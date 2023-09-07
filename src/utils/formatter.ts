@@ -1,3 +1,5 @@
+import { UPLOAD_FILE_VIDEO_AUDIO_TYPES } from '@/constant/common'
+
 export function formatPriceInFen(fen, decimal = 2) {
   decimal = Number.isInteger(decimal) ? decimal : 2
   const yuan = Number(fen) / 100
@@ -27,17 +29,32 @@ export function trimDecimal(number, decimal = 0, defaultText = '--') {
 export const FILE_TYPE_NAMES = {
   editor: '在线文档',
   webpage: '网页',
-  pdf: 'PDF',
-  doc: 'Word',
-  docx: 'Word',
+  pdf: 'pdf',
+  docx: 'word',
+  text: 'txt',
   txt: 'txt',
-  ppt: 'PPT',
-  pptx: 'PPT',
-  xls: 'Excel',
-  xlsx: 'Excel'
+  ppt: 'ppt',
+  pptx: 'pptx',
+  xls: 'excel',
+  xlsx: 'excel',
+  ...UPLOAD_FILE_VIDEO_AUDIO_TYPES.reduce((pre, cur) => {
+    pre[cur.replace('.', '')] = 'txt'
+    return pre
+  }, {})
 }
+
 export function getFileTypeName(type) {
   return FILE_TYPE_NAMES[type] || type || '-'
+}
+
+export function getFileName(fileName: string) {
+  const fileHeadName = fileName.match(/^(.+?)(\.[^.]*$|$)/)[1] || ''
+  const fileExtension = fileName.match(/\.([^.]+)$/)?.[1] // 使用正则表达式从文件名末尾提取文件后缀
+  if (fileExtension && UPLOAD_FILE_VIDEO_AUDIO_TYPES.includes(`.${fileExtension}`)) {
+    return `${fileHeadName} [${fileExtension}转txt]`
+  }
+
+  return fileName
 }
 
 export const FILE_STATUS_NAMES = {

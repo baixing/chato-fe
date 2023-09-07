@@ -17,7 +17,7 @@
           </el-icon>
         </div>
       </template>
-      <el-tabs v-model="activeName" class="demo-tabs">
+      <el-tabs v-model="activeName">
         <el-tab-pane :label="t('输入问答')" name="input-text">
           <el-form
             ref="ruleFormRef"
@@ -285,6 +285,9 @@ function onError(err) {
 function onSuccess(response: any, uploadFile: UploadFile) {
   if (response.code === 200031) {
     return Notification.error(`「${response.data.filename}」已接收，请勿重复上传`)
+  }
+  if (response.code === 200017) {
+    return Notification.error(`「${uploadFile.name}」${response.message}`)
   }
   uploadFileList.value = uploadFileList.value.filter((item) => item.uid !== uploadFile.uid)
 }

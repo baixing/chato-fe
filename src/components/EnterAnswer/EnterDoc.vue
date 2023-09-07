@@ -16,19 +16,22 @@
           </el-icon>
         </div>
       </template>
-      <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
+      <el-tabs v-model="activeName">
         <el-tab-pane :label="$t('上传文档')" name="upload-doc">
           <div class="upload-box">
-            <p class="description">
-              {{
-                $t(
-                  '格式支持 .pdf .docx .mobi .xlsx .txt .pptx .epub .md .csv，请确保内容可复制，每个{sizeLimit}MB以内，单次最多上传{qtyLimit}个。',
-                  { sizeLimit, qtyLimit }
-                )
-              }}
+            <div class="description">
+              <p>
+                {{
+                  $t(
+                    '格式支持 .pdf .docx .mobi .xlsx .txt .pptx .epub .md .csv，音视频格式支持.mp3 .mp4 .mpeg .mpga .m4a .wav .webm；文档格式{sizeLimit}MB以内，音视频格式{mediaLimit}MB以内；单次最多上传{qtyLimit}个',
+                    { sizeLimit, mediaLimit, qtyLimit }
+                  )
+                }}
+              </p>
               <br />
-              {{ $t('文档中的表格和图片暂时无法学习。') }}
-            </p>
+              <p>{{ $t('请确保文档内容可复制，文档中的表格和图片暂时无法学习。') }}</p>
+              <p>{{ $t('音视频上传后会自动解析成文字存储并学习，内容可修改。') }}</p>
+            </div>
             <el-upload
               class="upload-ctrl"
               v-model:file-list="uploadFileList"
@@ -148,7 +151,7 @@ import * as apiFile from '@/api/file'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import useGlobalProperties from '@/composables/useGlobalProperties'
-import { UPLOAD_FILE_TYPES, USER_ROLES } from '@/constant/common'
+import { UPLOAD_FILE_TYPES, UPLOAD_FILE_VIDEO_AUDIO_TYPES, USER_ROLES } from '@/constant/common'
 import { EDocumentTabType } from '@/enum/knowledge'
 import type { IDocumentForm } from '@/interface/knowledge'
 import { useAuthStore } from '@/stores/auth'
@@ -167,17 +170,22 @@ const base = useBase()
 
 interface Props {
   apiUpload: string
-  sizeLimit: number
-  qtyLimit: number
   domainId: string
   dialogVisible: boolean
   defaultForm: IDocumentForm
   specailTipVisible?: number
+  sizeLimit?: number
+  qtyLimit?: number
+  mediaLimit?: number
 }
 
 type uploadingListType = UploadRawFile & { startTime: string }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  sizeLimit: 30,
+  qtyLimit: 20,
+  mediaLimit: 25
+})
 const emit = defineEmits([
   'closeDialogVisble',
   'setSuccess',
@@ -259,10 +267,6 @@ const publicTabTile = computed(() => {
   return base.userInfo.role === USER_ROLES.SUPERMAN ? t('公众号抓取(仅超人可见)') : t('公众号抓取')
 })
 
-const handleClick = (tab) => {
-  console.log(tab, activeName.value)
-}
-
 async function submitInputText() {
   const formEl = formEl_Ref[activeName.value].value
   if (!formEl) return
@@ -317,6 +321,7 @@ async function submitInputText() {
 }
 function beforeUpload(rawFile: UploadRawFile) {
   const fileType = rawFile.name.substring(rawFile.name.lastIndexOf('.')).toLowerCase()
+  const size = rawFile.size / 1024 / 1024
   if (!UPLOAD_FILE_TYPES.includes(fileType)) {
     Notification.error(t('不支持{fileType}格式', { fileType }))
     return false
@@ -328,10 +333,20 @@ function beforeUpload(rawFile: UploadRawFile) {
     type: rawFile.type,
     startTime: dayjs().format('YYYY-MM-DD HH:mm:ss')
   })
-  if (rawFile.size / 1024 / 1024 > props.sizeLimit) {
+
+  if (UPLOAD_FILE_VIDEO_AUDIO_TYPES.includes(fileType) && size > props.mediaLimit) {
     Notification.error(
-      t('文件 “{fileName}” 体积已超过 {sizeLimit}MB，暂时无法上传。', {
-        fileName: rawFile.name,
+      t('文件 “{name}” 体积已超过 {mediaLimit}MB，暂时无法上传。', {
+        name: rawFile.name,
+        mediaLimit: props.mediaLimit
+      })
+    )
+    return false
+  }
+  if (UPLOAD_FILE_TYPES.includes(fileType) && size > props.sizeLimit) {
+    Notification.error(
+      t('文件 “{name}” 体积已超过 {sizeLimit}MB，暂时无法上传。', {
+        name: rawFile.name,
         sizeLimit: props.sizeLimit
       })
     )
@@ -364,6 +379,12 @@ function handleChange(uploadFile: UploadFile, uploadFiles: UploadFiles) {
 const handleSuccess = (response: any, uploadFile: UploadFile) => {
   if (response.code === 200031) {
     return Notification.error(`「${response.data.filename}」已接收，请勿重复上传`)
+  }
+  if (response.code === 200017) {
+    return Notification.error(`「${uploadFile.name}」${response.message}`)
+  }
+  if (response.code !== 200) {
+    return Notification.error(response.message)
   }
   uploadFileList.value = uploadFileList.value.filter((item) => item.uid !== uploadFile.uid)
 }
