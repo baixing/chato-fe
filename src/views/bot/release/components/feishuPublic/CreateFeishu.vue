@@ -2,11 +2,11 @@
   <Modal
     width="45%"
     mobile-width="95%"
-    :visible="visible"
-    :title="$t(`配置飞书群聊`)"
+    v-model:visible="visible"
+    :title="t('配置飞书群聊')"
     :footer="false"
     class="official-account-container"
-    @cancel="() => emit('update:value', false)"
+    @cancel="visible = false"
   >
     <div v-loading="loading">
       <CreatePublic
@@ -77,10 +77,11 @@ const handleSubmit = async (e: feishuiPublicFormType) => {
       data: { data }
     } = await postFeishuConfig(postData)
     feishuConfig.value.url = data.url
+    resetConfig.value = false
   } catch (e) {
+    resetConfig.value = true
   } finally {
     loading.close()
-    resetConfig.value = false
   }
 }
 

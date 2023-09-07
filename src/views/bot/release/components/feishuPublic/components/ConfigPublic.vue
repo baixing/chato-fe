@@ -11,7 +11,7 @@
     <p class="text-[#9DA3AF] mb-[16px]">
       {{ $t('复制下方信息，在「飞书开放平台」粘贴') }}
     </p>
-    <div class="flex justify-between flex-wrap items-center mb-[16px] pr-4">
+    <div class="flex justify-between items-center mb-[16px] pr-4">
       <div class="work-break md:my-1 md:flex md:flex-col">
         <label :for="$t(`生成地址`)">{{ $t('生成地址：') }}</label>
         <span class="ml-[10px] md:ml-0 md:my-1">{{ url }}</span>

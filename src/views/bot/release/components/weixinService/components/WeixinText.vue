@@ -6,7 +6,7 @@
       v-for="(value, key) in configList"
       :key="key"
     >
-      <label :for="value" class="leading-5">{{ $t(EWeixinConfigText[key]) }}：{{ value }}</label>
+      <label :for="value" class="leading-5 max-w-[90%] break-words">{{ $t(EWeixinConfigText[key]) }}：{{ value }}</label>
       <el-button link type="primary" @click="emit('handleCopy', value)">{{ $t('复制') }}</el-button>
     </p>
     <slot name="bottom"></slot>
