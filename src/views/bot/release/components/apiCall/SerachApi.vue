@@ -3,7 +3,7 @@
     width="40%"
     mobile-width="90%"
     v-model:visible="internalVisible"
-    title="查看秘钥"
+    :title="$t(`查看秘钥`)"
     :footer="false"
     class="copy-api-container"
   >
@@ -17,12 +17,12 @@
             link
             size="large"
             @click.prevent="emit('handleCopyApiUrl', chatAPI)"
-            >复制
-          </el-button>
+            >{{ $t('复制') }}</el-button
+          >
         </dd>
       </dl>
       <dl>
-        <dt>机器人标识：</dt>
+        <dt>{{ $t('机器人标识：') }}</dt>
         <dd class="copiable-item">
           {{ slug }}
           <el-button
@@ -30,8 +30,8 @@
             link
             size="large"
             @click.prevent="emit('handleCopyApiUrl', slug)"
-            >复制
-          </el-button>
+            >{{ $t('复制') }}</el-button
+          >
         </dd>
       </dl>
     </div>
@@ -55,8 +55,7 @@ const internalVisible = computed({
   set: (v) => emit('update:value', v)
 })
 </script>
-
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .api-detail dl {
   display: flex;
   align-items: center;
@@ -114,7 +113,6 @@ const internalVisible = computed({
   }
 }
 </style>
-
 <style lang="scss">
 .copy-api-container {
   .el-dialog__header {

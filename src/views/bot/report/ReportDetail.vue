@@ -5,34 +5,38 @@
         <div class="flex gap-4 w-fit flex-wrap">
           <el-dropdown trigger="click" @command="handleCommand">
             <el-button size="large">
-              {{ sourceName }} <el-icon class="el-icon--right"><arrow-down /></el-icon>
+              {{ sourceName }}
+              <el-icon class="el-icon--right"><arrow-down /></el-icon>
             </el-button>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item command="all">全部来源</el-dropdown-item>
-                <el-dropdown-item command="customer">用户数据</el-dropdown-item>
-                <el-dropdown-item command="admin">训练数据</el-dropdown-item>
+                <el-dropdown-item command="all">{{ $t('全部来源') }}</el-dropdown-item>
+                <el-dropdown-item command="customer">{{ $t('用户数据') }}</el-dropdown-item>
+                <el-dropdown-item command="admin">{{ $t('训练数据') }}</el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
 
           <el-dropdown trigger="click" @command="handleEvaluationCommand">
             <el-button size="large">
-              {{ evaluationName }} <el-icon class="el-icon--right"><arrow-down /></el-icon>
+              {{ evaluationName }}
+              <el-icon class="el-icon--right"><arrow-down /></el-icon>
             </el-button>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item command="all">全部评价</el-dropdown-item>
+                <el-dropdown-item command="all">{{ $t('全部评价') }}</el-dropdown-item>
                 <el-dropdown-item command="none">
-                  <p style="flex: auto; text-align: center">无评价</p>
+                  <p style="flex: auto; text-align: center">
+                    {{ $t('无评价') }}
+                  </p>
                 </el-dropdown-item>
                 <el-dropdown-item command="like">
                   <svg-icon color="#596780" style="flex: auto" name="report-like" />
-                  <p style="flex: content">赞</p>
+                  <p style="flex: content">{{ $t('赞') }}</p>
                 </el-dropdown-item>
                 <el-dropdown-item command="dislike">
                   <svg-icon color="#596780" style="flex: auto; rotate: 180deg" name="report-like" />
-                  <p style="flex: content">踩</p>
+                  <p style="flex: content">{{ $t('踩') }}</p>
                 </el-dropdown-item>
               </el-dropdown-menu>
             </template>
@@ -47,8 +51,8 @@
             type="daterange"
             unlink-panels
             range-separator="To"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
+            :start-placeholder="$t(`开始日期`)"
+            :end-placeholder="$t(`结束日期`)"
             :shortcuts="shortcuts"
             class="shrink-0 max-w-[330px]"
           />
@@ -56,10 +60,12 @@
         <SearchInput v-model:value="keyword" size="large" />
       </div>
       <div v-if="!isMobile" class="button-container">
-        <el-button v-if="multipleSelection.size > 0" type="primary" @click="() => handleExport()">
-          导出当前
-        </el-button>
-        <el-button type="primary" @click="() => handleExport(true)"> 导出全部 </el-button>
+        <el-button v-if="multipleSelection.size > 0" type="primary" @click="() => handleExport()">{{
+          $t('导出当前')
+        }}</el-button>
+        <el-button type="primary" @click="() => handleExport(true)">{{
+          $t(' 导出全部 ')
+        }}</el-button>
       </div>
     </div>
 
@@ -67,7 +73,7 @@
       <el-table
         :data="$items"
         stripe
-        empty-text="暂未获取问答记录，请刷新重试"
+        :empty-text="$t(`暂未获取问答记录，请刷新重试`)"
         tooltip-effect="light"
         style="width: 100%"
         header-row-class-name="table-header-title"
@@ -79,11 +85,11 @@
           <template #default="{ row }">
             <ul class="expand-ul">
               <li>
-                <div class="expand-left">提问：</div>
+                <div class="expand-left">{{ $t('提问：') }}</div>
                 <div class="markdow-answer-expand">{{ row.question }}</div>
               </li>
               <li>
-                <div class="expand-left">答案：</div>
+                <div class="expand-left">{{ $t('答案：') }}</div>
                 <div
                   class="markdow-answer-expand markdown-body"
                   v-if="detectMarkdown(row.answer)"
@@ -95,18 +101,18 @@
           </template>
         </el-table-column>
         <el-table-column v-if="!isMobile" type="selection" width="55" />
-        <el-table-column v-if="!isMobile" prop="seq" label="序号" align="left" width="80" />
-        <el-table-column label="提问">
+        <el-table-column v-if="!isMobile" prop="seq" :label="$t(`序号`)" align="left" width="80" />
+        <el-table-column :label="$t(`提问`)">
           <template #default="{ row }">
             <div class="answer-column-container">{{ row.question }}</div>
           </template>
         </el-table-column>
-        <el-table-column label="回答">
+        <el-table-column :label="$t(`回答`)">
           <template #default="{ row }">
             <div class="answer-column-container">{{ row.answer }}</div>
           </template>
         </el-table-column>
-        <el-table-column v-if="!isMobile" label="时间" align="left" width="150">
+        <el-table-column v-if="!isMobile" :label="$t(`时间`)" align="left" width="150">
           <template #default="{ row }">
             {{ toSimpleDateTime(row.created) }}
           </template>
@@ -114,7 +120,7 @@
         <el-tooltip content="s" placement="bottom" effect="light">
           <el-table-column
             v-if="!isMobile"
-            label="提问者"
+            :label="$t(`提问者`)"
             align="left"
             :show-overflow-tooltip="true"
             width="100"
@@ -124,12 +130,12 @@
             </template>
           </el-table-column>
         </el-tooltip>
-        <el-table-column fixed="right" label="操作" :width="isMobile ? 60 : 150">
+        <el-table-column fixed="right" :label="$t(`操作`)" :width="isMobile ? 60 : 150">
           <template #default="{ row }">
-            <el-button type="primary" link @click="correctAnswer(row)">修正</el-button>
-            <el-button v-if="!isMobile" type="primary" link @click="onLinkContext(row)">
-              查看上下文
-            </el-button>
+            <el-button type="primary" link @click="correctAnswer(row)">{{ $t('修正') }}</el-button>
+            <el-button v-if="!isMobile" type="primary" link @click="onLinkContext(row)">{{
+              $t('查看上下文')
+            }}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -155,7 +161,6 @@
     />
   </div>
 </template>
-
 <script setup>
 import * as apiReport from '@/api/report'
 import EnterQa from '@/components/EnterAnswer/EnterQa.vue'
@@ -171,8 +176,10 @@ import { debouncedWatch } from '@vueuse/core'
 import { ElNotification as Notification } from 'element-plus'
 import { storeToRefs } from 'pinia'
 import { computed, nextTick, reactive, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 
+const { t } = useI18n()
 const router = useRouter()
 const route = useRoute()
 const domainStoreI = useDomainStore()
@@ -185,27 +192,27 @@ const evaluation = ref('all')
 const evaluationName = computed(() => {
   switch (evaluation.value) {
     case 'all':
-      return '全部评价'
+      return t('全部评价')
     case 'none':
-      return '无评价'
+      return t('无评价')
     case 'like':
-      return '赞'
+      return t('赞')
     case 'dislike':
-      return '踩'
+      return t('踩')
     default:
-      return '全部评价'
+      return t('全部评价')
   }
 })
 const sourceName = computed(() => {
   switch (source.value) {
     case 'all':
-      return '全部来源'
+      return t('全部来源')
     case 'customer':
-      return '用户数据'
+      return t('用户数据')
     case 'admin':
-      return '训练数据'
+      return t('训练数据')
     default:
-      return '全部来源'
+      return t('全部来源')
   }
 })
 const isListLoading = ref(true) // 列表加载状态
@@ -225,7 +232,7 @@ const timeRange = ref('')
 const keyword = ref('')
 const shortcuts = [
   {
-    text: '今日',
+    text: t('今日'),
     value: () => {
       const start = new Date()
       start.setHours(0, 0, 0)
@@ -235,7 +242,7 @@ const shortcuts = [
     }
   },
   {
-    text: '昨日',
+    text: t('昨日'),
     value: () => {
       const start = new Date()
       start.setTime(start.getTime() - 3600 * 1000 * 24 * 1)
@@ -247,7 +254,7 @@ const shortcuts = [
     }
   },
   {
-    text: '近7天',
+    text: t('近7天'),
     value: () => {
       const start = new Date()
       start.setTime(start.getTime() - 3600 * 1000 * 24 * 6)
@@ -258,7 +265,7 @@ const shortcuts = [
     }
   },
   {
-    text: '近一个月',
+    text: t('近一个月'),
     value: () => {
       const start = new Date()
       start.setTime(start.getTime() + 3600 * 1000 * 24 * 1)
@@ -270,7 +277,7 @@ const shortcuts = [
     }
   },
   {
-    text: '近半年',
+    text: t('近半年'),
     value: () => {
       const start = new Date()
       start.setTime(start.getTime() + 3600 * 1000 * 24 * 1)
@@ -282,7 +289,7 @@ const shortcuts = [
     }
   },
   {
-    text: '近一年',
+    text: t('近一年'),
     value: () => {
       const start = new Date()
       start.setTime(start.getTime() + 3600 * 1000 * 24 * 1)
@@ -294,6 +301,7 @@ const shortcuts = [
     }
   }
 ]
+
 const defaultTime = [new Date(2023, 5, 1, 0, 0, 0), new Date(2023, 5, 1, 23, 59, 59)]
 function init() {
   updateList()
@@ -388,7 +396,7 @@ function timeChange() {
 async function handleExport(isAll = false) {
   const exportArray = isAll ? [] : Array.from(multipleSelection.value)
   if (exportArray.length === 0 && !isAll) {
-    Notification.error('抱歉，未勾选数据，无法导出。请先勾选数据再进行导出操作。')
+    Notification.error(t('抱歉，未勾选数据，无法导出。请先勾选数据再进行导出操作。'))
     return
   }
   isListLoading.value = true
@@ -413,7 +421,6 @@ async function handleExport(isAll = false) {
 
 watch(domainId, (v) => v && init(), { immediate: true })
 </script>
-
 <style lang="scss" scoped>
 .content-view-container {
   :deep(.el-col) {
@@ -481,7 +488,6 @@ watch(domainId, (v) => v && init(), { immediate: true })
   }
 }
 </style>
-
 <style lang="scss">
 .markdow-answer-expand {
   line-height: 20px;

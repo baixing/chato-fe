@@ -4,7 +4,7 @@
       <div class="header-left w-full">
         <div class="img-upload-container">
           <div class="default-avatar" v-if="!userInfo?.org?.avatar && !isRemove">
-            <el-avatar :size="48">空间</el-avatar>
+            <el-avatar :size="48">{{ $t('空间') }}</el-avatar>
           </div>
           <div
             :class="[!userInfo.org.avatar && !isRemove ? 'hidden-img-upload' : 'show-img-upload']"
@@ -20,7 +20,7 @@
           size="large"
           class="mx-4 w-full max-w-[80%]"
           @blurInput="blurInput"
-          placeholder="请输入空间名"
+          :placeholder="$t(`请输入空间名`)"
           :limit="20"
           :defaultFocus="true"
         />
@@ -31,9 +31,8 @@
         type="primary"
         class="!border-none !bg-white !py-[10px] !px-5 !text-[#7C5CFC] hover:opacity-80"
         @click="onAddMember"
+        >{{ $t('添加成员') }}</el-button
       >
-        添加成员
-      </el-button>
     </div>
     <div class="w-full h-full member-table" v-loading="loading">
       <el-table
@@ -49,29 +48,34 @@
           --el-fill-color-light: #f2f3f5;
         "
       >
-        <el-table-column prop="nickname" label="用户名" min-width="200">
+        <el-table-column prop="nickname" :label="$t(`用户名`)" min-width="200">
           <template #default="scope">
             <div class="flex justify-start items-center">
               <UserAvatar :user="scope.row" :size="28" :text-size="14" class="mr-[6px]" />
               {{
                 scope.row.id === userInfo.id
-                  ? `${scope.row.nickname}（我自己）`
+                  ? $t('{slot1}（我自己）', { slot1: scope.row.nickname })
                   : scope.row.nickname
               }}
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="mobile" label="手机号" width="180" />
-        <el-table-column prop="consume_total" label="已用电力值" width="140" />
-        <el-table-column label="角色" align="left" class-name="table-role-container" width="200">
+        <el-table-column prop="mobile" :label="$t(`手机号`)" width="180" />
+        <el-table-column prop="consume_total" :label="$t(`已用电力值`)" width="140" />
+        <el-table-column
+          :label="$t(`角色`)"
+          align="left"
+          class-name="table-role-container"
+          width="200"
+        >
           <template #default="scope">
-            <span class="float-left ml-3" v-if="scope.row.org.owner_id === scope.row.id"
-              >管理者</span
-            >
+            <span class="float-left ml-3" v-if="scope.row.org.owner_id === scope.row.id">{{
+              $t('管理者')
+            }}</span>
             <el-select
               v-model="scope.row.role"
               class="custom-select text-[#3D3D3D]"
-              placeholder="选择角色"
+              :placeholder="$t(`选择角色`)"
               @change="(e: ESettingSpaceRole) => handleSelect(scope.row.id,e)"
               v-else
             >
@@ -94,7 +98,7 @@
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column width="90" label="操作" fixed="right">
+        <el-table-column width="90" :label="$t(`操作`)" fixed="right">
           <template #default="scope">
             <el-button
               v-if="scope.row.org.owner_id !== scope.row.id"
@@ -102,7 +106,7 @@
               link
               type="primary"
             >
-              {{ scope.row.id === userInfo.id ? '退出' : '移除' }}
+              {{ scope.row.id === userInfo.id ? $t('退出') : $t('移除') }}
             </el-button>
             <el-text v-else type="info">-</el-text>
           </template>
@@ -112,8 +116,7 @@
     <AddMember v-model:visible="addMemberVisible" />
   </div>
 </template>
-
-<script setup lang="ts">
+<script lang="ts" setup>
 import { removeSpaceMember, updateOrgSpaceInfo, updateSpaceMemberRole } from '@/api/space'
 import UserAvatar from '@/components/Avatar/UserAvatar.vue'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
@@ -129,9 +132,11 @@ import { getStringWidth } from '@/utils/string'
 import { ElMessage, ElMessageBox, ElNotification as Notification } from 'element-plus'
 import { storeToRefs } from 'pinia'
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import AddMember from './components/AddMember.vue'
 
+const { t } = useI18n()
 const router = useRouter()
 const base = useBase()
 const spaceStoreI = useSpaceStore()
@@ -147,14 +152,14 @@ const { switchSpace } = useSpace()
 
 const roleList = [
   {
-    label: '管理者',
+    label: t('管理者'),
     value: 'owner',
-    desc: '可训练机器人，可管理空间成员'
+    desc: t('可训练机器人，可管理空间成员')
   },
   {
-    label: '使用者',
+    label: t('使用者'),
     value: 'member',
-    desc: '不可训练机器人，不可管理空间成员'
+    desc: t('不可训练机器人，不可管理空间成员')
   }
 ]
 
@@ -204,16 +209,16 @@ const onAddMember = async () => {
 }
 
 const exitMsgBox = {
-  title: '退出空间',
-  content: '退出后将无法访问此空间，是否确认退出？',
-  okBtn: '确认退出',
-  doneMsg: '退出成功'
+  title: t('退出空间'),
+  content: t('退出后将无法访问此空间，是否确认退出？'),
+  okBtn: t('确认退出'),
+  doneMsg: t('退出成功')
 }
 const removeMsgBox = {
-  title: '移除成员',
-  content: '移除后该成员将无法访问此空间，是否确认移除该成员？',
-  okBtn: '确认移除',
-  doneMsg: '移除成功'
+  title: t('移除成员'),
+  content: t('移除后该成员将无法访问此空间，是否确认移除该成员？'),
+  okBtn: t('确认移除'),
+  doneMsg: t('移除成功')
 }
 
 const handleRemoveMember = async (row: any) => {
@@ -222,7 +227,7 @@ const handleRemoveMember = async (row: any) => {
 
   await ElMessageBox.confirm(msgBox.content, msgBox.title, {
     confirmButtonText: msgBox.okBtn,
-    cancelButtonText: '取消',
+    cancelButtonText: t('取消'),
     type: 'warning'
   })
 
@@ -253,7 +258,7 @@ const handleSelect = async (userId: number, value: ESettingSpaceRole) => {
   const message = res.data.message
   ElMessage({
     type: code === 200 ? 'success' : 'error',
-    message: code === 200 ? '修改成功' : message
+    message: code === 200 ? t('修改成功') : message
   })
   if (data.org_user_id === userInfo.value.id) {
     switchSpace(userInfo.value.org.id, { role: value as unknown as EAllRole })
@@ -267,12 +272,12 @@ const handleUpdateOrgInfo = async () => {
     avatar: avatar.value,
     name: name.value
   }
-  if (getStringWidth(data.name) > 20) return Notification.error('昵称超过20个字符')
-  if (getStringWidth(data.name) === 0) return Notification.error('请输入昵称')
+  if (getStringWidth(data.name) > 20) return Notification.error(t('昵称超过20个字符'))
+  if (getStringWidth(data.name) === 0) return Notification.error(t('请输入昵称'))
   try {
     await updateOrgSpaceInfo(data)
     base.updateUserOrgInfoAttri(data)
-    Notification.success('保存成功')
+    Notification.success(t('保存成功'))
   } catch (e) {}
 }
 
@@ -288,7 +293,6 @@ const init = async () => {
 
 init()
 </script>
-
 <style lang="scss">
 .personal-space-container {
   .member-table {
@@ -357,7 +361,6 @@ init()
   }
 }
 </style>
-
 <style lang="scss" scoped>
 .default-avatar {
   position: absolute;

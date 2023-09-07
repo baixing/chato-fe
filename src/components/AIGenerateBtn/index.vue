@@ -21,7 +21,9 @@ import type { EDomainAIGenerateType } from '@/enum/domain'
 import { useDomainStore } from '@/stores/domain'
 import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const props = defineProps<{
   generateStr: string
   type: EDomainAIGenerateType
@@ -39,7 +41,7 @@ const { domainInfo } = storeToRefs(domainStoreI)
 
 const clickCount = ref(0)
 const generating = ref(false)
-const btnText = computed(() => (clickCount.value ? '换一个' : '一键 AI 优化'))
+const btnText = computed(() => (clickCount.value ? t('换一个') : t('一键 AI 优化')))
 
 const SSEInstance = new SSE()
 

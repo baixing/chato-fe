@@ -3,18 +3,18 @@
     width="35%"
     mobile-width="100%"
     v-model:visible="internalVisible"
-    title="复制链接"
+    :title="$t(`复制链接`)"
     :footer="false"
     class="copy-link-container"
   >
-    <header>URL链接</header>
+    <header>{{ $t('URL链接') }}</header>
     <p class="text-[color: #596780] text-sm my-[18px] flex items-center">
       {{ chatWebPage }}
-      <el-button class="ml-1" type="primary" link size="large" @click="emit('handleCopyLink')"
-        >复制</el-button
-      >
+      <el-button class="ml-1" type="primary" link size="large" @click="emit('handleCopyLink')">{{
+        $t('复制')
+      }}</el-button>
     </p>
-    <header>二维码</header>
+    <header>{{ $t('二维码') }}</header>
     <div class="qr-container">
       <QrCode :value="chatWebPage" :bordered="false" errorLevel="M" />
     </div>
@@ -38,8 +38,7 @@ const internalVisible = computed({
   set: (v) => emit('update:value', v)
 })
 </script>
-
-<style scoped lang="scss">
+<style lang="scss" scoped>
 header {
   color: #303133;
   font-size: 14px;
@@ -49,7 +48,6 @@ header {
   margin-left: -9px;
 }
 </style>
-
 <style lang="scss">
 .copy-link-container {
   .el-dialog__header {

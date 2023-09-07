@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col">
-    <h3 class="mt-6 ml-5 mb-3 text-sm font-medium leading-[22px]">对话列表</h3>
+    <h3 class="mt-6 ml-5 mb-3 text-sm font-medium leading-[22px]">{{ $t('对话列表') }}</h3>
     <ul class="w-[180px] px-3 py-2 flex-1 overflow-y-auto">
       <li
         v-for="item in chatList"

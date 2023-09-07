@@ -5,7 +5,7 @@
     class="!text-[#7c5cfc] !border-[#7c5cfc] !font-normal hover:opacity-80"
     @click="onOpenDialog()"
   >
-    添加收集表单
+    {{ $t('添加收集表单') }}
   </el-button>
   <div v-else class="p-3 bg-[#F2F3F5] rounded-lg flex justify-between gap-6">
     <div class="text-[#303133] text-xs flex items-center flex-1 overflow-hidden">
@@ -14,20 +14,20 @@
       >
         <svg-icon name="table-form" svg-class="w-[14px] h-[14px]"></svg-icon>
       </span>
-      <span class="mr-2 truncate">表单：{{ formTitle }}</span>
+      <span class="mr-2 truncate">{{ $t('表单：{slot1}', { slot1: formTitle }) }}</span>
 
       <span class="inline-flex gap-2 shrink-0">
         <el-button link type="primary" size="small" @click="onOpenDialog(formState.id)">
-          编辑
+          {{ $t('编辑') }}
         </el-button>
-        <el-button link type="primary" size="small" @click="onPreview">预览</el-button>
-        <el-button link type="danger" size="small" @click="onDelete">删除</el-button>
+        <el-button link type="primary" size="small" @click="onPreview">{{ $t('预览') }}</el-button>
+        <el-button link type="danger" size="small" @click="onDelete">{{ $t('删除') }}</el-button>
       </span>
     </div>
     <SwitchWithStateMsg
       :value="formAbled"
-      close-msg="关闭"
-      open-msg="开启"
+      :close-msg="$t('关闭')"
+      :open-msg="$t('开启')"
       msg-position="left"
       size="small"
       @change="onFormAbled"
@@ -35,23 +35,23 @@
   </div>
   <el-dialog
     v-model="dialogVisible"
-    title="收集表单"
+    :title="$t('收集表单')"
     :width="isMobile ? '80%' : '40%'"
     @close="onCloseDialog"
   >
     <el-form ref="formRef" label-position="top" :model="formState" class="collect-form">
-      <el-form-item label="表单标题" prop="title" required :rules="formRules.title">
+      <el-form-item :label="$t('表单标题')" prop="title" required :rules="formRules.title">
         <el-input
           v-model="formState.title"
-          placeholder="标题将展示在广告内，用户可点击后展开表单"
+          :placeholder="$t('标题将展示在广告内，用户可点击后展开表单')"
         />
       </el-form-item>
-      <div class="mb-3 text-[#303133]">表单条目</div>
+      <div class="mb-3 text-[#303133]">{{ $t('表单条目') }}</div>
       <el-row :gutter="8" class="mb-3 text-[#596780]">
-        <el-col :span="6">类型</el-col>
-        <el-col :span="11">问题</el-col>
-        <el-col :span="3">必填</el-col>
-        <el-col :span="4">操作</el-col>
+        <el-col :span="6">{{ $t('类型') }}</el-col>
+        <el-col :span="11">{{ $t('问题') }}</el-col>
+        <el-col :span="3">{{ $t('必填') }}</el-col>
+        <el-col :span="4">{{ $t('操作') }}</el-col>
       </el-row>
       <draggable
         tag="ul"
@@ -68,13 +68,13 @@
               <el-form-item :prop="`fields.${index}.type`" :rules="formRules.fieldType">
                 <el-select
                   v-model="element.type"
-                  placeholder="请选择表单类型"
+                  :placeholder="$t('请选择表单类型')"
                   :options="CustomerFormFieldTypeOptions"
                 >
                   <el-option
                     v-for="item in CustomerFormFieldTypeOptions"
                     :key="item.value"
-                    :label="item.label"
+                    :label="$t(item.label)"
                     :value="item.value"
                   />
                 </el-select>
@@ -82,7 +82,7 @@
             </el-col>
             <el-col :span="11">
               <el-form-item :prop="`fields.${index}.name`" :rules="formRules.fieldName">
-                <el-input v-model="element.name" placeholder="请输入问题" />
+                <el-input v-model="element.name" :placeholder="$t('请输入问题')" />
               </el-form-item>
             </el-col>
             <el-col :span="3">
@@ -111,25 +111,25 @@
         </template>
       </draggable>
       <el-button v-show="formState.fields.length !== 5" link type="primary" @click="onAddFormField">
-        新增一项
+        {{ $t('新增一项') }}
       </el-button>
     </el-form>
     <template #footer>
       <span>
-        <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="onSubmit">确认</el-button>
+        <el-button @click="dialogVisible = false">{{ $t('取消') }}</el-button>
+        <el-button type="primary" @click="onSubmit">{{ $t('确认') }}</el-button>
       </span>
     </template>
   </el-dialog>
 
   <el-dialog
     v-model="previewVisible"
-    title="预览表单"
+    :title="$t('预览表单')"
     :width="isMobile ? '80%' : '40%'"
     class="preview-dialog"
   >
     <div class="p-4 bg-white rounded">
-      <p class="text-[#303133] font-medium leading-7 text-base mb-4">留下联系方式</p>
+      <p class="text-[#303133] font-medium leading-7 text-base mb-4">{{ $t('留下联系方式') }}</p>
       <CustomerForm :id="formState.id" disabled />
     </div>
   </el-dialog>
@@ -154,8 +154,10 @@ import { cloneDeep } from 'lodash-es'
 import remove from 'lodash-es/remove'
 import { storeToRefs } from 'pinia'
 import { computed, reactive, ref, toRaw, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import draggable from 'vuedraggable'
 
+const { t } = useI18n()
 const dialogVisible = ref(false)
 const previewVisible = ref(false)
 const drag = ref(false)
@@ -190,13 +192,13 @@ let originalConfigState: ICustomerFormConfig
 
 const formRules = {
   title: [
-    { required: true, message: '表单标题不能为空', trigger: 'change' },
-    { max: 40, message: '表单标题最大不能超过 40 字符', trigger: 'change' }
+    { required: true, message: t('表单标题不能为空'), trigger: 'change' },
+    { max: 40, message: t('表单标题最大不能超过 40 字符'), trigger: 'change' }
   ],
-  fieldType: { required: true, message: '类型不能为空', trigger: 'change' },
+  fieldType: { required: true, message: t('类型不能为空'), trigger: 'change' },
   fieldName: [
-    { required: true, message: '问题不能为空', trigger: 'change' },
-    { max: 20, message: '问题最大不能超过 20 字符', trigger: 'change' }
+    { required: true, message: t('问题不能为空'), trigger: 'change' },
+    { max: 20, message: t('问题最大不能超过 20 字符'), trigger: 'change' }
   ]
 }
 
@@ -213,14 +215,17 @@ const onUpdateAbleAdForm = async () => {
 const onFormAbled = async (value) => {
   try {
     const confirmAction = value ? '开启' : '关闭'
+    const showHide = value ? t('') : t('不')
     await ElMessageBox.confirm(
-      `${confirmAction}表单后，广告中将${
-        value ? '' : '不'
-      }会展示表单，是否确认${confirmAction}表单？`,
-      `${confirmAction}表单`,
+      t('{slot1}表单后，广告中将{slot2}会展示表单，是否确认{slot3}表单？', {
+        slot1: confirmAction,
+        slot2: showHide,
+        slot3: confirmAction
+      }),
+      t(`{slot1}表单`, { slot1: confirmAction }),
       {
-        confirmButtonText: '确认',
-        cancelButtonText: '取消'
+        confirmButtonText: t('确认'),
+        cancelButtonText: t('取消')
       }
     )
     formAbled.value = value
@@ -259,17 +264,17 @@ const onSubmit = async () => {
     await formRef.value.validate()
 
     const confirmState = {
-      action: '创建',
-      tips: '创建的表单将加在广告末尾，提交的信息可在表单报表明细中查看，是否确认创建？'
+      action: t('创建'),
+      tips: t('创建的表单将加在广告末尾，提交的信息可在表单报表明细中查看，是否确认创建？')
     }
     if (formState.id) {
-      confirmState.action = '修改'
-      confirmState.tips = '修改后将更新表单，该操作不可撤销，是否确认修改？'
+      confirmState.action = t('修改')
+      confirmState.tips = t('修改后将更新表单，该操作不可撤销，是否确认修改？')
     }
 
     await ElMessageBox.confirm(confirmState.tips, `${confirmState.action}表单`, {
-      confirmButtonText: '确认',
-      cancelButtonText: '取消'
+      confirmButtonText: t('确认'),
+      cancelButtonText: t('取消')
     })
 
     const saveState = { ...toRaw(formState), domain_id: domainInfo.value.id }
@@ -287,11 +292,11 @@ const onSubmit = async () => {
 const onDelete = async () => {
   try {
     await ElMessageBox.confirm(
-      '删除后该表单收集到的数据明细也会对应删除，该操作不可撤销，是否确认删除表单？',
-      `删除表单`,
+      t('删除后该表单收集到的数据明细也会对应删除，该操作不可撤销，是否确认删除表单？'),
+      t(`删除表单`),
       {
-        confirmButtonText: '确认',
-        cancelButtonText: '取消'
+        confirmButtonText: t('确认'),
+        cancelButtonText: t('取消')
       }
     )
 

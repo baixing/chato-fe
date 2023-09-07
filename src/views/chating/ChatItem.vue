@@ -1,4 +1,32 @@
-<script setup lang="ts">
+<template>
+  <Chat
+    :isreadRouteParam="true"
+    :internalProps="true"
+    @correctAnswer="correctAnswer"
+    @showDrawer="onOpenSource"
+    :bSlug="botSlug"
+  />
+  <!-- 文档来源 -->
+  <DocSourceDrawer
+    v-model:visible="currentDrawer.visible"
+    :question-id="currentDrawer.questionId"
+    :slug="currentDrawer.slug"
+  >
+    <template #afterTitle="{ item }">
+      <a style="margin-right: 10px; color: #303133" :download="item.url" :href="item.url">
+        {{ item.title }} </a
+      >{{ $t('评分：') }}{{ Math.round(item.score * 100) }}
+    </template>
+  </DocSourceDrawer>
+  <EnterQa
+    :activeNames="EDocumentTabType.inputText"
+    :defaultForm="defaultForm"
+    :dialogVisible="dialogVisibleQa"
+    hidden-batch
+    @closeDialogVisble="() => (dialogVisibleQa = false)"
+  />
+</template>
+<script lang="ts" setup>
 // TODO: refactor chat
 import DocSourceDrawer from '@/components/Chat/ChatDocSourceDrawer.vue'
 import Chat from '@/components/Chat/index.vue'
@@ -43,33 +71,3 @@ const onOpenSource = (question_id, slug) => {
   currentDrawer.visible = true
 }
 </script>
-
-<template>
-  <Chat
-    :isreadRouteParam="true"
-    :internalProps="true"
-    @correctAnswer="correctAnswer"
-    @showDrawer="onOpenSource"
-    :bSlug="botSlug"
-  />
-  <!-- 文档来源 -->
-  <DocSourceDrawer
-    v-model:visible="currentDrawer.visible"
-    :question-id="currentDrawer.questionId"
-    :slug="currentDrawer.slug"
-  >
-    <template #afterTitle="{ item }">
-      <a style="margin-right: 10px; color: #303133" :download="item.url" :href="item.url">
-        {{ item.title }}
-      </a>
-      评分：{{ Math.round(item.score * 100) }}
-    </template>
-  </DocSourceDrawer>
-  <EnterQa
-    :activeNames="EDocumentTabType.inputText"
-    :defaultForm="defaultForm"
-    :dialogVisible="dialogVisibleQa"
-    hidden-batch
-    @closeDialogVisble="() => (dialogVisibleQa = false)"
-  />
-</template>

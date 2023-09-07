@@ -1,6 +1,8 @@
 import { currentEnvConfig } from '@/config'
+import { ELangKey } from '@/enum/locales'
 import { useBase } from '@/stores/base'
 import { fetchEventSource } from '@microsoft/fetch-event-source'
+import { useLocalStorage } from '@vueuse/core'
 import { handleRequestError } from './help'
 
 export default class SSE {
@@ -18,13 +20,15 @@ export default class SSE {
     fn?: (data: string) => void,
     initConfig?: { responseAll?: boolean }
   ) {
+    const currentlocales = useLocalStorage('locale', ELangKey.zh_cn)
     const { responseAll } = initConfig || { responseAll: false }
     this.abortCtrl = new AbortController()
 
     return fetchEventSource(currentEnvConfig.baseURL + url, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'x-lang': currentlocales.value
       },
       body: JSON.stringify({ token: this.token, ...bodyData }),
       signal: this.abortCtrl.signal,

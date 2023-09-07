@@ -13,7 +13,7 @@
           <div
             v-if="showUploadList.showPreviewIcon"
             class="action-btn"
-            title="预览图片"
+            :title="$t(`预览图片`)"
             @click="() => emit('onPreview', file, fileIndex)"
           >
             <el-icon><zoom-in /></el-icon>
@@ -21,7 +21,7 @@
           <div
             v-if="showUploadList.showRemoveIcon && !disabled"
             class="action-btn"
-            title="删除图片"
+            :title="$t(`删除图片`)"
             @click="() => emit('onRemove', file, fileIndex)"
           >
             <el-icon><Delete /></el-icon>
@@ -37,7 +37,7 @@
           <a
             v-if="showUploadList.showDownloadIcon && !disabled"
             class="action-btn"
-            title="下载图片"
+            :title="$t(`下载图片`)"
             download="image.jpg"
             :href="file.url"
             target="_block"
@@ -52,7 +52,7 @@
               fileIndex !== 0
             "
             class="action-btn"
-            title="前移"
+            :title="$t(`前移`)"
             @click="() => emit('onMove', file, -1)"
           >
             <el-icon><ArrowLeft /></el-icon>
@@ -65,7 +65,7 @@
               fileIndex !== fileList.length - 1
             "
             class="action-btn"
-            title="后移"
+            :title="$t(`后移`)"
             @click="() => emit('onMove', file, 1)"
           >
             <el-icon><ArrowRight /></el-icon>

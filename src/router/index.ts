@@ -9,11 +9,13 @@ import { createRouter, createWebHistory, RouterView } from 'vue-router'
 
 export const RoutesMap = {
   home: {
+    homeName: 'home',
     index: 'homeIndex',
     nash: 'homeNash',
     case: 'homeCase'
   },
   auth: {
+    authName: 'auth',
     login: 'authLogin',
     logout: 'authLogout',
     verify: 'authVerify'
@@ -21,11 +23,15 @@ export const RoutesMap = {
   safe: 'safe',
   release: 'release',
   chat: {
+    chatName: 'chat',
     release: 'chatRelease',
     c: 'chatC'
   },
   resource: 'resource',
   tranning: {
+    information: 'information',
+    release: 'release',
+    kownlwedge: 'kownlwedge',
     bot: 'tranningBot',
     botUser: 'tranningBotUser',
     botPersona: 'tranningBotPersona',
@@ -42,10 +48,12 @@ export const RoutesMap = {
     detail: 'tranningDetail'
   },
   manager: {
+    managerName: 'manager',
     center: 'managerCenter',
     create: 'managerCreate'
   },
   namespace: {
+    namespaceName: 'namespace',
     personalSetting: 'namespacePersonalSetting',
     management: 'namespacePersonalManagement'
   },

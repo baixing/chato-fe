@@ -4,24 +4,24 @@
       <img src="@/assets/img/logo-header.png" alt="" class="logo" />
     </div>
     <el-card class="card" shadow="never">
-      <h1>即将离开当前网站</h1>
-      <p class="info">您即将离开当前网站，请确认您的帐号和财产安全。</p>
+      <h1>{{ $t('即将离开当前网站') }}</h1>
+      <p class="info">
+        {{ $t('您即将离开当前网站，请确认您的帐号和财产安全。') }}
+      </p>
       <a class="link" :href="target">{{ target }}</a>
       <el-divider></el-divider>
       <a :href="target" style="display: flex; justify-content: flex-end">
-        <el-button type="primary"> 继续访问 </el-button>
+        <el-button type="primary">{{ $t(' 继续访问 ') }}</el-button>
       </a>
     </el-card>
   </div>
 </template>
-
 <script setup>
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
 const target = route.query.target || '/'
 </script>
-
 <style lang="scss" scoped>
 .page-container {
   display: flex;

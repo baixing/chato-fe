@@ -5,7 +5,7 @@
         v-model="formState.phone"
         :maxlength="11"
         size="large"
-        placeholder="请输入手机号（必填）"
+        :placeholder="$t(`请输入手机号（必填）`)"
         class="!rounded-lg"
       />
     </el-form-item>
@@ -13,7 +13,7 @@
       <el-select
         v-model="formState.industry"
         :loading="industryState.loading"
-        placeholder="请选择行业"
+        :placeholder="$t(`请选择行业`)"
         size="large"
         clearable
         class="!rounded-lg w-full"
@@ -41,29 +41,27 @@
   </el-button>
 
   <el-checkbox v-model="protocolAgree">
-    <p class="text-[13px] flex items-center">
-      <span class="text-[#596780]">我已阅读并同意</span>
+    <p class="text-[13px] flex items-center whitespace-nowrap break-all">
+      <span class="text-[#596780]">{{ $t('我已阅读并同意') }}</span>
       <el-link
         :underline="false"
         target="_blank"
         type="primary"
         class="!text-[13px] !font-normal ml-1"
         @click="openPreviewUrl(kUserAgreementLinkUrl)"
-      >
-        用户协议 </el-link
+        >{{ $t('用户协议 ') }}</el-link
       >、<el-link
         :underline="false"
         target="_blank"
         type="primary"
         class="!text-[13px] !font-normal"
         @click="openPreviewUrl(kPrivacyLinkUrl)"
-        >隐私政策</el-link
+        >{{ $t('隐私政策') }}</el-link
       >
     </p>
   </el-checkbox>
 </template>
-
-<script setup lang="ts">
+<script lang="ts" setup>
 import { getFirstGuideSelect } from '@/api/release'
 import useGlobalProperties from '@/composables/useGlobalProperties'
 import { kPrivacyLinkUrl, kUserAgreementLinkUrl } from '@/constant/terms'
@@ -72,7 +70,9 @@ import dayjs from 'dayjs'
 import { ElNotification } from 'element-plus'
 import type { FormInstance, FormRules } from 'element-plus/es/components/form'
 import { reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const props = defineProps<{
   submitBtnText: string
   submitBtnClass?: string
@@ -89,8 +89,12 @@ const formRef = ref<FormInstance>()
 let formState = reactive({ ...defaultFormState })
 const formRules = reactive<FormRules>({
   phone: [
-    { required: true, message: '手机号不能为空', trigger: 'change' },
-    { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号', trigger: 'change' }
+    { required: true, message: t('手机号不能为空'), trigger: 'change' },
+    {
+      pattern: /^1[3-9]\d{9}$/,
+      message: t('请输入正确的手机号'),
+      trigger: 'change'
+    }
   ]
 })
 const industryState = reactive({
@@ -117,14 +121,14 @@ const { $sensors } = useGlobalProperties()
 const onSubmit = async () => {
   await formRef.value.validate()
   $sensors?.track('home_schedule_call_back', {
-    name: `首页-${props.submitBtnText}`,
+    name: t('首页-{slot1}', { slot1: props.submitBtnText }),
     type: 'home_schedule_call_back',
     data: { ...formState, time: dayjs().format('YYYY-MM-DD HH:mm:ss') }
   })
 
   formState = Object.assign(formState, defaultFormState)
   formRef.value.resetFields()
-  ElNotification.success('预约成功')
+  ElNotification.success(t('预约成功'))
   emit('submit')
 }
 

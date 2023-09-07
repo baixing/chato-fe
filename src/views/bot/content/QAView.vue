@@ -1,7 +1,94 @@
-<script setup lang="ts">
+<template>
+  <div class="qa-container" v-loading="initing">
+    <div
+      v-if="
+        !pagination.page_count &&
+        QaSelectStatus === LearningStatesPerformanceType.all &&
+        !searchInput
+      "
+      class="flex flex-col items-center justify-center mt-[20vh]"
+    >
+      <img
+        :src="emptyQAPath"
+        class="w-[321px] h-[201px] object-cover mb-12 lg:w-[240px] lg:h-[150px] lg:mb-8"
+      />
+      <p class="text-[#9DA3AF] text-xs mb-6">
+        {{ $t('您还没有录入问答，快去录入吧！') }}
+      </p>
+      <el-button
+        type="primary"
+        size="large"
+        plain
+        @click="() => (dialogVisibleQa = true)"
+        class="bg-white"
+        >{{ $t('录入问答') }}</el-button
+      >
+    </div>
+    <template v-else>
+      <div class="flex justify-between items-center flex-wrap gap-4">
+        <p class="tab-describe">
+          {{ $t('完成录入后，AI 通过 5-10 分钟消化知识，并最终优先根据问答知识回复，可前往')
+          }}<RouterLink
+            :to="{
+              name: RoutesMap.tranning.botChat,
+              params: { botId: domainId }
+            }"
+            >{{ $t('聊天演示') }}</RouterLink
+          >{{ $t('测试效果。') }}
+        </p>
+        <el-button type="primary" size="large" @click="() => (dialogVisibleQa = true)">{{
+          $t('录入问答')
+        }}</el-button>
+      </div>
+      <div class="flex justify-between items-center mt-[31px] flex-wrap">
+        <div>
+          <el-button @click="handleTriggerMate">{{ $t('批量操作') }}</el-button>
+          <el-button
+            :disabled="!multipleSelection.length"
+            v-if="batchRemove"
+            @click="handleBatchRemove"
+            link
+            class="ml-[16px] text-[#303133]"
+          >
+            <el-icon class="mr-[4px]"><Delete /></el-icon>{{ $t(' 删除') }}</el-button
+          >
+        </div>
+        <SearchInput v-model:value="searchInput" />
+      </div>
+      <QaLearnTable
+        v-model:selectStatus="QaSelectStatus"
+        v-model:loading="loading"
+        :batchRemove="batchRemove"
+        :domain-id="domainId"
+        :domain-slug="domainInfo.slug"
+        :activeNames="activeNames"
+        :doc-list="(tableData as IDocumentList[])"
+        v-model:multipleSelection="multipleSelection"
+        v-model:pagination="pagination"
+        @after-remove="onAfterRemove"
+        @edit-preview-doc="onEditPreviewQA"
+      />
+    </template>
+  </div>
+  <EnterQa
+    @setSuccess="onCloseDialog"
+    :activeNames="activeNames"
+    :defaultForm="currentEdit"
+    :domainId="domainId"
+    :sizeLimit="sizeLimit"
+    :qtyLimit="qtyLimit"
+    :apiUpload="apiUpload"
+    :dialogVisible="dialogVisibleQa"
+    @updateSpecailTipVisible="specailTipVisible = tableData.length"
+    @reloadList="initQAList"
+    @closeDialogVisble="onCloseDialog"
+  />
+</template>
+<script lang="ts" setup>
 import { deleteRetryFileMate, getFilesByDomainId } from '@/api/file'
 import EnterQa from '@/components/EnterAnswer/EnterQa.vue'
 import SearchInput from '@/components/Input/SearchInput.vue'
+import useImagePath from '@/composables/useImagePath'
 import { currentEnvConfig } from '@/config'
 import { USER_ROLES } from '@/constant/common'
 import {
@@ -22,9 +109,12 @@ import { ElLoading, ElMessageBox, ElNotification } from 'element-plus'
 import { debounce } from 'lodash'
 import { storeToRefs } from 'pinia'
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import QaLearnTable from './components/QaLearnTable.vue'
+const { ImagePath: emptyQAPath } = useImagePath('empty-qa')
 
+const { t } = useI18n()
 let timer = null
 const route = useRoute()
 const base = useBase()
@@ -141,7 +231,7 @@ const handleTriggerMate = () => {
 const deteleOrRetryFile = async (type: DeleteRetryFileMateStatusType, ids: number[]) => {
   const loading = ElLoading.service({
     lock: true,
-    text: type === DeleteRetryFileMateStatusType.deleted ? '删除中...' : '重试中...',
+    text: type === DeleteRetryFileMateStatusType.deleted ? t('删除中...') : t('重试中...'),
     background: 'rgba(0, 0, 0, 0.7)'
   })
   const data = {
@@ -158,15 +248,15 @@ const deteleOrRetryFile = async (type: DeleteRetryFileMateStatusType, ids: numbe
 
 const handleBatchRemove = () => {
   if (!multipleSelection.value.length) return
-  ElMessageBox.confirm('您确认确删除这些文件吗？', '温馨提示', {
-    confirmButtonText: '确认',
-    cancelButtonText: '取消',
+  ElMessageBox.confirm(t('您确认确删除这些文件吗？'), t('温馨提示'), {
+    confirmButtonText: t('确认'),
+    cancelButtonText: t('取消'),
     type: 'warning'
   })
     .then(async () => {
       const loading = ElLoading.service({
         lock: true,
-        text: '保存中',
+        text: t('保存中'),
         background: 'rgba(0, 0, 0, 0.7)'
       })
       const ids = multipleSelection.value.map((item) => item.id)
@@ -177,7 +267,7 @@ const handleBatchRemove = () => {
       initQAList()
       ElNotification({
         type: code ? 'success' : 'error',
-        message: code ? '删除成功' : message
+        message: code ? t('删除成功') : message
       })
     })
     .catch(() => {})
@@ -234,90 +324,6 @@ onUnmounted(() => {
   clearInterval(timer)
 })
 </script>
-
-<template>
-  <div class="qa-container" v-loading="initing">
-    <div
-      v-if="
-        !pagination.page_count &&
-        QaSelectStatus === LearningStatesPerformanceType.all &&
-        !searchInput
-      "
-      class="flex flex-col items-center justify-center mt-[20vh]"
-    >
-      <img
-        src="@/assets/img/empty-qa.png"
-        class="w-[321px] h-[201px] object-cover mb-12 lg:w-[240px] lg:h-[150px] lg:mb-8"
-      />
-      <p class="text-[#9DA3AF] text-xs mb-6">您还没有录入问答，快去录入吧！</p>
-      <el-button
-        type="primary"
-        size="large"
-        plain
-        @click="() => (dialogVisibleQa = true)"
-        class="bg-white"
-      >
-        录入问答
-      </el-button>
-    </div>
-    <template v-else>
-      <div class="flex justify-between items-center flex-wrap gap-4">
-        <p class="tab-describe">
-          完成录入后，AI 通过 5-10 分钟消化知识，并最终优先根据问答知识回复，可前往
-          <RouterLink :to="{ name: RoutesMap.tranning.botChat, params: { botId: domainId } }">
-            聊天演示
-          </RouterLink>
-          测试效果。
-        </p>
-        <el-button type="primary" size="large" @click="() => (dialogVisibleQa = true)">
-          录入问答
-        </el-button>
-      </div>
-      <div class="flex justify-between items-center mt-[31px] flex-wrap">
-        <div>
-          <el-button @click="handleTriggerMate">批量操作</el-button>
-          <el-button
-            :disabled="!multipleSelection.length"
-            v-if="batchRemove"
-            @click="handleBatchRemove"
-            link
-            class="ml-[16px] text-[#303133]"
-          >
-            <el-icon class="mr-[4px]"><Delete /></el-icon> 删除
-          </el-button>
-        </div>
-        <SearchInput v-model:value="searchInput" />
-      </div>
-      <QaLearnTable
-        v-model:selectStatus="QaSelectStatus"
-        v-model:loading="loading"
-        :batchRemove="batchRemove"
-        :domain-id="domainId"
-        :domain-slug="domainInfo.slug"
-        :activeNames="activeNames"
-        :doc-list="(tableData as IDocumentList[])"
-        v-model:multipleSelection="multipleSelection"
-        v-model:pagination="pagination"
-        @after-remove="onAfterRemove"
-        @edit-preview-doc="onEditPreviewQA"
-      />
-    </template>
-  </div>
-  <EnterQa
-    @setSuccess="onCloseDialog"
-    :activeNames="activeNames"
-    :defaultForm="currentEdit"
-    :domainId="domainId"
-    :sizeLimit="sizeLimit"
-    :qtyLimit="qtyLimit"
-    :apiUpload="apiUpload"
-    :dialogVisible="dialogVisibleQa"
-    @updateSpecailTipVisible="specailTipVisible = tableData.length"
-    @reloadList="initQAList"
-    @closeDialogVisble="onCloseDialog"
-  />
-</template>
-
 <style lang="scss" scoped>
 :deep(.el-message-box) {
   --el-messagebox-width: 461px;

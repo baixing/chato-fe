@@ -42,6 +42,7 @@ import type { FormInstance } from 'element-plus'
 import { ElLoading, ElMessageBox, ElNotification as Notification } from 'element-plus'
 import { storeToRefs } from 'pinia'
 import { computed, onMounted, onUnmounted, ref, watch, type Ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import PlatFormList from './components/PlatFormList.vue'
 import ReleaseBox from './components/ReleaseBox.vue'
@@ -59,6 +60,7 @@ import DrawerPublic from './components/weixinPublic/DrawerPublic.vue'
 import PublicImgPreview from './components/weixinPublic/PublicImgPreview.vue'
 import WeixinService from './components/weixinService/WeixinService.vue'
 
+const { t } = useI18n()
 interface CurrentRowI {
   qrcode_data: string
   room_id?: string
@@ -130,11 +132,6 @@ const tiktokService = ref<boolean>(false) // 抖音
 
 const sureMessage = [ECreatePublicType.create, ECreatePublicType.friends, ECreatePublicText.invite]
 
-async function initPublicList() {
-  const res: any = await getPubliclist(domainInfo.value.id || Number(route.params.botId))
-  tableData.value = res.data.data
-}
-
 function getChatAPI(baseURL, slug) {
   return `${baseURL}/chato/api-public/domains/${slug}/chat`
 }
@@ -157,15 +154,15 @@ async function submitCreatePublic(
   }
   try {
     if (sureMessage.includes(type)) {
-      await ElMessageBox.confirm(ECreatePublicText[type], '创建群聊确认', {
-        confirmButtonText: '确认',
-        cancelButtonText: '取消',
+      await ElMessageBox.confirm(t(ECreatePublicText[type]), t('创建群聊确认'), {
+        confirmButtonText: t('确认'),
+        cancelButtonText: t('取消'),
         icon: ''
       })
     }
     loading.value = ElLoading.service({
       lock: true,
-      text: '保存中...',
+      text: t('保存中...'),
       background: 'rgba(0, 0, 0, 0.7)'
     })
     let apiFunc = null
@@ -224,10 +221,16 @@ async function submitCreatePublic(
       }, 10000)
     }
     if (type === ECreatePublicType.invite) {
-      return Notification.success('@机器人提问，机器人即可自动回复，请前往群聊体验。')
+      return Notification.success(
+        t('{mention}机器人提问，机器人即可自动回复，请前往群聊体验。', { mention: '@' })
+      )
     }
 
-    Notification.success(`${isEdit.value ? '保存' : '操作'}成功`)
+    Notification.success(
+      t('{slot1}成功', {
+        slot1: isEdit.value ? t('更新') : t('创建')
+      })
+    )
     isEdit.value = false
     transferStatus.value = type === ECreatePublicType.transfer
   } catch (e) {
@@ -247,6 +250,11 @@ async function reloadCodeImg(room_id: string) {
   const res = await getPublicCodeImg(domainInfo.value.id, room_id)
   currentRow.value.qrcode_data = res.data.data.qrcode_data
   codeImgLoading.value = false
+}
+
+async function initPublicList() {
+  const res: any = await getPubliclist(domainInfo.value.id || Number(route.params.botId))
+  tableData.value = res.data.data
 }
 
 function editPublic(inputCreatePublicForm, row) {
@@ -269,10 +277,10 @@ const createPublicDialog = async () => {
 }
 
 const platformList: PlatFormListProps[] = [
-  { title: '钉钉', icon: 'dingding' },
+  { title: t('钉钉'), icon: 'dingding' },
   { title: 'QQ', icon: 'qq' },
   { title: 'APP', icon: 'app-store' },
-  { title: '小程序', icon: 'applets' }
+  { title: t('小程序'), icon: 'applets' }
 ]
 
 // 蒙层
@@ -337,7 +345,7 @@ const getBrandDomainList = async () => {
 const codeIframeHtml = (source: string) => {
   return `
 <iframe
-src="${chatReleaseURL.value.chatWebPage}?source=js-${source}"
+src="${chatReleaseURL.value.chatWebPage}?source=${source}"
 width="408px"
 height="594px"
 frameborder="0">
@@ -351,7 +359,7 @@ const codeContent = (source: string) => {
 <script>
 window.tip_chato_color="${tip_chato_color}";
 window.tip_chato_bg="${domainInfo.value.suspend_style}";
-window.chato_iframe_src = "${chatReleaseURL.value.chatWebPage}?source=js-${source}";
+window.chato_iframe_src = "${chatReleaseURL.value.chatWebPage}?source=${source}";
 window.chato_script_checkDomain = "${chatReleaseURL.value.chato_script_checkDomain}";
 var st = document.createElement("script");
 st.type="text/javascript";
@@ -384,24 +392,24 @@ const handleShowDrawer = () => {
 const releaseList = [
   {
     icon: 'wangye',
-    title: '网页',
-    desc: '用户在此链接可以直接和您的机器人聊天',
+    title: t('网页'),
+    desc: t('用户在此链接可以直接和您的机器人聊天'),
     setList: [
       {
         icon: CopyDocument,
-        label: '复制链接',
+        label: t('复制链接'),
         scriptId: 'Chato-copy-link',
         click: () => commonVisible(showCopyLinkVisbile)
       },
       {
         icon: View,
-        label: '预览体验',
+        label: t('预览体验'),
         scriptId: 'Chato-preview-chat',
         click: () => handlePreview(chatReleaseURL.value.chatWebPage)
       },
       {
         icon: UploadFilled,
-        label: '域名部署',
+        label: t('域名部署'),
         scriptId: 'Chato-brand-domain',
         click: brandDomain
       }
@@ -409,18 +417,18 @@ const releaseList = [
   },
   {
     icon: 'js-qianru',
-    title: 'JS嵌入',
-    desc: '可添加到网站的任何位置，将此 iframe 添加到 html 代码中',
+    title: t('JS嵌入'),
+    desc: t('可添加到网站的任何位置，将此 iframe 添加到 html 代码中'),
     setList: [
       {
         icon: CirclePlus,
-        label: '创建站点',
+        label: t('创建站点'),
         scriptId: 'Chato-setted-effect-site',
         click: () => commonVisible(dialogVisibleHttp)
       },
       {
         icon: View,
-        label: '查看代码',
+        label: t('查看代码'),
         scriptId: 'Chato-copy-code',
         click: () => commonVisible(visibleSite)
       }
@@ -428,18 +436,18 @@ const releaseList = [
   },
   {
     icon: 'api-diaoyong',
-    title: 'API调用',
-    desc: '通过API，可直接进行调用或发出请求',
+    title: t('API调用'),
+    desc: t('通过API，可直接进行调用或发出请求'),
     setList: [
       {
         icon: View,
-        label: '接口秘钥',
+        label: t('接口秘钥'),
         scriptId: 'Chato-fetch-api',
         click: () => commonVisible(showCopyApiVisible)
       },
       {
         icon: Document,
-        label: '接口文档',
+        label: t('接口文档'),
         scriptId: 'Chato-api-document',
         click: () => handlePreview(wssApiDocs)
       }
@@ -447,18 +455,18 @@ const releaseList = [
   },
   {
     icon: 'weixin-qun',
-    title: '微信群聊',
-    desc: '在微信群聊中提供机器人服务',
+    title: t('微信群聊'),
+    desc: t('在微信群聊中提供机器人服务'),
     setList: [
       {
         icon: CirclePlus,
-        label: '创建群聊',
+        label: t('创建群聊'),
         scriptId: 'Chato-group-create',
         click: createPublicDialog
       },
       {
         icon: View,
-        label: '查看群聊',
+        label: t('查看群聊'),
         scriptId: 'Chato-group-view',
         click: () => commonVisible(showDrawerPublic)
       }
@@ -466,12 +474,12 @@ const releaseList = [
   },
   {
     icon: 'weixin-public',
-    title: '微信公众号',
-    desc: '可在微信公众号后台配置，提供机器人服务',
+    title: t('微信公众号'),
+    desc: t('可在微信公众号后台配置，提供机器人服务'),
     setList: [
       {
         icon: Tools,
-        label: '配置公众号',
+        label: t('配置公众号'),
         scriptId: 'Chato-public-set',
         click: () => commonVisible(dialogVisibleOfficialAccount)
       }
@@ -479,12 +487,12 @@ const releaseList = [
   },
   {
     icon: 'feishu-public',
-    title: '飞书',
-    desc: '在飞书群聊中提供机器人服务',
+    title: t('飞书'),
+    desc: t('在飞书群聊中提供机器人服务'),
     setList: [
       {
         icon: Tools,
-        label: '配置飞书',
+        label: t('配置飞书'),
         scriptId: 'Chato-feishu-set',
         click: () => commonVisible(feiShuVisible)
       }
@@ -492,18 +500,18 @@ const releaseList = [
   },
   {
     icon: 'weixin-service',
-    title: '微信客服',
-    desc: '通过配置微信客服，实现与机器人1V1聊天',
+    title: t('微信客服'),
+    desc: t('通过配置微信客服，实现与机器人1V1聊天'),
     setList: [
       {
         icon: Tools,
-        label: '配置微信客服',
+        label: t('配置微信客服'),
         scriptId: 'Chato-weixin-service-set',
         click: () => commonVisible(weixinService)
       },
       {
         icon: Document,
-        label: '配置文档',
+        label: t('配置文档'),
         scriptId: 'Chato-weixin-api-document',
         click: () => handlePreview(weixinServiceDocs)
       }
@@ -511,12 +519,12 @@ const releaseList = [
   },
   {
     icon: 'tiktok',
-    title: '抖音',
-    desc: '配置完成后，机器人可自动回复私信',
+    title: t('抖音'),
+    desc: t('配置完成后，机器人可自动回复私信'),
     setList: [
       {
         icon: FullScreen,
-        label: '扫码授权',
+        label: t('扫码授权'),
         scriptId: 'Chato-tiktok-set',
         click: () => commonVisible(tiktokService)
       }

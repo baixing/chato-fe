@@ -35,7 +35,7 @@
       </div>
 
       <div class="message float-right" :style="`background-color: ${internalBot?.message_style};`">
-        你好，请做个自我介绍？
+        {{ $t('你好，请做个自我介绍？') }}
       </div>
     </div>
     <div class="flex flex-wrap gap-2 px-4">
@@ -49,7 +49,7 @@
     </div>
 
     <div class="m-4 border border-solid border-[#eee] h-12 flex items-center px-3 py-2">
-      <p class="text-sm text-[#DCDFE6] flex-1">输入您的问题</p>
+      <p class="text-sm text-[#DCDFE6] flex-1">{{ $t('输入您的问题') }}</p>
       <div class="w-[1px] bg-[#eee] h-full mr-2"></div>
       <svg-icon svg-class="w-6 h-6 text-[#9DA3AF] mr-1" name="chat-sound" />
       <svg-icon svg-class="w-6 h-6 text-[#9DA3AF]" name="chat-send" />
@@ -63,8 +63,7 @@
     />
   </div>
 </template>
-
-<script setup lang="ts">
+<script lang="ts" setup>
 import DefaultAvatar from '@/assets/img/avatar.png'
 import ChatFooter from '@/components/Chat/ChatFooter.vue'
 import type { IDomainInfo, IDomainShortcut } from '@/interface/domain'
@@ -87,7 +86,6 @@ const internalBot = computed<Partial<IDomainInfo>>(() => props.bot || {})
 
 const renderWithDefaultContent = (val: string) => val || '...'
 </script>
-
 <style lang="scss" scoped>
 .message {
   width: fit-content;

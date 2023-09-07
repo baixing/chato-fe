@@ -153,3 +153,32 @@ export const handleRequestError = (error = null, errorMsg = '') => {
 export const isManagerRole = (role: string): boolean => {
   return MANGER_ROLES.includes(role)
 }
+
+const allModules = {
+  '': import.meta.glob('/src/assets/img/*'),
+  home: import.meta.glob('/src/assets/img/home/*'),
+  'home/caseImg': import.meta.glob('/src/assets/img/home/caseImg/*'),
+  release: import.meta.glob('/src/assets/img/release/*'),
+  example: import.meta.glob('/src/assets/img/example/*')
+}
+
+export const localeImagePath = async (
+  imageName: string,
+  lan: string,
+  subDir: string = '',
+  fileType: string = 'png'
+) => {
+  const modules = allModules[subDir]
+  if (!modules) {
+    throw new Error(`No modules found for subDirectory: ${subDir}`)
+  }
+
+  const path = `/src/assets/img/${subDir ? subDir + '/' : ''}${imageName}-${lan}.${fileType}`
+  const imageModule = await modules[path]?.()
+
+  if (!imageModule) {
+    throw new Error(`Image not found: ${path}`)
+  }
+
+  return (imageModule as any)?.default
+}

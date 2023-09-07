@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.1.0",
+    "@ifreeovo/i18n-extract-cli": "^3.2.0",
     "@microsoft/fetch-event-source": "^2.0.1",
     "@sentry/vue": "^7.57.0",
     "@types/lodash": "^4.14.191",
@@ -40,6 +41,7 @@
     "markdown-it-regexp": "^0.4.0",
     "normalize.css": "^8.0.1",
     "pinia": "^2.0.28",
+    "pinia-plugin-persistedstate": "^3.2.0",
     "prismjs": "^1.29.0",
     "qrcode": "^1.5.3",
     "recorder-core": "^1.2.23061700",
@@ -47,6 +49,7 @@
     "universal-cookie": "^4.0.4",
     "vue": "^3.2.45",
     "vue-cropper": "^0.6.2",
+    "vue-i18n": "^9.2.2",
     "vue-router": "^4.1.6",
     "watermark-plus": "^1.6.1",
     "vuedraggable": "^4.1.0",

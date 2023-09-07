@@ -3,31 +3,33 @@
     width="45%"
     mobile-width="100%"
     v-model:visible="visible"
-    title="配置微信客服"
+    :title="$t(`配置微信客服`)"
     :footer="false"
     class="official-account-container"
   >
     <div v-loading="loading" class="cursor-pointer">
       <WeixinInput
         v-if="index === 1"
-        placeholder="请填写开发者ID"
-        labelName="企业ID"
-        btnText="确认，并下一步"
-        :url="weixinService1"
+        :placeholder="$t(`请填写开发者ID`)"
+        :labelName="$t(`企业ID`)"
+        :btnText="$t(`确认，并下一步`)"
+        :url="weixinServiceImg1"
         @handleCancle="handleCancle"
         @handleBtn="(info) => handleBtn(2, info)"
         @changesketchDialogVisible="changesketchDialogVisible"
       >
         <p>
-          第一步： 进入微信<a
+          {{ $t('第一步： 进入微信')
+          }}<a
             href="https://kf.weixin.qq.com/kf/frame#/corpinfo"
             target="_blank"
             class="text-[#2AC74A]"
-            >「微信客服后台」</a
-          >
-          ，复制“企业ID”信息
+            >{{ $t('「微信客服后台」') }}</a
+          >{{ $t('，复制“企业ID”信息') }}
         </p>
-        <p class="text-[#9DA3AF] text-[12px] my-[12px]">将企业ID信息，粘贴在下方输入框</p>
+        <p class="text-[#9DA3AF] text-[12px] my-[12px]">
+          {{ $t('将企业ID信息，粘贴在下方输入框') }}
+        </p>
       </WeixinInput>
       <WeixinText
         v-if="index === 2 && $notnull(config)"
@@ -36,18 +38,20 @@
         :list="config"
       >
         <template v-slot:top>
-          <p class="text-[#303133]">第二步：复制以下信息，并填入微信后台</p>
-          <p class="my-[12px] text-[12px] text-[#9DA3AF">
-            路径：开发配置—点击“开始使用”—填写信息—点击“完成”
+          <p class="text-[#303133]">
+            {{ $t('第二步：复制以下信息，并填入微信后台') }}
           </p>
-          <p class="mb-[12px] text-[#7C5CFC]" @click="changesketchDialogVisible(weixinService2)">
-            查看示意图
+          <p class="my-[12px] text-[12px] text-[#9DA3AF">
+            {{ $t('路径：开发配置—点击“开始使用”—填写信息—点击“完成”') }}
+          </p>
+          <p class="mb-[12px] text-[#7C5CFC]" @click="changesketchDialogVisible(weixinServiceImg2)">
+            {{ $t('查看示意图') }}
           </p>
         </template>
         <template v-slot:bottom>
           <WeixinBtn
             :disabled="false"
-            btnText="确认，并下一步"
+            :btnText="$t(`确认，并下一步`)"
             @handleCopy="(e: string) => emit('handleCopy', e)"
             @handleCancle="handleCancle"
             @handleBtn="() => handleBtn(3)"
@@ -56,15 +60,17 @@
       </WeixinText>
       <WeixinInput
         v-if="index === 3"
-        placeholder="请填写开发者Secret"
+        :placeholder="$t(`请填写开发者Secret`)"
         labelName="Secret"
-        btnText="确认"
-        :url="weixinService3"
+        :btnText="$t(`确认`)"
+        :url="weixinServiceImg3"
         @handleCancle="handleCancle"
         @handleBtn="(info) => handleBtn(4, info)"
         @changesketchDialogVisible="changesketchDialogVisible"
       >
-        <p class="mb-[12px]">第三步：复制Secret信息，并填入下面输入框</p>
+        <p class="mb-[12px]">
+          {{ $t('第三步：复制Secret信息，并填入下面输入框') }}
+        </p>
       </WeixinInput>
       <WeixinText
         v-if="index === 4 && $notnull(config)"
@@ -77,32 +83,31 @@
               @change="handleChange"
               v-model="showWeixin"
               size="large"
-              active-text="开启"
-              inactive-text="关闭"
+              :active-text="$t(`开启`)"
+              :inactive-text="$t(`关闭`)"
             />
           </p>
-          <p class="text-[#303133] mb-[12px]">服务器配置</p>
+          <p class="text-[#303133] mb-[12px]">{{ $t('服务器配置') }}</p>
         </template>
         <template v-slot:bottom>
-          <p class="text-[#7C5CFC]" @click="() => handleBtn(1)">重新配置</p>
+          <p class="text-[#7C5CFC]" @click="() => handleBtn(1)">
+            {{ $t('重新配置') }}
+          </p>
         </template>
       </WeixinText>
     </div>
     <SketchDialog v-model:value="sketchDialogVisible" :url="previewUrl" />
   </Modal>
 </template>
-
-<script setup lang="ts">
+<script lang="ts" setup>
 import {
   getChannelType,
   patchChannelType,
   patchWeixinConfig,
   postWeixinConfig
 } from '@/api/release'
-import weixinService1 from '@/assets/img/release/weixin-service-1.png'
-import weixinService2 from '@/assets/img/release/weixin-service-2.png'
-import weixinService3 from '@/assets/img/release/weixin-service-3.png'
 import Modal from '@/components/Modal/index.vue'
+import useImagePath from '@/composables/useImagePath'
 import { AfficialAccountStatusType, EChannelType } from '@/enum/release'
 import type { weixinConfigType } from '@/interface/release'
 import { $notnull } from '@/utils/help'
@@ -112,6 +117,9 @@ import WeixinBtn from './components/WeixinBtn.vue'
 import WeixinInput from './components/WeixinInput.vue'
 import WeixinText from './components/WeixinText.vue'
 
+const { ImagePath: weixinServiceImg1 } = useImagePath('weixin-service-1', 'release')
+const { ImagePath: weixinServiceImg2 } = useImagePath('weixin-service-2', 'release')
+const { ImagePath: weixinServiceImg3 } = useImagePath('weixin-service-3', 'release')
 const props = defineProps<{
   value: boolean
   domain_slug: string
@@ -213,8 +221,7 @@ watch(
   }
 )
 </script>
-
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .official-account-container {
   .el-dialog__header {
     margin-right: 0;

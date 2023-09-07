@@ -1,5 +1,5 @@
 <template>
-  <el-tooltip :disabled="isMobile" content="语音输入" placement="top" :hide-after="0">
+  <el-tooltip :disabled="isMobile" :content="$t('语音输入')" placement="top" :hide-after="0">
     <div
       text
       :class="['recorder-btn transition-colors', isStart && 'start-trans']"
@@ -16,8 +16,10 @@ import { useBasicLayout } from '@/composables/useBasicLayout'
 import { currentEnvConfig } from '@/config'
 import { ElNotification } from 'element-plus'
 import { computed, ref, toRef } from 'vue'
+import { useI18n } from 'vue-i18n'
 import ChartRecognizer from './chatRecognizer'
 
+const { t } = useI18n()
 const props = defineProps<{
   str: string
   disabled?: boolean
@@ -134,7 +136,7 @@ const startRecording = () => {
       stopRecording()
     }, DefaultCloseTime * 1000)
   } catch (err) {
-    ElNotification.error('录音识别失败')
+    ElNotification.error(t('录音识别失败'))
   }
 }
 

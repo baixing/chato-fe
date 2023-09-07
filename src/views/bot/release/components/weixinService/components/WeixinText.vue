@@ -6,14 +6,13 @@
       v-for="(value, key) in configList"
       :key="key"
     >
-      <label :for="value" class="leading-5">{{ EWeixinConfigText[key] }}：{{ value }}</label>
-      <el-button link type="primary" @click="emit('handleCopy', value)">复制</el-button>
+      <label :for="value" class="leading-5">{{ $t(EWeixinConfigText[key]) }}：{{ value }}</label>
+      <el-button link type="primary" @click="emit('handleCopy', value)">{{ $t('复制') }}</el-button>
     </p>
     <slot name="bottom"></slot>
   </div>
 </template>
-
-<script setup lang="ts">
+<script lang="ts" setup>
 import { EWeixinConfigText } from '@/constant/release'
 import type { weixinConfigListRes } from '@/interface/release'
 import { computed } from 'vue'
@@ -40,8 +39,7 @@ const configList = computed({
   set: (val) => val
 })
 </script>
-
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .p-container {
   &:last-of-type {
     margin-bottom: 16px;

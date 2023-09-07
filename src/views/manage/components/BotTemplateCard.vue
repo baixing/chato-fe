@@ -9,7 +9,7 @@
   >
     <img :src="domain.avatar || DefaultAvatar" alt="" class="w-12 h-12 rounded-full shrink-0" />
     <div class="text-left">
-      <p class="text-sm text-[#596780] font-medium truncate">{{ domain.name }}</p>
+      <p class="text-sm text-[#596780] font-medium line-clamp-1">{{ domain.name }}</p>
       <p class="line-clamp-2 mt-2">{{ domain.desc }}</p>
     </div>
   </div>

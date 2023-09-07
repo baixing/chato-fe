@@ -5,7 +5,10 @@
     <h3
       class="hidden text-5xl leading-[72px] font-medium text-[#303133] text-center lg:text-[26px] lg:leading-[38px] lg:block"
     >
-      行业<strong class="tracking-[0.08em] bg-clip-text text-transparent line-grad-bg">案例</strong>
+      {{ $t('行业') }}
+      <strong class="tracking-[0.08em] bg-clip-text text-transparent line-grad-bg">
+        {{ $t('案例') }}
+      </strong>
     </h3>
     <IndustryCaseCard v-if="isMobile" :item="caseList[activeIndex]" />
     <div v-else class="mt-[70px] pl-[22px]">
@@ -23,7 +26,7 @@
         class="top-tag px-6 py-3 rounded-[22px] w-fit mx-auto flex items-center justify-center gap-1 text-white font-medium text-xs mb-5"
       >
         <img
-          v-if="caseList[activeIndex].tagName.includes('飞书')"
+          v-if="caseList[activeIndex].tagName.includes($t('飞书'))"
           class="w-4 h-4"
           :src="caseList[activeIndex].tagIcon"
         />
@@ -71,91 +74,94 @@
     <div v-if="isMobile" class="m-bg"></div>
   </div>
 </template>
-
-<script setup lang="ts">
+<script lang="ts" setup>
 // 引入顺序
-import CaseChato from '@/assets/img/home/caseImg/chato.png'
 import CpChato from '@/assets/img/home/cp/chato.png'
 import EmShine from '@/assets/img/home/emoji/shine.png'
 // 引入顺序
-import CaseTswct from '@/assets/img/home/caseImg/tswct.png'
 import CpTswct from '@/assets/img/home/cp/tswct.png'
 import EmEye from '@/assets/img/home/emoji/eye.png'
 // 引入顺序
-import CaseJpcg from '@/assets/img/home/caseImg/jpcg.png'
 import CpJpcg from '@/assets/img/home/cp/jpcg.png'
 import EmHeart from '@/assets/img/home/emoji/heart.png'
 // 引入顺序
-import CaseWjs from '@/assets/img/home/caseImg/wjs.png'
 import CpWjs from '@/assets/img/home/cp/wjs.png'
 import EmPerson from '@/assets/img/home/emoji/person.png'
 // 引入顺序
-import CaseXlai from '@/assets/img/home/caseImg/xlai.png'
 import CpXlai from '@/assets/img/home/cp/xlai.png'
 import EmSuperman from '@/assets/img/home/emoji/superman.png'
 // 引入顺序
 import FsActive from '@/assets/img/fs-active.png'
-import CaseYywj from '@/assets/img/home/caseImg/yywj.png'
 import CpYywj from '@/assets/img/home/cp/yywj.png'
 import EmNet from '@/assets/img/home/emoji/net.png'
 import { useBasicLayout } from '@/composables/useBasicLayout'
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import useImagePath from '@/composables/useImagePath'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import IndustryCaseCard from './IndustryCaseCard.vue'
 
-const caseList = [
+// 获取home/caseImg目录下的图片路径
+const { ImagePath: CaseChatoPath } = useImagePath('chato', 'home/caseImg')
+const { ImagePath: CaseTswctPath } = useImagePath('tswct', 'home/caseImg')
+const { ImagePath: CaseXlaiPath } = useImagePath('xlai', 'home/caseImg')
+const { ImagePath: CaseWjsPath } = useImagePath('wjs', 'home/caseImg')
+const { ImagePath: CaseJpcgPath } = useImagePath('jpcg', 'home/caseImg')
+const { ImagePath: CaseYywjPath } = useImagePath('yywj', 'home/caseImg')
+
+const { t } = useI18n()
+const caseList = computed(() => [
   {
     logo: CpChato,
     emoji: EmShine,
-    title: 'Chato 智能客服',
-    caseImg: CaseChato,
-    tagName: '网页发布',
+    title: t('Chato 智能客服'),
+    caseImg: CaseChatoPath.value,
+    tagName: t('网页发布'),
     tagIcon: 'computer-filled'
   },
   {
     logo: CpTswct,
     emoji: EmEye,
-    title: '天使湾数字 AI 创投经理',
-    caseImg: CaseTswct,
-    tagName: 'API 接入',
+    title: t('天使湾数字 AI 创投经理'),
+    caseImg: CaseTswctPath.value,
+    tagName: t('API 接入'),
     tagIcon: 'api-access'
   },
   {
     logo: CpXlai,
     emoji: EmHeart,
-    title: '心聊 AI 微信群聊咨询师',
-    caseImg: CaseXlai,
-    tagName: '微信群聊',
+    title: t('心聊 AI 微信群聊咨询师'),
+    caseImg: CaseXlaiPath.value,
+    tagName: t('微信群聊'),
     tagIcon: 'wechat-filled'
   },
   {
     logo: CpWjs,
     emoji: EmPerson,
-    title: '王建硕公众号 AI 分身',
-    caseImg: CaseWjs,
-    tagName: '微信公众号',
+    title: t('王建硕公众号 AI 分身'),
+    caseImg: CaseWjsPath.value,
+    tagName: t('微信公众号'),
     tagIcon: 'wx-public'
   },
   {
     logo: CpJpcg,
     emoji: EmSuperman,
-    title: '金牌橱柜 VIP 顾问',
-    caseImg: CaseJpcg,
-    tagName: '飞书群聊',
+    title: t('金牌橱柜 VIP 顾问'),
+    caseImg: CaseJpcgPath.value,
+    tagName: t('飞书群聊'),
     tagIcon: FsActive
   },
   {
     logo: CpYywj,
     emoji: EmNet,
-    title: '地道英语外教',
-    caseImg: CaseYywj,
-    tagName: 'JS 嵌入',
+    title: t('地道英语外教'),
+    caseImg: CaseYywjPath.value,
+    tagName: t('JS 嵌入'),
     tagIcon: 'js-access'
   }
-]
+])
 
 let timer
 const activeIndex = ref(0)
-
 const { isMobile } = useBasicLayout()
 
 const onSelectCase = (index: number) => {
@@ -166,7 +172,7 @@ const onSelectCase = (index: number) => {
 
 const onTimerListener = () => {
   timer = setInterval(() => {
-    if (activeIndex.value === caseList.length - 1) {
+    if (activeIndex.value === caseList.value.length - 1) {
       activeIndex.value = 0
     } else {
       activeIndex.value += 1
@@ -190,7 +196,6 @@ watch(isMobile, () => {
   }
 })
 </script>
-
 <style lang="scss" scoped>
 .case-pic-bg {
   background: linear-gradient(155deg, #ffa8e5 1%, #ffe45e 95%);

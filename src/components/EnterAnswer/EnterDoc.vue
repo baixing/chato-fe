@@ -2,7 +2,7 @@
   <div>
     <el-dialog
       v-model="visible"
-      title="录入文档"
+      :title="$t('录入文档')"
       :width="isMobile ? '80%' : '40%'"
       class="dialog-box-container"
       :before-close="() => emit('closeDialogVisble', false)"
@@ -10,21 +10,24 @@
     >
       <template #header="{ close, titleId, titleClass }">
         <div class="my-header">
-          <h4 :id="titleId" :class="titleClass">录入文档</h4>
+          <h4 :id="titleId" :class="titleClass">{{ $t('录入文档') }}</h4>
           <el-icon class="el-icon--left" @click="close" :size="22">
             <Close />
           </el-icon>
         </div>
       </template>
       <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
-        <el-tab-pane label="上传文档" name="upload-doc">
+        <el-tab-pane :label="$t('上传文档')" name="upload-doc">
           <div class="upload-box">
             <p class="description">
-              格式支持 .pdf .docx .mobi .xlsx .txt .pptx .epub .md .csv，请确保内容可复制，每个{{
-                sizeLimit
-              }}MB以内，单次最多上传{{ qtyLimit }}个。
+              {{
+                $t(
+                  '格式支持 .pdf .docx .mobi .xlsx .txt .pptx .epub .md .csv，请确保内容可复制，每个{sizeLimit}MB以内，单次最多上传{qtyLimit}个。',
+                  { sizeLimit, qtyLimit }
+                )
+              }}
               <br />
-              文档中的表格和图片暂时无法学习。
+              {{ $t('文档中的表格和图片暂时无法学习。') }}
             </p>
             <el-upload
               class="upload-ctrl"
@@ -43,11 +46,13 @@
               drag
             >
               <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-              <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+              <div class="el-upload__text">
+                {{ $t('将文件拖到此处，或') }}<em>{{ $t('点击上传') }}</em>
+              </div>
             </el-upload>
           </div>
         </el-tab-pane>
-        <el-tab-pane label="输入文本" name="input-text">
+        <el-tab-pane :label="$t('输入文本')" name="input-text">
           <el-form
             ref="ruleFormRef"
             size="large"
@@ -60,7 +65,7 @@
               <el-input
                 type="text"
                 v-model="inputTextForm.title"
-                placeholder="文本标题"
+                :placeholder="$t('文本标题')"
                 maxlength="30"
               ></el-input>
             </el-form-item>
@@ -68,7 +73,7 @@
               <HansInputLimit
                 v-model:value="inputTextForm.content_html"
                 type="textarea"
-                placeholder="文本内容，请输入 100000 字符以内"
+                :placeholder="$t('文本内容，请输入 100000 字符以内')"
                 :rows="10"
                 :limit="limit.text_prompt"
                 :specifyInputStrLen="getStringWidth(inputTextForm.content_html || '')"
@@ -77,9 +82,9 @@
             </el-form-item>
           </el-form>
         </el-tab-pane>
-        <el-tab-pane label="网页抓取" name="input-url">
+        <el-tab-pane :label="$t('网页抓取')" name="input-url">
           <p class="description">
-            请避免非法抓取他人网站的侵权行为，保证链接可公开访问，且网站内容可复制
+            {{ $t('请避免非法抓取他人网站的侵权行为，保证链接可公开访问，且网站内容可复制') }}
           </p>
           <el-form
             ref="spliderUrl"
@@ -94,7 +99,7 @@
                 type="textarea"
                 :rows="10"
                 v-model="spliderUrlForm.urlData"
-                placeholder="输入要爬取的网页地址，使用英文,分隔"
+                :placeholder="$t('输入要爬取的网页地址，使用英文,分隔')"
               ></el-input>
             </el-form-item>
           </el-form>
@@ -117,7 +122,7 @@
                 type="textarea"
                 :rows="10"
                 v-model="spliderPubliceForm.publicData"
-                placeholder="请输入要爬取的公众号名称，用英文,分隔"
+                :placeholder="$t('请输入要爬取的公众号名称，用英文,分隔')"
               ></el-input>
             </el-form-item>
           </el-form>
@@ -127,9 +132,9 @@
       <template #footer>
         <span class="dialog-footer" v-if="inputTextForm.status !== 'preview'">
           <template v-if="showSubmit">
-            <el-button @click="() => emit('closeDialogVisble', false)">取消</el-button>
+            <el-button @click="() => emit('closeDialogVisble', false)">{{ $t('取消') }}</el-button>
             <el-button type="primary" data-script="Chato-doc-submit" @click="submitInputText()">
-              确认
+              {{ $t('确认') }}
             </el-button>
           </template>
         </span>
@@ -155,7 +160,9 @@ import type { FormInstance, FormRules, UploadFile, UploadFiles, UploadRawFile } 
 import { ElLoading, ElMessage, ElMessageBox, ElNotification as Notification } from 'element-plus'
 import { storeToRefs } from 'pinia'
 import { computed, onUnmounted, reactive, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const base = useBase()
 
 interface Props {
@@ -221,25 +228,25 @@ const limit = reactive({
 
 const rulesUrl = reactive({
   urlData: [
-    { required: true, message: '请输入网页地址', trigger: 'blur' }
+    { required: true, message: t('请输入网页地址'), trigger: 'blur' }
     // { validator: validatorUrl, trigger: 'blur' }
   ]
 })
 
 const rulesPublic = reactive({
-  publicData: [{ required: true, message: '请输入公众号名字', trigger: 'blur' }]
+  publicData: [{ required: true, message: t('请输入公众号名字'), trigger: 'blur' }]
 })
 
 const rules = reactive<FormRules>({
   title: [
-    { required: true, message: '请输入文本标题', trigger: 'blur' },
-    { min: 2, message: '文本标题最短不少于4个字符', trigger: 'blur' }
+    { required: true, message: t('请输入文本标题'), trigger: 'blur' },
+    { min: 2, message: t('文本标题最短不少于4个字符'), trigger: 'blur' }
   ],
   content_html: [
-    { required: true, message: '请输入文本内容', trigger: 'blur' },
+    { required: true, message: t('请输入文本内容'), trigger: 'blur' },
     {
       min: 2,
-      message: '文本内容最短不少于4个字符',
+      message: t('文本内容最短不少于4个字符'),
       trigger: 'blur'
     }
   ]
@@ -249,7 +256,7 @@ const $textExceedLimit = computed(() => {
 })
 
 const publicTabTile = computed(() => {
-  return base.userInfo.role === USER_ROLES.SUPERMAN ? '公众号抓取(仅超人可见)' : '公众号抓取'
+  return base.userInfo.role === USER_ROLES.SUPERMAN ? t('公众号抓取(仅超人可见)') : t('公众号抓取')
 })
 
 const handleClick = (tab) => {
@@ -260,12 +267,14 @@ async function submitInputText() {
   const formEl = formEl_Ref[activeName.value].value
   if (!formEl) return
   if ($textExceedLimit.value)
-    return ElMessage.warning(`文本内容不能超过 ${limit.text_prompt} 字符！`)
+    return ElMessage.warning(
+      t('文本内容不能超过 {limitText} 字符！', { limitText: limit.text_prompt })
+    )
   await formEl.validate((valid, fields) => {
     if (valid) {
       const loading = ElLoading.service({
         lock: true,
-        text: '保存中',
+        text: t('保存中'),
         background: 'rgba(0, 0, 0, 0.7)'
       })
       let requestFunc = ''
@@ -287,7 +296,7 @@ async function submitInputText() {
       apiFile[requestFunc](props.domainId, requestParams)
         .then((res) => {
           if (res.data.code === 200) {
-            Notification.success('保存成功')
+            Notification.success(t('保存成功'))
             spliderUrlForm.urlData = ''
             spliderPubliceForm.publicData = ''
             emit('setSuccess')
@@ -309,7 +318,7 @@ async function submitInputText() {
 function beforeUpload(rawFile: UploadRawFile) {
   const fileType = rawFile.name.substring(rawFile.name.lastIndexOf('.')).toLowerCase()
   if (!UPLOAD_FILE_TYPES.includes(fileType)) {
-    Notification.error(`不支持${fileType}格式`)
+    Notification.error(t('不支持{fileType}格式', { fileType }))
     return false
   }
   uploadingList.value.push({
@@ -320,7 +329,12 @@ function beforeUpload(rawFile: UploadRawFile) {
     startTime: dayjs().format('YYYY-MM-DD HH:mm:ss')
   })
   if (rawFile.size / 1024 / 1024 > props.sizeLimit) {
-    Notification.error(`文件 “${rawFile.name}” 体积已超过 ${props.sizeLimit}MB，暂时无法上传。`)
+    Notification.error(
+      t('文件 “{fileName}” 体积已超过 {sizeLimit}MB，暂时无法上传。', {
+        fileName: rawFile.name,
+        sizeLimit: props.sizeLimit
+      })
+    )
     return false
   }
 }
@@ -328,10 +342,10 @@ function beforeUpload(rawFile: UploadRawFile) {
 function onError(err) {
   const errMessage = err.message || ''
   const errName = err.name || ''
-  if (errMessage.includes('该文件已上传')) {
-    Notification.error('您上传的文件已存在，无需重复上传。')
+  if (errMessage.includes(t('该文件已上传'))) {
+    Notification.error(t('您上传的文件已存在，无需重复上传。'))
   } else if (errName === 'UploadAjaxError' && errMessage.includes('fail to post')) {
-    Notification.error('文件体积已超过限制，暂时无法上传。')
+    Notification.error(t('文件体积已超过限制，暂时无法上传。'))
   }
 }
 
@@ -360,7 +374,7 @@ function pretreatmentTracker(uid: number) {
     const current = uploadingList.value[i]
     if (uid === current.uid) {
       $sensors?.track('upload_time', {
-        name: '文档上传时间',
+        name: t('文档上传时间'),
         type: 'upload_time',
         data: { ...current, endTime: dayjs().format('YYYY-MM-DD HH:mm:ss') }
       })
@@ -377,16 +391,20 @@ function onProgress(event) {
 }
 
 function onExceed() {
-  Notification.warning(`您选择的文件数量过多，每次最多可上传 ${props.qtyLimit} 个文件。`)
+  Notification.warning(
+    t('您选择的文件数量过多，每次最多可上传 {qtyLimit} 个文件。', { qtyLimit: props.qtyLimit })
+  )
 }
 
 function showFirstUp() {
   if (!props.specailTipVisible) {
     ElMessageBox.confirm(
-      '训练素材的学习时长各异，正常情况下 5-10 分钟后生效。 如果上传文件过多或过大，可能超出预期时长，请耐心等待。 切换或关闭该页面不影响 AI 学习素材，可稍后再来查看进度。',
-      '温馨提示',
+      t(
+        '训练素材的学习时长各异，正常情况下 5-10 分钟后生效。 如果上传文件过多或过大，可能超出预期时长，请耐心等待。 切换或关闭该页面不影响 AI 学习素材，可稍后再来查看进度。'
+      ),
+      t('温馨提示'),
       {
-        confirmButtonText: '我已知晓',
+        confirmButtonText: t('我已知晓'),
         dangerouslyUseHTMLString: true,
         showCancelButton: false,
         type: 'warning',
@@ -400,7 +418,7 @@ function showFirstUp() {
 }
 
 function resetInputTextForm() {
-  inputTextForm.title = '文本：' + dayjs(new Date()).format('YYYY-MM-DD HH:mm:ss')
+  inputTextForm.title = t('文本：') + dayjs(new Date()).format('YYYY-MM-DD HH:mm:ss')
   inputTextForm.id = 0
   inputTextForm.content_html = ''
   inputTextForm.status = 'create'

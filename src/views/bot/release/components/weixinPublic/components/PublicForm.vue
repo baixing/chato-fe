@@ -23,52 +23,55 @@
         />
       </el-select>
     </el-form-item>
-    <el-form-item v-if="nameRequired" label="群聊名称" prop="name">
+    <el-form-item v-if="nameRequired" :label="$t(`群聊名称`)" prop="name">
       <HansInputLimit
         class="w-full"
         type="text"
-        placeholder="请输入群聊名称"
+        :placeholder="$t(`请输入群聊名称`)"
         v-model:value="inputCreatePublicForm.name"
         limit="32"
       />
     </el-form-item>
-    <el-form-item v-if="weixinNameRequired" label="激活时的微信昵称" prop="weixinName">
+    <el-form-item v-if="weixinNameRequired" :label="$t(`激活时的微信昵称`)" prop="weixinName">
       <HansInputLimit
         class="w-full"
         type="text"
-        placeholder="请输入激活时的微信昵称"
+        :placeholder="$t(`请输入激活时的微信昵称`)"
         v-model:value="inputCreatePublicForm.weixinName"
         limit="32"
       />
       <p class="text-[#EA0000] !text-xs mt-[5px]">
-        注意：请填写正确微信账号昵称。确认后，在群聊中用此微信账号输出 “激活”
-        才可以在群中正常使用该机器人
+        {{
+          $t(
+            '注意：请填写正确微信账号昵称。确认后，在群聊中用此微信账号输出 “激活”才可以在群中正常使用该机器人'
+          )
+        }}
       </p>
     </el-form-item>
     <el-collapse class="w-full !border-0 text-sm" v-if="hightRequired">
-      <el-collapse-item title="群高级设置" name="1" class="border-0 text-sm">
-        <el-form-item label="回复方式" prop="robot_response_type">
+      <el-collapse-item :title="$t(`群高级设置`)" name="1" class="border-0 text-sm">
+        <el-form-item :label="$t(`回复方式`)" prop="robot_response_type">
           <el-select
             v-model="inputCreatePublicForm.robot_response_type"
             class="w-full"
-            placeholder="请选择回复方式"
+            :placeholder="$t(`请选择回复方式`)"
           >
-            <el-option label="仅@回复" value="1" />
-            <el-option label="@或者提及昵称回复" value="2" />
+            <el-option :label="$t(`仅{'@'}回复`)" value="1" />
+            <el-option :label="$t(`{'@'}或者提及昵称回复`)" value="2" />
           </el-select>
         </el-form-item>
-        <el-form-item label="新人进群@Ta打招呼" prop="new_user_in_group_msg">
+        <el-form-item :label="$t(`新人进群{'@'}Ta打招呼`)" prop="new_user_in_group_msg">
           <el-input
             type="textarea"
             :rows="5"
             v-model="inputCreatePublicForm.new_user_in_group_msg"
-            placeholder="请输入新人进群@Ta打招呼欢迎语"
+            :placeholder="$t(`请输入新人进群{'@'}Ta打招呼欢迎语`)"
           ></el-input>
         </el-form-item>
         <slot name="create"></slot>
       </el-collapse-item>
     </el-collapse>
-    <el-form-item v-if="publicImgRequired" label="上传群二维码" prop="base64_data">
+    <el-form-item v-if="publicImgRequired" :label="$t(`上传群二维码`)" prop="base64_data">
       <ImgUpload
         @onChange="handleUpload"
         :value="inputCreatePublicForm.base64_data"
@@ -90,7 +93,8 @@ import type { weixinCreateConfigType } from '@/interface/release'
 import { getFileBase64 } from '@/utils/url'
 import type { FormInstance, FormRules } from 'element-plus'
 import { onUnmounted, reactive, ref, watch } from 'vue'
-
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 const emit = defineEmits(['handleSelect'])
 const props = withDefaults(
   defineProps<{
@@ -141,15 +145,37 @@ const uploadProps = {
 }
 const ruleFormCreatePublicRef = ref<FormInstance>()
 const rulesCreatePublic = reactive<FormRules>({
-  name: [{ required: props.nameRequired, trigger: 'blur', message: '请输入群聊名称' }],
-  robot_response_type: [{ required: true, trigger: 'blur', message: '请选择回复方式' }],
-  extra: [{ required: props.extraRequired, trigger: 'blur', message: props.extraMessage }],
-  base64_data: [
-    { required: props.publicImgRequired, trigger: 'change', message: '请上传群二维码' }
+  name: [
+    {
+      required: props.nameRequired,
+      trigger: 'blur',
+      message: t('请输入群聊名称')
+    }
   ],
+  robot_response_type: [{ required: true, trigger: 'blur', message: t('请选择回复方式') }],
+  extra: [
+    {
+      required: props.extraRequired,
+      trigger: 'blur',
+      message: props.extraMessage
+    }
+  ],
+  base64_data: [
+    {
+      required: props.publicImgRequired,
+      trigger: 'change',
+      message: t('请上传群二维码')
+    }
+  ],
+
   weixinName: [
-    { required: props.weixinNameRequired, trigger: 'blur', message: '请输入激活时的微信昵称' }
+    {
+      required: props.weixinNameRequired,
+      trigger: 'blur',
+      message: t('请输入激活时的微信昵称')
+    }
   ]
+
   // new_user_in_group_msg: [{ required: true, trigger: 'blur', message: '请输入新人进群@Ta打招呼' }]
 })
 
@@ -187,8 +213,7 @@ onUnmounted(() => {
   watchProps()
 })
 </script>
-
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .input-text-form {
   :deep(.el-collapse-item__header) {
     border-bottom: none;

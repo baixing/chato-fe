@@ -1,5 +1,5 @@
 <template>
-  <Topbar title="我的机器人" />
+  <Topbar :title="$t('我的机器人')" />
   <ContentLayout>
     <div v-loading="initing">
       <div class="grid grid-cols-2 lg:grid-cols-1 gap-5 lg:gap-4">
@@ -14,8 +14,10 @@
             <el-icon :size="20" class="text-[#596780]"><Plus /></el-icon>
           </div>
           <div>
-            <p class="font-medium text-sm leading-5 text-[#7C5CFC] mb-2">创建机器人</p>
-            <p class="text-[#9DA3AF] text-[13px] leading-[22px]">快速创建一个属于你的机器人吧！</p>
+            <p class="font-medium text-sm leading-5 text-[#7C5CFC] mb-2">{{ $t('创建机器人') }}</p>
+            <p class="text-[#9DA3AF] text-[13px] leading-[22px]">
+              {{ $t('快速创建一个属于你的机器人吧！') }}
+            </p>
           </div>
         </div>
         <BotListCard
@@ -34,9 +36,9 @@
       :width="isMobile ? '80%' : '40%'"
     >
       <el-row align="middle" class="mb-5">
-        <el-col :span="5">机器人分类</el-col>
+        <el-col :span="5">{{ $t('机器人分类') }}</el-col>
         <el-col :span="19">
-          <el-select v-model="opDomain.category" placeholder="请选择机器人分类">
+          <el-select v-model="opDomain.category" :placeholder="$t(`请选择机器人分类`)">
             <el-option
               v-for="item in DomainCategoryOptions"
               :key="item.value"
@@ -48,15 +50,16 @@
       </el-row>
       <template #footer>
         <div class="flex justify-end items-center gap-3">
-          <el-button @click="onClose">取消</el-button>
-          <el-button type="primary" @click="onSync" :loading="syncSubmiting"> 确认 </el-button>
+          <el-button @click="onClose">{{ $t('取消') }}</el-button>
+          <el-button type="primary" @click="onSync" :loading="syncSubmiting">{{
+            $t(' 确认 ')
+          }}</el-button>
         </div>
       </template>
     </el-dialog>
   </ContentLayout>
 </template>
-
-<script setup lang="ts">
+<script lang="ts" setup>
 import { cloneDomainRobot, updateDomainInResource } from '@/api/domain'
 import { deletesDomain } from '@/api/user'
 import Topbar from '@/components/Topbar/index.vue'
@@ -73,9 +76,11 @@ import type { Action } from 'element-plus'
 import { ElLoading, ElMessage, ElMessageBox, ElNotification, ElSelect } from 'element-plus'
 import { storeToRefs } from 'pinia'
 import { reactive, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import BotListCard from './components/BotListCard.vue'
 
+const { t } = useI18n()
 const router = useRouter()
 const chatStoreI = useChatStore()
 const domainStoreI = useDomainStore()
@@ -112,22 +117,23 @@ const onRefresh = async () => {
 
 const onDelete = async (item: IDomainInfo) => {
   try {
-    const confirmMessage =
+    const confirmMessage = t(
       '确定要删除您的聊天机器人吗？删除同时废止链接、嵌入代码、API 接口，此操作无法撤消。'
+    )
 
-    await ElMessageBox.confirm(confirmMessage, '确认删除', {
-      confirmButtonText: '确认',
-      cancelButtonText: '取消',
+    await ElMessageBox.confirm(confirmMessage, t('确认删除'), {
+      confirmButtonText: t('确认'),
+      cancelButtonText: t('取消'),
       type: 'warning'
     })
 
     loading.value = ElLoading.service({
       lock: true,
-      text: '删除中...',
+      text: t('删除中...'),
       background: 'rgba(0, 0, 0, 0.7)'
     })
     await deletesDomain(item.id)
-    ElNotification.success('删除成功')
+    ElNotification.success(t('删除成功'))
     await onRefresh()
   } catch (err) {
   } finally {
@@ -140,12 +146,12 @@ const opDomain = ref<Partial<IDomainInfo>>({})
 const onOpenSync = async (bot: IDomainInfo, type: 'visible' | 'template') => {
   opDomain.value = { ...bot }
 
-  let actionType = type === 'visible' ? '可见' : '不可见'
+  let actionType = type === 'visible' ? t('可见') : t('不可见')
   if (type === 'template') {
-    actionType = bot.template ? '资源广场机器人' : '模板机器人'
+    actionType = bot.template ? t('资源广场机器人') : t('模板机器人')
   }
 
-  dialogState.title = `设置为${actionType}`
+  dialogState.title = t('设置为{actionType}', { actionType: actionType })
   dialogState.type = type
   dialogState.visible = true
 }
@@ -165,7 +171,7 @@ const onSync = async () => {
       category: opDomain.value.category
     })
     dialogState.visible = false
-    ElNotification.success(`操作成功`)
+    ElNotification.success(t('操作成功'))
     await onRefresh()
   } catch (err) {
   } finally {
@@ -181,12 +187,12 @@ const onClose = () => {
 const cloneDomainRobotSubmit = async (slug: string, is_need_document: 0 | 1, name: string) => {
   loading.value = ElLoading.service({
     lock: true,
-    text: '克隆中...',
+    text: t('克隆中...'),
     background: 'rgba(0, 0, 0, 0.7)'
   })
   try {
     await cloneDomainRobot(slug, { is_need_document })
-    ElMessage.success(`克隆成功，${name}已创建成功`)
+    ElMessage.success(t('克隆成功，{name}已创建成功', { name: name }))
     await onRefresh()
   } catch (e) {
   } finally {
@@ -196,11 +202,15 @@ const cloneDomainRobotSubmit = async (slug: string, is_need_document: 0 | 1, nam
 
 const cloneRobotSubmit = (slug: string, robotName: string, is_need_document: 0 | 1) => {
   ElMessageBox.confirm(
-    `复制并新建${robotName}，新建后${is_need_document === 0 ? '不' : ''}包含知识库`,
-    '克隆机器人',
+    t('复制并新建{robotName}，新建后{slot1}包含知识库', {
+      robotName: robotName,
+      slot1: is_need_document === 0 ? t('不') : ''
+    }),
+    t('克隆机器人'),
+
     {
-      confirmButtonText: '确认',
-      cancelButtonText: '取消',
+      confirmButtonText: t('确认'),
+      cancelButtonText: t('取消'),
       type: 'warning'
     }
   )
@@ -211,9 +221,9 @@ const cloneRobotSubmit = (slug: string, robotName: string, is_need_document: 0 |
 }
 
 const cloneRobot = async (id: string, name: string) => {
-  ElMessageBox.confirm('复制并新建此机器人，是否需要包含知识库？', '克隆机器人', {
-    confirmButtonText: '包含',
-    cancelButtonText: '不包含',
+  ElMessageBox.confirm(t('复制并新建此机器人，是否需要包含知识库？'), t('克隆机器人'), {
+    confirmButtonText: t('包含'),
+    cancelButtonText: t('不包含'),
     distinguishCancelAndClose: true,
     type: 'warning'
   })

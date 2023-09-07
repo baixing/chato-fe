@@ -23,8 +23,8 @@
             type="daterange"
             unlink-panels
             range-separator="To"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
+            :start-placeholder="$t(`开始日期`)"
+            :end-placeholder="$t(`结束日期`)"
             :shortcuts="shortcuts"
             class="shrink-0 max-w-[330px]"
           />
@@ -33,16 +33,18 @@
       </div>
       <div v-if="!isMobile" class="button-container">
         <el-button v-if="multipleSelection.size > 0" type="primary" @click="() => handleExport()">
-          导出当前
+          {{ $t('导出当前') }}
         </el-button>
-        <el-button type="primary" @click="() => handleExport(true)"> 导出全部 </el-button>
+        <el-button type="primary" @click="() => handleExport(true)">
+          {{ $t('导出全部') }}
+        </el-button>
       </div>
     </div>
     <div class="list" v-loading="isListLoading">
       <el-table
         :data="$items"
         stripe
-        empty-text="暂未获取问答记录，请刷新重试"
+        :empty-text="$t(`暂未获取问答记录，请刷新重试`)"
         tooltip-effect="light"
         style="width: 100%"
         header-row-class-name="table-header-title"
@@ -53,9 +55,9 @@
         <el-table-column type="expand">
           <template #default="{ row }">
             <ul class="expand-ul">
-              <li>序号：{{ row.id }}</li>
-              <li>填写时间：{{ toSimpleDateTime(row.created) }}</li>
-              <li>用户ID：{{ row.sender_uid }}</li>
+              <li>{{ $t('序号') }}：{{ row.id }}</li>
+              <li>{{ $t('填写时间') }}：{{ toSimpleDateTime(row.created) }}</li>
+              <li>{{ $t('用户ID') }}：{{ row.sender_uid }}</li>
               <li v-for="item in curSelectInfo.fields" :key="item.id" :label="item.name">
                 {{ item.name }}：{{ row[item.field_id] }}
               </li>
@@ -63,13 +65,13 @@
           </template>
         </el-table-column>
         <el-table-column v-if="!isMobile" type="selection" width="55" />
-        <el-table-column v-if="!isMobile" prop="id" label="序号" align="left" width="80" />
-        <el-table-column v-if="!isMobile" label="填写时间" align="left" width="150">
+        <el-table-column v-if="!isMobile" prop="id" :label="$t(`序号`)" align="left" width="80" />
+        <el-table-column v-if="!isMobile" :label="$t(`填写时间`)" align="left" width="150">
           <template #default="{ row }">
             {{ toSimpleDateTime(row.created) }}
           </template>
         </el-table-column>
-        <el-table-column label="用户ID" prop="sender_uid" />
+        <el-table-column :label="$t(`用户ID`)" prop="sender_uid" />
         <el-table-column v-for="item in curSelectInfo.fields" :key="item.id" :label="item.name">
           <template #default="{ row }">
             {{ row[item.field_id] }}
@@ -108,9 +110,10 @@ import { debouncedWatch } from '@vueuse/core'
 import { ElNotification as Notification } from 'element-plus'
 import { storeToRefs } from 'pinia'
 import { computed, nextTick, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import UpgrateVersion from './components/UpgrateVersion.vue'
-
+const { t } = useI18n()
 const route = useRoute()
 const domainStoreI = useDomainStore()
 const { domainInfo } = storeToRefs(domainStoreI)
@@ -126,7 +129,7 @@ const timeRange = ref('')
 const keyword = ref('')
 const shortcuts = [
   {
-    text: '今日',
+    text: t('今日'),
     value: () => {
       const start = new Date()
       start.setHours(0, 0, 0)
@@ -136,7 +139,7 @@ const shortcuts = [
     }
   },
   {
-    text: '昨日',
+    text: t('昨日'),
     value: () => {
       const start = new Date()
       start.setTime(start.getTime() - 3600 * 1000 * 24 * 1)
@@ -148,7 +151,7 @@ const shortcuts = [
     }
   },
   {
-    text: '近7天',
+    text: t('近7天'),
     value: () => {
       const start = new Date()
       start.setTime(start.getTime() - 3600 * 1000 * 24 * 6)
@@ -159,7 +162,7 @@ const shortcuts = [
     }
   },
   {
-    text: '近一个月',
+    text: t('近一个月'),
     value: () => {
       const start = new Date()
       start.setTime(start.getTime() + 3600 * 1000 * 24 * 1)
@@ -171,7 +174,7 @@ const shortcuts = [
     }
   },
   {
-    text: '近半年',
+    text: t('近半年'),
     value: () => {
       const start = new Date()
       start.setTime(start.getTime() + 3600 * 1000 * 24 * 1)
@@ -183,7 +186,7 @@ const shortcuts = [
     }
   },
   {
-    text: '近一年',
+    text: t('近一年'),
     value: () => {
       const start = new Date()
       start.setTime(start.getTime() + 3600 * 1000 * 24 * 1)
@@ -270,7 +273,7 @@ function handleSelectAll(val) {
 async function handleExport(isAll = false) {
   const exportArray = isAll ? [] : Array.from(multipleSelection.value)
   if (exportArray.length === 0 && !isAll) {
-    Notification.error('抱歉，未勾选数据，无法导出。请先勾选数据再进行导出操作。')
+    Notification.error(t('抱歉，未勾选数据，无法导出。请先勾选数据再进行导出操作。'))
     return
   }
   isListLoading.value = true

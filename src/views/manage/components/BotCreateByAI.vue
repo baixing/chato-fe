@@ -6,22 +6,22 @@
     :rules="formRules"
     class="bot-create-form"
   >
-    <el-form-item label="角色名字" prop="role" required>
+    <el-form-item :label="t('角色名字')" prop="role" required>
       <HansInputLimit
         v-model:value="formState.role"
         type="text"
         size="large"
-        placeholder="例如：营销助手、客服专员等"
+        :placeholder="$t(`例如：营销助手、客服专员等`)"
         :limit="20"
         class="w-full"
       />
     </el-form-item>
-    <el-form-item label="角色需求">
+    <el-form-item :label="t('角色需求')">
       <HansInputLimit
         v-model:value="formState.role_requirement"
         type="textarea"
         size="large"
-        placeholder="例如：制定专业的苹果手机营销计划和策略"
+        :placeholder="$t('例如：制定专业的苹果手机营销计划和策略')"
         :rows="4"
         :limit="300"
         class="w-full"
@@ -32,7 +32,7 @@
   <div v-show="AIGenerateVisible" class="mb-14">
     <div class="label-title flex justify-between items-center">
       <span class="text-[#596780] font-normal">
-        {{ AIGenerateLoading ? '正在为您生成...' : '已为您生成' }}
+        {{ AIGenerateLoading ? $t('正在为您生成...') : $t('已为您生成') }}
       </span>
       <el-button
         v-show="AIGenerateVisible && !AIGenerateLoading"
@@ -40,12 +40,11 @@
         type="primary"
         :icon="RefreshRight"
         @click="onAIGenerate"
+        >{{ $t('重新生成') }}</el-button
       >
-        重新生成
-      </el-button>
     </div>
     <div class="bg-white rounded-lg p-6">
-      <p class="label-title !text-[#596780] !font-normal">简介</p>
+      <p class="label-title !text-[#596780] !font-normal">{{ $t('简介') }}</p>
       <HansInputLimit
         v-model:value="formState.desc"
         type="textarea"
@@ -55,7 +54,9 @@
         class="w-full mb-6"
       />
 
-      <p class="label-title !text-[#596780] !font-normal">角色描述</p>
+      <p class="label-title !text-[#596780] !font-normal">
+        {{ $t('角色描述') }}
+      </p>
       <HansInputLimit
         v-model:value="formState.system_prompt"
         type="textarea"
@@ -64,7 +65,7 @@
         disabled
         class="w-full mb-6"
       />
-      <p class="label-title !text-[#596780] !font-normal">欢迎语</p>
+      <p class="label-title !text-[#596780] !font-normal">{{ $t('欢迎语') }}</p>
       <HansInputLimit
         v-model:value="formState.welcome"
         type="textarea"
@@ -87,11 +88,10 @@
         : 'Chato_tranning_create_domain_ai_generate'
     }`"
   >
-    {{ AIGenerateVisible ? '确认并创建' : 'AI 一键生成' }}
+    {{ AIGenerateVisible ? $t('确认并创建') : $t('AI 一键生成') }}
   </el-button>
 </template>
-
-<script setup lang="ts">
+<script lang="ts" setup>
 import { createDomainByAI } from '@/api/user'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
 import useSpaceRights from '@/composables/useSpaceRights'
@@ -101,7 +101,9 @@ import SSE from '@/utils/sse'
 import { RefreshRight } from '@element-plus/icons-vue'
 import { ElLoading, ElNotification, type FormInstance, type FormRules } from 'element-plus'
 import { reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const emit = defineEmits(['saveSuccess'])
 
 let formState = reactive<{
@@ -119,7 +121,7 @@ let formState = reactive<{
 })
 const formRef = ref<FormInstance>()
 const formRules = reactive<FormRules>({
-  role: [{ required: true, message: '角色名字不能为空', trigger: 'change' }]
+  role: [{ required: true, message: t('角色名字不能为空'), trigger: 'change' }]
 })
 
 const AIGenerateVisible = ref(false)
@@ -156,7 +158,11 @@ const onAIGenerate = async () => {
     await formRef.value.validate()
     AIGenerateVisible.value = true
     AIGenerateLoading.value = true
-    formState = Object.assign(formState, { desc: '', welcome: '', system_prompt: '' })
+    formState = Object.assign(formState, {
+      desc: '',
+      welcome: '',
+      system_prompt: ''
+    })
     const allPromises = [
       EDomainAIGenerateType.intro,
       EDomainAIGenerateType.role,
@@ -182,7 +188,7 @@ const onBtnClick = async () => {
     try {
       loading.value = ElLoading.service({
         lock: true,
-        text: '创建中...',
+        text: t('创建中...'),
         background: 'rgba(0, 0, 0, 0.7)'
       })
       const {
@@ -190,7 +196,7 @@ const onBtnClick = async () => {
       } = await createDomainByAI(formState)
 
       emit('saveSuccess', data.id)
-      ElNotification.success('创建成功')
+      ElNotification.success(t('创建成功'))
     } catch (err) {
     } finally {
       loading.value.close()
@@ -200,7 +206,6 @@ const onBtnClick = async () => {
   }
 }
 </script>
-
 <style lang="scss" scoped>
 .label-title {
   @apply text-[#303133] text-sm leading-4 font-medium tracking-[0.13px] mb-4;

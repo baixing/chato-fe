@@ -2,23 +2,31 @@
   <el-form ref="joinForm" class="w-full" :model="joinFormModel" :rules="joinFormRule">
     <el-form-item prop="name">
       <el-input
-        placeholder="姓名（必填）"
+        :placeholder="$t('姓名（必填）')"
         size="large"
         maxlength="10"
         v-model="joinFormModel.name"
       />
     </el-form-item>
     <el-form-item prop="company">
-      <el-input placeholder="公司名称（必填）" size="large" v-model="joinFormModel.company" />
+      <el-input
+        :placeholder="$t('公司名称（必填）')"
+        size="large"
+        v-model="joinFormModel.company"
+      />
     </el-form-item>
     <el-form-item prop="mobile">
-      <el-input placeholder="联系电话（必填）" size="large" v-model.number="joinFormModel.mobile" />
+      <el-input
+        :placeholder="$t('联系电话（必填）')"
+        size="large"
+        v-model.number="joinFormModel.mobile"
+      />
     </el-form-item>
     <el-form-item prop="email">
-      <el-input placeholder="联系邮箱（选填）" size="large" v-model="joinFormModel.email" />
+      <el-input :placeholder="$t('联系邮箱（选填）')" size="large" v-model="joinFormModel.email" />
     </el-form-item>
     <el-form-item prop="other">
-      <el-input placeholder="备注（选填）" size="large" v-model="joinFormModel.other" />
+      <el-input :placeholder="$t('备注（选填）')" size="large" v-model="joinFormModel.other" />
     </el-form-item>
     <el-form-item>
       <el-button
@@ -26,7 +34,7 @@
         type="primary"
         size="large"
         @click="onSubmit"
-        >提交申请</el-button
+        >{{ $t('提交申请') }}</el-button
       >
     </el-form-item>
   </el-form>
@@ -39,18 +47,20 @@ import dayjs from 'dayjs'
 import type { FormInstance, FormRules } from 'element-plus'
 import { ElNotification } from 'element-plus'
 import { reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const emit = defineEmits(['submit'])
 const { $sensors } = useGlobalProperties()
 const joinForm = ref<FormInstance>()
 const joinFormRule = ref<FormRules>({
-  name: [{ required: true, message: '请输入您的姓名', trigger: 'blur' }],
-  company: [{ required: true, message: '请输入您的公司名称', trigger: 'blur' }],
+  name: [{ required: true, message: t('请输入您的姓名'), trigger: 'blur' }],
+  company: [{ required: true, message: t('请输入您的公司名称'), trigger: 'blur' }],
   mobile: [
-    { required: true, message: '请输入您的联系方式', trigger: 'blur' },
-    { pattern: MOBILE_REG, message: '请输入联系方式', trigger: 'blur' }
+    { required: true, message: t('请输入您的联系方式'), trigger: 'blur' },
+    { pattern: MOBILE_REG, message: t('请输入联系方式'), trigger: 'blur' }
   ],
-  email: [{ pattern: EMAIL_REG, message: '请输入正确邮箱', trigger: 'blur' }]
+  email: [{ pattern: EMAIL_REG, message: t('请输入正确邮箱'), trigger: 'blur' }]
 })
 const joinFormModel = reactive({
   name: '',
@@ -63,12 +73,12 @@ const joinFormModel = reactive({
 const onSubmit = async () => {
   await joinForm.value.validate()
   $sensors.track('home_join_call_back', {
-    name: `首页-招商加盟`,
+    name: t(`首页-招商加盟`),
     type: 'home_join_call_back',
     data: { ...joinFormModel, time: dayjs().format('YYYY-MM-DD HH:mm:ss') }
   })
   joinForm.value.resetFields()
-  ElNotification.success('提交成功')
+  ElNotification.success(t('提交成功'))
   emit('submit')
 }
 </script>

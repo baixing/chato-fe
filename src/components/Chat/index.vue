@@ -1,4 +1,203 @@
-<script setup lang="ts">
+<template>
+  <div class="container-preview-page bg-white">
+    <div
+      v-if="route.name !== RoutesMap.tranning.botChat && detail.avatar_show && detail.name_show"
+      class="flex items-center justify-center h-[52px] bg-white mb-0 text-sm font-medium gap-2 shrink-0"
+      style="border-bottom: 1px solid #eee"
+    >
+      <img
+        :src="detail.avatar || DefaultAvatar"
+        class="w-7 h-7 rounded-full shrink-0 overflow-hidden"
+        alt=""
+      />
+      <span>{{ detail.name || '...' }}</span>
+    </div>
+    <div
+      class="flex flex-col max-w-[800px] mx-auto h-full w-full overflow-hidden"
+      v-loading="$isLoading"
+      element-loading-background="#F2F3F5"
+    >
+      <div v-if="!history.length" class="empty h-full">
+        {{ $t('请在下方输入框提问吧～') }}
+      </div>
+      <div
+        v-else
+        :class="['chat-history', route.name === RoutesMap.chat.c && '!px-4']"
+        @scroll="onChatHistoryScroll"
+        ref="refChatHistory"
+      >
+        <div class="MessageItem" ref="MessageItemContainer">
+          <!-- 机器人简介 -->
+          <div v-if="detail.desc_show" class="quick-message-container" style="margin-bottom: 20px">
+            <div class="quick-span-desc">
+              <img :src="detail.avatar" alt="logo" />
+              <div class="desc-right">
+                <div class="desc-right-title">{{ detail.name || '...' }}</div>
+                <span>{{ detail.desc }}</span>
+              </div>
+            </div>
+          </div>
+          <div v-for="(item, index) in history" :key="item.id" class="messageItem-container">
+            <template v-if="item.displayType !== 'remove'">
+              <MessageItem
+                :isLast="index === history.length - 1 && !isLoadingAnswer"
+                :message="item"
+                :detail="detail"
+                :isInternal="isInternal && isChatingPractice"
+                :is-loading-answer="isLoadingAnswer"
+                :correct-visible="isInternal || (detail.qa_modifiable && !correctTicketExpired)"
+                :currentPlayId="currentPlayId"
+                :audioLoading="audioLoading"
+                :isPlaying="isPlaying"
+                @evaluate="onEvaluate"
+                @send-message="submit"
+                @show-more-action="onShowMoreAction"
+                @receive-question-answer="(mItem) => emit('correctAnswer', mItem)"
+                @click-source="(questionId) => emit('showDrawer', questionId, botSlug)"
+                @handleAudio="voiceAnnounements"
+              />
+            </template>
+            <template v-else-if="item.displayType === 'remove'">
+              <el-divider>
+                <span class="divider-tip">{{ $t('已清除与历史消息的关联，开始全新的会话') }}</span>
+              </el-divider>
+            </template>
+          </div>
+          <div v-if="quotaUpperLimit" class="divider-desc-seesion">
+            {{ $t('电力值不足，更多电力值请咨询产品顾问') }}
+          </div>
+        </div>
+      </div>
+      <div
+        v-show="isLoadingAnswer"
+        data-sensors-click
+        id="Chato_chat_stop_click"
+        :data-sensors-question-id="history?.[history.length - 1]?.questionId"
+        class="shrink-0 mb-4 mt-3 mx-auto flex items-center gap-[6px] text-[#303133] text-xs cursor-pointer px-4 py-3 rounded-md bg-[#F2F3F5] w-fit hover:opacity-80"
+        @click="onTerminateRetry"
+      >
+        <el-icon class="text-base"> <VideoPause /> </el-icon>{{ $t('终止') }}
+      </div>
+
+      <div v-if="detail.shortcuts" class="quick-message-bottom relative">
+        <span
+          v-for="(item, index) in detail.shortcuts"
+          :key="index"
+          class="quick-item"
+          data-sensors-click
+          id="Chato_chat_menu_click"
+          :data-sensors-menu-name="item.title"
+          @click="quickAnswerMessage(item)"
+        >
+          {{ item.title }}
+        </span>
+        <div
+          v-show="isLoadingAnswer"
+          class="absolute top-0 right-0 bottom-0 left-0 cursor-not-allowed bg-[#ffffffa3] z-[1]"
+        ></div>
+      </div>
+
+      <div :class="['input-box', route.name === RoutesMap.chat.c && '!px-4']">
+        <el-tooltip
+          :disabled="isMobile"
+          :content="$t(`清空历史消息`)"
+          placement="top"
+          :hide-after="0"
+        >
+          <el-icon
+            data-sensors-click
+            id="Chato_chat_delete_click"
+            :data-sensors-question-id="history?.[history.length - 1]?.questionId"
+            :size="20"
+            :class="[
+              '!w-10 !h-10 mr-1 text-center rounded-full shrink-0 cursor-pointer hover:bg-[#f2f3f5]',
+              isMidJourneyDomain && '!hidden'
+            ]"
+            @click="clearMessage"
+          >
+            <svg-icon name="clear-message"></svg-icon>
+          </el-icon>
+        </el-tooltip>
+        <div class="input-box-content pr-2">
+          <el-input
+            class="input-textarea"
+            resize="none"
+            type="textarea"
+            :autosize="{ minRows: 1, maxRows: 5 }"
+            v-model="input"
+            :placeholder="inputPlaceHolder"
+            ref="refInput"
+            :disabled="inputDisabled || isLoadingAnswer"
+            @click="scrollChatHistory"
+            @keydown.enter="Keydown"
+          />
+          <ChatRecorder
+            v-model:str="input"
+            :disabled="isLoadingAnswer"
+            ref="chatRecorderRef"
+            @recording="onRecording"
+          />
+          <el-tooltip :disabled="isMobile" :content="$t(`发送`)" placement="top" :hide-after="0">
+            <div
+              data-script="Chato-send-question"
+              class="input-box-btn transition-colors"
+              :disabled="isLoadingAnswer"
+              @click="() => submit('')"
+            >
+              <svg-icon svg-class="w-6 h-6 text-[#9DA3AF]" name="chat-send" />
+            </div>
+          </el-tooltip>
+        </div>
+        <div
+          v-show="isLoadingAnswer"
+          class="absolute top-0 right-0 bottom-0 left-0 cursor-not-allowed bg-[#ffffffa3] z-[1]"
+        ></div>
+      </div>
+      <div v-if="footerBrand.show" class="page-main-power site-logo">
+        <!-- TODO: 放到 ChatFooter -->
+        <div v-if="isInternal && !props.isreadRouteParam" class="flex items-center">
+          {{ $t('目前为训练演示视角， 如需用户视角') }}
+          <el-link
+            :href="`/b/${botSlug}`"
+            type="primary"
+            :underline="false"
+            class="!text-xs !font-normal"
+            target="_blank"
+            id="Chato_manager_test_click_here"
+          >
+            {{ $t('请点击此处前往') }}
+          </el-link>
+        </div>
+        <ChatFooter
+          v-else
+          :name="footerBrand.name"
+          :logo="footerBrand.logo"
+          :class="[!isCustomerBrand && 'cursor-pointer']"
+          @click="onFooterBrandLink"
+        />
+      </div>
+    </div>
+  </div>
+  <ChatMessageMore
+    :message="currentMessage"
+    :actions="currentMoreActions"
+    :position="currentMoreActionPosition"
+    @play-audio="voiceAnnounements"
+    @send-message="submit"
+    @receive-question-answer="(message) => emit('correctAnswer', message)"
+    @delete-success="onDeleteSuccess"
+    @translate-success="onTranslateSuccess"
+    @like-dislike-success="onLikeDislikeSuccess"
+  />
+  <CustomerFormDialog
+    v-model:visible="customerFormState.visible"
+    :form-id="customerFormState.formId"
+    :uid="customerFormState.uId"
+  />
+  <el-image-viewer v-if="showPreview" :url-list="[previewImageUrl]" @close="showPreview = false" />
+</template>
+
+<script lang="ts" setup>
 import {
   chatToBotHistoryB,
   chatToBotHistoryC,
@@ -13,11 +212,9 @@ import {
 } from '@/api/domain'
 import DefaultAvatar from '@/assets/img/avatar.png'
 import MessageItem from '@/components/Chat/ChatMessageItem.vue'
-import CustomerFormDialog from '@/components/Customer/CustomerFormDialog.vue'
 import useAudioPlayer from '@/composables/useAudio'
 import { useBasicLayout, useIsMobile } from '@/composables/useBasicLayout'
 import useSpaceRights from '@/composables/useSpaceRights'
-import { getCurrentEnv } from '@/config'
 import { DefaultBrandLogo } from '@/constant/brand'
 import {
   ChatBubbleColorList,
@@ -56,6 +253,7 @@ import { random, remove } from 'lodash'
 import { storeToRefs } from 'pinia'
 import qs from 'query-string'
 import { computed, nextTick, onBeforeUnmount, onMounted, provide, reactive, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import Watermark from 'watermark-plus'
 import xss from 'xss'
@@ -63,6 +261,7 @@ import ChatFooter from './ChatFooter.vue'
 import ChatMessageMore from './ChatMessageMore.vue'
 import ChatRecorder from './ChatRecorder/index.vue'
 
+const { t } = useI18n()
 interface Props {
   internalProps?: boolean
   bSlug?: string
@@ -128,12 +327,11 @@ const chatHistoryParams: ChatHistoryParams = reactive({
   page_size: 10
 })
 const inputPlaceHolder = computed(() => {
-  return !mobileDevice ? '输入问题，换行可通过shift+回车' : '请输入问题'
+  return !mobileDevice ? t('输入问题，换行可通过shift+回车') : t('请输入问题')
 })
 
 const realInput = computed(() => String(input.value).trim())
 
-const currentEnv = getCurrentEnv()
 const SSEInstance = new SSE()
 
 const { isPlaying, handlePlay, handlePause, checkExistAudioUrl, addLocalAudioUrl } =
@@ -226,7 +424,9 @@ async function init() {
   sseStore.$patch({ sseMsgId: '' })
   history.value = []
   chatHistoryParams.page = 1
-  chatHistoryPage = Object.assign(chatHistoryPage, { ...DefaultChatHistoryPage })
+  chatHistoryPage = Object.assign(chatHistoryPage, {
+    ...DefaultChatHistoryPage
+  })
   await getBotInfo()
   if (!isInternal) {
     await checkQuotaInPlatformC()
@@ -359,7 +559,7 @@ const beforeSubmit = async () => {
   // C 端对话额度限制，B 端对话额度限制走流式
   if (!isInternal) {
     if (quotaUpperLimit.value) {
-      ElMessage.warning('电力值不足，更多电力值请咨询产品顾问')
+      ElMessage.warning(t('电力值不足，更多电力值请咨询产品顾问'))
       return false
     }
   }
@@ -391,7 +591,7 @@ async function submit(retryString: string) {
   }
 
   if (getStringWidth(text) > Number(inputLength.value)) {
-    Notification.warning('问题过长！')
+    Notification.warning(t('问题过长！'))
     return
   }
 
@@ -433,7 +633,7 @@ const onTerminateRetry = async () => {
     // 终止
     const lastAnswer = history.value[history.value.length - 1]
     if (lastAnswer.displayType !== EMessageDisplayType.answer) {
-      Notification.error('终止失败：终止触发时，当前消息是预期以外的消息类型')
+      Notification.error(t('终止失败：终止触发时，当前消息是预期以外的消息类型'))
       return
     }
 
@@ -451,7 +651,7 @@ const onTerminateRetry = async () => {
     SSEInstance.request('/chato/chat/close', terminateParams)
 
     if (!lastAnswer.questionId) {
-      lastAnswer.content = '回答已终止'
+      lastAnswer.content = t('回答已终止')
       lastAnswer.status = EWsMessageStatus.done
       isLoadingAnswer.value = false
       return
@@ -467,7 +667,7 @@ watch(isTerminated, (v) => {
     const optMsg = history.value[history.value.length - 1]
     // 触发了终止且当前机器人不是 MidJourney，消息后接上继续
     if (!isMidJourneyDomain.value) {
-      optMsg.content += regReplaceA('#继续#', {
+      optMsg.content += regReplaceA(t('#继续#'), {
         class: 'answer-continue',
         'data-cid': optMsg.msg_id || optMsg.questionId
       })
@@ -529,7 +729,7 @@ async function sendMsgRequest(message) {
 
 const generateMessage = (data) => {
   isLoadingAnswer.value = ChatMessageFinalStatus.includes(data.status) ? false : true
-  continueTarget.value && (continueTarget.value.innerText = '继续')
+  continueTarget.value && (continueTarget.value.innerText = t('继续'))
   // socket 返回消息需要更改的问题和答案 index
   let currentQuestionIndex: number
   let currentAnswerIndex: number
@@ -562,7 +762,7 @@ const generateMessage = (data) => {
   }
 
   if (data.finish_reason === 'length') {
-    currentAnswer.content += regReplaceA('#继续#', {
+    currentAnswer.content += regReplaceA(t('#继续#'), {
       class: 'answer-continue',
       'data-cid': data.msg_id
     })
@@ -665,7 +865,10 @@ const checkCorrectTicketExpired = async () => {
 
   const {
     data: { data }
-  } = await checkDomainCorrectTicketIsExpired({ ticket: route.query.ticket, slug: botSlug.value })
+  } = await checkDomainCorrectTicketIsExpired({
+    ticket: route.query.ticket,
+    slug: botSlug.value
+  })
   correctTicketExpired.value = data
 }
 
@@ -952,202 +1155,6 @@ watch(
 
 provide(SymChatDomainDetail, detail)
 </script>
-
-<template>
-  <div class="container-preview-page bg-white">
-    <div
-      v-if="route.name !== RoutesMap.tranning.botChat && detail.avatar_show && detail.name_show"
-      class="flex items-center justify-center h-[52px] bg-white mb-0 text-sm font-medium gap-2 shrink-0"
-      style="border-bottom: 1px solid #eee"
-    >
-      <img
-        :src="detail.avatar || DefaultAvatar"
-        class="w-7 h-7 rounded-full shrink-0 overflow-hidden"
-        alt=""
-      />
-      <span>{{ detail.name || '...' }}</span>
-    </div>
-    <div
-      class="flex flex-col max-w-[800px] mx-auto h-full w-full overflow-hidden"
-      v-loading="$isLoading"
-      element-loading-background="#F2F3F5"
-    >
-      <div v-if="!history.length" class="empty h-full">请在下方输入框提问吧～</div>
-      <div
-        v-else
-        :class="['chat-history', route.name === RoutesMap.chat.c && '!px-4']"
-        @scroll="onChatHistoryScroll"
-        ref="refChatHistory"
-      >
-        <div class="MessageItem" ref="MessageItemContainer">
-          <!-- 机器人简介 -->
-          <div v-if="detail.desc_show" class="quick-message-container" style="margin-bottom: 20px">
-            <div class="quick-span-desc">
-              <img :src="detail.avatar" alt="logo" />
-              <div class="desc-right">
-                <div class="desc-right-title">{{ detail.name || '...' }}</div>
-                <span>{{ detail.desc }}</span>
-              </div>
-            </div>
-          </div>
-          <div v-for="(item, index) in history" :key="item.id" class="messageItem-container">
-            <template v-if="item.displayType !== 'remove'">
-              <MessageItem
-                :isLast="index === history.length - 1 && !isLoadingAnswer"
-                :message="item"
-                :detail="detail"
-                :isInternal="isInternal && isChatingPractice"
-                :is-loading-answer="isLoadingAnswer"
-                :correct-visible="isInternal || (detail.qa_modifiable && !correctTicketExpired)"
-                :currentPlayId="currentPlayId"
-                :audioLoading="audioLoading"
-                :isPlaying="isPlaying"
-                @evaluate="onEvaluate"
-                @send-message="submit"
-                @show-more-action="onShowMoreAction"
-                @receive-question-answer="(mItem) => emit('correctAnswer', mItem)"
-                @click-source="(questionId) => emit('showDrawer', questionId, botSlug)"
-                @handleAudio="voiceAnnounements"
-              />
-            </template>
-            <template v-else-if="item.displayType === 'remove'">
-              <el-divider>
-                <span class="divider-tip">已清除与历史消息的关联，开始全新的会话</span>
-              </el-divider>
-            </template>
-          </div>
-          <div v-if="quotaUpperLimit" class="divider-desc-seesion">
-            电力值不足，更多电力值请咨询产品顾问
-          </div>
-        </div>
-      </div>
-      <div
-        v-show="isLoadingAnswer"
-        data-sensors-click
-        id="Chato_chat_stop_click"
-        :data-sensors-question-id="history?.[history.length - 1]?.questionId"
-        class="shrink-0 mb-4 mt-3 mx-auto flex items-center gap-[6px] text-[#303133] text-xs cursor-pointer px-4 py-3 rounded-md bg-[#F2F3F5] w-fit hover:opacity-80"
-        @click="onTerminateRetry"
-      >
-        <el-icon class="text-base">
-          <VideoPause />
-        </el-icon>
-        终止
-      </div>
-
-      <div v-if="detail.shortcuts" class="quick-message-bottom relative">
-        <span
-          v-for="(item, index) in detail.shortcuts"
-          :key="index"
-          class="quick-item"
-          data-sensors-click
-          id="Chato_chat_menu_click"
-          :data-sensors-menu-name="item.title"
-          @click="quickAnswerMessage(item)"
-        >
-          {{ item.title }}
-        </span>
-        <div
-          v-show="isLoadingAnswer"
-          class="absolute top-0 right-0 bottom-0 left-0 cursor-not-allowed bg-[#ffffffa3] z-[1]"
-        ></div>
-      </div>
-
-      <div :class="['input-box', route.name === RoutesMap.chat.c && '!px-4']">
-        <el-tooltip :disabled="isMobile" content="清空历史消息" placement="top" :hide-after="0">
-          <el-icon
-            data-sensors-click
-            id="Chato_chat_delete_click"
-            :data-sensors-question-id="history?.[history.length - 1]?.questionId"
-            :size="20"
-            :class="[
-              '!w-10 !h-10 mr-1 text-center rounded-full shrink-0 cursor-pointer hover:bg-[#f2f3f5]',
-              isMidJourneyDomain && '!hidden'
-            ]"
-            @click="clearMessage"
-          >
-            <svg-icon name="clear-message"></svg-icon>
-          </el-icon>
-        </el-tooltip>
-        <div class="input-box-content pr-2">
-          <el-input
-            class="input-textarea"
-            resize="none"
-            type="textarea"
-            :autosize="{ minRows: 1, maxRows: 5 }"
-            v-model="input"
-            :placeholder="inputPlaceHolder"
-            ref="refInput"
-            :disabled="inputDisabled || isLoadingAnswer"
-            @click="scrollChatHistory"
-            @keydown.enter="Keydown"
-          />
-          <ChatRecorder
-            v-model:str="input"
-            :disabled="isLoadingAnswer"
-            ref="chatRecorderRef"
-            @recording="onRecording"
-          />
-          <el-tooltip :disabled="isMobile" content="发送" placement="top" :hide-after="0">
-            <div
-              data-script="Chato-send-question"
-              class="input-box-btn transition-colors"
-              :disabled="isLoadingAnswer"
-              @click="() => submit('')"
-            >
-              <svg-icon svg-class="w-6 h-6 text-[#9DA3AF]" name="chat-send" />
-            </div>
-          </el-tooltip>
-        </div>
-        <div
-          v-show="isLoadingAnswer"
-          class="absolute top-0 right-0 bottom-0 left-0 cursor-not-allowed bg-[#ffffffa3] z-[1]"
-        ></div>
-      </div>
-      <div v-if="footerBrand.show" class="page-main-power site-logo">
-        <!-- TODO: 放到 ChatFooter -->
-        <div v-if="isInternal && !props.isreadRouteParam" class="flex items-center">
-          目前为训练演示视角， 如需用户视角
-          <el-link
-            :href="`/b/${botSlug}`"
-            type="primary"
-            :underline="false"
-            class="!text-xs !font-normal"
-            target="_blank"
-            id="Chato_manager_test_click_here"
-          >
-            请点击此处前往
-          </el-link>
-        </div>
-        <ChatFooter
-          v-else
-          :name="footerBrand.name"
-          :logo="footerBrand.logo"
-          :class="[!isCustomerBrand && 'cursor-pointer']"
-          @click="onFooterBrandLink"
-        />
-      </div>
-    </div>
-  </div>
-  <ChatMessageMore
-    :message="currentMessage"
-    :actions="currentMoreActions"
-    :position="currentMoreActionPosition"
-    @play-audio="voiceAnnounements"
-    @send-message="submit"
-    @receive-question-answer="(message) => emit('correctAnswer', message)"
-    @delete-success="onDeleteSuccess"
-    @translate-success="onTranslateSuccess"
-    @like-dislike-success="onLikeDislikeSuccess"
-  />
-  <CustomerFormDialog
-    v-model:visible="customerFormState.visible"
-    :form-id="customerFormState.formId"
-    :uid="customerFormState.uId"
-  />
-  <el-image-viewer v-if="showPreview" :url-list="[previewImageUrl]" @close="showPreview = false" />
-</template>
-
 <style lang="scss" scoped>
 .container-preview-page {
   width: 100%;
@@ -1367,4 +1374,3 @@ provide(SymChatDomainDetail, detail)
   font-size: 12px;
 }
 </style>
-@/stores/sse

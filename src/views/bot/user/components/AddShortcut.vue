@@ -17,29 +17,37 @@
         class="input-text-form special-text-form"
         @submit.prevent
       >
-        <p style="margin-top: 8px; margin-bottom: 8px; height: 24px">关键词</p>
+        <p style="margin-top: 8px; margin-bottom: 8px; height: 24px">
+          {{ $t('关键词') }}
+        </p>
         <el-form-item prop="title">
           <HansInputLimit
             v-model:value="inputTextForm.title"
             type="text"
             size="large"
-            placeholder="输入关键词"
+            :placeholder="$t(`输入关键词`)"
             :limit="20"
             class="w-full"
           />
         </el-form-item>
-        <p style="margin-top: 8px; margin-bottom: 8px; height: 24px">回复内容</p>
+        <p style="margin-top: 8px; margin-bottom: 8px; height: 24px">
+          {{ $t('回复内容') }}
+        </p>
         <el-form-item prop="response" class="content_html_item">
           <HansInputLimit
             v-model:value="inputTextForm.response"
             type="textarea"
-            placeholder="输入回复内容。如需网页链接跳转，请直接填写域名，例如:http://chato.cn"
+            :placeholder="
+              $t(`输入回复内容。如需网页链接跳转，请直接填写域名，例如:http://chato.cn`)
+            "
             :rows="4"
             :limit="limitTextPrompt"
             class="w-full mb-4"
           />
         </el-form-item>
-        <p style="margin-bottom: 8px; height: 24px">图片（最多上传9张）</p>
+        <p style="margin-bottom: 8px; height: 24px">
+          {{ $t('图片（最多上传9张）') }}
+        </p>
         <el-form-item prop="images" class="content_html_item">
           <ImgUpload
             :value="inputTextForm.images"
@@ -51,8 +59,10 @@
       </el-form>
       <template #footer>
         <span class="dialog-footer" v-if="inputTextForm.status !== 'preview'">
-          <el-button @click="() => emit('closeDialogVisble')">取消</el-button>
-          <el-button type="primary" @click="submitInputText(ruleFormRef)"> 确认 </el-button>
+          <el-button @click="() => emit('closeDialogVisble')">{{ $t('取消') }}</el-button>
+          <el-button type="primary" @click="submitInputText(ruleFormRef)">{{
+            $t(' 确认 ')
+          }}</el-button>
         </span>
       </template>
     </el-dialog>
@@ -68,7 +78,9 @@ import { $notnull } from '@/utils/help'
 import { getStringWidth } from '@/utils/string'
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 import { computed, onUnmounted, reactive, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const props = defineProps<{
   dialogVisible: boolean
   apiUpload: string
@@ -77,13 +89,13 @@ const props = defineProps<{
 
 const emit = defineEmits(['closeDialogVisble', 'setSuccess'])
 const title = computed<string>(() => {
-  let ope = '查看'
+  let ope = t('查看')
   if (props.defaultForm.status === 'create') {
-    ope = '添加'
+    ope = t('添加')
   } else if (props.defaultForm.status === 'edit') {
-    ope = '编辑'
+    ope = t('编辑')
   }
-  return `${ope}菜单栏`
+  return t('{ope}菜单栏', { ope: ope })
 })
 const { isMobile } = useBasicLayout()
 const visible = ref(false)
@@ -120,11 +132,11 @@ const inputTextForm = reactive({
 const validateTitle = (rule: any, value: any, callback: any) => {
   const valHansLen = getStringWidth(value)
   if (!value) {
-    callback(new Error('请输入关键词'))
+    callback(new Error(t('请输入关键词')))
   } else if (valHansLen < 2) {
-    callback(new Error('关键词最短不少于 2 个字符'))
+    callback(new Error(t('关键词最短不少于 2 个字符')))
   } else if (valHansLen > 20) {
-    callback(new Error('关键词最长不超过 20 个字符'))
+    callback(new Error(t('关键词最长不超过 20 个字符')))
   } else {
     callback()
   }
@@ -133,9 +145,9 @@ const validateTitle = (rule: any, value: any, callback: any) => {
 const validateResponse = (rule: any, value: any, callback: any) => {
   const valHansLen = getStringWidth(value)
   if (!value) {
-    callback(new Error('请输入回复内容'))
+    callback(new Error(t('请输入回复内容')))
   } else if (valHansLen < 2) {
-    callback(new Error('回复内容最短不少于 2 个字符'))
+    callback(new Error(t('回复内容最短不少于 2 个字符')))
   } else {
     callback()
   }
@@ -155,7 +167,11 @@ async function submitInputText(formEl) {
     return
   }
   if ($textExceedLimit.value) {
-    return ElMessage.warning(`「关键词」加「回复内容」长度不能超过 ${limitTextPrompt} 字符！`)
+    return ElMessage.warning(
+      t('「关键词」加「回复内容」长度不能超过 {limitTextPrompt} 字符！', {
+        limitTextPrompt: limitTextPrompt
+      })
+    )
   }
 
   await formEl.validate((valid, fields) => {
@@ -208,7 +224,6 @@ onUnmounted(() => {
   watchProps()
 })
 </script>
-
 <style lang="scss" scoped>
 :deep(.el-dialog__header) {
   margin-bottom: 0 !important;

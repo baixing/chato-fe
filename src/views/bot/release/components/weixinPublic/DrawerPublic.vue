@@ -1,4 +1,141 @@
-<script setup lang="ts">
+<template>
+  <el-drawer
+    ref="drawerRef"
+    v-model="visible"
+    :title="$t(`我创建的群`)"
+    :before-close="handleClose"
+    class="create-drawer-container"
+    :size="isMobile ? '100%' : '40%'"
+  >
+    <el-collapse v-model="activeNames" accordion>
+      <el-collapse-item
+        v-for="(item, index) in tableData"
+        :key="item.created_at"
+        :name="$t('群聊{slot1}：{slot2}', { slot1: index + 1, slot2: item.name })"
+      >
+        <template #title>
+          <p class="leading-5 break-all">{{ $t('群聊') }}{{ index + 1 }}：{{ item.name }}</p>
+        </template>
+        <div>
+          <PublicForm
+            v-slot="slotProps"
+            :name="item.name"
+            :disabled="item.dragon_mother_name"
+            :robot_response_type="String(item.response_type)"
+            :new_user_in_group_msg="item.new_user_msg"
+          >
+            <el-form-item
+              :label="$t(`群机器人信息：`)"
+              class="flex-col items-start"
+              label-position="top"
+            >
+              <div class="flex flex-col">
+                <p class="form-item-desc">
+                  {{ $t('如需修改机器人名字请') }}
+                  <router-link class="theme-color" :to="userRoute">
+                    {{ $t('前往形象') }}
+                  </router-link>
+                  <!-- TODO: i18n -->
+                  {{ $t('（群头像暂不支持修改）') }}
+                </p>
+                <div class="form-itm-content">
+                  <img :src="avatar" alt="logo" />
+                  {{ nickname }}
+                </div>
+              </div>
+            </el-form-item>
+            <el-form-item
+              :label="$t(`激活秘钥：`)"
+              v-if="item.activate_secret"
+              class="flex-col items-start"
+            >
+              <p class="flex justify-between form-item-desc">
+                <span class="mr-[10px]"
+                  >{{ $t('添加机器人时请填写：') }}{{ item.activate_secret }}</span
+                >
+                <el-button type="primary" link @click="$copyText(item.activate_secret)">
+                  {{ $t('复制') }}
+                </el-button>
+              </p>
+            </el-form-item>
+            <el-form-item
+              :label="$t(`机器人二维码：`)"
+              v-if="item.activate_secret"
+              class="flex-col items-start"
+            >
+              <div class="preview-code-container" v-loading="codeImgLoading">
+                <img :src="robotQrCode?.url" :alt="$t(`机器人二维码`)" />
+              </div>
+            </el-form-item>
+            <el-form-item
+              :label="$t(`群二维码：`)"
+              v-if="!item.dragon_mother_name"
+              class="flex-col items-start"
+            >
+              <div class="flex flex-col">
+                <p class="form-item-desc">
+                  {{ $t('首位扫码进群人员为管理员，二维码实时刷新，请确保使用最新码') }}
+                </p>
+                <div class="preview-code-container" v-loading="codeImgLoading || !isDone">
+                  <img :src="qrcode_data" :alt="$t(`群聊二维码`)" />
+                  <a
+                    class="cm-link"
+                    href="javascript:;"
+                    @click="() => emit('handleReloadCodeImg', item.room_id)"
+                    >{{ $t('刷新') }}</a
+                  >
+                </div>
+              </div>
+            </el-form-item>
+            <el-form-item>
+              <el-button
+                class="!text-[#7C5CFC] !border-[#7C5CFC]"
+                @click="() => handleTransfer(slotProps.submit, item.id)"
+              >
+                <!-- TODO: i18n -->
+                转移群
+              </el-button>
+            </el-form-item>
+            <el-row justify="end" v-if="!item.dragon_mother_name">
+              <el-col :lg="8" :xl="8" :xs="12" :sm="12" :md="12">
+                <el-button
+                  type="primary"
+                  size="large"
+                  @click="
+                    () =>
+                      emit(
+                        'submitCreatePublic',
+                        slotProps.submit,
+                        slotProps.ruleFormCreatePublicRef,
+                        ECreatePublicType.edit,
+                        item
+                      )
+                  "
+                  >{{ $t('确认') }}</el-button
+                >
+              </el-col>
+            </el-row>
+          </PublicForm>
+        </div>
+      </el-collapse-item>
+    </el-collapse>
+  </el-drawer>
+
+  <!-- TODO: i18n -->
+  <Modal
+    title="转移群"
+    mobile-width="100%"
+    v-model:visible="internalVisible"
+    :footer="!transferStatus"
+    :submit-disabled="!$notnull(selectedDomain)"
+    class="public-drawer-container text-[14px]"
+    @submit="submitTransfer"
+  >
+    <TransferResult @handle-push="handlePushTransfer" v-if="transferStatus" />
+    <TransferPublic v-else v-model:value="selectedDomain" :domainList="domainList" />
+  </Modal>
+</template>
+<script lang="ts" setup>
 import { serachPublicCreateStatus } from '@/api/release'
 import Modal from '@/components/Modal/index.vue'
 import { useBasicLayout } from '@/composables/useBasicLayout'
@@ -13,8 +150,6 @@ import { storeToRefs } from 'pinia'
 import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import PublicForm from './components/PublicForm.vue'
-import TransferPublic from './components/TransferPublic.vue'
-import TransferResult from './components/TransferResult.vue'
 
 const props = withDefaults(
   defineProps<{
@@ -139,126 +274,6 @@ watch(visible, (v) => {
   v ? serachPublicStatus() : null
 })
 </script>
-
-<template>
-  <el-drawer
-    ref="drawerRef"
-    v-model="visible"
-    title="我创建的群"
-    :before-close="handleClose"
-    class="create-drawer-container"
-    :size="isMobile ? '100%' : '40%'"
-  >
-    <el-collapse v-model="activeNames" accordion>
-      <el-collapse-item
-        v-for="(item, index) in tableData"
-        :key="item.created_at"
-        :name="`群聊${index + 1}：${item.name}`"
-      >
-        <template #title>
-          <p class="leading-5 break-all">群聊{{ index + 1 }}：{{ item.name }}</p>
-        </template>
-        <div>
-          <PublicForm
-            v-slot="slotProps"
-            :name="item.name"
-            :disabled="item.dragon_mother_name"
-            :robot_response_type="String(item.response_type)"
-            :new_user_in_group_msg="item.new_user_msg"
-          >
-            <el-form-item label="群机器人信息：" class="flex-col items-start" label-position="top">
-              <p class="form-item-desc">
-                机器人名字「{{ nickname }}」，如需修改机器人名字请
-                <router-link class="theme-color" :to="userRoute">前往形象</router-link>
-                （群头像暂不支持修改）
-              </p>
-            </el-form-item>
-            <el-form-item
-              label="激活秘钥："
-              v-if="item.activate_secret"
-              class="flex-col items-start"
-            >
-              <p class="flex justify-between form-item-desc">
-                <span class="mr-[10px]">添加机器人时请填写：{{ item.activate_secret }}</span>
-                <el-button type="primary" link @click="$copyText(item.activate_secret)"
-                  >复制</el-button
-                >
-              </p>
-            </el-form-item>
-            <el-form-item
-              label="机器人二维码："
-              v-if="item.activate_secret"
-              class="flex-col items-start"
-            >
-              <div class="preview-code-container" v-loading="codeImgLoading">
-                <img :src="robotQrCode?.url" alt="机器人二维码" />
-              </div>
-            </el-form-item>
-            <el-form-item
-              label="群二维码："
-              v-if="!item.dragon_mother_name"
-              class="flex-col items-start"
-            >
-              <div class="flex flex-col">
-                <p class="form-item-desc">
-                  首位扫码进群人员为管理员，二维码实时刷新，请确保使用最新码
-                </p>
-                <div class="preview-code-container" v-loading="codeImgLoading">
-                  <img :src="qrcode_data" alt="群聊二维码" />
-                  <a
-                    class="cm-link"
-                    href="javascript:;"
-                    @click="() => emit('handleReloadCodeImg', item.room_id)"
-                    >刷新</a
-                  >
-                </div>
-              </div>
-            </el-form-item>
-            <el-form-item>
-              <el-button
-                class="!text-[#7C5CFC] !border-[#7C5CFC]"
-                @click="() => handleTransfer(slotProps.submit, item.id)"
-                >转移群</el-button
-              >
-            </el-form-item>
-            <el-row justify="end" v-if="!item.dragon_mother_name">
-              <el-col :lg="8" :xl="8" :xs="12" :sm="12" :md="12">
-                <el-button
-                  type="primary"
-                  size="large"
-                  @click="
-                    () =>
-                      emit(
-                        'submitCreatePublic',
-                        slotProps.submit,
-                        slotProps.ruleFormCreatePublicRef,
-                        ECreatePublicType.edit,
-                        item
-                      )
-                  "
-                  >确认</el-button
-                >
-              </el-col>
-            </el-row>
-          </PublicForm>
-        </div>
-      </el-collapse-item>
-    </el-collapse>
-    <Modal
-      title="转移群"
-      mobile-width="100%"
-      v-model:visible="internalVisible"
-      :footer="!transferStatus"
-      :submit-disabled="!$notnull(selectedDomain)"
-      class="public-drawer-container text-[14px]"
-      @submit="submitTransfer"
-    >
-      <TransferResult @handle-push="handlePushTransfer" v-if="transferStatus" />
-      <TransferPublic v-else v-model:value="selectedDomain" :domainList="domainList" />
-    </Modal>
-  </el-drawer>
-</template>
-
 <style scoped lang="scss">
 .form-item-desc {
   margin: 6px 0 16px;
@@ -297,7 +312,6 @@ watch(visible, (v) => {
   }
 }
 </style>
-
 <style lang="scss">
 .public-drawer-container {
   cursor: pointer;

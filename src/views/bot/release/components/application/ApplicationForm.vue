@@ -5,9 +5,9 @@
     >
       <img :src="ReleaseFormLogo" class="md:mb-3" alt="logo" />
       <div class="a-f-title flex flex-col md:flex-col items-start md:items-center">
-        <span class="mb-[28px] font-medium md:text-sm"
-          >提交以下信息后，即可开通并分享给他人使用</span
-        >
+        <span class="mb-[28px] font-medium md:text-sm">{{
+          $t('提交以下信息后，即可开通并分享给他人使用')
+        }}</span>
         <PlatFormList :platformList="platformList" />
       </div>
     </div>
@@ -21,37 +21,45 @@
       status-icon
       class="w-[50%] md:w-[100%] m-auto"
     >
-      <el-form-item label="姓名" prop="name">
-        <el-input v-model="applicationForm.name" placeholder="请输入您的名字" />
+      <el-form-item :label="$t(`姓名`)" prop="name">
+        <el-input v-model="applicationForm.name" :placeholder="$t(`请输入您的名字`)" />
       </el-form-item>
-      <el-form-item label="所属行业" prop="industry">
-        <el-select v-model="applicationForm.industry" class="w-full" placeholder="请选择行业">
+      <el-form-item :label="$t(`所属行业`)" prop="industry">
+        <el-select
+          v-model="applicationForm.industry"
+          class="w-full"
+          :placeholder="$t(`请选择行业`)"
+        >
           <el-option v-for="item in industryList" :label="item" :key="item" :value="item" />
         </el-select>
       </el-form-item>
-      <el-form-item label="公司名称" prop="company">
-        <el-input v-model="applicationForm.company_name" placeholder="请输入您的公司的名称" />
+      <el-form-item :label="$t(`公司名称`)" prop="company">
+        <el-input
+          v-model="applicationForm.company_name"
+          :placeholder="$t(`请输入您的公司的名称`)"
+        />
       </el-form-item>
       <el-form-item class="mt-[56px]">
         <el-row class="w-full">
           <el-col :xl="4" :lg="4" :sx="12" :sm="12" :md="12">
-            <el-button type="primary" @click="() => onSubmit(applicationFormRef)"
-              >提交审核</el-button
-            >
+            <el-button type="primary" @click="() => onSubmit(applicationFormRef)">{{
+              $t('提交审核')
+            }}</el-button>
           </el-col>
         </el-row>
       </el-form-item>
     </el-form>
   </div>
 </template>
-
-<script setup lang="ts">
+<script lang="ts" setup>
 import { applicationFormSave, getIndustry } from '@/api/release'
 import ReleaseFormLogo from '@/assets/img/release-form-logo.png'
 import type { FormInstance, FormRules } from 'element-plus'
 import { ElLoading, ElNotification } from 'element-plus'
 import { reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import PlatFormList from './components/PlatFormList.vue'
+const { t } = useI18n()
 
 const props = defineProps<{
   org_id: number
@@ -70,9 +78,9 @@ const applicationForm = reactive({
   company_name: ''
 })
 const applicationFormRules = reactive<FormRules>({
-  name: [{ required: true, message: '请输入您的名字', trigger: 'blur' }],
-  industry: [{ required: true, message: '请选择行业', trigger: 'blur' }],
-  company_name: [{ required: true, message: '请选择行业', trigger: 'blur' }]
+  name: [{ required: true, message: t('请输入您的名字'), trigger: 'blur' }],
+  industry: [{ required: true, message: t('请选择行业'), trigger: 'blur' }],
+  company_name: [{ required: true, message: t('请选择行业'), trigger: 'blur' }]
 })
 
 const onSubmit = async (formEl: FormInstance | undefined) => {
@@ -81,7 +89,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
     if (valid) {
       const loading = ElLoading.service({
         lock: true,
-        text: '审核中...',
+        text: t('审核中...'),
         background: 'rgba(0, 0, 0, 0.7)'
       })
       const data = {
@@ -92,14 +100,14 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
       loading.close()
       if (res.data.code === 200) {
         ElNotification({
-          title: '审核结果',
-          message: '审核成功',
+          title: t('审核结果'),
+          message: t('审核成功'),
           type: 'success'
         })
         emit('handleUpdateOrgInfo')
       } else {
         ElNotification({
-          title: '审核结果',
+          title: t('审核结果'),
           message: res.data.message,
           type: 'error'
         })
@@ -119,8 +127,7 @@ const init = async () => {
 
 init()
 </script>
-
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .application-form-container {
   width: 100%;
   .a-f-header {

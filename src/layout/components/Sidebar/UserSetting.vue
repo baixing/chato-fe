@@ -27,11 +27,11 @@
     <div class="mx-5 flex flex-col items-start">
       <el-button link @click="onLinkTo(RoutesMap.namespace.personalSetting)" class="btn">
         <el-icon class="mr-1"><Edit /></el-icon>
-        修改资料
+        {{ $t('修改资料') }}
       </el-button>
       <el-button link @click="onLinkTo(RoutesMap.auth.logout)" class="btn">
         <el-icon class="mr-1"><SwitchButton /></el-icon>
-        退出登录
+        {{ $t('退出登录') }}
       </el-button>
     </div>
   </el-popover>

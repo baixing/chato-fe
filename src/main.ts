@@ -11,15 +11,14 @@ import useSentry from '@/composables/useSentry'
 import elementIcon from '@/utils/elementIcon'
 import { copyPaste } from '@/utils/help'
 import ElementPlus from 'element-plus'
-import zhLocale from 'element-plus/lib/locale/lang/zh-cn'
 import 'github-markdown-css/github-markdown-light.css'
 import { createPinia } from 'pinia'
 import type sensors from 'sa-sdk-javascript'
 import 'virtual:svg-icons-register'
 import { createApp } from 'vue'
 import App from './App.vue'
+import i18n from './locales'
 import router from './router'
-
 declare module 'vue' {
   export interface ComponentCustomProperties {
     $sensors?: typeof sensors
@@ -35,9 +34,10 @@ declare global {
 
 const app = createApp(App)
 
-app.use(ElementPlus, { locale: zhLocale })
+app.use(ElementPlus)
 app.use(createPinia())
 app.use(router)
+app.use(i18n)
 
 app.use(elementIcon)
 app.component('svg-icon', SvgIcon)

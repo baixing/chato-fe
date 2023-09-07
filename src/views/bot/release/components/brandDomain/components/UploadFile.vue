@@ -19,14 +19,15 @@
     </div>
   </el-upload>
 </template>
-
-<script setup lang="ts">
+<script lang="ts" setup>
 import type { UploadResType } from '@/components/ImgUpload/data'
 import { useAuthStore } from '@/stores/auth'
 import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus'
 import { ElMessageBox, genFileId } from 'element-plus'
 import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 const emit = defineEmits(['update:value'])
 const props = defineProps<{
@@ -66,11 +67,15 @@ const handleExceed: UploadProps['onExceed'] = (files) => {
 }
 
 const beforeRemove: UploadProps['beforeRemove'] = (uploadFile, uploadFiles) => {
-  return ElMessageBox.confirm(`你确定要移除 ${uploadFile.name} 吗?`, '温馨提示', {
-    confirmButtonText: '确认',
-    cancelButtonText: '取消',
-    type: 'warning'
-  }).then(
+  return ElMessageBox.confirm(
+    t('你确定要移除 {slot1} 吗?', { slot1: uploadFile.name }),
+    t('温馨提示'),
+    {
+      confirmButtonText: t('确认'),
+      cancelButtonText: t('取消'),
+      type: 'warning'
+    }
+  ).then(
     () => true,
     () => false
   )
@@ -85,8 +90,7 @@ const handleSuccess = () => {
   })
 }
 </script>
-
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .upload-file-key {
   position: relative;
   // display: flex;

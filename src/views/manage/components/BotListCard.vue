@@ -22,34 +22,35 @@
         {{ internalBot.desc }}
       </p>
       <div class="flex gap-x-4 gap-y-3 flex-wrap">
-        <IconBtn :icon="Edit" @click="() => onLinkTo(RoutesMap.tranning.botUser)">编辑</IconBtn>
+        <IconBtn :icon="Edit" @click="() => onLinkTo(RoutesMap.tranning.botUser)">
+          {{ $t('编辑') }}
+        </IconBtn>
         <IconBtn :icon="ChatDotRound" @click="() => onLinkTo(RoutesMap.tranning.botChat)">
-          调试
+          {{ $t('调试') }}
         </IconBtn>
         <IconBtn :icon="Share" @click="() => onLinkTo(RoutesMap.tranning.botRelease)">
-          分享
+          {{ $t('分享') }}
         </IconBtn>
         <IconBtn :icon="DataLine" @click="() => onLinkTo(RoutesMap.tranning.report)">
-          报表
+          {{ $t('报表') }}
         </IconBtn>
         <IconBtn
           name="clone-robot"
           @click="() => emit('cloneRobot', internalBot.slug, internalBot.name)"
+          >{{ $t('克隆') }}</IconBtn
         >
-          克隆
-        </IconBtn>
         <template v-if="isPrivilege">
           <IconBtn
             :icon="internalBot.visible ? Hide : View"
             @click="() => emit('sync', internalBot, 'visible')"
           >
-            {{ internalBot.visible ? '设置为不可见' : '设置为可见' }}
+            {{ internalBot.visible ? $t('设置为不可见') : $t('设置为可见') }}
           </IconBtn>
           <IconBtn
             :icon="internalBot.template ? Notification : Compass"
             @click="() => emit('sync', internalBot, 'template')"
           >
-            {{ internalBot.template ? '设为资源广场机器人' : '设为模板机器人' }}
+            {{ internalBot.template ? $t('设为资源广场机器人') : $t('设为模板机器人') }}
           </IconBtn>
         </template>
         <IconBtn
@@ -57,15 +58,13 @@
           :icon="Delete"
           @click="() => emit('delete', internalBot)"
           class="hover:!text-[#f56c6c]"
+          >{{ $t('删除') }}</IconBtn
         >
-          删除
-        </IconBtn>
       </div>
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
+<script lang="ts" setup>
 import DefaultAvatar from '@/assets/img/avatar.png'
 import IconBtn from '@/components/IconBtn/index.vue'
 import type { IDomainInfo } from '@/interface/domain'

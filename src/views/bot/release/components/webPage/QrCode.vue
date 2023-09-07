@@ -49,9 +49,9 @@ console.log(qrcode)
 <template>
   <div class="m-qrcode" :class="{ bordered: bordered }" :style="`border-color: ${borderColor};`">
     <img :src="qrcode" class="u-qrcode" alt="QRCode" />
-    <a :href="qrcode" download="Chato.png" class="description text-sm text-[#7C5CFC] mt-2.5"
-      >保存</a
-    >
+    <a :href="qrcode" download="Chato.png" class="description text-sm text-[#7C5CFC] mt-2.5">{{
+      $t('保存')
+    }}</a>
   </div>
 </template>
 <style lang="less" scoped>

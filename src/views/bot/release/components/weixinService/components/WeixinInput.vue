@@ -2,15 +2,15 @@
   <div class="w-full text-[14px]">
     <slot></slot>
     <p class="text-[#7C5CFC] text-[12px]">
-      <el-button type="primary" link @click="emit('changesketchDialogVisible', url)">
-        查看示意图
-      </el-button>
+      <el-button type="primary" link @click="emit('changesketchDialogVisible', url)">{{
+        $t('查看示意图')
+      }}</el-button>
     </p>
     <el-form
       ref="formInputRef"
       :model="formInput"
       :rules="formInputRules"
-      label-width="80px"
+      label-width="100px"
       labelPosition="left"
       size="large"
       status-icon
@@ -32,8 +32,7 @@
     </el-form>
   </div>
 </template>
-
-<script setup lang="ts">
+<script lang="ts" setup>
 import type { FormInstance } from 'element-plus'
 import { reactive, ref } from 'vue'
 import WeixinBtn from './WeixinBtn.vue'
@@ -65,5 +64,3 @@ const submitForm = (formEl: FormInstance | undefined) => {
   })
 }
 </script>
-
-<style scoped lang="scss"></style>

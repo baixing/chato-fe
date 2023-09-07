@@ -9,12 +9,13 @@
     />
     <p v-else>{{ resultInfo }}</p>
     <template v-if="authToken && !resultInfo" #footer>
-      <p class="text-xs mt-4 text-[#9DA3AF]">进入后，在右上角账户中心里可切换不同空间</p>
+      <p class="text-xs mt-4 text-[#9DA3AF]">
+        {{ $t('进入后，在右上角账户中心里可切换不同空间') }}
+      </p>
     </template>
   </BlankWithChatoLayout>
 </template>
-
-<script setup lang="ts">
+<script lang="ts" setup>
 import { getInviteUserDetail } from '@/api/space'
 import type { ESettingSpaceRole } from '@/enum/space'
 import type { IUserInfo } from '@/interface/user'

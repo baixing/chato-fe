@@ -1,5 +1,5 @@
 <template>
-  <Topbar title="个人设置" />
+  <Topbar :title="$t(`个人设置`)" />
   <div class="page-center-container page-content-cotainer">
     <el-form
       ref="settingFormRef"
@@ -10,10 +10,10 @@
       label-width="60px"
       :hide-required-asterisk="true"
     >
-      <el-form-item label="手机号">
+      <el-form-item :label="$t(` 手机号`)">
         {{ settingForm.mobile }}
       </el-form-item>
-      <el-form-item label="头像">
+      <el-form-item :label="$t(`头像`)">
         <div class="img-upload-container">
           <div
             class="default-avatar"
@@ -29,12 +29,12 @@
           </div>
         </div>
       </el-form-item>
-      <el-form-item label="昵称" prop="nickname">
+      <el-form-item :label="$t(`昵称`)" prop="nickname">
         <HansInputLimit
           v-model:value="settingForm.nickname"
           type="text"
           size="large"
-          placeholder="请输入你的昵称"
+          :placeholder="$t(`请输入你的昵称`)"
           :limit="20"
           class="w-full max-w-[330px]"
         />
@@ -42,17 +42,16 @@
       <el-form-item label-width="12px" class="mt-[56px]">
         <el-row class="w-full">
           <el-col :xs="8" :sm="6" :md="4" :lg="4" :xl="4"
-            ><el-button type="primary" @click="handleSaveSetting(settingFormRef)"
-              >保存设置</el-button
-            ></el-col
+            ><el-button type="primary" @click="handleSaveSetting(settingFormRef)">{{
+              $t('保存设置')
+            }}</el-button></el-col
           >
         </el-row>
       </el-form-item>
     </el-form>
   </div>
 </template>
-
-<script setup lang="ts">
+<script lang="ts" setup>
 import { updateOrgUserInfo } from '@/api/space'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
 import Topbar from '@/components/Topbar/index.vue'
@@ -62,7 +61,9 @@ import type { FormInstance, FormRules } from 'element-plus'
 import { ElLoading, ElNotification as Notification } from 'element-plus'
 import { storeToRefs } from 'pinia'
 import { onUnmounted, reactive, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const base = useBase()
 const { userInfo } = storeToRefs(base)
 const settingFormRef = ref<FormInstance>()
@@ -80,7 +81,7 @@ const settingRule = reactive<FormRules>({
   nickname: [
     {
       required: true,
-      message: '请输入你的昵称',
+      message: t('请输入你的昵称'),
       trigger: 'blur'
     }
   ]
@@ -118,12 +119,13 @@ const handleSaveSetting = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
   await formEl.validate(async (valid, fields) => {
     if (valid) {
-      if (getStringWidth(settingForm.nickname) > 20) return Notification.error('昵称超过20个字符')
-      if (getStringWidth(settingForm.nickname) === 0) return Notification.error('请输入昵称')
+      if (getStringWidth(settingForm.nickname) > 20)
+        return Notification.error(t('昵称超过20个字符'))
+      if (getStringWidth(settingForm.nickname) === 0) return Notification.error(t('请输入昵称'))
       settingForm.nickname = settingForm.nickname.trim()
       const loading = ElLoading.service({
         lock: true,
-        text: '保存中',
+        text: t('保存中'),
         background: 'rgba(0, 0, 0, 0.7)'
       })
       const data = {
@@ -133,7 +135,7 @@ const handleSaveSetting = async (formEl: FormInstance | undefined) => {
       try {
         await updateOrgUserInfo(data)
         base.updateUserInfoAttri(data)
-        Notification.success('保存成功')
+        Notification.success(t('保存成功'))
       } catch (e) {
       } finally {
         loading.close()
@@ -158,8 +160,7 @@ onUnmounted(() => {
   watchUserInfo()
 })
 </script>
-
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .default-avatar {
   position: absolute;
   width: 48px;

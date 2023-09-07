@@ -209,7 +209,7 @@ const mjProgress = computed(() => `${Number(props.message?.progress || 0) * 100}
             class="py-1 px-2 text-xs rounded-2xl border border-solid border-[#dcdfe6] hover:opacity-80"
             @click="emit('receiveQuestionAnswer', message)"
           >
-            修正
+            {{ $t('修正') }}
           </div>
         </div>
         <div v-else-if="isLast" class="flex items-center gap-5 text-[#596780] text-lg">

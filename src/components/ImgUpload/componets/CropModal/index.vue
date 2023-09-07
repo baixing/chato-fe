@@ -1,7 +1,7 @@
 <template>
   <UploadModal
     :width="isMobile ? '100%' : '50%'"
-    title="裁剪图片（移动方框可裁剪图片最佳位置）"
+    :title="$t(`裁剪图片（移动方框可裁剪图片最佳位置）`)"
     :visible="cropVisible"
     :modal="true"
     :footer="false"

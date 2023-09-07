@@ -1,6 +1,6 @@
 <template>
   <div class="tranning-sidebar flex flex-col">
-    <h3 class="mt-6 ml-5 mb-3 text-sm font-medium leading-[22px]">工作台</h3>
+    <h3 class="mt-6 ml-5 mb-3 text-sm font-medium leading-[22px]">{{ $t('工作台') }}</h3>
     <el-menu
       :default-active="activeMenu"
       :default-openeds="[]"
@@ -51,12 +51,14 @@ import { useDomainStore } from '@/stores/domain'
 import { ChatLineRound, DataLine, Edit, Reading, User } from '@element-plus/icons-vue'
 import { storeToRefs } from 'pinia'
 import { computed, h } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 
 const IconSize = 20
 
 const router = useRouter()
 const route = useRoute()
+const { t } = useI18n()
 
 const domainStoreI = useDomainStore()
 const { domainInfo } = storeToRefs(domainStoreI)
@@ -64,31 +66,34 @@ const { domainInfo } = storeToRefs(domainStoreI)
 const activeMenu = computed(() => route.name as string)
 
 const menus: IMenuItem[] = [
-  { title: '形象', routeName: RoutesMap.tranning.botUser, icon: User },
-  { title: '规则', routeName: RoutesMap.tranning.botPersona, icon: Edit },
+  { title: t('形象'), routeName: RoutesMap.tranning.botUser, icon: User },
+  { title: t('规则'), routeName: RoutesMap.tranning.botPersona, icon: Edit },
   {
-    title: '知识',
+    title: t('知识'),
+    routeName: RoutesMap.tranning.kownlwedge,
     children: [
-      { title: '问答式', routeName: RoutesMap.tranning.botContentQA },
-      { title: '文档式', routeName: RoutesMap.tranning.botContentDoc }
+      { title: t('问答式'), routeName: RoutesMap.tranning.botContentQA },
+      { title: t('文档式'), routeName: RoutesMap.tranning.botContentDoc }
     ],
     icon: Reading
   },
-  { title: '调试', routeName: RoutesMap.tranning.botChat, icon: ChatLineRound },
+  { title: t('调试'), routeName: RoutesMap.tranning.botChat, icon: ChatLineRound },
   {
-    title: '发布',
+    title: t('发布'),
+    routeName: RoutesMap.tranning.release,
     icon: h(SvgIcon, { name: 'share-outlined' }),
     children: [
-      { title: '发布媒介', routeName: RoutesMap.tranning.botReleaseChannel },
-      { title: '发布设置', routeName: RoutesMap.tranning.botReleaseSetting }
+      { title: t('发布媒介'), routeName: RoutesMap.tranning.botReleaseChannel },
+      { title: t('发布设置'), routeName: RoutesMap.tranning.botReleaseSetting }
     ]
   },
   {
-    title: '数据',
+    title: t('数据'),
+    routeName: RoutesMap.tranning.information,
     children: [
-      { title: '数据概览', routeName: RoutesMap.tranning.report },
-      { title: '对话消息明细', routeName: RoutesMap.tranning.reportDetail },
-      { title: '收集表单明细', routeName: RoutesMap.tranning.reportCollectForm }
+      { title: t('数据概览'), routeName: RoutesMap.tranning.report },
+      { title: t('对话消息明细'), routeName: RoutesMap.tranning.reportDetail },
+      { title: t('收集表单明细'), routeName: RoutesMap.tranning.reportCollectForm }
     ],
     icon: DataLine
   }

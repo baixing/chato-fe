@@ -1,23 +1,27 @@
 <template>
   <div class="w-full userDusty-container">
     <el-form label-position="top" :rules="rules" :model="form">
-      <el-form-item label="称呼（选填）" prop="surname">
+      <el-form-item :label="$t('称呼（选填）')" prop="surname">
         <el-input
           size="large"
           class="rounded-full"
           v-model="form.surname"
-          placeholder="例如张女士、李先生"
+          :placeholder="$t('例如张女士、李先生')"
         ></el-input>
       </el-form-item>
-      <el-form-item label="公司名称（选填）" prop="company">
-        <el-input size="large" v-model="form.company" placeholder="请输入公司名称"></el-input>
+      <el-form-item :label="$t('公司名称（选填）')" prop="company">
+        <el-input
+          size="large"
+          v-model="form.company"
+          :placeholder="$t('请输入公司名称')"
+        ></el-input>
       </el-form-item>
-      <el-form-item label="职位" prop="job">
+      <el-form-item :label="$t('职位')" prop="job">
         <el-select
           v-model="form.job"
           size="large"
           class="w-full"
-          placeholder="请选择您在公司中的职责角色"
+          :placeholder="$t('请选择您在公司中的职责角色')"
           popper-class="popperClass"
         >
           <el-option v-for="item in jobList" :key="item" :label="item" :value="item" />

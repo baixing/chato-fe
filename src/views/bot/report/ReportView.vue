@@ -1,3 +1,110 @@
+<template>
+  <div class="content-view-container" v-loading="$isLoading">
+    <div class="section">
+      <div class="section-body">
+        <el-row :gutter="24">
+          <el-col :lg="8" :xl="8" :xs="12" :sm="12" :md="12" class="col-margin">
+            <el-card
+              shadow="never"
+              style="width: 100%; height: 160px; border-radius: 2px; padding: 12px"
+            >
+              <p class="cardTitle">{{ $t('全部对话数') }}</p>
+              <p class="cardContent">
+                {{ data.all_question_count }}
+              </p>
+            </el-card>
+          </el-col>
+          <el-col :lg="8" :xl="8" :xs="12" :sm="12" :md="12" class="col-margin">
+            <el-card
+              shadow="never"
+              style="width: 100%; height: 160px; border-radius: 2px; padding: 12px"
+            >
+              <p class="cardTitle">{{ $t('本周对话数') }}</p>
+              <p class="cardContent">
+                {{ data.week_question_count }}
+              </p>
+            </el-card>
+          </el-col>
+          <el-col :lg="8" :xl="8" :xs="12" :sm="12" :md="12" class="col-margin">
+            <el-card
+              shadow="never"
+              style="width: 100%; height: 160px; border-radius: 2px; padding: 12px"
+            >
+              <p class="cardTitle">{{ $t('昨日对话数') }}</p>
+              <p class="cardContent">
+                {{ data.yesterday_question_count }}
+              </p>
+            </el-card>
+          </el-col>
+          <el-col :lg="8" :xl="8" :xs="12" :sm="12" :md="12" class="col-margin">
+            <el-card
+              shadow="never"
+              style="width: 100%; height: 160px; border-radius: 2px; padding: 12px"
+            >
+              <p class="cardTitle">{{ $t('全部用户') }}</p>
+              <p class="cardContent">
+                {{ data.all_user_count }}
+              </p>
+            </el-card>
+          </el-col>
+          <el-col :lg="8" :xl="8" :xs="12" :sm="12" :md="12" class="col-margin">
+            <el-card
+              shadow="never"
+              style="width: 100%; height: 160px; border-radius: 2px; padding: 12px"
+            >
+              <p class="cardTitle">{{ $t('本周用户') }}</p>
+              <p class="cardContent">
+                {{ data.week_user_count }}
+              </p>
+            </el-card>
+          </el-col>
+          <el-col :lg="8" :xl="8" :xs="12" :sm="12" :md="12" class="col-margin">
+            <el-card
+              shadow="never"
+              style="width: 100%; height: 160px; border-radius: 2px; padding: 12px"
+            >
+              <p class="cardTitle">{{ $t('昨日用户') }}</p>
+              <p class="cardContent">
+                {{ data.yesterday_user_count }}
+              </p>
+            </el-card>
+          </el-col>
+          <el-col :lg="8" :xl="8" :xs="12" :sm="12" :md="12" class="col-margin">
+            <el-card
+              shadow="never"
+              style="width: 100%; height: 160px; border-radius: 2px; padding: 12px"
+            >
+              <p class="cardTitle">{{ $t('用户反馈数') }}</p>
+              <p class="cardContent">
+                {{ data.all_evaluation_count }}
+              </p>
+            </el-card>
+          </el-col>
+          <el-col :lg="8" :xl="8" :xs="12" :sm="12" :md="12" class="col-margin">
+            <el-card
+              shadow="never"
+              style="width: 100%; height: 160px; border-radius: 2px; padding: 12px"
+            >
+              <p class="cardTitle">{{ $t('反馈满意数') }}</p>
+              <p class="cardContent">
+                {{ data.like_evaluation_count }}
+              </p>
+            </el-card>
+          </el-col>
+          <el-col :lg="8" :xl="8" :xs="12" :sm="12" :md="12" class="col-margin">
+            <el-card
+              shadow="never"
+              style="width: 100%; height: 160px; border-radius: 2px; padding: 12px"
+            >
+              <p class="cardTitle">{{ $t('用户满意度') }}</p>
+              <p class="cardContent">{{ data.like_evaluation_percent }}%</p>
+            </el-card>
+          </el-col>
+        </el-row>
+      </div>
+    </div>
+  </div>
+</template>
 <script setup>
 import * as apiReport from '@/api/report'
 import { useDomainStore } from '@/stores/domain'
@@ -47,115 +154,6 @@ function init() {
 
 watch(domainId, (v) => v && init(), { immediate: true })
 </script>
-
-<template>
-  <div class="content-view-container" v-loading="$isLoading">
-    <div class="section">
-      <div class="section-body">
-        <el-row :gutter="24">
-          <el-col :lg="8" :xl="8" :xs="12" :sm="12" :md="12" class="col-margin">
-            <el-card
-              shadow="never"
-              style="width: 100%; height: 160px; border-radius: 2px; padding: 12px"
-            >
-              <p class="cardTitle">全部对话数</p>
-              <p class="cardContent">
-                {{ data.all_question_count }}
-              </p>
-            </el-card>
-          </el-col>
-          <el-col :lg="8" :xl="8" :xs="12" :sm="12" :md="12" class="col-margin">
-            <el-card
-              shadow="never"
-              style="width: 100%; height: 160px; border-radius: 2px; padding: 12px"
-            >
-              <p class="cardTitle">本周对话数</p>
-              <p class="cardContent">
-                {{ data.week_question_count }}
-              </p>
-            </el-card>
-          </el-col>
-          <el-col :lg="8" :xl="8" :xs="12" :sm="12" :md="12" class="col-margin">
-            <el-card
-              shadow="never"
-              style="width: 100%; height: 160px; border-radius: 2px; padding: 12px"
-            >
-              <p class="cardTitle">昨日对话数</p>
-              <p class="cardContent">
-                {{ data.yesterday_question_count }}
-              </p>
-            </el-card>
-          </el-col>
-          <el-col :lg="8" :xl="8" :xs="12" :sm="12" :md="12" class="col-margin">
-            <el-card
-              shadow="never"
-              style="width: 100%; height: 160px; border-radius: 2px; padding: 12px"
-            >
-              <p class="cardTitle">全部用户</p>
-              <p class="cardContent">
-                {{ data.all_user_count }}
-              </p>
-            </el-card>
-          </el-col>
-          <el-col :lg="8" :xl="8" :xs="12" :sm="12" :md="12" class="col-margin">
-            <el-card
-              shadow="never"
-              style="width: 100%; height: 160px; border-radius: 2px; padding: 12px"
-            >
-              <p class="cardTitle">本周用户</p>
-              <p class="cardContent">
-                {{ data.week_user_count }}
-              </p>
-            </el-card>
-          </el-col>
-          <el-col :lg="8" :xl="8" :xs="12" :sm="12" :md="12" class="col-margin">
-            <el-card
-              shadow="never"
-              style="width: 100%; height: 160px; border-radius: 2px; padding: 12px"
-            >
-              <p class="cardTitle">昨日用户</p>
-              <p class="cardContent">
-                {{ data.yesterday_user_count }}
-              </p>
-            </el-card>
-          </el-col>
-          <el-col :lg="8" :xl="8" :xs="12" :sm="12" :md="12" class="col-margin">
-            <el-card
-              shadow="never"
-              style="width: 100%; height: 160px; border-radius: 2px; padding: 12px"
-            >
-              <p class="cardTitle">用户反馈数</p>
-              <p class="cardContent">
-                {{ data.all_evaluation_count }}
-              </p>
-            </el-card>
-          </el-col>
-          <el-col :lg="8" :xl="8" :xs="12" :sm="12" :md="12" class="col-margin">
-            <el-card
-              shadow="never"
-              style="width: 100%; height: 160px; border-radius: 2px; padding: 12px"
-            >
-              <p class="cardTitle">反馈满意数</p>
-              <p class="cardContent">
-                {{ data.like_evaluation_count }}
-              </p>
-            </el-card>
-          </el-col>
-          <el-col :lg="8" :xl="8" :xs="12" :sm="12" :md="12" class="col-margin">
-            <el-card
-              shadow="never"
-              style="width: 100%; height: 160px; border-radius: 2px; padding: 12px"
-            >
-              <p class="cardTitle">用户满意度</p>
-              <p class="cardContent">{{ data.like_evaluation_percent }}%</p>
-            </el-card>
-          </el-col>
-        </el-row>
-      </div>
-    </div>
-  </div>
-</template>
-
 <style lang="scss" scoped>
 .content-view-container {
   :deep(.el-col) {

@@ -3,12 +3,12 @@
     <div class="create-bot-container" :style="{ width: isMobile ? '95%' : '576px' }">
       <div class="px-[40px]">
         <div class="flex justify-between items-center mb-1 font-medium text-[18px]">
-          <span>欢迎加入Chato</span>
+          <span>{{ $t('欢迎加入Chato') }}</span>
           <span class="text-[14px]">{{ index }}/3</span>
         </div>
-        <p class="md:mb-[12px] mb-[32px]">我们将根据你的回答，提供更好地服务</p>
+        <p class="md:mb-[12px] mb-[32px]">{{ $t('我们将根据你的回答，提供更好地服务') }}</p>
         <p class="text-sm font-medium md:mb-2 mb-4" v-if="index !== 3">
-          {{ index === 1 ? '所在行业' : '预期希望解决的问题' }}
+          {{ index === 1 ? t('所在行业') : t('预期希望解决的问题') }}
         </p>
         <AllIndusty
           v-if="index === 1"
@@ -36,9 +36,9 @@
         :justify="index === 1 ? 'end' : 'space-between'"
       >
         <el-col class="" :md="12" :xs="12" :sm="12" :lg="6" v-if="[2, 3].includes(index)">
-          <el-button class="justify-start" circle link size="large" @click="index -= 1"
-            >上一步</el-button
-          >
+          <el-button class="justify-start" circle link size="large" @click="index -= 1">
+            {{ $t('上一步') }}
+          </el-button>
         </el-col>
         <el-col :md="12" :xs="12" :sm="12" :lg="6">
           <el-button
@@ -47,7 +47,7 @@
             :class="['rounded-full', disabled ? 'disabled-btn' : '']"
             size="large"
             @click="handleStep"
-            >{{ [1, 2].includes(index) ? '下一步' : '完成' }}</el-button
+            >{{ [1, 2].includes(index) ? $t('下一步') : $t('完成') }}</el-button
           >
         </el-col>
       </el-row>
@@ -64,6 +64,7 @@ import { $notnull } from '@/utils/help'
 import { ElLoading, ElNotification as Notification } from 'element-plus'
 import { storeToRefs } from 'pinia'
 import { computed, onUnmounted, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import AllIndusty from './AllIndusty.vue'
 import UserDusty from './UserDusty.vue'
 
@@ -95,6 +96,7 @@ const showInputQustion = ref<boolean>(false)
 const jobList = ref<string[]>([])
 const userDustyInfo = ref<UserDustyInfo>()
 
+const { t } = useI18n()
 const disabled = computed(() =>
   index.value === 1 ? !currentIndusty.value : !curentQuestion.value.length
 )
@@ -102,20 +104,20 @@ const disabled = computed(() =>
 const handleIndusty = (item: string, index: number) => {
   if (index === 1) {
     currentIndusty.value = currentIndusty.value === item ? '' : item
-    showInputIndusty.value = currentIndusty.value === '其他' ? true : false
+    showInputIndusty.value = currentIndusty.value === t('其他') ? true : false
   } else {
     const index = curentQuestion.value.findIndex((i) => i === item)
     index < 0 ? curentQuestion.value.push(item) : curentQuestion.value.splice(index, 1)
-    showInputQustion.value = curentQuestion.value.includes('其他') ? true : false
+    showInputQustion.value = curentQuestion.value.includes(t('其他')) ? true : false
   }
 }
 
 const handleStep = async () => {
   if (index.value === 1 && !industyName.value && !currentIndusty.value) {
-    return Notification.error('请选择您所在行业')
+    return Notification.error(t('请选择您所在行业'))
   }
   if (index.value === 2 && !curentQuestion.value.length && !questionName.value) {
-    return Notification.error('请选择您预期希望解决的问题')
+    return Notification.error(t('请选择您预期希望解决的问题'))
   }
 
   if (index.value === 3) {
@@ -123,10 +125,11 @@ const handleStep = async () => {
       try {
         loading.value = ElLoading.service({
           lock: true,
-          text: '提交中',
+          text: t('提交中'),
           background: 'rgba(0, 0, 0, 0.7)'
         })
-        const industry = currentIndusty.value === '其他' ? industyName.value : currentIndusty.value
+        const industry =
+          currentIndusty.value === t('其他') ? industyName.value : currentIndusty.value
         curentQuestion.value.push(questionName.value)
         await postFirstGuideSelect({
           industry,
@@ -142,7 +145,7 @@ const handleStep = async () => {
       }
       return
     } else {
-      return Notification.error('请选择您的职位')
+      return Notification.error(t('请选择您的职位'))
     }
   }
   index.value = index.value + 1

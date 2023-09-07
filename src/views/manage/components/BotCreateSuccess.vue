@@ -4,8 +4,10 @@
       src="@/assets/img/create-bot-success.png"
       class="w-[160px] h-[120px] object-cover mb-6 mx-auto"
     />
-    <p class="text-lg font-medium text-[#303133] mb-3">创建成功</p>
-    <p class="text-xs text-[#9DA3AF] mb-8">前往以下环节，去优化您的机器人</p>
+    <p class="text-lg font-medium text-[#303133] mb-3">{{ $t('创建成功') }}</p>
+    <p class="text-xs text-[#9DA3AF] mb-8">
+      {{ $t('前往以下环节，去优化您的机器人') }}
+    </p>
     <el-row justify="start" :gutter="16" class="gap-y-4">
       <el-col v-for="item in GuideList" :key="item.route" :sm="24" :md="12" :lg="12">
         <div
@@ -14,7 +16,9 @@
         >
           <svg-icon :name="item.icon" svg-class="w-12 h-12" />
           <div class="flex-1 text-left">
-            <p class="text-[#303133] text-sm font-medium mb-1">{{ item.title }}</p>
+            <p class="text-[#303133] text-sm font-medium mb-1">
+              {{ item.title }}
+            </p>
             <p class="text-xs text-[#9DA3AF]">{{ item.desc }}</p>
           </div>
           <el-icon :size="16"><ArrowRight /></el-icon>
@@ -23,12 +27,13 @@
     </el-row>
   </div>
 </template>
-
-<script setup lang="ts">
+<script lang="ts" setup>
 import { RoutesMap } from '@/router'
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 
+const { t } = useI18n()
 const props = defineProps<{
   domainId: string
 }>()
@@ -40,26 +45,26 @@ const internalDomainId = computed(() => props.domainId)
 const GuideList = [
   {
     icon: 'guide-user',
-    title: '形象',
-    desc: '个性化配置界面上展示的各种元素',
+    title: t('形象'),
+    desc: t('个性化配置界面上展示的各种元素'),
     route: RoutesMap.tranning.botUser
   },
   {
     icon: 'guide-personal',
-    title: '规则',
-    desc: '设定机器人类型和背景信息',
+    title: t('规则'),
+    desc: t('设定机器人类型和背景信息'),
     route: RoutesMap.tranning.botPersona
   },
   {
     icon: 'guide-knowledge',
-    title: '知识',
-    desc: '灌入学习素材并智能学习',
+    title: t('知识'),
+    desc: t('灌入学习素材并智能学习'),
     route: RoutesMap.tranning.botContentQA
   },
   {
     icon: 'guide-chat',
-    title: '对话',
-    desc: '在对话中可不断验证和修正',
+    title: t('对话'),
+    desc: t('在对话中可不断验证和修正'),
     route: RoutesMap.tranning.botChat
   }
 ]

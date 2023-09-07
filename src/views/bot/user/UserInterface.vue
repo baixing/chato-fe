@@ -8,7 +8,7 @@
     ></div>
     <div v-else class="flex justify-between flex-wrap gap-4 w-full overflow-hidden">
       <div class="bot-setting-container max-w-[600px] 2xl:max-w-[480px]">
-        <FLTitle>基本信息</FLTitle>
+        <FLTitle>{{ $t('基本信息') }}</FLTitle>
         <div class="flex items-center justify-between gap-4 mb-9">
           <ImgUpload
             :value="settingForm.domain.avatar"
@@ -38,7 +38,7 @@
             <template #label>
               <div class="personal-label">
                 <div class="flex items-center gap-2">
-                  <span>简介</span>
+                  <span>{{ $t('简介') }}</span>
                   <AIGenerateBtn
                     ref="generateIntroBtnRef"
                     v-model:generateStr="settingForm.domain.desc"
@@ -61,12 +61,12 @@
               />
             </div>
           </el-form-item>
-          <FLTitle class="mt-16">对话元素</FLTitle>
+          <FLTitle class="mt-16">{{ $t('对话元素') }}</FLTitle>
           <el-form-item>
             <template #label>
               <div class="flex items-center justify-between">
-                欢迎语
-                <AIGenerateBtn
+                {{ $t('欢迎语')
+                }}<AIGenerateBtn
                   ref="generateWelcomeBtnRef"
                   v-model:generateStr="settingForm.domain.welcome"
                   :type="EDomainAIGenerateType.welcome"
@@ -85,36 +85,40 @@
                 :disabled="welcomeInputDisabled"
               />
               <div class="personal-form-tips">
-                打开聊天窗口后会主动发送，添加双井号可添加提问示例，例如：#帮我写一则关于xxx的文案#，此类消息不消耗电力值。
+                {{
+                  $t(
+                    '打开聊天窗口后会主动发送，添加双井号可添加提问示例，例如：#帮我写一则关于xxx的文案#，此类消息不消耗电力值。'
+                  )
+                }}
               </div>
             </div>
           </el-form-item>
-          <el-form-item label="菜单栏" class="mt-10">
+          <el-form-item :label="$t(`菜单栏`)" class="mt-10">
             <div class="w-full">
               <ChatShortcuts v-model:shortcuts="settingForm.shortcuts" :domain-id="domainId" />
               <div class="personal-form-tips">
-                用户点击菜单后，将回复对应内容。此类消息不消耗电力值。
+                {{ $t('用户点击菜单后，将回复对应内容。此类消息不消耗电力值。') }}
               </div>
             </div>
           </el-form-item>
-          <el-form-item label="气泡设置" class="mt-10 !mb-16">
+          <el-form-item :label="$t(`气泡设置`)" class="mt-10 !mb-16">
             <div class="flex gap-16 w-full lg:flex-col lg:gap-4">
               <div class="flex items-center gap-6">
-                <span class="text-[#596780]">对话气泡</span>
+                <span class="text-[#596780] bubble-text">{{ $t('对话气泡') }}</span>
                 <ColorPicker v-model:color="settingForm.show.message_style" />
               </div>
               <div class="flex items-center gap-6">
-                <span class="text-[#596780]">悬浮气泡</span>
+                <span class="text-[#596780] bubble-text">{{ $t('悬浮气泡') }}</span>
                 <ColorPicker v-model:color="settingForm.show.suspend_style" />
               </div>
             </div>
           </el-form-item>
           <div class="relative w-full">
-            <FLTitle>品牌包装</FLTitle>
+            <FLTitle>{{ $t('品牌包装') }}</FLTitle>
             <el-form-item class="!mb-[60px]">
               <template #label>
                 <div class="personal-label">
-                  <span>品牌 & logo</span>
+                  <span>{{ $t('品牌 & logo') }}</span>
                   <SwitchWithStateMsg v-model:value="settingForm.show.brand_show" />
                 </div>
               </template>
@@ -138,13 +142,13 @@
             </el-form-item>
             <SpaceRightsMask :visible="maskVisible" :rightsType="ESpaceRightsType.brand" />
           </div>
-          <el-button type="primary" @click="onSave" size="large" class="lg:mb-4">
-            保存设定
-          </el-button>
+          <el-button type="primary" @click="onSave" size="large" class="lg:mb-4">{{
+            $t('保存设定')
+          }}</el-button>
         </el-form>
       </div>
       <div class="bot-setting-preview">
-        <h2 class="preview-title">以下为预览效果</h2>
+        <h2 class="preview-title">{{ $t('以下为预览效果') }}</h2>
         <PreviewBot
           :bot="previewBotInfo"
           :shortcuts="settingForm.shortcuts"
@@ -167,7 +171,6 @@
     </div>
   </div>
 </template>
-
 <script setup>
 import { getDomainDetailV2, saveDomainV2 } from '@/api/domain'
 import DefaultAvatar from '@/assets/img/avatar.png'
@@ -191,11 +194,13 @@ import * as url from '@/utils/url'
 import { ElLoading, ElMessage, ElNotification as Notification } from 'element-plus'
 import { storeToRefs } from 'pinia'
 import { computed, reactive, ref, toRaw, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import ChatShortcuts from './components/ChatShortcuts.vue'
 import ColorPicker from './components/ColorPicker.vue'
 import PreviewBot from './components/PreviewBot.vue'
 
+const { t } = useI18n()
 const route = useRoute()
 const domainStoreI = useDomainStore()
 const spaceStoreI = useSpaceStore()
@@ -256,7 +261,9 @@ const settingForm = reactive({
     welcome: '',
     brand_name: '',
     brand_logo: '',
-    ad_content: 'Chato ——基于AI技术 轻松创建对话机器人，赶快来 Chato 创建一个属于自己的机器人吧。',
+    ad_content: t(
+      'Chato ——基于AI技术 轻松创建对话机器人，赶快来 Chato 创建一个属于自己的机器人吧。'
+    ),
     ad_frequency: 30,
     category: ''
   }
@@ -279,26 +286,30 @@ const onImgChange = (value, type = 'avatar' | 'brand_logo') => {
 const beforeSaveCheck = () => {
   let msg = ''
   if (getStringWidth(settingForm.domain.name) > HansLimit.name) {
-    msg = `机器人名字不能超过 ${HansLimit.name} 字符`
+    msg = t('机器人名字不能超过 {slot1} 字符', { slot1: HansLimit.name })
   }
 
   if (getStringWidth(settingForm.domain.desc) > HansLimit.desc) {
-    msg = `机器人简介不能超过 ${HansLimit.desc} 字符`
+    msg = t('机器人简介不能超过 {slot1} 字符', { slot1: HansLimit.desc })
   }
 
   if (getStringWidth(settingForm.domain.welcome) > HansLimit.welcome) {
-    msg = `机器人欢迎语不能超过 ${HansLimit.welcome} 字符`
+    msg = t('机器人欢迎语不能超过 {slot1} 字符', {
+      slot1: HansLimit.welcome
+    })
   }
 
   if (getStringWidth(settingForm.domain.brand_name) > HansLimit.brandName) {
-    msg = `品牌名称不能超过 ${HansLimit.brandName} 字符`
+    msg = t('品牌名称不能超过 {slot1} 字符', {
+      slot1: HansLimit.brandName
+    })
   }
 
   if (
     settingForm.show.ad_show &&
     getStringWidth(settingForm.domain.ad_content) > HansLimit.adText
   ) {
-    msg = `广告文案不能超过 ${HansLimit.adText} 字符`
+    msg = t('广告文案不能超过 {slot1} 字符', { slot1: HansLimit.adText })
   }
 
   if (msg) {
@@ -317,7 +328,7 @@ const onSave = async () => {
   }
   loading.value = ElLoading.service({
     lock: true,
-    text: '保存中',
+    text: t('保存中'),
     background: 'rgba(0, 0, 0, 0.7)'
   })
   try {
@@ -337,7 +348,7 @@ const onSave = async () => {
     saveParams.domain.ad_show = undefined
     // TODO: 推进后端接口改动，支持只传递要修改的字段，而不是全部的字段
     await saveDomainV2(slug.value, { ...domainDetailRes, ...settingForm })
-    Notification.success('保存成功')
+    Notification.success(t('保存成功'))
     generateIntroBtnRef.value?.resetCount()
     generateWelcomeBtnRef.value?.resetCount()
     domainStoreI.initDomainList(route)
@@ -379,7 +390,6 @@ watch(
   { immediate: true }
 )
 </script>
-
 <style>
 .avatar-uploader .el-upload {
   position: relative;
@@ -401,6 +411,9 @@ watch(
 }
 </style>
 <style lang="scss" scoped>
+.bubble-text {
+  line-height: 1.55;
+}
 .bot-setting-container {
   width: 100%;
 

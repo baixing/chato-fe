@@ -27,14 +27,16 @@ import { useBasicLayout } from '@/composables/useBasicLayout'
 import useSpaceRights from '@/composables/useSpaceRights'
 import { ESpaceRightsType } from '@/enum/space'
 import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const visible = ref(false)
 
 const helpList = [
-  { title: '联系客服', icon: 'wechat', link: '' },
-  { title: 'Chato社区', icon: 'community', link: 'https://support.qq.com/products/600388/' },
+  { title: t('联系客服'), icon: 'wechat', link: '' },
+  { title: t('Chato社区'), icon: 'community', link: 'https://support.qq.com/products/600388/' },
   {
-    title: '用户手册',
+    title: t('用户手册'),
     icon: 'book-guide',
     link: 'https://baixingwang.feishu.cn/wiki/EZAPw0vwJiHBazkOCfLcMGYpnig'
   }

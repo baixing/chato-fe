@@ -1,5 +1,7 @@
 <template>
-  <div class="title">内测名额有限，排队人数众多，即将完成审核，请稍后...</div>
+  <div class="title">
+    {{ $t('内测名额有限，排队人数众多，即将完成审核，请稍后...') }}
+  </div>
 
   <el-progress type="circle" :percentage="progress" color="#409EFF">
     <template #default="{ percentage }">
@@ -7,7 +9,6 @@
     </template>
   </el-progress>
 </template>
-
 <script setup>
 import { ElNotification as Notification } from 'element-plus'
 import { ref } from 'vue'
@@ -20,12 +21,11 @@ const timer = setInterval(() => {
   progress.value += 10
   if (progress.value >= 100) {
     timer && clearInterval(timer)
-    Notification.success('审核通过')
+    Notification.success(t('审核通过'))
     router.replace(`/resource`)
   }
 }, 1000)
 </script>
-
 <style lang="scss" scoped>
 .title {
   font-size: 14px;

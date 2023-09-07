@@ -6,7 +6,7 @@
         internalVal && '!text-inherit !text-[#7C5CFC]'
       ]"
     >
-      {{ internalVal ? props.openMsg : props.closeMsg }}
+      {{ internalVal ? $t(props.openMsg) : $t(props.closeMsg) }}
     </span>
     <el-switch v-model="internalVal" :size="size" />
   </span>

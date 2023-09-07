@@ -10,7 +10,7 @@
       <div class="flex flex-col gap-3 items-center cursor-pointer">
         <Avatar
           :avatar="userInfo.org.avatar"
-          name="空间"
+          :name="$t('空间')"
           :commercial-type="userCommercialType"
           with-rights
           show-all-name
@@ -19,14 +19,14 @@
           plain
           class="!text-[#7C5CFC] !border-[#7C5CFC] !leading-4 !text-xs !rounded-md !px-[10px] box-border !py-[2px] !h-fit !bg-transparent hover:opacity-90 mb-5"
         >
-          切换
+          {{ $t('切换') }}
         </el-button>
       </div>
     </template>
     <div class="flex flex-col -mx-3 px-5 flex-1 box-border overflow-hidden">
-      <span class="mb-2 text-[#596780]">我的空间</span>
+      <span class="mb-2 text-[#596780]">{{ $t('我的空间') }}</span>
       <div class="flex items-center justify-between">
-        <Avatar :avatar="selectedSpace?.org.avatar" name="空间" :size="28" show-all-name />
+        <Avatar :avatar="selectedSpace?.org.avatar" :name="$t('空间')" :size="28" show-all-name />
         <div class="space-more ml-2">
           <p class="flex-1 text-[#7c5cfc] truncate text-sm">{{ selectedSpace?.org.name }}</p>
           <el-icon class="!mr-0 text-[#7c5cfc]">
@@ -44,7 +44,7 @@
           @click="onSelect(item)"
           class="flex items-center justify-between overflow-hidden shrink-0 cursor-pointer space-item"
         >
-          <Avatar :avatar="item.org.avatar" name="空间" :size="28" show-all-name />
+          <Avatar :avatar="item.org.avatar" :name="$t('空间')" :size="28" show-all-name />
           <span class="flex-1 inline-block truncate ml-2 transition-colors">
             {{ item.org.name }}
           </span>

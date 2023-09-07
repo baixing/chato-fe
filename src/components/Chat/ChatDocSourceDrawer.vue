@@ -1,7 +1,7 @@
 <template>
   <el-drawer
     v-model="internalVisible"
-    title="文档来源"
+    :title="$t(`文档来源`)"
     :size="isMobile ? '80%' : '40%'"
     class="source-drawer"
   >

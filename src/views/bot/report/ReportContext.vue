@@ -25,7 +25,7 @@
       </template>
     </virtual-list>
     <div class="text-center flex items-end justify-center">
-      <el-button type="primary" @click="onExport">导出全部</el-button>
+      <el-button type="primary" @click="onExport">{{ $t('导出全部') }}</el-button>
     </div>
   </div>
   <ChatMessageMore
@@ -52,8 +52,7 @@
   />
   <el-image-viewer v-if="showPreview" :url-list="[previewImageUrl]" @close="showPreview = false" />
 </template>
-
-<script setup lang="ts">
+<script lang="ts" setup>
 import { getDomainDetailPublic } from '@/api/domain'
 import { exportQuestions, getQuestions } from '@/api/report'
 import DocSourceDrawer from '@/components/Chat/ChatDocSourceDrawer.vue'

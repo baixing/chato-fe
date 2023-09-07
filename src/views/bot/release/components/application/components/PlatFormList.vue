@@ -3,19 +3,17 @@
     <div class="plat-item md:mb-3" v-for="item in platformList" :key="item">
       <svg-icon :name="item"></svg-icon>
     </div>
-    <span class="text-[14px] ml-4 md:text-xs"
-      >Chato 支持多平台、多渠道、多形式地对外发布机器人</span
-    >
+    <span class="text-[14px] ml-4 md:text-xs">{{
+      $t('Chato 支持多平台、多渠道、多形式地对外发布机器人')
+    }}</span>
   </div>
 </template>
-
-<script setup lang="ts">
+<script lang="ts" setup>
 defineProps<{
   platformList: string[]
 }>()
 </script>
-
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .plat-list-conatiner {
   display: flex;
   justify-content: flex-start;

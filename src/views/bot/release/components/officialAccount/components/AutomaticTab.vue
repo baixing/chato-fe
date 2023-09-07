@@ -7,7 +7,7 @@
         link
         size="large"
         @click="emit('handleEventSet', 'preview', automaticTabImg)"
-        >查看填写示意图</el-button
+        >{{ $t('查看填写示意图') }}</el-button
       >
     </p>
     <div class="w-full flex">
@@ -21,16 +21,20 @@
       <div class="steps-right">
         <div class="mb-[20px]">
           <p class="text-sm">
-            <span class="text-[#303133]">进入微信</span>
-            <a href="https://mp.weixin.qq.com/" target="_blank" class="text-[#2AC74A]"
-              >「公众号后台」</a
-            >
+            <span class="text-[#303133]">{{ $t('进入微信') }}</span>
+            <a href="https://mp.weixin.qq.com/" target="_blank" class="text-[#2AC74A]">{{
+              $t('「公众号后台」')
+            }}</a>
           </p>
-          <p class="text-[#9DA3AF] mt-[8px]">路径：内容与互动 > 自动回复 > 收到消息回复</p>
+          <p class="text-[#9DA3AF] mt-[8px]">
+            {{ $t('路径：内容与互动 > 自动回复 > 收到消息回复') }}
+          </p>
         </div>
         <div class="mb-[20px]">
-          <p class="text-sm text-[#303133]">创建自动回复</p>
-          <p class="mt-[8px] text-[#9DA3AF]">选择自动回复类型，将以下链接或二维码，配置到回复里</p>
+          <p class="text-sm text-[#303133]">{{ $t('创建自动回复') }}</p>
+          <p class="mt-[8px] text-[#9DA3AF]">
+            {{ $t('选择自动回复类型，将以下链接或二维码，配置到回复里') }}
+          </p>
           <p class="my-[12px] text-[#303133]">{{ link }}</p>
           <p>
             <el-button
@@ -39,10 +43,12 @@
               link
               size="large"
               @click="emit('handleEventSet', 'copy', link)"
-              >复制链接</el-button
+              >{{ $t('复制链接') }}</el-button
             >
-            <a :href="qrcode" download="二维码"
-              ><el-button type="primary" class="text-xs" link size="large">保存二维码</el-button></a
+            <a :href="qrcode" :download="$t(`二维码`)"
+              ><el-button type="primary" class="text-xs" link size="large">{{
+                $t('保存二维码')
+              }}</el-button></a
             >
           </p>
         </div>
@@ -50,9 +56,9 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import automaticTabImg from '@/assets/img/authmaticTabImg.png'
+<script lang="ts" setup>
+import useImagePath from '@/composables/useImagePath'
+const { ImagePath: automaticTabImg } = useImagePath('authmaticTabImg')
 defineProps<{
   qrcode: string
   link: string
@@ -60,5 +66,3 @@ defineProps<{
 
 const emit = defineEmits(['handleEventSet'])
 </script>
-
-<style scoped lang="scss"></style>

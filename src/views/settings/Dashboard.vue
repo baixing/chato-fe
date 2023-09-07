@@ -1,3 +1,102 @@
+<template>
+  <header>
+    <h2>{{ $t('仪表盘') }}</h2>
+    <div class="action">
+      <el-radio-group v-model="$dateRangeType" @change="onChangeDateRangeType">
+        <el-radio-button label="today">{{ $t('今天') }}</el-radio-button>
+        <el-radio-button label="week">{{ $t('最近 7 天') }}</el-radio-button>
+        <el-radio-button label="month">{{ $t('最近 30 天') }}</el-radio-button>
+      </el-radio-group>
+    </div>
+  </header>
+  <div class="main-body">
+    <div class="summary" v-loading="isSummaryLoading">
+      <div class="amount">
+        <h4>{{ $t('问题总数') }}</h4>
+        <div class="value">
+          {{ typeof $pagination.total === 'number' ? $pagination.total : '--' }}
+        </div>
+      </div>
+      <div class="score">
+        <h4>{{ $t('平均评分') }}</h4>
+        <div class="value">
+          {{
+            typeof $summary.ave_owner_score === 'number'
+              ? trimDecimal($summary.ave_owner_score, 1)
+              : '-.-'
+          }}
+        </div>
+      </div>
+      <div class="hit-rate" v-if="false">
+        <h4>{{ $t('搜索命中率') }}</h4>
+        <div class="value">
+          {{
+            typeof $summary.resp_rate === 'number' ? trimDecimal($summary.resp_rate * 100) : '--'
+          }}
+          <span class="unit">%</span>
+        </div>
+      </div>
+      <div class="response-time">
+        <h4>{{ $t('平均响应时间') }}</h4>
+        <div class="value">
+          {{ typeof $summary.ave_time === 'number' ? trimDecimal($summary.ave_time, 1) : '--' }}
+          <span class="unit">{{ $t('秒') }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="list" v-loading="isListLoading">
+      <el-table
+        :data="$items"
+        stripe
+        :empty-text="$t(`暂未获取问答记录，请刷新重试`)"
+        style="width: 100%"
+      >
+        <el-table-column prop="id" label="ID" width="60" align="right" />
+        <el-table-column prop="question" :label="$t(`提问`)" min-width="120" />
+        <el-table-column prop="answer" :label="$t(`回答`)" min-width="200" />
+        <el-table-column prop="status" :label="$t(`状态`)" width="80" align="center" />
+        <el-table-column :label="$t(`评分`)" width="60" align="right">
+          <template #default="scope">
+            <template v-if="typeof scope.row.owner_score === 'number'">
+              {{ scope.row.owner_score }}
+            </template>
+            <template v-else>
+              <el-popover
+                placement="top-end"
+                title=""
+                :width="150"
+                trigger="hover"
+                :visible="scope.row.popoverRating"
+              >
+                <template #reference>
+                  <a class="cm-link" href="#rate" @click.prevent="">{{ $t('评分') }}</a>
+                </template>
+                <el-rate
+                  @change="
+                    (value) => {
+                      rate(scope.row, value)
+                      scope.row.popoverRating = false
+                    }
+                  "
+                  :colors="['#99A9BF', '#F7BA2A', '#FF9900']"
+                />
+              </el-popover>
+            </template>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div class="pagination">
+        <el-pagination
+          background
+          layout="prev, pager, next"
+          :page-count="$pagination.page_count"
+          :current-page="$pagination.page"
+          @update:current-page="updateList"
+        />
+      </div>
+    </div>
+  </div>
+</template>
 <script setup>
 import {
   getOrgDashboardQuestions,
@@ -77,102 +176,6 @@ function onChangeDateRangeType(dateRangeType) {
   updateSummary()
 }
 </script>
-
-<template>
-  <header>
-    <h2>仪表盘</h2>
-    <div class="action">
-      <el-radio-group v-model="$dateRangeType" @change="onChangeDateRangeType">
-        <el-radio-button label="today">今天</el-radio-button>
-        <el-radio-button label="week">最近 7 天</el-radio-button>
-        <el-radio-button label="month">最近 30 天</el-radio-button>
-      </el-radio-group>
-    </div>
-  </header>
-  <div class="main-body">
-    <div class="summary" v-loading="isSummaryLoading">
-      <div class="amount">
-        <h4>问题总数</h4>
-        <div class="value">
-          {{ typeof $pagination.total === 'number' ? $pagination.total : '--' }}
-        </div>
-      </div>
-      <div class="score">
-        <h4>平均评分</h4>
-        <div class="value">
-          {{
-            typeof $summary.ave_owner_score === 'number'
-              ? trimDecimal($summary.ave_owner_score, 1)
-              : '-.-'
-          }}
-        </div>
-      </div>
-      <div class="hit-rate" v-if="false">
-        <h4>搜索命中率</h4>
-        <div class="value">
-          {{
-            typeof $summary.resp_rate === 'number' ? trimDecimal($summary.resp_rate * 100) : '--'
-          }}
-          <span class="unit">%</span>
-        </div>
-      </div>
-      <div class="response-time">
-        <h4>平均响应时间</h4>
-        <div class="value">
-          {{ typeof $summary.ave_time === 'number' ? trimDecimal($summary.ave_time, 1) : '--' }}
-          <span class="unit">秒</span>
-        </div>
-      </div>
-    </div>
-    <div class="list" v-loading="isListLoading">
-      <el-table :data="$items" stripe empty-text="暂未获取问答记录，请刷新重试" style="width: 100%">
-        <el-table-column prop="id" label="ID" width="60" align="right" />
-        <el-table-column prop="question" label="提问" min-width="120" />
-        <el-table-column prop="answer" label="回答" min-width="200" />
-        <el-table-column prop="status" label="状态" width="80" align="center" />
-        <el-table-column label="评分" width="60" align="right">
-          <template #default="scope">
-            <template v-if="typeof scope.row.owner_score === 'number'">
-              {{ scope.row.owner_score }}
-            </template>
-            <template v-else>
-              <el-popover
-                placement="top-end"
-                title=""
-                :width="150"
-                trigger="hover"
-                :visible="scope.row.popoverRating"
-              >
-                <template #reference>
-                  <a class="cm-link" href="#rate" @click.prevent="">评分</a>
-                </template>
-                <el-rate
-                  @change="
-                    (value) => {
-                      rate(scope.row, value)
-                      scope.row.popoverRating = false
-                    }
-                  "
-                  :colors="['#99A9BF', '#F7BA2A', '#FF9900']"
-                />
-              </el-popover>
-            </template>
-          </template>
-        </el-table-column>
-      </el-table>
-      <div class="pagination">
-        <el-pagination
-          background
-          layout="prev, pager, next"
-          :page-count="$pagination.page_count"
-          :current-page="$pagination.page"
-          @update:current-page="updateList"
-        />
-      </div>
-    </div>
-  </div>
-</template>
-
 <style lang="scss" scoped>
 .page-main {
   header {

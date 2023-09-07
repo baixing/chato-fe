@@ -12,7 +12,7 @@
       <Avatar :avatar="item.org.avatar" name="空间" :size="32" show-all-name />
       <p class="flex-1 pr-4 truncate break-all text-sm">{{ item.org.name }}</p>
       <el-button plain type="primary" class="bg-white" @click="() => onInto(item)">
-        进入
+        {{ $t('进入') }}
       </el-button>
     </div>
   </div>

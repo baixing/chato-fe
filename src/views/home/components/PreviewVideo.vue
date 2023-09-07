@@ -18,19 +18,21 @@
       preload="none"
       muted
       controls
-      poster="@/assets/img/home/video-cover.jpg"
+      :poster="ImagePath"
     >
       <source
         src="https://ai.baixing.net/ai/Chato8%E6%9C%8815%E7%89%88%E6%9C%AC.mp4"
         type="video/mp4"
       />
-      您的浏览器不支持 video 标签。
+      {{ $t('您的浏览器不支持 video 标签。') }}
     </video>
   </div>
 </template>
-
-<script setup lang="ts">
+<script lang="ts" setup>
+import useImagePath from '@/composables/useImagePath'
 import { computed } from 'vue'
+
+const { ImagePath } = useImagePath('video-cover', 'home', 'jpg')
 
 const props = defineProps<{
   visible: boolean

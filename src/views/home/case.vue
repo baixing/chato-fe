@@ -3,8 +3,12 @@
     <div
       class="pt-[210px] pb-[88px] px-[118px] relative text-[28px] leading-[50px] text-center lg:text-xl lg:px-4 lg:pt-32 lg:pb-16"
     >
-      <h2 class="font-normal lg:px-2 lg:mb-4">各个行业、各种规模的公司都适合使用 Chato</h2>
-      <h2 class="font-normal lg:px-2">用 Chato，连接企业智慧，超越传统运营，实现 AI 赋能</h2>
+      <h2 class="font-normal lg:px-2 lg:mb-4">
+        {{ $t('各个行业、各种规模的公司都适合使用 Chato') }}
+      </h2>
+      <h2 class="font-normal lg:px-2">
+        {{ $t('用 Chato，连接企业智慧，超越传统运营，实现 AI 赋能') }}
+      </h2>
       <div class="flex gap-8 flex-wrap justify-center mt-16 lg:gap-3 lg:mt-10">
         <div
           v-for="(item, index) in caseTypeList"
@@ -23,8 +27,8 @@
           class="case-type-card !text-sm !gap-1 lg:!w-16 lg:!h-16 lg:!text-xs lg:!rounded-xl"
           style="background: linear-gradient(144deg, #356bff -29%, #35a4ff -29%, #e96dff 131%)"
         >
-          <span>100+个方案</span>
-          <span>行业方案</span>
+          <span>{{ $t('100+个方案') }}</span>
+          <span>{{ $t('行业方案') }}</span>
         </div>
       </div>
       <div
@@ -40,7 +44,7 @@
 
     <template v-for="(item, index) in caseList" :key="`case_item_${index}`">
       <div class="text-4xl font-medium text-center mb-10 lg:text-2xl">
-        {{ `行业案例：${item.title}` }}
+        {{ $t('行业案例：{msg}', { msg: item.title }) }}
       </div>
       <div
         class="w-full grid grid-cols-[1fr_2fr] rounded-[28px] overflow-hidden border border-solid border-[#E4E7ED] mb-24 lg:grid-cols-1 lg:mb-12"
@@ -75,7 +79,7 @@
             </p>
           </div>
           <p class="text-xl text-[#303133] font-medium mt-10 mb-5 lg:mt-5 lg:mb-2 lg:text-base">
-            客户概况
+            {{ $t('客户概况') }}
           </p>
           <div class="space-y-4 lg:space-y-2">
             <p
@@ -87,7 +91,7 @@
           </div>
         </div>
         <div class="bg-white px-16 py-10 text-[#3D3D3D] text-sm leading-5 shrink-0 lg:px-6">
-          <p class="text-lg font-medium leading-5 mb-6">需求和痛点</p>
+          <p class="text-lg font-medium leading-5 mb-6">{{ $t('需求和痛点') }}</p>
           <ul class="list-disc space-y-4 pl-4 marker:text-[#B5BED0] mb-10">
             <li
               v-for="(needsItem, needsIndex) in item.needs"
@@ -96,7 +100,7 @@
               {{ needsItem }}
             </li>
           </ul>
-          <p class="text-lg font-medium leading-5 mb-6 text-[#7C5CFC]">解决方案</p>
+          <p class="text-lg font-medium leading-5 mb-6 text-[#7C5CFC]">{{ $t('解决方案') }}</p>
           <ul class="list-disc space-y-4 pl-4 marker:text-[#B5BED0]">
             <li v-for="(solItem, solIndex) in item.solution" :key="`case_${index}_sol_${solIndex}`">
               {{ solItem }}
@@ -111,15 +115,17 @@
             class="mt-12 !font-normal lg:mt-6"
             @click="onEnter"
           >
-            立即体验 Chato
+            {{ $t('立即体验 Chato') }}
           </el-button>
         </div>
       </div>
     </template>
   </div>
   <div class="line-grad-bg home-center-padding text-white py-16 text-center lg:py-12">
-    <p class="mb-5 text-2xl font-medium lg:px-8">Chato 期待与各行各业的伙伴共同成长</p>
-    <p class="mb-10 leading-6">我们致力于为您提供定制化的产品解决方案，用 AI 来提升业务的效率</p>
+    <p class="mb-5 text-2xl font-medium lg:px-8">{{ $t('Chato 期待与各行各业的伙伴共同成长') }}</p>
+    <p class="mb-10 leading-6">
+      {{ $t('我们致力于为您提供定制化的产品解决方案，用 AI 来提升业务的效率') }}
+    </p>
     <div class="flex gap-7 items-center justify-center lg:gap-3">
       <el-button
         class="w-[150px] !h-10 !border-none !bg-[#303133] !text-white rounded-lg !text-sm font-medium tracking-[0.08em] lg:w-24 lg:!h-9 lg:!text-xs hover:!scale-105"
@@ -127,7 +133,7 @@
         id="Chato_case_bottom_experience_click"
         @click="onEnter()"
       >
-        体验 Chato
+        {{ $t('体验 Chato') }}
       </el-button>
       <el-button
         class="w-[150px] !h-10 !text-[#303133] !bg-white !border-none rounded-lg !text-sm font-medium tracking-[0.08em] lg:w-24 lg:!h-9 lg:!text-xs hover:!scale-105"
@@ -136,7 +142,7 @@
         :icon="ChatDotRound"
         @click="onEnter('Chato_case_bottom_wechat_click')"
       >
-        微信联系
+        {{ $t('微信联系') }}
       </el-button>
     </div>
   </div>
@@ -150,7 +156,9 @@ import CompanyJMImg from '@/assets/img/home-case/company-jm.png'
 import CompanySTYImg from '@/assets/img/home-case/company-sty.png'
 import CompanyWMImg from '@/assets/img/home-case/company-wm.png'
 import { ChatDotRound } from '@element-plus/icons-vue'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const emit = defineEmits(['enter'])
 
 const onEnter = () => {
@@ -158,141 +166,161 @@ const onEnter = () => {
 }
 
 const caseTypeList = [
-  { icon: 'teaching', title: '教培', bg: 'linear-gradient(148deg, #05FF8E -19%, #52C8FF 134%)' },
-  { icon: 'heart', title: '咨询', bg: 'linear-gradient(153deg, #4278F6 -38%, #51C8FF 111%)' },
-  { icon: 'media', title: '新媒体', bg: 'linear-gradient(148deg, #356BFF -185%, #FD83FF 134%)' },
-  { icon: 'drinking', title: '门店', bg: 'linear-gradient(144deg, #FF4C72 -31%, #FFE873 136%)' },
-  { icon: 'medical', title: '医疗', bg: 'linear-gradient(146deg, #4278F6 -51%, #51F3FF 104%)' },
-  { icon: 'deed', title: '房产', bg: 'linear-gradient(146deg, #0DEEA7 -38%, #5AD0FF 128%)' }
+  { icon: 'teaching', title: t('教培'), bg: 'linear-gradient(148deg, #05FF8E -19%, #52C8FF 134%)' },
+  { icon: 'heart', title: t('咨询'), bg: 'linear-gradient(153deg, #4278F6 -38%, #51C8FF 111%)' },
+  { icon: 'media', title: t('新媒体'), bg: 'linear-gradient(148deg, #356BFF -185%, #FD83FF 134%)' },
+  { icon: 'drinking', title: t('门店'), bg: 'linear-gradient(144deg, #FF4C72 -31%, #FFE873 136%)' },
+  { icon: 'medical', title: t('医疗'), bg: 'linear-gradient(146deg, #4278F6 -51%, #51F3FF 104%)' },
+  { icon: 'deed', title: t('房产'), bg: 'linear-gradient(146deg, #0DEEA7 -38%, #5AD0FF 128%)' }
 ]
 
 const caseList = [
   {
-    title: '教育培训',
+    title: t('教育培训'),
     logo: CompanySTYImg,
-    company: '心聊康业',
-    tags: ['教育培训', '营销获客', '私域运营'],
+    company: t('心聊康业'),
+    tags: [t('教育培训'), t('营销获客'), t('私域运营')],
     companyDescTitle: '',
-    companyCustomerIntro: ['业务体量：10w+付费用户', '业务范围：家庭咨询、家庭教育'],
+    companyCustomerIntro: [t('业务体量：10w+付费用户'), t('业务范围：家庭咨询、家庭教育')],
     companyDesc: [
-      '心聊康业是一家专注于家庭教育和家庭咨询课程的机构，多年来积累了近百个付费客户社群'
+      t('心聊康业是一家专注于家庭教育和家庭咨询课程的机构，多年来积累了近百个付费客户社群')
     ],
     needs: [
-      '社群缺乏标准化运营流程，活跃度低',
-      '传统的门店获客方式效率低、成本高且效果不理想',
-      '线下未成交客户容易流失'
+      t('社群缺乏标准化运营流程，活跃度低'),
+      t('传统的门店获客方式效率低、成本高且效果不理想'),
+      t('线下未成交客户容易流失')
     ],
     solution: [
-      '机器人进群持续促活，群内活跃度极高，平均一小时有 30+ 互动问答，深度挖掘客户需求线索',
-      '用 AI 为卖点人拉人的私域裂变，3 天自然拉新 1200+ 精准客户',
-      '转化路径清晰，后台可直接设置营销广告链接，提高转化率'
+      t('机器人进群持续促活，群内活跃度极高，平均一小时有 30+ 互动问答，深度挖掘客户需求线索'),
+      t('用 AI 为卖点人拉人的私域裂变，3 天自然拉新 1200+ 精准客户'),
+      t('转化路径清晰，后台可直接设置营销广告链接，提高转化率')
     ]
   },
   {
-    title: '餐饮零售',
+    title: t('餐饮零售'),
     logo: CompanyJMImg,
-    company: '吉玛咖啡',
-    tags: ['餐饮', '新零售'],
+    company: t('吉玛咖啡'),
+    tags: [t('餐饮'), t('新零售')],
     companyDescTitle: '',
-    companyCustomerIntro: ['业务范围：饮品制作、咖啡培训、熟豆零售'],
+    companyCustomerIntro: [t('业务范围：饮品制作、咖啡培训、熟豆零售')],
     companyDesc: [
-      '吉玛咖啡深耕咖啡行业 21 年，从咖啡烘焙工厂到咖啡培训，再到自营的门店，在深圳当地颇有名气，口碑相传'
+      t(
+        '吉玛咖啡深耕咖啡行业 21 年，从咖啡烘焙工厂到咖啡培训，再到自营的门店，在深圳当地颇有名气，口碑相传'
+      )
     ],
     needs: [
-      '传统线下门店想搭建数字化体系，有限的人员难以同时兼顾一边服务客户一边处理软件',
-      '以做口碑的拓客方式过于传统，想做私域群，但社群需要 24 小时处理群里的问题，费时费力',
-      '设计门店营销活动没有思路，活动文案和推销话术产出效率低'
+      t('传统线下门店想搭建数字化体系，有限的人员难以同时兼顾一边服务客户一边处理软件'),
+      t('以做口碑的拓客方式过于传统，想做私域群，但社群需要 24 小时处理群里的问题，费时费力'),
+      t('设计门店营销活动没有思路，活动文案和推销话术产出效率低')
     ],
     solution: [
-      '创建并训练咖啡师推荐师机器人，帮助客户进行产品推荐和解答疑问，提升购买体验和销售效果',
-      '通过引入群聊机器人维护社群，24 小时处理群内问题，提高社群运营效率',
-      '利用机器人提供营销方案，设计门店营销活动并提供活动文案和推销话术，提高活动产出效率'
+      t('创建并训练咖啡师推荐师机器人，帮助客户进行产品推荐和解答疑问，提升购买体验和销售效果'),
+      t('通过引入群聊机器人维护社群，24 小时处理群内问题，提高社群运营效率'),
+      t('利用机器人提供营销方案，设计门店营销活动并提供活动文案和推销话术，提高活动产出效率')
     ]
   },
   {
-    title: '医疗美容',
+    title: t('医疗美容'),
     logo: CompanyWMImg,
-    company: '米娜美业',
-    tags: ['医美'],
+    company: t('米娜美业'),
+    tags: [t('医美')],
     companyDescTitle: '',
-    companyCustomerIntro: ['门店数量：全国 30 家门店', '业务范围：皮肤管理'],
+    companyCustomerIntro: [t('门店数量：全国 30 家门店'), t('业务范围：皮肤管理')],
     companyDesc: [
-      'wake me 拥有 32 年的韩国美业教育背景，引进国际标准化容颜管理体系，以做您可信赖的皮肤顾问为服务宗旨，通过科学的管理，唤醒美、守护美！'
+      t(
+        'wake me 拥有 32 年的韩国美业教育背景，引进国际标准化容颜管理体系，以做您可信赖的皮肤顾问为服务宗旨，通过科学的管理，唤醒美、守护美！'
+      )
     ],
     needs: [
-      '门店员工频繁回答重复问题，浪费时间和资源',
-      '需要在各大社交平台推荐产品、护肤知识，有大量的文案撰写需求',
-      '需要定期输出创意营销方案来支持推广和获客'
+      t('门店员工频繁回答重复问题，浪费时间和资源'),
+      t('需要在各大社交平台推荐产品、护肤知识，有大量的文案撰写需求'),
+      t('需要定期输出创意营销方案来支持推广和获客')
     ],
     solution: [
-      '创建护肤知识库机器人，提供专业信息查询和答疑，快速匹配适合客户的项目并提供详细说明',
-      '创建品牌文案机器人，根据不同平台调整内容，提供个性化推荐',
-      '创建营销专员机器人，撰写医美行业的销售和获客方案'
+      t('创建护肤知识库机器人，提供专业信息查询和答疑，快速匹配适合客户的项目并提供详细说明'),
+      t('创建品牌文案机器人，根据不同平台调整内容，提供个性化推荐'),
+      t('创建营销专员机器人，撰写医美行业的销售和获客方案')
     ]
   },
   {
-    title: '婚恋服务',
+    title: t('婚恋服务'),
     logo: CompanyAIImg,
-    company: '恋 AI 脑',
-    tags: ['婚恋'],
+    company: t('恋 AI 脑'),
+    tags: [t('婚恋')],
     companyDescTitle: '',
-    companyCustomerIntro: ['业务范围：红娘服务、情感咨询'],
+    companyCustomerIntro: [t('业务范围：红娘服务、情感咨询')],
     companyDesc: [
-      '「恋 AI 脑」项目针对传统婚恋服务的痛点，并基于对 AI 时代的洞察，由创始人元彬先生与初创团队共同开启。通过引入「 AI 红娘」的方式，真正解决了婚恋行业的成本和效率问题，帮助红娘提升业绩。'
+      t(
+        '「恋 AI 脑」项目针对传统婚恋服务的痛点，并基于对 AI 时代的洞察，由创始人元彬先生与初创团队共同开启。通过引入「 AI 红娘」的方式，真正解决了婚恋行业的成本和效率问题，帮助红娘提升业绩。'
+      )
     ],
     needs: [
-      '传统婚介形式落伍、用户需求沟通成本高',
-      '获客难且成本高，这是目前婚恋行业的现状',
-      '以“红娘”为代表的服务人员业务水平参差不齐，并且人员成本高昂'
+      t('传统婚介形式落伍、用户需求沟通成本高'),
+      t('获客难且成本高，这是目前婚恋行业的现状'),
+      t('以“红娘”为代表的服务人员业务水平参差不齐，并且人员成本高昂')
     ],
     solution: [
-      '利用 AI 绘图的能力，既满足了年轻人的好奇心，又有效地调研客户信息',
-      '以 AI 为卖点吸引客户，降低获客成本；同时，利用 AI 在线承接客户并进行精准引导，提高了获客的精准度',
-      '7x24 小时在线增加了服务时长；从 1 对 1 转变为 1 对多，增加了客户服务数量；通过 AI 接待客户替代传统红娘，加速了沟通并提升了服务质量。每位红娘的服务能力可达到原业绩的 5-10 倍。'
+      t('利用 AI 绘图的能力，既满足了年轻人的好奇心，又有效地调研客户信息'),
+      t(
+        '以 AI 为卖点吸引客户，降低获客成本；同时，利用 AI 在线承接客户并进行精准引导，提高了获客的精准度'
+      ),
+      t(
+        '7x24 小时在线增加了服务时长；从 1 对 1 转变为 1 对多，增加了客户服务数量；通过 AI 接待客户替代传统红娘，加速了沟通并提升了服务质量。每位红娘的服务能力可达到原业绩的 5-10 倍。'
+      )
     ]
   },
   {
-    title: '分类信息',
+    title: t('分类信息'),
     logo: CompanyBXImg,
-    company: '百姓网',
-    tags: ['分类信息', '门户网站', '互联网'],
+    company: t('百姓网'),
+    tags: [t('分类信息'), t('门户网站'), t('互联网')],
     companyDescTitle: '',
     companyCustomerIntro: [
-      '业务体量：国内领先的分类信息生态服务商',
-      '业务范围：为用户提供涵盖生活服务、招聘求职、房屋租售、二手交易、教育培训、同城交友等一站式本地生活服务信息平台，同时为中小微商户建立全方位的精准营销解决方案。'
+      t('业务体量：国内领先的分类信息生态服务商'),
+      t(
+        '业务范围：为用户提供涵盖生活服务、招聘求职、房屋租售、二手交易、教育培训、同城交友等一站式本地生活服务信息平台，同时为中小微商户建立全方位的精准营销解决方案。'
+      )
     ],
-    companyDesc: ['百姓网致力于创造以分类信息业务为平台、多条垂直业务线布局的生态圈。'],
+    companyDesc: [t('百姓网致力于创造以分类信息业务为平台、多条垂直业务线布局的生态圈。')],
     needs: [
-      '平台型互联网公司长期需要线上客服服务于 B 端和 C 端，提供售前和售后咨询事宜',
-      '以往的线上机器人客服人工依赖高，需要长期 Q&A 语料库搭建，经历较长期的运营',
-      '机器人客服回答不够灵活，整体回复率仅有 60%，约 40% 售前问题仍然依赖人工客服解决'
+      t('平台型互联网公司长期需要线上客服服务于 B 端和 C 端，提供售前和售后咨询事宜'),
+      t('以往的线上机器人客服人工依赖高，需要长期 Q&A 语料库搭建，经历较长期的运营'),
+      t('机器人客服回答不够灵活，整体回复率仅有 60%，约 40% 售前问题仍然依赖人工客服解决')
     ],
     solution: [
-      '引入 7x24 小时随时服务的机器人客服，提升在线服务时长，提高用户体验',
-      '利用百姓网积累多年的 Q&A 语料库训练机器人客服，保证其根据业务自动处理用户问题',
-      '与传统机器人客服相比，回答灵活性大大提升，整体回复率提高到了 90%，售前问题的人工依赖率降低到了 10%。大幅缩减了人工客服的用人成本'
+      t('引入 7x24 小时随时服务的机器人客服，提升在线服务时长，提高用户体验'),
+      t('利用百姓网积累多年的 Q&A 语料库训练机器人客服，保证其根据业务自动处理用户问题'),
+      t(
+        '与传统机器人客服相比，回答灵活性大大提升，整体回复率提高到了 90%，售前问题的人工依赖率降低到了 10%。大幅缩减了人工客服的用人成本'
+      )
     ]
   },
   {
-    title: '会展沙龙',
+    title: t('会展沙龙'),
     logo: CompanyDDImg,
-    company: '逐浪 AI 系列沙龙',
-    tags: ['会议展览', '路演沙龙'],
-    companyDescTitle: '主办方',
-    companyCustomerIntro: ['会议规模：每期 80-120 人'],
+    company: t('逐浪 AI 系列沙龙'),
+    tags: [t('会议展览'), t('路演沙龙')],
+    companyDescTitle: t('主办方'),
+    companyCustomerIntro: [t('会议规模：每期 80-120 人')],
     companyDesc: [
-      '得到高研院：面向创业者和高管的终身学习俱乐部，实现能力、视野、人脉的突破；目前上海校区有各行业的 4000+ 实干家校友。',
-      '客齐集小聚： 2005 年在上海第一次进行客齐集聚会开始。间断持续 18 年，一直围绕最新技术讨论，是沪上著名的新技术探索者们的聚会。'
+      t(
+        '得到高研院：面向创业者和高管的终身学习俱乐部，实现能力、视野、人脉的突破；目前上海校区有各行业的 4000+ 实干家校友。'
+      ),
+      t(
+        '客齐集小聚： 2005 年在上海第一次进行客齐集聚会开始。间断持续 18 年，一直围绕最新技术讨论，是沪上著名的新技术探索者们的聚会。'
+      )
     ],
     needs: [
-      '人力成本高，路演现场需要根据活动规模，配备相应数量的工作人员来提供信息咨询和解答参会者的问题',
-      '传统的会议沙龙，工作人员需要逐一回答重复问题，服务效率较低',
-      '信息传递不及时，参会者可能需要等待较长时间才能获得所需的信息'
+      t(
+        '人力成本高，路演现场需要根据活动规模，配备相应数量的工作人员来提供信息咨询和解答参会者的问题'
+      ),
+      t('传统的会议沙龙，工作人员需要逐一回答重复问题，服务效率较低'),
+      t('信息传递不及时，参会者可能需要等待较长时间才能获得所需的信息')
     ],
     solution: [
-      'AI 会议助手承担信息咨询的任务，为现场减少了至少 5 名工作人员的配置，节约了会议成本',
-      'AI 会议助手可以同时处理多个参会者的问题，提供快速、准确的回答，提高服务效率',
-      'AI 会议助手提供实时信息，参会者可以随时获取所需的会议信息，提升了会议体验'
+      t('AI 会议助手承担信息咨询的任务，为现场减少了至少 5 名工作人员的配置，节约了会议成本'),
+      t('AI 会议助手可以同时处理多个参会者的问题，提供快速、准确的回答，提高服务效率'),
+      t('AI 会议助手提供实时信息，参会者可以随时获取所需的会议信息，提升了会议体验')
     ]
   }
 ]

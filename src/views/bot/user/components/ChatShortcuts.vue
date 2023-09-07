@@ -2,25 +2,25 @@
   <el-table
     :data="internalShortcut"
     size="default"
-    empty-text="您还没有设置菜单栏"
+    :empty-text="$t(`您还没有设置菜单栏`)"
     header-cell-class-name="!bg-[#F2F3F5] !text-sm !font-normal"
     max-height="250"
     style="width: 100%"
   >
-    <el-table-column v-if="!isMobile" label="序号" width="100">
-      <template #default="scope"> 回复设置{{ scope.$index + 1 }} </template>
+    <el-table-column v-if="!isMobile" :label="$t(`序号`)" width="100">
+      <template #default="scope">{{ $t(' 回复设置') }}{{ scope.$index + 1 }} </template>
     </el-table-column>
-    <el-table-column prop="title" label="关键词">
+    <el-table-column prop="title" :label="$t(`关键词`)">
       <template #default="scope">
         {{ scope.row.title }}
       </template>
     </el-table-column>
-    <el-table-column label="回复内容" width="110">
+    <el-table-column :label="$t(`回复内容`)" width="115">
       <template #default="{ row }">
         {{ rednerRowResponseSummary(row) }}
       </template>
     </el-table-column>
-    <el-table-column fixed="right" label="操作" width="140">
+    <el-table-column fixed="right" :label="$t(`操作`)" width="140">
       <template #default="scope">
         <el-row :gutter="10" align="middle">
           <el-col :span="8">
@@ -28,21 +28,21 @@
               class="cm-link"
               href="#rpreview"
               @click.prevent="onEditViewShortcut(scope.$index, 'preview')"
+              >{{ $t('查看') }}</a
             >
-              查看
-            </a>
           </el-col>
           <el-col :span="8">
             <a
               class="cm-link"
               href="#rate"
               @click.prevent="onEditViewShortcut(scope.$index, 'edit')"
+              >{{ $t('编辑') }}</a
             >
-              编辑
-            </a>
           </el-col>
           <el-col :span="8">
-            <a class="cm-link" href="#rate" @click.prevent="onDeleteShortcut(scope.$index)">删除</a>
+            <a class="cm-link" href="#rate" @click.prevent="onDeleteShortcut(scope.$index)">{{
+              $t('删除')
+            }}</a>
           </el-col>
         </el-row>
       </template>
@@ -54,9 +54,8 @@
     type="primary"
     link
     @click="onAddShortcut"
+    >{{ $t('+ 添加菜单栏') }}</el-button
   >
-    + 添加菜单栏
-  </el-button>
 
   <AddShortcut
     @setSuccess="
@@ -81,8 +80,10 @@ import { $notnull } from '@/utils/help'
 import * as url from '@/utils/url'
 import { ElNotification } from 'element-plus'
 import { computed, reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import AddShortcut from './AddShortcut.vue'
 
+const { t } = useI18n()
 const props = defineProps<{
   shortcuts: IDomainShortcut[]
   domainId: string
@@ -115,7 +116,7 @@ const dialogVisible = ref(false)
 const onAddShortcut = () => {
   const len = internalShortcut.value.length
   if (len >= 3) {
-    ElNotification.error('最多添加3个快捷回复')
+    ElNotification.error(t('最多添加3个快捷回复'))
     return
   }
   curShortcut = Object.assign(curShortcut, { ...DefaultShortcut, index: len })
@@ -149,10 +150,10 @@ const onDeleteShortcut = (index: number) => {
 const rednerRowResponseSummary = (row: IDomainShortcut) => {
   const summary = []
   if (row.response) {
-    summary.push('文字')
+    summary.push(t('文字'))
   }
   if ($notnull(row.images)) {
-    summary.push('图片')
+    summary.push(t('图片'))
   }
 
   return summary.join(' + ')

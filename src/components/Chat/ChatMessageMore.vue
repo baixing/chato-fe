@@ -31,7 +31,7 @@
         <svg-icon name="audio" color="#2F3447" v-else-if="item.type === EMessageActionType.audio" />
         <component v-else :is="item.icon" />
       </el-icon>
-      {{ item.title }}
+      {{ $t(item.title) }}
     </li>
   </ul>
 </template>

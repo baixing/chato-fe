@@ -2,36 +2,35 @@
   <Modal
     mobile-width="100%"
     v-model:visible="internalVisible"
-    title="创建站点"
+    :title="$t(`创建站点`)"
     :footer="false"
     class="set-site-container"
   >
     <SitePublic v-slot="slotProps" name="">
       <el-row class="w-full mt-2 mr-0" justify="end" :gutter="8">
         <el-col :lg="4" :xl="4" :xs="12" :sm="12" :md="12">
-          <el-button size="large" @click="emit('update:value', false)">取消</el-button>
+          <el-button size="large" @click="emit('update:value', false)">{{ $t('取消') }}</el-button>
         </el-col>
         <el-col :lg="4" :xl="4" :xs="12" :sm="12" :md="12">
           <el-button
             type="primary"
             size="large"
             @click="submitCreateSite(slotProps.ruleFormCreateSiteRef, slotProps.submit)"
+            >{{ $t('确认') }}</el-button
           >
-            确认
-          </el-button>
         </el-col>
       </el-row>
     </SitePublic>
   </Modal>
 </template>
-
-<script setup lang="ts">
+<script lang="ts" setup>
 import { createDeleteEditSites } from '@/api/iframe'
 import Modal from '@/components/Modal/index.vue'
 import { ElLoading, ElNotification as Notification } from 'element-plus'
 import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import SitePublic from './SitePublic.vue'
-
+const { t } = useI18n()
 const loading = ref()
 
 interface SiteData {
@@ -57,7 +56,7 @@ async function submitCreateSite(formEl, data: SiteData) {
       try {
         loading.value = ElLoading.service({
           lock: true,
-          text: '创建中...',
+          text: t('创建中...'),
           background: 'rgba(0, 0, 0, 0.7)'
         })
         const postData = {
@@ -85,7 +84,6 @@ async function submitCreateSite(formEl, data: SiteData) {
   })
 }
 </script>
-
 <style lang="scss">
 .set-site-container {
   .el-dialog__header {

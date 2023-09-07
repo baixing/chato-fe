@@ -1,6 +1,6 @@
 <template>
   <div class="about-content">
-    <div class="about-to-title">以下发布平台即将开放，敬请期待</div>
+    <div class="about-to-title">{{ $t('以下发布平台即将开放，敬请期待') }}</div>
     <div class="platform-list">
       <div class="platform" v-for="item in platformList" :key="item.icon">
         <div class="icon-block">
@@ -11,16 +11,14 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
+<script lang="ts" setup>
 import type { PlatFormListProps } from '@/interface/release'
 
 defineProps<{
   platformList: PlatFormListProps[]
 }>()
 </script>
-
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .about-content {
   max-width: 90%;
   margin: auto;

@@ -6,8 +6,10 @@
     <p class="leading-5">
       <span class="text-[#0256FF] text-lg mr-3">
         {{
-          SpaceCommercialTypeMapper?.[spaceRightsSummary?.type] ||
-          SpaceCommercialTypeMapper[ESpaceCommercialType.free]
+          t(
+            SpaceCommercialTypeMapper?.[spaceRightsSummary?.type] ||
+              SpaceCommercialTypeMapper[ESpaceCommercialType.free]
+          )
         }}
       </span>
       <span class="inline-block flex-1 text-[#9DA3AF]">{{ expireTime }}</span>
@@ -17,9 +19,8 @@
       size="small"
       class="!text-[#596780] !p-0 shrink-0 hover:!opacity-80"
       @click="onUpgrade"
+      >{{ $t('升级/续费版本，享更多专属权益及服务 >') }}</el-button
     >
-      升级/续费版本，享更多专属权益及服务 >
-    </el-button>
   </div>
 
   <div class="flex flex-wrap gap-5">
@@ -38,7 +39,7 @@
     </div>
   </div>
 </template>
-<script setup lang="ts">
+<script lang="ts" setup>
 import { getSpaceRightsSummary } from '@/api/space'
 import useSpaceRights from '@/composables/useSpaceRights'
 import { SpaceCommercialTypeMapper } from '@/constant/space'
@@ -46,45 +47,47 @@ import { ESpaceCommercialType, ESpaceRightsType } from '@/enum/space'
 import type { ISpaceRightsSummary } from '@/interface/space'
 import dayjs from 'dayjs'
 import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const defaultCardList = {
   domain: {
     bg: '#4381FF',
     icon: 'magic-cube',
-    title: '训练机器人',
-    desc: '已训练/总数',
+    title: t('训练机器人'),
+    desc: t('已训练/总数'),
     consume: 0,
     total: 0
   },
   quota: {
     bg: '#1CC29D',
     icon: 'battery',
-    title: '电力值',
-    desc: '已使用量/总量',
+    title: t('电力值'),
+    desc: t('已使用量/总量'),
     consume: 0,
     total: 0
   },
   group: {
     bg: '#F3C137',
     icon: 'chat-bubble',
-    title: '群聊数',
-    desc: '已创建数/总数',
+    title: t('群聊数'),
+    desc: t('已创建数/总数'),
     consume: 0,
     total: 0
   },
   member: {
     bg: '#7C5CFC',
     icon: 'user-group',
-    title: '空间用户数',
-    desc: '已添加用户数/总数',
+    title: t('空间用户数'),
+    desc: t('已添加用户数/总数'),
     consume: 0,
     total: 0
   },
   painting: {
     bg: '#08C3D8',
     icon: 'picture',
-    title: '图像值',
-    desc: '已生成/总数',
+    title: t('图像值'),
+    desc: t('已生成/总数'),
     consume: 0,
     total: 0
   }
@@ -103,7 +106,7 @@ const expireTime = computed(() => {
   if (!spaceRightsSummary.value?.expire_time) {
     return ''
   }
-  return dayjs(spaceRightsSummary.value.expire_time).format('YYYY/MM/DD') + ' 到期'
+  return dayjs(spaceRightsSummary.value.expire_time).format('YYYY/MM/DD') + t(' 到期')
 })
 
 const init = async () => {
@@ -150,7 +153,6 @@ const init = async () => {
 
 init()
 </script>
-
 <style lang="scss" scoped>
 .rights-card {
   background-color: white;

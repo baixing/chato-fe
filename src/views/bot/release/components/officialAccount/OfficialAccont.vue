@@ -3,24 +3,24 @@
     width="45%"
     mobile-width="100%"
     v-model:visible="internalVisible"
-    title="配置公众号"
+    :title="$t(`配置公众号`)"
     :footer="false"
     class="official-account-container"
   >
     <el-tabs v-model="activeName" class="official-tabs">
-      <el-tab-pane label="添加菜单" name="addMenuTab"
+      <el-tab-pane :label="$t(`添加菜单`)" name="addMenuTab"
         ><AddMenuTab
           @handleEventSet="handleEventSet"
           :link="link + '?source=mp_menu'"
           :qrcode="qrcode"
       /></el-tab-pane>
-      <el-tab-pane label="自动回复" name="automaticTab" :qrcode="qrcode"
+      <el-tab-pane :label="$t(`自动回复`)" name="automaticTab" :qrcode="qrcode"
         ><AutomaticTab
           @handleEventSet="handleEventSet"
           :qrcode="qrcode"
           :link="link + '?source=mp_reply'"
       /></el-tab-pane>
-      <el-tab-pane label="消息调用" name="MessageTab"
+      <el-tab-pane :label="$t(`消息调用`)" name="MessageTab"
         ><MessageTab
           @handleCloseDialog="emit('update:value', false)"
           @handleEventSet="handleEventSet"
@@ -82,9 +82,6 @@ const handleEventSet = (type: handleEventSetType, value?: string) => {
   }
 }
 </script>
-
-<style scoped lang="scss"></style>
-
 <style lang="scss">
 .official-account-container {
   .el-dialog__header {

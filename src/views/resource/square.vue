@@ -1,5 +1,5 @@
 <template>
-  <Topbar title="全部应用" />
+  <Topbar :title="$t(`全部应用`)" />
   <ContentLayout v-loading="initing" element-loading-background="transparent">
     <div
       v-for="(item, index) in resourceList"
@@ -36,8 +36,7 @@
     </div>
   </ContentLayout>
 </template>
-
-<script setup lang="ts">
+<script lang="ts" setup>
 import { addSession } from '@/api/chatList'
 import { getResource } from '@/api/resource'
 import Topbar from '@/components/Topbar/index.vue'
@@ -48,8 +47,10 @@ import { useChatStore } from '@/stores/chat'
 import { ElLoading, ElNotification } from 'element-plus'
 import { storeToRefs } from 'pinia'
 import { ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 
+const { t } = useI18n()
 const router = useRouter()
 const baseStoreI = useBase()
 const resourceList = ref([])
@@ -62,7 +63,7 @@ async function addSessionChat(item) {
     return router.replace(`/c/bot/${item.slug}`)
   const loading = ElLoading.service({
     lock: true,
-    text: '正在进入...',
+    text: t('正在进入...'),
     background: 'rgba(0, 0, 0, 0.7)'
   })
   const res = await addSession([item.id])
@@ -102,7 +103,6 @@ const init = async () => {
 
 init()
 </script>
-
 <style lang="scss" scoped>
 .resource-card {
   width: calc(25% - 12px);

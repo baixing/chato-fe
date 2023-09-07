@@ -1,12 +1,18 @@
 import { currentEnvConfig } from '@/config'
 import { EFengkongField } from '@/enum/common'
+import { ELangKey } from '@/enum/locales'
 import type { IResponse } from '@/interface/common'
+import i18n from '@/locales'
 import router from '@/router'
 import { useAuthStore } from '@/stores/auth'
+import { useLocalStorage } from '@vueuse/core'
 import axios, { AxiosError, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios'
 import { handleRequestError } from './help'
-
 let tokenAbnormal = false
+
+const $t = i18n.global.t
+
+const currentlocales = useLocalStorage('locale', ELangKey.zh_cn)
 
 const baseURL = currentEnvConfig.baseURL
 
@@ -22,6 +28,7 @@ service.interceptors.request.use((config: AxiosRequestConfigType) => {
   const authStoreI = useAuthStore()
   const headers = config.headers
   const token = authStoreI.authToken
+  headers['X-LANG'] = currentlocales.value
   if (token && !config.enforceAnonymity) headers.Authorization = 'Bearer ' + token
   return config
 })
@@ -35,14 +42,14 @@ service.interceptors.response.use(
       switch (data.code) {
         case 401: {
           authStoreI.$patch({ authToken: '' })
-          data.message = '您的登录状态已失效，请重新登录。'
+          data.message = $t('您的登录状态已失效，请重新登录。')
           if (window.location.pathname !== '/') {
             router.replace('/auth/login')
           }
           break
         }
         case 403:
-          data.message = '暂无访问权限'
+          data.message = $t('暂无访问权限')
           break
         case 200002: // 已经加入的空间，直接进入，不提示！
           data.notThrowError = true
@@ -73,10 +80,10 @@ service.interceptors.response.use(
   (err: AxiosError) => {
     if (err.response) {
       // 对于 HTTP 错误状态码进行处理，例如 404 Not Found
-      err.message = '请求错误'
+      err.message = $t('请求错误')
     } else if (err.request) {
       // 对于请求未发送到服务器的错误进行处理，例如网络错误
-      err.message = '网络异常，请检查后重试'
+      err.message = $t('网络异常，请检查后重试')
     }
     // Todo: 避免3s内客户端显示很多报错
     if (!tokenAbnormal) {

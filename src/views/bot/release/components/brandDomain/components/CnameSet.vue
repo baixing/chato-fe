@@ -3,49 +3,55 @@
     <el-form label-position="top" ref="cnameSetForm" :model="cnameSetModel" class="cname-set-form">
       <el-form-item class="text-[#303133]">
         <template #label>
-          <p class="font-medium">1.配置CNAME</p>
+          <p class="font-medium">{{ $t('1.配置CNAME') }}</p>
         </template>
         <p>
-          腾讯云备案，请在域名服务网址上添加CNAME记录指向：lb-ni22fj7z-behsioq6t9mx2w15.clb.ap-shanghai.tencentclb.com
+          {{
+            $t(
+              '腾讯云备案，请在域名服务网址上添加CNAME记录指向：lb-ni22fj7z-behsioq6t9mx2w15.clb.ap-shanghai.tencentclb.com'
+            )
+          }}
         </p>
         <p class="mt-[16px]">
-          <el-checkbox v-model="checked">已完成配置</el-checkbox>
+          <el-checkbox v-model="checked">{{ $t('已完成配置') }}</el-checkbox>
         </p>
       </el-form-item>
       <div :class="[!checked ? 'cnameSet-overlay' : '']">
         <el-form-item class="required-item text-[#303133]">
           <template #label>
             <p class="font-medium">
-              2.填写域名和备案信息 <span class="text-[#7C5CFC] font-medium">*</span>
+              {{ $t('2.填写域名和备案信息 ') }}<span class="text-[#7C5CFC] font-medium">*</span>
             </p>
           </template>
-          <p>输入独立域名</p>
+          <p>{{ $t('输入独立域名') }}</p>
           <el-input
             v-model="cnameSetModel.hostname"
-            placeholder="例：x.chato.cn"
+            :placeholder="$t(`例：x.chato.cn`)"
             class="my-4"
           ></el-input>
-          <p>输入备案信息</p>
+          <p>{{ $t('输入备案信息') }}</p>
           <el-input
             v-model="cnameSetModel.record"
-            placeholder="例：粤.ICP备.xxxxxxxx号"
+            :placeholder="$t(`例：粤.ICP备.xxxxxxxx号`)"
             class="my-4"
           ></el-input>
         </el-form-item>
         <el-form-item class="required-item text-[#303133]">
           <template #label>
             <p class="font-medium">
-              3.上传安全证书 <span class="text-[#7C5CFC] font-medium">*</span>
+              {{ $t('3.上传安全证书 ') }}<span class="text-[#7C5CFC] font-medium">*</span>
             </p>
           </template>
-          <p class="my-4 text-[#9DA3AF] text-xs">需要从购买证书的服务网站上下载证书后，在此上传</p>
+          <p class="my-4 text-[#9DA3AF] text-xs">
+            {{ $t('需要从购买证书的服务网站上下载证书后，在此上传') }}
+          </p>
           <div class="w-full">
             <UploadFile
               v-model:value="cnameSetModel.pub_key"
               :disabled="cnameSetModel.pub_key.length > 0"
               :apiUpload="apiUpload"
-              name="上传证书文件"
-              extra="后缀为：*.pem或*.crt的文件"
+              :name="$t(`上传证书文件`)"
+              :extra="$t(`后缀为：*.pem或*.crt的文件`)"
               accept-type=".pem,.crt"
             />
           </div>
@@ -54,8 +60,8 @@
               v-model:value="cnameSetModel.pri_key"
               :disabled="cnameSetModel.pri_key.length > 0"
               :apiUpload="apiUpload"
-              name="上传私钥文件"
-              extra="后缀为：*.key的文件"
+              :name="$t(`上传私钥文件`)"
+              :extra="$t(`后缀为：*.key的文件`)"
               accept-type=".key"
             />
           </div>
@@ -63,9 +69,9 @@
         <el-form-item>
           <el-row justify="end" class="w-full">
             <el-col :lg="4" :xl="4" :md="12" :xs="12" :sm="12">
-              <el-button type="primary" size="large" :disabled="disabled" @click="handleSubmit"
-                >提交审核</el-button
-              >
+              <el-button type="primary" size="large" :disabled="disabled" @click="handleSubmit">{{
+                $t('提交审核')
+              }}</el-button>
             </el-col>
           </el-row>
         </el-form-item>
@@ -73,8 +79,7 @@
     </el-form>
   </div>
 </template>
-
-<script setup lang="ts">
+<script lang="ts" setup>
 import { saveBrandDomain } from '@/api/release'
 import type { UploadResType } from '@/components/ImgUpload/data'
 import { currentEnvConfig } from '@/config'
@@ -87,9 +92,11 @@ import type { FormInstance } from 'element-plus'
 import { ElLoading, ElNotification as Notification } from 'element-plus'
 import { storeToRefs } from 'pinia'
 import { computed, reactive, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import UploadFile from './UploadFile.vue'
 
+const { t } = useI18n()
 type cnameSetModelType = brandDomainType & {
   pub_key: UploadResType[]
   pri_key: UploadResType[]
@@ -135,7 +142,7 @@ const handleSubmit = async () => {
   // 提交审核
   const loading = ElLoading.service({
     lock: true,
-    text: '保存中',
+    text: t('保存中'),
     background: 'rgba(0, 0, 0, 0.7)'
   })
   const data = {
@@ -152,7 +159,7 @@ const handleSubmit = async () => {
   const res = await saveBrandDomain(props.slug, data)
   loading.close()
   if (res.data.code === 200) {
-    Notification.success('操作成功，正在审核中....')
+    Notification.success(t('操作成功，正在审核中....'))
     emit('handleSubmitSuccess')
   } else {
     Notification.success(res.data.message)
@@ -170,8 +177,7 @@ watch(
   { immediate: true, deep: true }
 )
 </script>
-
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .cnameSet-overlay {
   position: relative;
   &::after {

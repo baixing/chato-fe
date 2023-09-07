@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     v-model="internalVisible"
-    title="查看示例"
+    :title="$t(`查看示例`)"
     :width="isMobile ? '90%' : internalDialogWidth"
   >
     <img :src="img" class="w-full" alt="" />

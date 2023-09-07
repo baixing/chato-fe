@@ -6,12 +6,11 @@
           @click="onLinkBots"
           class="flex items-center !font-normal !text-[#909399] hover:!text-[#7c5cfc]"
         >
-          <svg-icon svg-class="w-4 h-4 mr-1 mt-[-2px]" name="house" />
-          我的 Bots
-        </a>
+          <svg-icon svg-class="w-4 h-4 mr-1 mt-[-2px]" name="house" />{{ $t('我的 Bots') }}</a
+        >
       </el-breadcrumb-item>
       <el-breadcrumb-item>
-        <span class="text-[#303133]">创建机器人</span>
+        <span class="text-[#303133]">{{ $t('创建机器人') }}</span>
       </el-breadcrumb-item>
     </el-breadcrumb>
   </Topbar>
@@ -36,13 +35,19 @@ import ContentLayout from '@/layout/ContentLayout.vue'
 import { RoutesMap } from '@/router'
 import { useDomainStore } from '@/stores/domain'
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import BotCreateByAI from './components/BotCreateByAI.vue'
 import BotCreateByTemplate from './components/BotCreateByTemplate.vue'
 
+const { t } = useI18n()
 const tabsList = [
-  { label: '模板创建', key: 'template', component: BotCreateByTemplate },
-  { label: 'AI 一键创建', key: 'ai', component: BotCreateByAI }
+  {
+    label: t('模板创建'),
+    key: 'template',
+    component: BotCreateByTemplate
+  },
+  { label: t('AI 一键创建'), key: 'ai', component: BotCreateByAI }
 ]
 
 const router = useRouter()

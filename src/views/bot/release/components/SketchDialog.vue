@@ -3,7 +3,7 @@
     width="50%"
     mobile-width="100%"
     v-model:visible="internalVisible"
-    title="填写示意图"
+    :title="$t(`填写示意图`)"
     :footer="false"
     class="sketch-official-container"
   >
@@ -27,7 +27,6 @@ const internalVisible = computed({
   set: (v) => emit('update:value', v)
 })
 </script>
-
 <style lang="scss">
 .sketch-official-container {
   .el-dialog__header {

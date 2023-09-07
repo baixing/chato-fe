@@ -51,15 +51,16 @@ import { useDomainStore } from '@/stores/domain'
 import { isManagerRole } from '@/utils/help'
 import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import ChatSidebar from './ChatSidebar.vue'
 import SidebarBottom from './SidebarBottom.vue'
 import TranningSidebar from './TranningSidebar.vue'
-
+const { t } = useI18n()
 const allMenuList = [
-  { title: '训练', icon: 'robot-filled', routeName: RoutesMap.manager.center },
-  { title: '对话', icon: 'chat-filled', routeName: RoutesMap.chat.c },
-  { title: '广场', icon: 'cube-filled', routeName: RoutesMap.resource }
+  { title: t('训练'), icon: 'robot-filled', routeName: RoutesMap.manager.center },
+  { title: t('对话'), icon: 'chat-filled', routeName: RoutesMap.chat.c },
+  { title: t('广场'), icon: 'cube-filled', routeName: RoutesMap.resource }
 ]
 
 const secondarySidebar = {

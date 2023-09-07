@@ -35,7 +35,7 @@
           class="box-border w-full rounded-lg bg-white text-sm text-center transition ease-linear border border-solid border-white cursor-pointer h-[94px] leading-[94px] hover:shadow-md text-[#7c5cfc]"
           @click="viewHasMore = !viewHasMore"
         >
-          {{ viewHasMore ? '展开更多' : '收起' }}
+          {{ viewHasMore ? $t('展开更多') : $t('收起') }}
         </div>
       </el-col>
     </el-row>
@@ -47,21 +47,21 @@
       data-script="Chato-createBot-confirm"
       class="mt-7"
       id="Chato_tranning_create_domain_by_template"
+      >{{ $t('确认并创建') }}</el-button
     >
-      确认并创建
-    </el-button>
   </template>
 </template>
-
-<script setup lang="ts">
+<script lang="ts" setup>
 import { createDomainV2, getTemplateList } from '@/api/user'
 import useSpaceRights from '@/composables/useSpaceRights'
 import { ESpaceRightsType } from '@/enum/space'
 import type { IDomainInfo } from '@/interface/domain'
 import { ElLoading, ElNotification as Notification } from 'element-plus'
 import { computed, onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import BotTemplateCard from './BotTemplateCard.vue'
 
+const { t } = useI18n()
 const { checkRightsTypeNeedUpgrade } = useSpaceRights()
 
 const emit = defineEmits(['saveSuccess'])
@@ -119,14 +119,14 @@ const onSubmit = async () => {
   }
 
   if (!formTemplateId.value) {
-    Notification.error('请选择机器人模板')
+    Notification.error(t('请选择机器人模板'))
     return
   }
 
   try {
     loading.value = ElLoading.service({
       lock: true,
-      text: '创建中...',
+      text: t('创建中...'),
       background: 'rgba(0, 0, 0, 0.7)'
     })
     const {
@@ -134,7 +134,7 @@ const onSubmit = async () => {
     } = await createDomainV2(formTemplateId.value)
 
     emit('saveSuccess', data.id)
-    Notification.success('创建成功')
+    Notification.success(t('创建成功'))
   } catch (err) {
   } finally {
     loading.value.close()

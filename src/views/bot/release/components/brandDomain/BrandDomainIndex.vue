@@ -2,7 +2,7 @@
   <el-drawer
     ref="drawerRef"
     v-model="visible"
-    title="域名部署"
+    :title="$t(`域名部署`)"
     :before-close="() => emit('update:value', false)"
     class="create-drawer-container"
     :size="isMobile ? '100%' : '40%'"
