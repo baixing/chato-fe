@@ -488,7 +488,7 @@ const releaseList = [
   {
     icon: 'feishu-public',
     title: t('飞书'),
-    desc: t('在飞书群聊中提供机器人服务'),
+    desc: t('在飞书群/单聊中提供机器人服务，仅限内部员工使用'),
     setList: [
       {
         icon: Tools,
@@ -501,7 +501,7 @@ const releaseList = [
   {
     icon: 'weixin-service',
     title: t('微信客服'),
-    desc: t('通过配置微信客服，实现与机器人1V1聊天'),
+    desc: t('使用企微回复用户在微信咨询的消息，无需添加好友，扫码即可实现与机器人1V1聊天'),
     setList: [
       {
         icon: Tools,
