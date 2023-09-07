@@ -1,72 +1,123 @@
 <template>
   <div
-    class="bg-white rounded-lg p-5 flex gap-3 transition-shadow cursor-pointer hover:shadow-md lg:p-4"
+    class="relative bg-white rounded-lg p-6 space-y-5 transition cursor-pointer hover:shadow-lg hover:-translate-y-2 lg:p-4 lg:space-y-3"
     @click="() => onLinkTo(RoutesMap.tranning.botPersona)"
   >
-    <img
-      :src="internalBot.avatar || DefaultAvatar"
-      class="w-12 h-12 rounded-full overflow-hidden object-cover shrink-0 lg:w-10 lg:h-10"
-    />
-    <div class="w-full pt-[2px] overflow-hidden">
-      <div class="flex gap-4 justify-between items-center overflow-hidden lg:items-start">
-        <div class="flex gap-4 items-center lg:flex-col lg:gap-[2px] lg:items-start">
-          <span class="inline-block truncate font-medium text-[#3D3D3D] text-sm">
-            {{ internalBot.name }}
-          </span>
-          <span class="text-xs text-[#DCDFE6] truncate">ID: {{ internalBot.slug }}</span>
-        </div>
-      </div>
-      <p
-        class="text-[13px] text-[#9DA3AF] leading-[22px] line-clamp-2 mt-3 mb-[10px] h-11 break-all whitespace-pre-wrap lg:mt-2 lg:mb-2 lg:h-auto"
-      >
-        {{ internalBot.desc }}
-      </p>
-      <div class="flex gap-x-4 gap-y-3 flex-wrap">
-        <IconBtn :icon="Edit" @click="() => onLinkTo(RoutesMap.tranning.botUser)">
-          {{ $t('编辑') }}
-        </IconBtn>
-        <IconBtn :icon="ChatDotRound" @click="() => onLinkTo(RoutesMap.tranning.botChat)">
-          {{ $t('调试') }}
-        </IconBtn>
-        <IconBtn :icon="Share" @click="() => onLinkTo(RoutesMap.tranning.botRelease)">
-          {{ $t('分享') }}
-        </IconBtn>
-        <IconBtn :icon="DataLine" @click="() => onLinkTo(RoutesMap.tranning.report)">
-          {{ $t('报表') }}
-        </IconBtn>
-        <IconBtn
-          name="clone-robot"
-          @click="() => emit('cloneRobot', internalBot.slug, internalBot.name)"
-          >{{ $t('克隆') }}</IconBtn
-        >
-        <template v-if="isPrivilege">
-          <IconBtn
-            :icon="internalBot.visible ? Hide : View"
-            @click="() => emit('sync', internalBot, 'visible')"
-          >
-            {{ internalBot.visible ? $t('设置为不可见') : $t('设置为可见') }}
-          </IconBtn>
-          <IconBtn
-            :icon="internalBot.template ? Notification : Compass"
-            @click="() => emit('sync', internalBot, 'template')"
-          >
-            {{ internalBot.template ? $t('设为资源广场机器人') : $t('设为模板机器人') }}
-          </IconBtn>
-        </template>
+    <div class="flex gap-3 items-center">
+      <el-image
+        lazy
+        fit="cover"
+        :src="internalBot.avatar || DefaultAvatar"
+        class="w-11 h-11 rounded-full overflow-hidden shrink-0 lg:w-9 lg:h-9"
+      />
+      <span class="inline-block truncate font-medium text-[#3D3D3D]">
+        {{ $t(internalBot.name) }}
+      </span>
+    </div>
+
+    <p
+      class="text-xs text-[#B5BED0] leading-5 line-clamp-2 break-all whitespace-pre-wrap h-10 lg:h-auto"
+    >
+      {{ $t(internalBot.desc) }}
+    </p>
+
+    <div class="flex items-center justify-between">
+      <template v-if="EDomainStatus.draft === internalBot.status">
         <IconBtn
           v-if="isAllowedDelete"
           :icon="Delete"
           @click="() => emit('delete', internalBot)"
           class="hover:!text-[#f56c6c]"
-          >{{ $t('删除') }}</IconBtn
+          >{{ $t('删除') }}
+        </IconBtn>
+        <el-button
+          type="primary"
+          plain
+          class="shrink-0 w-[73%] max-w-[220px] !border-[#E4E7ED] !text-[#3D3D3D] !font-normal !bg-transparent hover:!bg-[#7C5CFC] hover:!border-[#7C5CFC] hover:!text-white"
         >
-      </div>
+          <template #icon>
+            <svg-icon name="create-continue" svg-class="w-4 h-4" />
+          </template>
+          {{ $t('继续创建') }}
+        </el-button>
+      </template>
+      <template v-else>
+        <div class="gap-5 flex items-center justify-between">
+          <IconBtn :icon="Edit" @click="() => onLinkTo(RoutesMap.tranning.botUser)">
+            {{ $t('编辑') }}
+          </IconBtn>
+          <IconBtn :icon="Position" @click="() => onLinkTo(RoutesMap.tranning.botRelease)">
+            {{ $t('发布') }}
+          </IconBtn>
+          <el-popover
+            trigger="click"
+            placement="right-start"
+            width="fit-content"
+            :show-arrow="false"
+          >
+            <template #reference>
+              <svg-icon
+                name="more"
+                svg-class="w-4 h-4 transition-colors text-[#9DA3AF] hover:text-[#7C5CFC]"
+                @click.stop
+              />
+            </template>
+            <div class="flex flex-col gap-4">
+              <IconBtn
+                class="w-full"
+                name="clone-robot"
+                @click="() => emit('cloneRobot', internalBot.slug, internalBot.name)"
+              >
+                {{ $t('克隆') }}
+              </IconBtn>
+              <template v-if="isPrivilege">
+                <IconBtn
+                  :icon="internalBot.visible ? Hide : View"
+                  @click="() => emit('sync', internalBot, 'visible')"
+                >
+                  {{ internalBot.visible ? t('设为不可见') : t('设为可见') }}
+                </IconBtn>
+                <IconBtn
+                  :icon="internalBot.template ? Notification : Compass"
+                  @click="() => emit('sync', internalBot, 'template')"
+                >
+                  {{ internalBot.template ? t('设为资源广场机器人') : t('设为模板机器人') }}
+                </IconBtn>
+              </template>
+              <IconBtn
+                v-if="isAllowedDelete"
+                :icon="Delete"
+                @click="() => emit('delete', internalBot)"
+                class="hover:!text-[#f56c6c]"
+              >
+                {{ $t('删除') }}
+              </IconBtn>
+            </div>
+          </el-popover>
+        </div>
+        <el-button
+          type="primary"
+          plain
+          :icon="ChatDotRound"
+          class="shrink-0 !border-[#E4E7ED] !text-[#3D3D3D] !font-normal !bg-transparent hover:!bg-[#7C5CFC] hover:!border-[#7C5CFC] hover:!text-white"
+        >
+          {{ $t('对话') }}
+        </el-button>
+      </template>
     </div>
+
+    <span
+      v-if="EDomainStatus.draft === internalBot.status"
+      class="absolute right-0 top-0 inline-block !m-0 text-center w-12 h-6 rounded-tr-md rounded-bl-md leading-6 bg-[#FFC7C7] text-xs text-[#EA0000]"
+    >
+      {{ $t('草稿') }}
+    </span>
   </div>
 </template>
 <script lang="ts" setup>
 import DefaultAvatar from '@/assets/img/avatar.png'
 import IconBtn from '@/components/IconBtn/index.vue'
+import { EDomainStatus } from '@/enum/domain'
 import type { IDomainInfo } from '@/interface/domain'
 import { RoutesMap } from '@/router'
 import { useBase } from '@/stores/base'
@@ -74,16 +125,16 @@ import { useDomainStore } from '@/stores/domain'
 import {
   ChatDotRound,
   Compass,
-  DataLine,
   Delete,
   Edit,
   Hide,
   Notification,
-  Share,
+  Position,
   View
 } from '@element-plus/icons-vue'
 import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 
 const props = defineProps<{
@@ -95,6 +146,7 @@ const emit = defineEmits(['delete', 'sync', 'cloneRobot'])
 // 特殊权益用户开放同步/隐藏资源广场机器人按钮
 const PrivilegeUser = '18116404787'
 
+const { t } = useI18n()
 const router = useRouter()
 const domainStoreI = useDomainStore()
 const baseStoreI = useBase()

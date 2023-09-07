@@ -1,34 +1,31 @@
 <template>
-  <Topbar :title="$t('我的机器人')" />
-  <ContentLayout>
-    <div v-loading="initing">
-      <div class="grid grid-cols-2 lg:grid-cols-1 gap-5 lg:gap-4">
+  <Topbar :title="$t('我的机器人')" class="!mb-0 lg:!mb-4" />
+  <ContentLayout class="pt-8 lg:pt-0">
+    <div
+      v-loading="initing"
+      class="grid grid-cols-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 gap-4"
+    >
+      <div
+        data-script="Chato-createBot"
+        class="bg-white rounded-lg leading-5 flex flex-col items-center justify-center gap-4 transition cursor-pointer h-full hover:shadow-lg hover:-translate-y-2 lg:p-4 lg:gap-3 lg:h-auto"
+        @click="onNew"
+      >
         <div
-          data-script="Chato-createBot"
-          class="bg-white rounded-lg p-5 flex gap-3 transition-shadow cursor-pointer h-full hover:shadow-md lg:p-4 lg:h-auto"
-          @click="onNew"
+          class="w-12 h-12 flex items-center justify-center rounded-full overflow-hidden shrink-0 bg-[#F2F3F5] lg:w-10 lg:h-10"
         >
-          <div
-            class="w-12 h-12 flex items-center justify-center rounded-full overflow-hidden shrink-0 bg-[#F2F3F5] lg:w-10 lg:h-10"
-          >
-            <el-icon :size="20" class="text-[#596780]"><Plus /></el-icon>
-          </div>
-          <div>
-            <p class="font-medium text-sm leading-5 text-[#7C5CFC] mb-2">{{ $t('创建机器人') }}</p>
-            <p class="text-[#9DA3AF] text-[13px] leading-[22px]">
-              {{ $t('快速创建一个属于你的机器人吧！') }}
-            </p>
-          </div>
+          <el-icon :size="20" class="text-[#596780]"><Plus /></el-icon>
         </div>
-        <BotListCard
-          v-for="item in domainList"
-          :key="item.id"
-          :bot="item"
-          @delete="onDelete"
-          @cloneRobot="cloneRobot"
-          @sync="onOpenSync"
-        />
+        <p class="font-medium text-sm text-[#7C5CFC]">{{ $t('创建机器人') }}</p>
+        <p class="text-[#9DA3AF] text-[13px]">{{ $t('快速创建一个属于你的机器人吧！') }}</p>
       </div>
+      <BotListCard
+        v-for="item in domainList"
+        :key="item.id"
+        :bot="item"
+        @delete="onDelete"
+        @cloneRobot="cloneRobot"
+        @sync="onOpenSync"
+      />
     </div>
     <el-dialog
       v-model="dialogState.visible"
@@ -51,9 +48,9 @@
       <template #footer>
         <div class="flex justify-end items-center gap-3">
           <el-button @click="onClose">{{ $t('取消') }}</el-button>
-          <el-button type="primary" @click="onSync" :loading="syncSubmiting">{{
-            $t(' 确认 ')
-          }}</el-button>
+          <el-button type="primary" @click="onSync" :loading="syncSubmiting">
+            {{ $t(' 确认 ') }}
+          </el-button>
         </div>
       </template>
     </el-dialog>
@@ -101,7 +98,8 @@ const onNew = async () => {
   if (needUpgrade) {
     return
   }
-  router.push({ name: RoutesMap.manager.create })
+  // router.push({ name: RoutesMap.manager.create })
+  router.push({ name: RoutesMap.manager.createNew })
 }
 
 const onRefresh = async () => {

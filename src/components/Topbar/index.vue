@@ -1,6 +1,6 @@
 <template>
-  <header :class="['flex justify-center', title ? 'mt-10 mb-8 lg:my-4' : 'h-16']">
-    <div class="page-center-container flex gap-2 items-center">
+  <header :class="['flex', title ? 'mt-10 mb-8 lg:my-4' : 'h-16', center && 'justify-center']">
+    <div :class="[center && 'page-center-container', 'flex gap-2 items-center']">
       <span
         v-show="isMobile"
         @click="drawerVisible = true"
@@ -17,9 +17,15 @@
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import useSidebar from '@/composables/useSidebar'
 
-defineProps<{
-  title?: string
-}>()
+withDefaults(
+  defineProps<{
+    center?: boolean
+    title?: string
+  }>(),
+  {
+    center: true
+  }
+)
 
 const { isMobile } = useBasicLayout()
 const { drawerVisible } = useSidebar()

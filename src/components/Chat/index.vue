@@ -448,7 +448,7 @@ function getBotInfo() {
           ? JSON.parse(res.data.data.shortcuts)
           : []
       inputLength.value = detail.value.question_max_length
-      !sseStore.isExistInPeddingDomains(botSlug.value) && sayWelcome()
+      !sseStore.isExistInPeddingDomains(botSlug.value) && sayWelcome(detail.value.welcome)
       shareWeixinInit(detail.value)
       // 健硕需求p参数
       $notnull(query_p) ? submit(query_p) : ''
@@ -528,8 +528,7 @@ const getHistoryChat = async (scrollBottomTag = true) => {
   }
 }
 
-function sayWelcome() {
-  const welcome = detail.value.welcome
+function sayWelcome(welcome: string) {
   if (welcome) {
     history.value.push({
       first: true,
@@ -1134,7 +1133,11 @@ onBeforeUnmount(() => {
 watch(
   botSlug,
   (v) => {
-    v && init()
+    if (v) {
+      init()
+    } else {
+      $isLoading.value = false
+    }
   },
   { immediate: true }
 )

@@ -3,6 +3,12 @@ export const enum EDomainType {
   role = 2
 }
 
+export const enum EDomainStatus {
+  able = 0, // 正常
+  disable = 1, // 被禁用
+  draft = 2 // 草稿
+}
+
 export enum brandDomainStatusType {
   normal = 'normal',
   refuse = 'refuse',

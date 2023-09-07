@@ -1,4 +1,4 @@
-import type { EDomainLLMType, EDomainType } from '@/enum/domain'
+import type { EDomainLLMType, EDomainStatus, EDomainType } from '@/enum/domain'
 
 export interface IDomainInfo {
   id: number
@@ -28,7 +28,7 @@ export interface IDomainInfo {
   desc_show: number
   type: EDomainType
   deleted: string
-  status: number
+  status: EDomainStatus
   visible: number // 是否在资源广场展示: 1 是 0 否
   template: number // 是否为模板: 1 是 0 否
   question_max_length: number
