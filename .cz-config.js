@@ -13,6 +13,7 @@ module.exports = {
       name: 'build:    构建流程、外部依赖变更（如升级 npm 包、修改 webpack 配置等）'
     },
     { value: 'ci', name: 'ci:       修改 CI 配置、脚本' },
+    { value: 'misc', name: 'misc:       杂项业务修改调整（不是大主功能，一些微小需求）' },
     { value: 'chore', name: 'chore:    对构建过程或辅助工具和库的更改（不影响源文件、测试用例）' },
     { value: 'revert', name: 'revert:   回滚 commit' }
   ],

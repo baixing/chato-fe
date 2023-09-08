@@ -129,7 +129,7 @@ const mjProgress = computed(() => `${Number(props.message?.progress || 0) * 100}
               v-html="renderMarkdown(messageContent)"
               class="markdown-container-chato markdown-body"
             ></div>
-            <div v-else v-html="messageContent" class="whitespace-pre-line"></div>
+            <div v-else v-html="messageContent" class="whitespace-pre-line break-words"></div>
             <ChatMessageAudio
               v-if="
                 isAnswerMessage &&

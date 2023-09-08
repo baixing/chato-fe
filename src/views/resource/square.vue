@@ -20,7 +20,7 @@
           @click="addSessionChat(c)"
         >
           <img
-            :src="c.avatar"
+            :src="c.avatar || DefaultAvatar"
             alt="logo"
             class="w-12 h-12 object-cover overflow-hidden shrink-0 rounded-full"
           />
@@ -39,6 +39,7 @@
 <script lang="ts" setup>
 import { addSession } from '@/api/chatList'
 import { getResource } from '@/api/resource'
+import DefaultAvatar from '@/assets/img/avatar.png'
 import Topbar from '@/components/Topbar/index.vue'
 import { EAllRole } from '@/enum/user'
 import ContentLayout from '@/layout/ContentLayout.vue'
