@@ -57,7 +57,7 @@
 <script lang="ts" setup>
 import { createDeleteEditSites } from '@/api/iframe'
 import { useBasicLayout } from '@/composables/useBasicLayout'
-import type { createDeleteEditSitesData, createSitesChannelsRes } from '@/interface/release'
+import type { ICreateDeleteEditSitesData, ICreateSitesChannelsRes } from '@/interface/release'
 import { renderMarkdown } from '@/utils/markdown'
 import type { FormInstance } from 'element-plus'
 import { ElLoading, ElMessageBox, ElNotification as Notification } from 'element-plus'
@@ -79,7 +79,7 @@ const props = defineProps<{
   suspend_style: string
   chato_script_checkDomain: string
   chatScript: string
-  sitesList: createSitesChannelsRes[]
+  sitesList: ICreateSitesChannelsRes[]
   defaultActiveNames: string
 }>()
 
@@ -134,7 +134,7 @@ const removeSite = (id: number, source: string) => {
     .catch(() => {})
 }
 
-const updateSites = async (data: createDeleteEditSitesData) => {
+const updateSites = async (data: ICreateDeleteEditSitesData) => {
   const res = await createDeleteEditSites(props.slug, data)
   Notification({
     type: res.data.code === 200 ? 'success' : 'error',

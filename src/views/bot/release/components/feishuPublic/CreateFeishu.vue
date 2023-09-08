@@ -5,7 +5,6 @@
     v-model:visible="visible"
     :title="t('配置飞书群聊')"
     :footer="false"
-    class="official-account-container"
     @cancel="visible = false"
   >
     <div v-loading="loading">
@@ -24,10 +23,11 @@
     </div>
   </Modal>
 </template>
+
 <script lang="ts" setup>
 import { getFeishuConfig, postFeishuConfig, postSwitchFeishuConfig } from '@/api/release'
 import Modal from '@/components/Modal/index.vue'
-import type { feishuiPublicFormType } from '@/interface/release'
+import type { IFeishuiPublicFormType } from '@/interface/release'
 import { $notnull } from '@/utils/help'
 import { ElLoading } from 'element-plus'
 import { computed, ref, watch } from 'vue'
@@ -48,7 +48,7 @@ const visible = computed({
 })
 
 const resetConfig = ref(false)
-const feishuConfig = ref<feishuiPublicFormType>({
+const feishuConfig = ref<IFeishuiPublicFormType>({
   app_id: '',
   app_secret: '',
   encrypt_key: '',
@@ -58,7 +58,7 @@ const feishuConfig = ref<feishuiPublicFormType>({
 const ban = ref(false)
 
 // 提交飞书
-const handleSubmit = async (e: feishuiPublicFormType) => {
+const handleSubmit = async (e: IFeishuiPublicFormType) => {
   const postData = {
     domain_slug: props.slug,
     app_id: e.app_id,
@@ -136,14 +136,3 @@ watch(ban, () => {
   updateFeishuStatus()
 })
 </script>
-<style lang="scss" scoped>
-.official-account-container {
-  .el-dialog__header {
-    margin-right: 0;
-  }
-  .el-dialog__body {
-    padding-top: 0;
-    padding-bottom: 24px;
-  }
-}
-</style>

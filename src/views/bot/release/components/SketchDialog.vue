@@ -5,7 +5,6 @@
     v-model:visible="internalVisible"
     :title="$t(`填写示意图`)"
     :footer="false"
-    class="sketch-official-container"
   >
     <img :src="url" class="w-full" alt="" />
   </Modal>
@@ -27,14 +26,3 @@ const internalVisible = computed({
   set: (v) => emit('update:value', v)
 })
 </script>
-<style lang="scss">
-.sketch-official-container {
-  .el-dialog__header {
-    margin-right: 0;
-  }
-  .el-dialog__body {
-    padding-top: 0;
-    padding-bottom: 24px;
-  }
-}
-</style>

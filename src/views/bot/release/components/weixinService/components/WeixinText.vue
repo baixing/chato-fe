@@ -16,11 +16,11 @@
 </template>
 <script lang="ts" setup>
 import { EWeixinConfigText } from '@/constant/release'
-import type { weixinConfigListRes } from '@/interface/release'
+import type { IWeixinConfigListRes } from '@/interface/release'
 import { computed } from 'vue'
 
 const props = defineProps<{
-  list: Partial<weixinConfigListRes>
+  list: Partial<IWeixinConfigListRes>
   index?: number
 }>()
 const targetOrder = ['url', 'token', 'encoding_aes_key', 'app_secret']

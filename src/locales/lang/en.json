@@ -211,6 +211,7 @@
   "完成设置，填写以下信息": " complete the settings and enter the information below",
   "请填写APP ID": "Please enter the APP ID",
   "请填写APP Secret": "Please enter the APP Secret",
+  "请填写APP Key": "Please fill in the APP Key",
   "请填写Encrypt Key": "Please enter Encrypt Key",
   "请填写Verification Token": "Please enter Verification Token",
   "提交": "Submit",
@@ -1096,5 +1097,11 @@
   "所在行业": "Industry",
   "请输入组织名称": "Please enter the organization name",
   "您的称呼": "Your address",
-  "组织名称": "Organization Name"
+  "组织名称": "Organization Name",
+  "配置钉钉": "Configure DingDing",
+  "复制下方信息，在「钉钉开放平台」粘贴": "Copy the information below and paste it on the 'Nail Open Platform",
+  "注意：请使用钉钉管理员账号创建": "Note: Please create using the DingTalk administrator account",
+  "请填写AppKey": "Please fill in the AppKey",
+  "「钉钉开放平台」": "「Nail Open Platform」",
+  "在群/单聊中提供机器人服务，仅限内部员工使用": "Provide robot services in group/single chat, limited to internal employees only"
 }

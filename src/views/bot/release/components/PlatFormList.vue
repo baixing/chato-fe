@@ -12,10 +12,10 @@
   </div>
 </template>
 <script lang="ts" setup>
-import type { PlatFormListProps } from '@/interface/release'
+import type { IPlatFormListProps } from '@/interface/release'
 
 defineProps<{
-  platformList: PlatFormListProps[]
+  platformList: IPlatFormListProps[]
 }>()
 </script>
 <style lang="scss" scoped>

@@ -5,7 +5,6 @@
     v-model:visible="internalVisible"
     :title="$t(`配置公众号`)"
     :footer="false"
-    class="official-account-container"
   >
     <el-tabs v-model="activeName" class="official-tabs">
       <el-tab-pane :label="$t(`添加菜单`)" name="addMenuTab"
@@ -83,16 +82,6 @@ const handleEventSet = (type: handleEventSetType, value?: string) => {
 }
 </script>
 <style lang="scss">
-.official-account-container {
-  .el-dialog__header {
-    margin-right: 0;
-  }
-  .el-dialog__body {
-    padding-top: 0;
-    padding-bottom: 24px;
-  }
-}
-
 .steps-container {
   .el-step__icon {
     background: #b5bed0;

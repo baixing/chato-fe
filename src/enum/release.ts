@@ -1,17 +1,7 @@
-export const enum AfficialAccountReplyModeType {
-  sync = 'sync',
-  async = 'async'
-}
-
-export const enum AfficialAccountStatusType {
+export const enum EAfficialAccountStatusType {
   normal = 'normal',
   disabled = 'disabled',
   deleted = 'deleted'
-}
-
-export const enum EFeishuConfigStatus {
-  refresh = 'refresh',
-  load = 'load'
 }
 
 export const enum EWeixinConfigText {
@@ -47,7 +37,8 @@ export const enum EChannelType {
   FEISHU = 'feishu',
   WECHAT_KF = 'wechat_kf',
   WECHAT_MP = 'wechat_mp',
-  DOUYIN = 'douyin'
+  DOUYIN = 'douyin',
+  DINGDING = 'dingding'
 }
 
 export enum EReleaseSettingExampleType {

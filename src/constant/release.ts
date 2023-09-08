@@ -1,9 +1,9 @@
-import { AfficialAccountStatusType, ECreatePublicType, EWeixinConfigType } from '@/enum/release'
+import { EAfficialAccountStatusType, ECreatePublicType, EWeixinConfigType } from '@/enum/release'
 
 export const ChannelStatusTiktok = {
-  [AfficialAccountStatusType.normal]: '解除授权',
-  [AfficialAccountStatusType.disabled]: '重新授权',
-  [AfficialAccountStatusType.deleted]: '重新授权'
+  [EAfficialAccountStatusType.normal]: '解除授权',
+  [EAfficialAccountStatusType.disabled]: '重新授权',
+  [EAfficialAccountStatusType.deleted]: '重新授权'
 }
 
 export const EWeixinConfigText = {

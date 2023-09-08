@@ -89,7 +89,7 @@
 <script setup lang="ts">
 import type { ImgVideoUploadFile, MediaItem } from '@/components/ImgUpload/data'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
-import type { weixinCreateConfigType } from '@/interface/release'
+import type { IWeixinCreateConfigType } from '@/interface/release'
 import { getFileBase64 } from '@/utils/url'
 import type { FormInstance, FormRules } from 'element-plus'
 import { reactive, ref, watch } from 'vue'
@@ -179,7 +179,7 @@ const rulesCreatePublic = reactive<FormRules>({
   // new_user_in_group_msg: [{ required: true, trigger: 'blur', message: '请输入新人进群@Ta打招呼' }]
 })
 
-const inputCreatePublicForm = reactive<weixinCreateConfigType>({
+const inputCreatePublicForm = reactive<IWeixinCreateConfigType>({
   name: '',
   robot_response_type: '',
   new_user_in_group_msg: '',

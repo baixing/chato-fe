@@ -5,7 +5,7 @@
     v-model:visible="internalVisible"
     :title="$t(`抖音授权`)"
     :footer="false"
-    class="official-account-container text-[12px]"
+    class="text-[12px]"
   >
     <div class="w-full" v-loading="loading">
       <p class="text-[14px]">{{ $t('请前往「抖音」扫码授权') }}</p>
@@ -20,7 +20,7 @@
       </div>
       <p
         class="text-[#EA0000] mb-[16px]"
-        v-if="tiktokStatus?.s_status === AfficialAccountStatusType.deleted"
+        v-if="tiktokStatus?.s_status === EAfficialAccountStatusType.deleted"
       >
         {{ $t('授权超过时间，已失效') }}
       </p>
@@ -40,11 +40,12 @@
     </div>
   </Modal>
 </template>
+
 <script lang="ts" setup>
 import { getChannelType, getTitokServiceConfig, patchChannelType } from '@/api/release'
 import Modal from '@/components/Modal/index.vue'
 import { ChannelStatusTiktok } from '@/constant/release'
-import { AfficialAccountStatusType, EChannelType } from '@/enum/release'
+import { EAfficialAccountStatusType, EChannelType } from '@/enum/release'
 import { ElLoading, ElMessage } from 'element-plus'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -79,7 +80,7 @@ const geTikTokConfig = async () => {
 
 // 授权
 const handleEmpower = async (txt: string) => {
-  if ([ChannelStatusTiktok[AfficialAccountStatusType.disabled], t('立即授权')].includes(txt)) {
+  if ([ChannelStatusTiktok[EAfficialAccountStatusType.disabled], t('立即授权')].includes(txt)) {
     return window.open(tiktokServiceConfig.value)
   } else {
     // 解除授权
@@ -90,7 +91,7 @@ const handleEmpower = async (txt: string) => {
     })
     try {
       const res = await patchChannelType(EChannelType.DOUYIN, props.domainSlug, {
-        s_status: AfficialAccountStatusType.disabled
+        s_status: EAfficialAccountStatusType.disabled
       })
       tiktokStatus.value = res.data.data || {}
       ElMessage.success(t('解除成功'))
@@ -126,14 +127,3 @@ const btnText = computed(() => {
   }
 })
 </script>
-<style lang="scss" scoped>
-.official-account-container {
-  .el-dialog__header {
-    margin-right: 0;
-  }
-  .el-dialog__body {
-    padding-top: 0;
-    padding-bottom: 24px;
-  }
-}
-</style>

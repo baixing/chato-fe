@@ -5,7 +5,6 @@
     v-model:visible="internalVisible"
     :title="$t(`复制链接`)"
     :footer="false"
-    class="copy-link-container"
   >
     <header>{{ $t('URL链接') }}</header>
     <p class="text-[color: #596780] text-sm my-[18px] flex items-center">
@@ -46,16 +45,5 @@ header {
 }
 .qr-container {
   margin-left: -9px;
-}
-</style>
-<style lang="scss">
-.copy-link-container {
-  .el-dialog__header {
-    margin-right: 0;
-  }
-  .el-dialog__body {
-    padding-top: 0;
-    padding-bottom: 24px;
-  }
 }
 </style>

@@ -10,14 +10,14 @@ export const enum EDomainStatus {
   draft = 3 // 草稿
 }
 
-export enum brandDomainStatusType {
+export enum EBrandDomainStatusType {
   normal = 'normal',
   refuse = 'refuse',
   pending = 'pending',
   offline = 'offline'
 }
 
-export enum brandCreateEditStatusType {
+export enum EBrandCreateEditStatusType {
   create = 'create',
   update = 'update'
 }

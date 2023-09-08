@@ -1,15 +1,16 @@
 import type { EChannelType } from '@/enum/release'
 import type {
-  ApplicationFormData,
-  CreateGroupChatResponse,
-  brandDomainType,
-  brandDomainTypeKeyFile,
-  createPublicStatus,
-  feishuPublicSerachRes,
-  feishuSwitchConfigType,
-  feishuiPublicFormType,
-  patchChannelType,
-  weixinConfigType
+  IApplicationFormData,
+  ICreateGroupChatResponse,
+  IBrandDomainType,
+  IBrandDomainTypeKeyFile,
+  ICreatePublicStatus,
+  IFeishuPublicSerachRes,
+  IFeishuSwitchConfigType,
+  IFeishuiPublicFormType,
+  IPatchChannelType,
+  IWeixinConfigType,
+  IDingDingPublicFormType
 } from '@/interface/release'
 import request from '@/utils/request'
 
@@ -24,7 +25,7 @@ export function createPublic(domainId, data) {
 
 // 查询当前创建的群聊
 export function serachPublicCreateStatus(orgId: number) {
-  return request<createPublicStatus>({
+  return request<ICreatePublicStatus>({
     url: `/chato/weixin_group/${orgId}/is_done`
   })
 }
@@ -40,7 +41,7 @@ export function editPublic(domainId, data) {
 
 // 获取群聊接口
 export function getPubliclist(domainId: number) {
-  return request<CreateGroupChatResponse[]>({
+  return request<ICreateGroupChatResponse[]>({
     url: `/chato/weixin_group/${domainId}/list`
   })
 }
@@ -61,7 +62,7 @@ export function getIndustry() {
 }
 
 // 空间保存
-export function applicationFormSave(data: ApplicationFormData) {
+export function applicationFormSave(data: IApplicationFormData) {
   return request({
     method: 'post',
     url: `/chato/api/v1/org/release_applications/save`,
@@ -70,7 +71,7 @@ export function applicationFormSave(data: ApplicationFormData) {
 }
 
 // 保存品牌域名
-export function saveBrandDomain(domain_slug: string, data: brandDomainType) {
+export function saveBrandDomain(domain_slug: string, data: IBrandDomainType) {
   return request({
     method: 'post',
     url: `/api/custom_host/${domain_slug}/save`,
@@ -79,14 +80,14 @@ export function saveBrandDomain(domain_slug: string, data: brandDomainType) {
 }
 
 export function getBrandDomain(domain_slug: string) {
-  return request<brandDomainTypeKeyFile[]>({
+  return request<IBrandDomainTypeKeyFile[]>({
     url: `/api/custom_host/${domain_slug}/get`
   })
 }
 
 // 查询飞书配置
 export function getFeishuConfig(domain_slug: string) {
-  return request<feishuPublicSerachRes>({
+  return request<IFeishuPublicSerachRes>({
     method: 'post',
     url: '/chato/feishu/search',
     data: { domain_slug }
@@ -94,7 +95,7 @@ export function getFeishuConfig(domain_slug: string) {
 }
 
 // 配置飞书
-export function postFeishuConfig(data: feishuiPublicFormType & { domain_slug: string }) {
+export function postFeishuConfig(data: IFeishuiPublicFormType & { domain_slug: string }) {
   return request({
     method: 'post',
     url: '/chato/feishu/login',
@@ -103,7 +104,7 @@ export function postFeishuConfig(data: feishuiPublicFormType & { domain_slug: st
 }
 
 // 飞书群聊开关
-export function postSwitchFeishuConfig(data: feishuSwitchConfigType) {
+export function postSwitchFeishuConfig(data: IFeishuSwitchConfigType) {
   return request({
     method: 'post',
     url: '/chato/feishu/ban',
@@ -119,7 +120,7 @@ export function postWeixinConfig(domain_slug: string, app_id: string) {
 }
 
 // 创建微信客服：app-id、app-secret
-export function patchWeixinConfig(domain_slug: string, data: weixinConfigType) {
+export function patchWeixinConfig(domain_slug: string, data: IWeixinConfigType) {
   return request({
     method: 'post',
     url: `/chato/api/v1/wechat_kf/account/${domain_slug}`,
@@ -152,7 +153,7 @@ export function getChannelType(channel_type: EChannelType, domain_slug: string) 
 export function patchChannelType(
   channel_type: EChannelType,
   domain_slug: string,
-  data: patchChannelType
+  data: IPatchChannelType
 ) {
   return request({
     method: 'patch',
@@ -182,5 +183,14 @@ export function postWeixinPublicInviteLarge(domain_id: number, data: any) {
 export function getWeixinPublicRobotQrCode(domain_id: number) {
   return request({
     url: `/chato/weixin_group/${domain_id}/available/wxuser/qrcode`
+  })
+}
+
+// 配置钉钉
+export function postDingDingConfig(data: IDingDingPublicFormType, domain_slug) {
+  return request({
+    method: 'post',
+    url: `/chato/api/v1/dingding/account/${domain_slug}`,
+    data
   })
 }

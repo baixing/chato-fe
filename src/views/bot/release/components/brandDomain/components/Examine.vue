@@ -1,6 +1,6 @@
 <template>
   <div class="examine-container p-40px pt-[200px] md:pt-[100px] text-x]">
-    <div v-if="brandDomainInfo.s_status === brandDomainStatusType.refuse" class="text-center">
+    <div v-if="brandDomainInfo.s_status === EBrandDomainStatusType.refuse" class="text-center">
       <p class="text-xl text-[#EA0000] flex items-center justify-center">
         <svg-icon name="brandDomain-error" class="mr-1"></svg-icon>{{ $t(' 审核失败') }}
       </p>
@@ -27,13 +27,13 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { brandDomainStatusType } from '@/enum/domain'
-import type { brandDomainTypeKeyFile } from '@/interface/release'
+import { EBrandDomainStatusType } from '@/enum/domain'
+import type { IBrandDomainTypeKeyFile } from '@/interface/release'
 import { watch } from 'vue'
 
 const emit = defineEmits(['nextClick'])
 const props = defineProps<{
-  brandDomainInfo: brandDomainTypeKeyFile
+  brandDomainInfo: IBrandDomainTypeKeyFile
 }>()
 watch(
   () => props.brandDomainInfo,

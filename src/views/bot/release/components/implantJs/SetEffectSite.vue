@@ -4,7 +4,6 @@
     v-model:visible="internalVisible"
     :title="$t(`创建站点`)"
     :footer="false"
-    class="set-site-container"
   >
     <SitePublic v-slot="slotProps" name="">
       <el-row class="w-full mt-2 mr-0" justify="end" :gutter="8">
@@ -23,6 +22,7 @@
     </SitePublic>
   </Modal>
 </template>
+
 <script lang="ts" setup>
 import { createDeleteEditSites } from '@/api/iframe'
 import Modal from '@/components/Modal/index.vue'
@@ -84,14 +84,3 @@ async function submitCreateSite(formEl, data: SiteData) {
   })
 }
 </script>
-<style lang="scss">
-.set-site-container {
-  .el-dialog__header {
-    margin-right: 0;
-  }
-  .el-dialog__body {
-    padding-top: 0;
-    padding-bottom: 24px;
-  }
-}
-</style>

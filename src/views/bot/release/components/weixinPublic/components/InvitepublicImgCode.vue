@@ -30,11 +30,11 @@
   </el-row>
 </template>
 <script lang="ts" setup>
-import type { RobotQrCodeInfoProps } from '@/interface/release'
+import type { IRobotQrCodeInfoProps } from '@/interface/release'
 import { computed } from 'vue'
 
 const props = defineProps<{
-  robotQrCodeInfo: RobotQrCodeInfoProps
+  robotQrCodeInfo: IRobotQrCodeInfoProps
 }>()
 
 const robotQrCode = computed(() => props.robotQrCodeInfo)

@@ -5,7 +5,6 @@
     v-model:visible="internalVisible"
     :title="$t(`创建群聊`)"
     :footer="false"
-    class="create-public-container"
   >
     <div class="w-full mb-[20px] py-[8px] px-4 bg-[#FCF6EC] text-[#E6A23C] leading-5 text-[14px]">
       <p>
@@ -50,12 +49,13 @@
     </el-tabs>
   </Modal>
 </template>
+
 <script setup lang="ts">
 import Modal from '@/components/Modal/index.vue'
 import useSpaceRights from '@/composables/useSpaceRights'
 import { PaidCommercialTypes } from '@/constant/space'
 import type { ETabPublicType } from '@/enum/release'
-import type { RobotQrCodeInfoProps, weixinCreateConfigType } from '@/interface/release'
+import type { IRobotQrCodeInfoProps, IWeixinCreateConfigType } from '@/interface/release'
 import { $notnull } from '@/utils/help'
 import { computed } from 'vue'
 import CreatePublicForm from './components/CreatePublicForm.vue'
@@ -69,7 +69,7 @@ const props = defineProps<{
   value: boolean
   userRoute: string
   activeName: ETabPublicType
-  robotQrCodeInfo: RobotQrCodeInfoProps
+  robotQrCodeInfo: IRobotQrCodeInfoProps
 }>()
 
 const isShowInvite = computed(() => isAllowedCommercialType(PaidCommercialTypes))
@@ -91,18 +91,7 @@ const internalVisible = computed({
   set: (v) => emit('update:value', v)
 })
 
-const submitCreatePublic = (form: weixinCreateConfigType, formEl, type) => {
+const submitCreatePublic = (form: IWeixinCreateConfigType, formEl, type) => {
   emit('submitCreatePublic', form, formEl, type)
 }
 </script>
-<style lang="scss">
-.create-public-container {
-  .el-dialog__header {
-    margin-right: 0;
-  }
-  .el-dialog__body {
-    padding-top: 0;
-    padding-bottom: 24px;
-  }
-}
-</style>

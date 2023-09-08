@@ -138,8 +138,8 @@
 <script lang="ts" setup>
 import { createAfficialAccount, serachAfficialAccount } from '@/api/weixin'
 import useImagePath from '@/composables/useImagePath'
-import { AfficialAccountStatusType } from '@/enum/release'
-import type { createAfficialAccountRes } from '@/interface/release'
+import { EAfficialAccountStatusType } from '@/enum/release'
+import type { ICeateAfficialAccountRes } from '@/interface/release'
 import type { FormInstance, FormRules } from 'element-plus'
 import { ElMessageBox } from 'element-plus'
 import { onMounted, reactive, ref, watch } from 'vue'
@@ -158,17 +158,17 @@ const MessageTabForm = reactive<{
   id: number
   app_id: string
   app_secret: string
-  s_status: AfficialAccountStatusType
+  s_status: EAfficialAccountStatusType
   status?: boolean
 }>({
   id: 0,
   app_id: '',
   app_secret: '',
   status: true,
-  s_status: AfficialAccountStatusType.normal
+  s_status: EAfficialAccountStatusType.normal
 })
 const loading = ref<boolean>(false)
-const afficialAccountList = ref<createAfficialAccountRes[]>([])
+const afficialAccountList = ref<ICeateAfficialAccountRes[]>([])
 const index = ref<number>(0)
 const MessageTabFormRules = reactive<FormRules>({
   app_id: [{ required: true, message: t('请输入app_id'), trigger: 'blur' }],
@@ -199,8 +199,8 @@ const submitForm = async () => {
   loading.value = true
   const data = { ...MessageTabForm }
   data.status
-    ? (data.s_status = AfficialAccountStatusType.normal)
-    : (data.s_status = AfficialAccountStatusType.disabled)
+    ? (data.s_status = EAfficialAccountStatusType.normal)
+    : (data.s_status = EAfficialAccountStatusType.disabled)
   delete data.status
   await createAfficialAccount(props.slug_id, data)
   init()

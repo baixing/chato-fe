@@ -28,20 +28,15 @@
   </div>
 </template>
 <script lang="ts" setup>
-import type { brandDomainType } from '@/interface/release'
-import type { UploadUserFile } from 'element-plus'
+import type { IBrandDomainTypeKeyFile } from '@/interface/release'
 import { ElMessageBox } from 'element-plus'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 
 const emit = defineEmits(['nextClick'])
-type brandDomainTypeProp = brandDomainType & {
-  pub_key: UploadUserFile
-  pri_key: UploadUserFile
-}
 const props = defineProps<{
-  brandDomainInfo: brandDomainTypeProp
+  brandDomainInfo: IBrandDomainTypeKeyFile
 }>()
 
 const brandDomainInfoDecorate = computed(() => {

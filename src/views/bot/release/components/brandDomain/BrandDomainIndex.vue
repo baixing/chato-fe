@@ -31,8 +31,8 @@
 
 <script setup lang="ts">
 import { useBasicLayout } from '@/composables/useBasicLayout'
-import type { brandCreateEditStatusType } from '@/enum/domain'
-import type { brandDomainTypeKeyFile } from '@/interface/release'
+import type { EBrandCreateEditStatusType } from '@/enum/domain'
+import type { IBrandDomainTypeKeyFile } from '@/interface/release'
 import { computed } from 'vue'
 import Agreement from './components/Agreement.vue'
 import CnameSet from './components/CnameSet.vue'
@@ -44,8 +44,8 @@ const props = defineProps<{
   value: boolean
   index: number
   slug: string
-  status: brandCreateEditStatusType
-  brandDomainInfo: brandDomainTypeKeyFile
+  status: EBrandCreateEditStatusType
+  brandDomainInfo: IBrandDomainTypeKeyFile
 }>()
 const { isMobile } = useBasicLayout()
 

@@ -141,7 +141,7 @@ import Modal from '@/components/Modal/index.vue'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import { ECreatePublicType } from '@/enum/release'
 import type { IDomainInfo } from '@/interface/domain'
-import type { RobotQrCodeInfoProps } from '@/interface/release'
+import type { IRobotQrCodeInfoProps } from '@/interface/release'
 import { RoutesMap } from '@/router'
 import { useDomainStore } from '@/stores/domain'
 import { $notnull } from '@/utils/help'
@@ -162,7 +162,7 @@ const props = withDefaults(
     qrcode_data: string
     codeImgLoading: boolean
     orgId: number
-    robotQrCodeInfo: RobotQrCodeInfoProps
+    robotQrCodeInfo: IRobotQrCodeInfoProps
     transferStatus: boolean
     showTransfer: boolean
   }>(),

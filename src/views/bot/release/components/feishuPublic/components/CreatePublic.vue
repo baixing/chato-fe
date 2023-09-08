@@ -23,7 +23,6 @@
         size="large"
         labelPosition="left"
         label-width="140px"
-        status-icon
         class="w-full"
       >
         <el-form-item label="APP ID" prop="app_id">
@@ -71,14 +70,14 @@
   </div>
 </template>
 <script lang="ts" setup>
-import type { feishuiPublicFormType } from '@/interface/release'
+import type { IFeishuiPublicFormType } from '@/interface/release'
 import type { FormInstance } from 'element-plus'
 import { onMounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 const emit = defineEmits(['handleClose', 'handleSubmit'])
 const props = defineProps<{
-  feishuConfig: feishuiPublicFormType
+  feishuConfig: IFeishuiPublicFormType
 }>()
 
 const createPublicRule = reactive({
@@ -88,7 +87,7 @@ const createPublicRule = reactive({
   verification_token: [{ required: true, message: t('请填写开发者密码'), trigger: 'blur' }]
 })
 
-const createPublicForm = reactive<feishuiPublicFormType>({
+const createPublicForm = reactive<IFeishuiPublicFormType>({
   app_id: '',
   app_secret: '',
   encrypt_key: '',

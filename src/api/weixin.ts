@@ -1,4 +1,4 @@
-import type { createAfficialAccountData, createAfficialAccountRes } from '@/interface/release'
+import type { ICreateAfficialAccountData, ICeateAfficialAccountRes } from '@/interface/release'
 import request from '@/utils/request'
 
 // 获取微信分享信息
@@ -10,8 +10,8 @@ export function getWeixinShare(params) {
 }
 
 // 绑定微信公众号
-export function createAfficialAccount(slug_id: string, data: createAfficialAccountData) {
-  return request<createAfficialAccountRes>({
+export function createAfficialAccount(slug_id: string, data: ICreateAfficialAccountData) {
+  return request<ICeateAfficialAccountRes>({
     method: 'post',
     url: `/mp/manage/${slug_id}/save`,
     data
@@ -20,7 +20,7 @@ export function createAfficialAccount(slug_id: string, data: createAfficialAccou
 
 // 查询当前绑定的微信公众号
 export function serachAfficialAccount(slug_id: string) {
-  return request<createAfficialAccountRes[]>({
+  return request<ICeateAfficialAccountRes[]>({
     method: 'get',
     url: `/mp/manage/${slug_id}`
   })

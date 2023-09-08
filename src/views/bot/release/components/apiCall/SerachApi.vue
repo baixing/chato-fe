@@ -5,33 +5,24 @@
     v-model:visible="internalVisible"
     :title="$t(`查看秘钥`)"
     :footer="false"
-    class="copy-api-container"
   >
     <div class="api-detail">
       <dl>
         <dt>token：</dt>
         <dd class="copiable-item">
           {{ chatAPI }}
-          <el-button
-            type="primary"
-            link
-            size="large"
-            @click.prevent="$copyText(chatAPI)"
-            >{{ $t('复制') }}</el-button
-          >
+          <el-button type="primary" link size="large" @click.prevent="$copyText(chatAPI)">
+            {{ $t('复制') }}
+          </el-button>
         </dd>
       </dl>
       <dl>
         <dt>{{ $t('机器人标识：') }}</dt>
         <dd class="copiable-item">
           {{ slug }}
-          <el-button
-            type="primary"
-            link
-            size="large"
-            @click.prevent="$copyText(slug)"
-            >{{ $t('复制') }}</el-button
-          >
+          <el-button type="primary" link size="large" @click.prevent="$copyText(slug)">
+            {{ $t('复制') }}
+          </el-button>
         </dd>
       </dl>
     </div>
@@ -55,6 +46,7 @@ const internalVisible = computed({
   set: (v) => emit('update:value', v)
 })
 </script>
+
 <style lang="scss" scoped>
 .api-detail dl {
   display: flex;
@@ -110,17 +102,6 @@ const internalVisible = computed({
     .el-button {
       margin-left: 10px;
     }
-  }
-}
-</style>
-<style lang="scss">
-.copy-api-container {
-  .el-dialog__header {
-    margin-right: 0;
-  }
-  .el-dialog__body {
-    padding-top: 0;
-    padding-bottom: 24px;
   }
 }
 </style>

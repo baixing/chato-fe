@@ -83,34 +83,27 @@
 import { saveBrandDomain } from '@/api/release'
 import type { UploadResType } from '@/components/ImgUpload/data'
 import { currentEnvConfig } from '@/config'
-import { brandCreateEditStatusType } from '@/enum/domain'
-import type { brandDomainType, brandDomainTypeKeyFile } from '@/interface/release'
-import { useDomainStore } from '@/stores/domain'
+import { EBrandCreateEditStatusType } from '@/enum/domain'
+import type { IBrandDomainType, IBrandDomainTypeKeyFile } from '@/interface/release'
 import { $notnull } from '@/utils/help'
 import * as url from '@/utils/url'
 import type { FormInstance } from 'element-plus'
 import { ElLoading, ElNotification as Notification } from 'element-plus'
-import { storeToRefs } from 'pinia'
 import { computed, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRoute } from 'vue-router'
 import UploadFile from './UploadFile.vue'
 
 const { t } = useI18n()
-type cnameSetModelType = brandDomainType & {
+type cnameSetModelType = IBrandDomainType & {
   pub_key: UploadResType[]
   pri_key: UploadResType[]
 }
 const props = defineProps<{
   slug: string
-  status: brandCreateEditStatusType
-  brandDomainInfo: brandDomainTypeKeyFile
+  status: EBrandCreateEditStatusType
+  brandDomainInfo: IBrandDomainTypeKeyFile
 }>()
 const emit = defineEmits(['nextClick', 'handleSubmitSuccess'])
-const route = useRoute()
-const domainStoreI = useDomainStore()
-const { domainInfo } = storeToRefs(domainStoreI)
-const domainId = (domainInfo.value.id || route.params.botId).toString()
 const cnameSetForm = ref<FormInstance>()
 const cnameSetModel = reactive<cnameSetModelType>({
   id: 0,
@@ -118,7 +111,7 @@ const cnameSetModel = reactive<cnameSetModelType>({
   record: '',
   pub_key: [],
   pri_key: [],
-  status: brandCreateEditStatusType.create
+  status: EBrandCreateEditStatusType.create
 })
 const checked = ref(false)
 const disabled = computed(() => {
@@ -151,8 +144,8 @@ const handleSubmit = async () => {
     expired: 0,
     memo: '',
     status: $notnull(props.brandDomainInfo)
-      ? brandCreateEditStatusType.create
-      : brandCreateEditStatusType.update,
+      ? EBrandCreateEditStatusType.create
+      : EBrandCreateEditStatusType.update,
     pub_key: PubkeyToData(cnameSetModel.pub_key),
     pri_key: PubkeyToData(cnameSetModel.pri_key)
   }
@@ -171,7 +164,7 @@ watch(
   (v) => {
     if ($notnull(v)) {
       cnameSetModel.id = v.id
-      cnameSetModel.status = brandCreateEditStatusType.update
+      cnameSetModel.status = EBrandCreateEditStatusType.update
     }
   },
   { immediate: true, deep: true }
@@ -191,7 +184,5 @@ watch(
     opacity: 0.5;
     background: #fff;
   }
-}
-.required-item {
 }
 </style>

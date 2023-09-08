@@ -98,8 +98,8 @@ import {
 } from '@/api/release'
 import Modal from '@/components/Modal/index.vue'
 import useImagePath from '@/composables/useImagePath'
-import { AfficialAccountStatusType, EChannelType } from '@/enum/release'
-import type { weixinConfigType } from '@/interface/release'
+import { EAfficialAccountStatusType, EChannelType } from '@/enum/release'
+import type { IWeixinConfigType } from '@/interface/release'
 import { $notnull } from '@/utils/help'
 import { computed, ref, watch } from 'vue'
 import SketchDialog from '../SketchDialog.vue'
@@ -146,8 +146,8 @@ const handleBtn = async (n: number, e: { input: '' } = { input: '' }) => {
 }
 
 const submitAppId = async (
-  call: (domain_slug: string, e: weixinConfigType | string) => Promise<any>,
-  e: weixinConfigType | string
+  call: (domain_slug: string, e: IWeixinConfigType | string) => Promise<any>,
+  e: IWeixinConfigType | string
 ) => {
   try {
     loading.value = true
@@ -168,8 +168,8 @@ const handleChange = async () => {
     app_id: config.value.app_id,
     app_secret: config.value.app_secret,
     s_status: showWeixin.value
-      ? AfficialAccountStatusType.normal
-      : AfficialAccountStatusType.disabled
+      ? EAfficialAccountStatusType.normal
+      : EAfficialAccountStatusType.disabled
   }
   try {
     const {
@@ -199,7 +199,7 @@ const init = async () => {
 
 watch(config, (v) => {
   $notnull(config.value.app_secret) ? (index.value = 4) : ''
-  showWeixin.value = config.value.s_status === AfficialAccountStatusType.normal ? true : false
+  showWeixin.value = config.value.s_status === EAfficialAccountStatusType.normal ? true : false
 })
 
 watch(

@@ -15,15 +15,15 @@ import useSpaceRights from '@/composables/useSpaceRights'
 import { currentEnvConfig } from '@/config'
 import { ChatBubbleColorList } from '@/constant/chat'
 import { ECreatePublicText } from '@/constant/release'
-import { brandCreateEditStatusType, brandDomainStatusType } from '@/enum/domain'
+import { EBrandCreateEditStatusType, EBrandDomainStatusType } from '@/enum/domain'
 import { ECreatePublicType, ETabPublicType } from '@/enum/release'
 import { ESpaceCommercialType, ESpaceRightsType } from '@/enum/space'
 import type {
-  PlatFormListProps,
-  RobotQrCodeInfoProps,
-  brandDomainTypeKeyFile,
-  createSitesChannelsRes,
-  weixinCreateConfigType
+  IPlatFormListProps,
+  IRobotQrCodeInfoProps,
+  IBrandDomainTypeKeyFile,
+  ICreateSitesChannelsRes,
+  IWeixinCreateConfigType
 } from '@/interface/release'
 import { useBase } from '@/stores/base'
 import { useDomainStore } from '@/stores/domain'
@@ -59,6 +59,7 @@ import CreatePublic from './components/weixinPublic/CreatePublic.vue'
 import DrawerPublic from './components/weixinPublic/DrawerPublic.vue'
 import PublicImgPreview from './components/weixinPublic/PublicImgPreview.vue'
 import WeixinService from './components/weixinService/WeixinService.vue'
+import CreateDing from './components/dingDing/CreateDing.vue'
 
 const { t } = useI18n()
 interface CurrentRowI {
@@ -108,7 +109,7 @@ const isCreating = ref<boolean>(false)
 const isEdit = ref<boolean>(false)
 const editConfig = ref({})
 const activeName = ref<ETabPublicType>(ETabPublicType.create)
-const robotQrCodeInfo = ref<RobotQrCodeInfoProps>({})
+const robotQrCodeInfo = ref<IRobotQrCodeInfoProps>({})
 const serachPublicStatusRef = ref(null)
 const transferStatus = ref(false)
 const showTransfer = ref(false)
@@ -119,16 +120,17 @@ const visibleSite = ref<boolean>(false)
 const loading = ref()
 const dialogVisibleHttp = ref<boolean>(false)
 // 站点
-const sitesList = ref<createSitesChannelsRes[]>([])
+const sitesList = ref<ICreateSitesChannelsRes[]>([])
 // 域名部署
 const brandDomainVisible = ref<boolean>(false)
 const currentIndex = ref<number>(1)
-const brandDomainList = ref<brandDomainTypeKeyFile[]>([])
-const brandDomainInfo = ref<brandDomainTypeKeyFile>()
-const brandDomainStatus = ref<brandCreateEditStatusType>(brandCreateEditStatusType.create)
+const brandDomainList = ref<IBrandDomainTypeKeyFile[]>([])
+const brandDomainInfo = ref<IBrandDomainTypeKeyFile>()
+const brandDomainStatus = ref<EBrandCreateEditStatusType>(EBrandCreateEditStatusType.create)
 const feiShuVisible = ref<boolean>(false) // 飞书
 const weixinService = ref<boolean>(false) // 微信客服
 const tiktokService = ref<boolean>(false) // 抖音
+const dingDingVisible = ref<boolean>(false) // 钉钉
 
 const sureMessage = [ECreatePublicType.create, ECreatePublicType.friends, ECreatePublicText.invite]
 
@@ -137,7 +139,7 @@ function getChatAPI(baseURL, slug) {
 }
 
 async function submitCreatePublic(
-  inputCreatePublicForm: weixinCreateConfigType,
+  inputCreatePublicForm: IWeixinCreateConfigType,
   formEl?: FormInstance,
   type?: ECreatePublicType,
   row?: any
@@ -276,8 +278,7 @@ const createPublicDialog = async () => {
   robotQrCodeInfo.value = {}
 }
 
-const platformList: PlatFormListProps[] = [
-  { title: t('钉钉'), icon: 'dingding' },
+const platformList: IPlatFormListProps[] = [
   { title: 'QQ', icon: 'qq' },
   { title: 'APP', icon: 'app-store' },
   { title: t('小程序'), icon: 'applets' }
@@ -332,7 +333,7 @@ const getBrandDomainList = async () => {
         pri_key: JSON.parse(resDomainInfo.pri_key as string),
         pub_key: JSON.parse(resDomainInfo.pub_key as string)
       }
-      brandDomainInfo.value.s_status === brandDomainStatusType.normal
+      brandDomainInfo.value.s_status === EBrandDomainStatusType.normal
         ? (currentIndex.value = 4)
         : (currentIndex.value = 3)
     } catch (e) {}
@@ -529,6 +530,19 @@ const releaseList = [
         click: () => commonVisible(tiktokService)
       }
     ]
+  },
+  {
+    icon: 'dingding',
+    title: '钉钉',
+    desc: '在群/单聊中提供机器人服务，仅限内部员工使用',
+    setList: [
+      {
+        icon: Tools,
+        label: '配置钉钉',
+        scriptId: 'Chato-dingding-set',
+        click: () => commonVisible(dingDingVisible)
+      }
+    ]
   }
 ]
 
@@ -682,6 +696,7 @@ onMounted(() => {
     <CreateFeishu :slug="domainInfo.slug" v-model:value="feiShuVisible" />
     <WeixinService v-model:value="weixinService" :domainSlug="domainInfo.slug" />
     <EmPower v-model:value="tiktokService" :domainSlug="botSlug" />
+    <CreateDing v-model:value="dingDingVisible" :domainSlug="botSlug" />
   </div>
 </template>
 
