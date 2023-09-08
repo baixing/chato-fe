@@ -16,7 +16,7 @@
             type="primary"
             link
             size="large"
-            @click.prevent="emit('handleCopyApiUrl', chatAPI)"
+            @click.prevent="$copyText(chatAPI)"
             >{{ $t('复制') }}</el-button
           >
         </dd>
@@ -29,7 +29,7 @@
             type="primary"
             link
             size="large"
-            @click.prevent="emit('handleCopyApiUrl', slug)"
+            @click.prevent="$copyText(slug)"
             >{{ $t('复制') }}</el-button
           >
         </dd>
@@ -48,7 +48,7 @@ const props = defineProps<{
   slug: string
 }>()
 
-const emit = defineEmits(['update:value', 'handleCopyApiUrl'])
+const emit = defineEmits(['update:value'])
 
 const internalVisible = computed({
   get: () => props.value,

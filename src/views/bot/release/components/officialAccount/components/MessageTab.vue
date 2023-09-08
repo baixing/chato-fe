@@ -142,7 +142,7 @@ import { AfficialAccountStatusType } from '@/enum/release'
 import type { createAfficialAccountRes } from '@/interface/release'
 import type { FormInstance, FormRules } from 'element-plus'
 import { ElMessageBox } from 'element-plus'
-import { onMounted, onUnmounted, reactive, ref, watch } from 'vue'
+import { onMounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
@@ -230,7 +230,7 @@ const handleCloseMessage = () => {
   }
 }
 
-const watchProps = watch(
+watch(
   () => MessageTabForm.status,
   (v) => {
     submitForm()
@@ -239,9 +239,6 @@ const watchProps = watch(
 
 onMounted(() => {
   init()
-})
-onUnmounted(() => {
-  watchProps()
 })
 </script>
 <style lang="scss" scoped>
