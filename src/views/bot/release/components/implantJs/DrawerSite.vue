@@ -61,7 +61,7 @@ import type { createDeleteEditSitesData, createSitesChannelsRes } from '@/interf
 import { renderMarkdown } from '@/utils/markdown'
 import type { FormInstance } from 'element-plus'
 import { ElLoading, ElMessageBox, ElNotification as Notification } from 'element-plus'
-import { computed, onUnmounted, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import SitePublic from './SitePublic.vue'
 const { t } = useI18n()
@@ -83,7 +83,7 @@ const props = defineProps<{
   defaultActiveNames: string
 }>()
 
-const emit = defineEmits(['update:value', 'handleCopyCode', 'handleUpSitesList'])
+const emit = defineEmits(['update:value', 'handleUpSitesList'])
 const loading = ref()
 const activeNames = ref('')
 const visible = computed({
@@ -143,15 +143,12 @@ const updateSites = async (data: createDeleteEditSitesData) => {
   res.data.code === 200 ? emit('handleUpSitesList') : ''
 }
 
-const watchActiveNameProps = watch(
+watch(
   () => props.defaultActiveNames,
   (v) => {
     activeNames.value = v
   }
 )
-onUnmounted(() => {
-  watchActiveNameProps()
-})
 </script>
 <style lang="scss" scoped>
 .copy-code-title {

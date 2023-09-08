@@ -92,7 +92,7 @@ import HansInputLimit from '@/components/Input/HansInputLimit.vue'
 import type { weixinCreateConfigType } from '@/interface/release'
 import { getFileBase64 } from '@/utils/url'
 import type { FormInstance, FormRules } from 'element-plus'
-import { onUnmounted, reactive, ref, watch } from 'vue'
+import { reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 const emit = defineEmits(['handleSelect'])
@@ -199,7 +199,7 @@ const handleUpload = async (values: MediaItem, fileList: ImgVideoUploadFile[]) =
   } catch (e) {}
 }
 
-const watchProps = watch(
+watch(
   props,
   (v) => {
     inputCreatePublicForm.name = v.name
@@ -208,10 +208,6 @@ const watchProps = watch(
   },
   { deep: true, immediate: true }
 )
-
-onUnmounted(() => {
-  watchProps()
-})
 </script>
 <style lang="scss" scoped>
 .input-text-form {

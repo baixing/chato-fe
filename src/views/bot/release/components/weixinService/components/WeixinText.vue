@@ -6,8 +6,10 @@
       v-for="(value, key) in configList"
       :key="key"
     >
-      <label :for="value" class="leading-5 max-w-[90%] break-words">{{ $t(EWeixinConfigText[key]) }}：{{ value }}</label>
-      <el-button link type="primary" @click="emit('handleCopy', value)">{{ $t('复制') }}</el-button>
+      <label :for="value" class="leading-5 max-w-[90%] break-words"
+        >{{ $t(EWeixinConfigText[key]) }}：{{ value }}</label
+      >
+      <el-button link type="primary" @click="$copyText(value)">{{ $t('复制') }}</el-button>
     </p>
     <slot name="bottom"></slot>
   </div>
@@ -21,7 +23,6 @@ const props = defineProps<{
   list: Partial<weixinConfigListRes>
   index?: number
 }>()
-const emit = defineEmits(['handleCopy'])
 const targetOrder = ['url', 'token', 'encoding_aes_key', 'app_secret']
 
 const configList = computed({

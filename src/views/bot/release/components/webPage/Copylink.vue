@@ -10,7 +10,7 @@
     <header>{{ $t('URL链接') }}</header>
     <p class="text-[color: #596780] text-sm my-[18px] flex items-center">
       {{ chatWebPage }}
-      <el-button class="ml-1" type="primary" link size="large" @click="emit('handleCopyLink')">{{
+      <el-button class="ml-1" type="primary" link size="large" @click="$copyText(chatWebPage)">{{
         $t('复制')
       }}</el-button>
     </p>

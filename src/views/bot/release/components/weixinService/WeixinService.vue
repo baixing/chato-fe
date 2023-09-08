@@ -31,12 +31,7 @@
           {{ $t('将企业ID信息，粘贴在下方输入框') }}
         </p>
       </WeixinInput>
-      <WeixinText
-        v-if="index === 2 && $notnull(config)"
-        :index="index"
-        @handleCopy="(e: string) => emit('handleCopy', e)"
-        :list="config"
-      >
+      <WeixinText v-if="index === 2 && $notnull(config)" :index="index" :list="config">
         <template v-slot:top>
           <p class="text-[#303133]">
             {{ $t('第二步：复制以下信息，并填入微信后台') }}
@@ -52,7 +47,6 @@
           <WeixinBtn
             :disabled="false"
             :btnText="$t(`确认，并下一步`)"
-            @handleCopy="(e: string) => emit('handleCopy', e)"
             @handleCancle="handleCancle"
             @handleBtn="() => handleBtn(3)"
           />
@@ -72,11 +66,7 @@
           {{ $t('第三步：复制Secret信息，并填入下面输入框') }}
         </p>
       </WeixinInput>
-      <WeixinText
-        v-if="index === 4 && $notnull(config)"
-        :list="config"
-        @handleCopy="(e: string) => emit('handleCopy', e)"
-      >
+      <WeixinText v-if="index === 4 && $notnull(config)" :list="config">
         <template v-slot:top>
           <p class="mb-[16px]">
             <el-switch
@@ -124,7 +114,7 @@ const props = defineProps<{
   value: boolean
   domain_slug: string
 }>()
-const emit = defineEmits(['update:value', 'handleCopy'])
+const emit = defineEmits(['update:value'])
 const visible = computed({
   get: () => props.value,
   set: (val) => emit('update:value', val)
