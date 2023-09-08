@@ -16,18 +16,29 @@
       </p>
     </div>
     <el-tabs v-model="activeName" class="w-full">
-      <el-tab-pane v-if="isShowInvite" :label="$t(`拉入已有群`)" name="invite">
-        <InvitePublicImgCode
-          :robotQrCodeInfo="robotQrCodeInfo"
-          @handleClose="emit('update:value', false)"
-          v-if="$notnull(robotQrCodeInfo)"
+      <el-tab-pane
+        :label="$t(`拉入已有群`)"
+        :class="[!isShowInvite ? '!w-[80%]' : '']"
+        name="invite"
+      >
+        <UpgrateVersion
+          v-if="!isShowInvite"
+          class="!justify-start"
+          class-name="h-[200px] md:w-full md:h-auto"
         />
-        <InvitePublicForm
-          v-else
-          :userRoute="userRoute"
-          @handleCancel="emit('update:value', false)"
-          @submitCreatePublic="submitCreatePublic"
-        />
+        <template>
+          <InvitePublicImgCode
+            :robotQrCodeInfo="robotQrCodeInfo"
+            @handleClose="emit('update:value', false)"
+            v-if="$notnull(robotQrCodeInfo)"
+          />
+          <InvitePublicForm
+            v-else
+            :userRoute="userRoute"
+            @handleCancel="emit('update:value', false)"
+            @submitCreatePublic="submitCreatePublic"
+          />
+        </template>
       </el-tab-pane>
       <el-tab-pane :label="$t(`创建群聊`)" name="create">
         <CreatePublicForm
@@ -50,6 +61,7 @@ import { computed } from 'vue'
 import CreatePublicForm from './components/CreatePublicForm.vue'
 import InvitePublicForm from './components/InvitePublicForm.vue'
 import InvitePublicImgCode from './components/InvitepublicImgCode.vue'
+import UpgrateVersion from '@/components/Upgrade/UpgrateVersion.vue'
 
 const { isAllowedCommercialType } = useSpaceRights()
 

@@ -1,6 +1,6 @@
 <template>
   <div v-if="isShowUpgrate" class="content-view-container">
-    <UpgrateVersion />
+    <UpgrateVersion class-name="w-[400px] h-[200px]" />
   </div>
   <template v-else>
     <div class="report-detail-title">
@@ -112,7 +112,8 @@ import { storeToRefs } from 'pinia'
 import { computed, nextTick, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
-import UpgrateVersion from './components/UpgrateVersion.vue'
+import UpgrateVersion from '@/components/Upgrade/UpgrateVersion.vue'
+
 const { t } = useI18n()
 const route = useRoute()
 const domainStoreI = useDomainStore()
