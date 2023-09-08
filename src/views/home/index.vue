@@ -74,7 +74,19 @@
       <router-view @enter="onEnter" />
 
       <div
-        class="home-center-padding flex gap-20 justify-center items-center mt-16 mb-20 lg:flex-col lg:gap-10 lg:mb-10"
+        :class="[
+          'home-center-padding',
+          'flex',
+          'gap-20',
+          'justify-center',
+          'items-center',
+          'mt-16',
+          'mb-20',
+          'lg:flex-col',
+          'lg:gap-10',
+          'lg:mb-10',
+          locale === ELangKey.en ? 'flex-wrap' : ''
+        ]"
       >
         <div>
           <img
@@ -122,22 +134,22 @@
             >
           </p>
         </div>
-        <div class="flex gap-4 items-center text-[#3D3D3D] text-sm lg:flex-col">
-          <span>{{ $t('扫码关注') }}</span>
-          <img
-            src="@/assets/img/nash-crcode.jpeg"
-            class="w-[106px] h-[106px] rounded-lg overflow-hidden"
-          />
-        </div>
-
         <!-- 招商加盟 -->
-        <div class="flex items-center justify-center text-[12px] text-[#9DA3AF] lg:flex-col">
-          <div class="mr-[12px] leading-5 text-[14px] text-left lg:text-center lg:mb-[5px]">
-            <p class="mb-[5px] text-[#3D3D3D]">{{ $t('渠道合作') }}</p>
-            <p>{{ $t('郑经理') }}</p>
-            <p><a class="text-[#9DA3AF]" href="tel:13916182066">13916182066</a></p>
+        <div
+          v-for="item in footerQrCode"
+          :key="item.label"
+          class="flex items-center justify-center text-[12px] text-[#9DA3AF] lg:flex-col"
+        >
+          <div
+            class="shrink-0 mr-[12px] leading-5 text-[14px] text-left lg:text-center lg:mb-[5px]"
+          >
+            <p class="mb-[5px] text-[#3D3D3D]">{{ $t(item.label) }}</p>
+            <p>{{ $t(item.desc) }}</p>
+            <p v-if="item.span">
+              <a class="text-[#9DA3AF]" href="tel:13916182066">{{ $t(item.span) }}</a>
+            </p>
           </div>
-          <img :src="homeInvestJoin" class="w-[106px] h-[106px]" alt="" />
+          <img :src="item.img" class="w-[106px] h-[106px]" alt="" />
         </div>
       </div>
     </div>
@@ -175,6 +187,8 @@
 </template>
 <script setup lang="ts">
 import homeInvestJoin from '@/assets/img/home/home-invest-join.png'
+import nashCrcode from '@/assets/img/nash-crcode.jpeg'
+import baixingAI from '@/assets/img/home/baixing-ai.png'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import useGlobalProperties from '@/composables/useGlobalProperties'
 import useSpaceRights from '@/composables/useSpaceRights'
@@ -291,6 +305,12 @@ const menuRouteList = [
   { title: t('客户案例'), key: RoutesMap.home.case },
   { title: t('联系我们'), key: 'menu_schedule' },
   { title: t('渠道合作'), key: 'menu_join' }
+]
+
+const footerQrCode = [
+  { label: '关注BaixingAI', desc: '掌握AI前沿资讯', img: baixingAI },
+  { label: '关注纳什智能', desc: '先人一步运用AI', img: nashCrcode },
+  { label: '渠道合作', desc: '郑经理', span: '13916182066', img: homeInvestJoin }
 ]
 
 const onLinkRoute = (key: string) => {

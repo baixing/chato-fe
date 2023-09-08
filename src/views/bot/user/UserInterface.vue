@@ -240,7 +240,7 @@ const uploadConfig = {
 const HansLimit = {
   name: 20,
   desc: 300,
-  welcome: 500,
+  welcome: 2000,
   brandName: 40,
   adText: 100
 }
