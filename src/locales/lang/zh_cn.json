@@ -828,7 +828,7 @@
   "训练素材的学习时长各异，正常情况下 5-10 分钟后生效。 <br> 如果上传文件过多或过大，可能超出预期时长，请耐心等待。<br> 切换或关闭该页面不影响 AI 学习素材，可稍后再来查看进度。": "训练素材的学习时长各异，正常情况下 5-10 分钟后生效。 <br> 如果上传文件过多或过大，可能超出预期时长，请耐心等待。<br> 切换或关闭该页面不影响 AI 学习素材，可稍后再来查看进度。",
   "我已知晓": "我已知晓",
   "文档上传时间": "文档上传时间",
-  "格式支持 .pdf .docx .mobi .xlsx .txt .pptx .epub .md .csv，请确保内容可复制，每个{sizeLimit}MB以内，单次最多上传{qtyLimit}个。": "格式支持 .pdf .docx .mobi .xlsx .txt .pptx .epub .md .csv，请确保内容可复制，每个{sizeLimit}MB以内，单次最多上传{qtyLimit}个。",
+  "格式支持 .pdf .docx .mobi .xlsx .txt .pptx .epub .md .csv，音视频格式支持.mp3 .mp4 .mpeg .mpga .m4a .wav .webm；文档格式{sizeLimit}MB以内，音视频格式{mediaLimit}MB以内；单次最多上传{qtyLimit}个": "格式支持 .pdf .docx .mobi .xlsx .txt .pptx .epub .md .csv，请确保内容可复制，每个{sizeLimit}MB以内，单次最多上传{qtyLimit}个。",
   "文档中的表格和图片暂时无法学习。": "文档中的表格和图片暂时无法学习。",
   "文本内容不能超过 {limitText} 字符！": "文本内容不能超过 {limitText} 字符！",
   "文本：": "文本：",

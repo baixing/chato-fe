@@ -7,7 +7,7 @@ import EzhCn from 'element-plus/es/locale/lang/zh-cn'
 // 语言包
 // 美国英语
 import en from './lang/en.json'
-// import zh_cn from './lang/zh_cn.json'
+import zh_cn from './lang/zh_cn.json'
 
 const currentlocales = useLocalStorage('locale', ELangKey.zh_cn)
 
@@ -17,8 +17,8 @@ export default createI18n({
   legacy: false,
   globalInjection: true,
   messages: {
-    en
-    // zh_cn
+    en,
+    zh_cn
   }
 })
 
