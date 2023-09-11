@@ -57,16 +57,20 @@ import HansInputLimit from '@/components/Input/HansInputLimit.vue'
 import Topbar from '@/components/Topbar/index.vue'
 import { useBase } from '@/stores/base'
 import { getStringWidth } from '@/utils/string'
+import { confirmAndSubmit } from '@/utils/help'
 import type { FormInstance, FormRules } from 'element-plus'
 import { ElLoading, ElNotification as Notification } from 'element-plus'
 import { storeToRefs } from 'pinia'
-import { onUnmounted, reactive, ref, watch } from 'vue'
+import { reactive, ref, watch, toRaw } from 'vue'
+import { onBeforeRouteLeave } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { cloneDeep } from 'lodash-es'
 
 const { t } = useI18n()
 const base = useBase()
 const { userInfo } = storeToRefs(base)
 const settingFormRef = ref<FormInstance>()
+let settingFormInit = {}
 
 const settingForm = reactive<{
   mobile: string
@@ -146,19 +150,22 @@ const handleSaveSetting = async (formEl: FormInstance | undefined) => {
   })
 }
 
-const watchUserInfo = watch(
+onBeforeRouteLeave((to, from, next) => {
+  confirmAndSubmit(settingFormInit, { ...toRaw(settingForm) }, next, () =>
+    handleSaveSetting(settingFormRef.value)
+  )
+})
+
+watch(
   userInfo,
   (v) => {
     settingForm.mobile = v.mobile
     settingForm.avatar = v.avatar
     settingForm.nickname = v.nickname
+    settingFormInit = cloneDeep(toRaw(settingForm))
   },
   { immediate: true, deep: true }
 )
-
-onUnmounted(() => {
-  watchUserInfo()
-})
 </script>
 <style lang="scss" scoped>
 .default-avatar {

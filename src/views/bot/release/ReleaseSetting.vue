@@ -258,14 +258,16 @@ import useImagePath from '@/composables/useImagePath'
 import { currentEnvConfig } from '@/config'
 import { EReleaseSettingExampleType } from '@/enum/release'
 import { ESpaceRightsType } from '@/enum/space'
-import type { IDomainDetail } from '@/interface/domain'
+import type { IDomainDetail, IDomainInfo } from '@/interface/domain'
 import { useDomainStore } from '@/stores/domain'
 import { useSpaceStore } from '@/stores/space'
-import { $notnull, copyPaste } from '@/utils/help'
+import { $notnull, copyPaste, confirmAndSubmit } from '@/utils/help'
+import { cloneDeep } from 'lodash-es'
 import { getStringWidth } from '@/utils/string'
 import { ElLoading, ElMessage, ElMessageBox, ElNotification } from 'element-plus'
 import { storeToRefs } from 'pinia'
-import { computed, reactive, ref, watch } from 'vue'
+import { computed, reactive, ref, watch, toRaw } from 'vue'
+import { onBeforeRouteLeave } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import CollectFormConfig from './components/CollectFormConfig.vue'
 import ViewExampleImgDialog from './components/ViewExampleImgDialog.vue'
@@ -459,6 +461,13 @@ const onCorrectAnswerChange = async (val: boolean) => {
   } catch (err) {}
 }
 
+const saveParams = computed(() => ({
+  ...domainDetailRes,
+  customer_limit: { ...toRaw(customerLimitState) },
+  domain: { ...domainInfo.value, ...settingState.domain },
+  show: { ...domainDetailRes.show, ...settingState.show }
+}))
+
 const onSave = async () => {
   if (!beforeSaveCheck()) {
     return
@@ -471,16 +480,15 @@ const onSave = async () => {
       background: 'rgba(0, 0, 0, 0.7)'
     })
     // TODO: 推进后端接口改动，支持只传递要修改的字段，而不是全部的字段
-    const saveParams = {
-      ...domainDetailRes,
-      customer_limit: customerLimitState,
-      domain: { ...domainInfo.value, ...settingState.domain },
-      show: { ...domainDetailRes.show, ...settingState.show }
-    }
-
-    await saveDomainV2(slug.value, saveParams)
+    await saveDomainV2(slug.value, saveParams.value)
     collectFormConfigRef.value?.onUpdateAbleAdForm()
     ElNotification.success(t('保存成功'))
+    domainDetailRes = {
+      ...domainDetailRes,
+      domain: saveParams.value.domain as IDomainInfo,
+      show: saveParams.value.show,
+      customer_limit: saveParams.value.customer_limit
+    }
   } catch (e) {
   } finally {
     loading.value.close()
@@ -509,13 +517,12 @@ const init = async () => {
     }
 
     if ($notnull(customer_limit)) {
-      customerLimitState = Object.assign(customerLimitState, customer_limit)
+      customerLimitState = Object.assign(customerLimitState, cloneDeep(customer_limit))
     }
     settingState = Object.assign(settingState, {
       show: resShow,
       domain: resDomain
     })
-
     if (show.qa_modifiable) {
       await initCorrect()
     }
@@ -524,6 +531,15 @@ const init = async () => {
     initing.value = false
   }
 }
+
+onBeforeRouteLeave((to, from, next) => {
+  confirmAndSubmit(
+    { ...domainDetailRes, domain: { ...domainInfo.value, ...domainDetailRes.domain } },
+    { ...saveParams.value },
+    next,
+    onSave
+  )
+})
 
 watch(slug, (v) => v && init(), { immediate: true })
 </script>

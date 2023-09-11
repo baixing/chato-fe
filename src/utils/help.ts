@@ -2,8 +2,11 @@ import { ChatMessageImgLimit, ChatMessageImgLimit_Size_800 } from '@/constant/ch
 import { MANGER_ROLES } from '@/constant/common'
 import router from '@/router'
 import { useClipboard } from '@vueuse/core'
-import { ElNotification } from 'element-plus'
+import { ElNotification, ElMessageBox } from 'element-plus'
+import type { Action } from 'element-plus'
 import { validateURL } from './validate'
+import type { NavigationGuardNext } from 'vue-router'
+import { isEqual } from 'lodash'
 
 export const $notnull = (target) => {
   if (target === undefined) return false
@@ -181,4 +184,28 @@ export const localeImagePath = async (
   }
 
   return (imageModule as any)?.default
+}
+
+export const confirmAndSubmit = async <T>(
+  value1: T,
+  value2: T,
+  next: NavigationGuardNext,
+  callback: () => void
+) => {
+  const result = isEqual(value1, value2)
+  if (!result) {
+    await ElMessageBox.alert('当前页面有内容更新，请确认是否保存？', '温馨提示', {
+      confirmButtonText: '保存',
+      cancelButtonText: '取消',
+      showCancelButton: true,
+      callback: async (action: Action) => {
+        if (action === 'confirm') {
+          await callback()
+        }
+        next()
+      }
+    })
+  } else {
+    next()
+  }
 }

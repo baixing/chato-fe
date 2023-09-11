@@ -280,19 +280,22 @@ import { EDomainAIGenerateType, EDomainLLMType } from '@/enum/domain'
 import { ESpaceCommercialType, ESpaceRightsType } from '@/enum/space'
 import { useDomainStore } from '@/stores/domain'
 import { getStringWidth } from '@/utils/string'
+import { confirmAndSubmit } from '@/utils/help'
 import { debouncedWatch } from '@vueuse/core'
 import { ElInput, ElNotification as Notification } from 'element-plus'
 import { storeToRefs } from 'pinia'
-import { computed, nextTick, reactive, ref, watch } from 'vue'
+import { computed, nextTick, reactive, ref, watch, toRaw } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRoute } from 'vue-router'
-const { t } = useI18n()
+import { useRoute, onBeforeRouteLeave } from 'vue-router'
+import { cloneDeep } from 'lodash-es'
 
+const { t } = useI18n()
 const route = useRoute()
 const domainStoreI = useDomainStore()
 const { domainInfo } = storeToRefs(domainStoreI)
 const domainId = computed(() => domainInfo.value.id || (route.params.botId as string))
 const loading = ref(true)
+let saveParamsInit = {}
 
 const DefaultFormState = {
   system_prompt: '',
@@ -375,6 +378,7 @@ const onSubmitCommon = async () => {
     await domainStoreI.initDomainList(route)
     Notification.success(t('保存成功'))
     generateBtnRef.value?.resetCount()
+    saveParamsInit = cloneDeep(toRaw(formData))
   } catch (err) {
   } finally {
     loading.value = false
@@ -408,6 +412,7 @@ const initDomainDetail = async () => {
     }
 
     formData = Object.assign(formData, newFormState)
+    saveParamsInit = cloneDeep(toRaw(formData))
   } catch (e) {
   } finally {
     loading.value = false
@@ -464,6 +469,10 @@ const systemPromptDisabled = ref(false)
 function init() {
   initDomainDetail()
 }
+
+onBeforeRouteLeave((to, from, next) => {
+  confirmAndSubmit(saveParamsInit, { ...toRaw(formData) }, next, onSubmit)
+})
 
 watch(domainId, (v) => v && init(), { immediate: true })
 

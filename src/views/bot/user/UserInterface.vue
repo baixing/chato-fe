@@ -190,14 +190,15 @@ import { ESpaceRightsType } from '@/enum/space'
 import { useChatStore } from '@/stores/chat'
 import { useDomainStore } from '@/stores/domain'
 import { useSpaceStore } from '@/stores/space'
-import { $notnull } from '@/utils/help'
+import { $notnull, confirmAndSubmit } from '@/utils/help'
 import { getStringWidth } from '@/utils/string'
 import * as url from '@/utils/url'
 import { ElLoading, ElMessage, ElNotification as Notification } from 'element-plus'
 import { storeToRefs } from 'pinia'
 import { computed, reactive, ref, toRaw, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRoute } from 'vue-router'
+import { cloneDeep } from 'lodash-es'
+import { useRoute, onBeforeRouteLeave } from 'vue-router'
 import ChatShortcuts from './components/ChatShortcuts.vue'
 import ColorPicker from './components/ColorPicker.vue'
 import PreviewBot from './components/PreviewBot.vue'
@@ -322,8 +323,6 @@ const beforeSaveCheck = () => {
   return true
 }
 
-const DefaultDomainAvatar =
-  'https://afu-1255830993.cos.ap-shanghai.myqcloud.com/chato_image/avater_11/05338fa85d92cd82ae2cc64ae1b7bebd.png'
 const onSave = async () => {
   if (!beforeSaveCheck()) {
     return
@@ -334,20 +333,6 @@ const onSave = async () => {
     background: 'rgba(0, 0, 0, 0.7)'
   })
   try {
-    const saveParams = { ...toRaw(settingForm) }
-
-    if (!saveParams.domain.avatar) {
-      saveParams.domain.avatar = DefaultDomainAvatar
-    }
-    // 针对于免费和标准权益兼容表单项默认展示值，强制 brand_logo 和 brand_name 保存时为空
-    if (saveParams.domain.brand_logo === DefaultBrandLogo) {
-      saveParams.domain.brand_logo = ''
-    }
-
-    if (saveParams.domain.brand_name === DefaultBrandName) {
-      saveParams.domain.brand_name = ''
-    }
-    saveParams.domain.ad_show = undefined
     // TODO: 推进后端接口改动，支持只传递要修改的字段，而不是全部的字段
     await saveDomainV2(slug.value, { ...domainDetailRes, ...settingForm })
     Notification.success(t('保存成功'))
@@ -355,6 +340,7 @@ const onSave = async () => {
     generateWelcomeBtnRef.value?.resetCount()
     domainStoreI.initDomainList(route)
     chatStoreI.initChatList()
+    settingFormInit = cloneDeep(toRaw(settingForm))
   } catch (e) {
   } finally {
     loading.value.close()
@@ -362,6 +348,7 @@ const onSave = async () => {
 }
 
 let domainDetailRes = {}
+let settingFormInit = {}
 
 const getUserChat = async () => {
   initing.value = true
@@ -378,11 +365,16 @@ const getUserChat = async () => {
     }
     settingForm.show = $notnull(show) ? { ...settingForm.show, ...show } : settingForm.show
     settingForm.shortcuts = $notnull(shortcuts) ? shortcuts : settingForm.shortcuts
+    settingFormInit = cloneDeep(toRaw(settingForm))
   } catch (e) {
   } finally {
     initing.value = false
   }
 }
+
+onBeforeRouteLeave((to, from, next) => {
+  confirmAndSubmit(settingFormInit, { ...toRaw(settingForm) }, next, onSave)
+})
 
 watch(
   slug,
