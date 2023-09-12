@@ -62,7 +62,7 @@
   </el-checkbox>
 </template>
 <script lang="ts" setup>
-import { getFirstGuideSelect } from '@/api/release'
+import { getFirstGuideSelect } from '@/api/userInformation'
 import useGlobalProperties from '@/composables/useGlobalProperties'
 import { kPrivacyLinkUrl, kUserAgreementLinkUrl } from '@/constant/terms'
 import { openPreviewUrl } from '@/utils/help'

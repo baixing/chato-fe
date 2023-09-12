@@ -8,7 +8,6 @@ import type {
   feishuPublicSerachRes,
   feishuSwitchConfigType,
   feishuiPublicFormType,
-  firstGuideSelectDataConfig,
   patchChannelType,
   weixinConfigType
 } from '@/interface/release'
@@ -58,22 +57,6 @@ export function getIndustry() {
   return request({
     method: 'post',
     url: `/chato/api/v1/config/industry`
-  })
-}
-
-// 新注册用户表单-行业+问题
-export function getFirstGuideSelect() {
-  return request({
-    url: '/chato/api/v1/org/industry_select_config'
-  })
-}
-
-// 新用户注册表单-提交
-export function postFirstGuideSelect(data: firstGuideSelectDataConfig) {
-  return request<firstGuideSelectDataConfig>({
-    method: 'post',
-    url: '/chato/api/v1/org/additions/save',
-    data
   })
 }
 

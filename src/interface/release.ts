@@ -101,14 +101,6 @@ export interface CreateGroupChatResponse {
   updated_at: string
 }
 
-export interface firstGuideSelectDataConfig {
-  industry: string[] | string
-  interests: string[]
-  job: string
-  company: string
-  surname: string
-}
-
 export interface feishuiPublicFormType {
   app_id: string
   app_secret: string

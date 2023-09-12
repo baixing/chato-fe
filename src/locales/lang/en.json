@@ -147,6 +147,7 @@
   "提交以下信息后，即可开通并分享给他人使用": "Submit the following information to activate and share with others",
   "姓名": "Name",
   "请输入您的名字": "Please enter your name",
+  "请输入您的称呼": "Please enter your salutation",
   "所属行业": "Industry",
   "请选择行业": "Please select an industry",
   "公司名称": "Company Name",
@@ -1070,5 +1071,13 @@
   "关注BaixingAI": "Follow BaixingAI",
   "关注纳什智能": "Follow Nash Intelligence",
   "先人一步运用AI": "Take the lead in using AI",
-  "掌握AI前沿资讯": "Stay updated on AI advancements"
+  "掌握AI前沿资讯": "Stay updated on AI advancements",
+  "企业用户": "Enterprise users",
+  "个人用户": "Individual users",
+  "其他组织": "Other organizations",
+  "请选择身份": "Please select an identity",
+  "所在行业": "Industry",
+  "请输入组织名称": "Please enter the organization name",
+  "您的称呼": "Your address",
+  "组织名称": "Organization Name"
 }
