@@ -1,21 +1,7 @@
 <template>
   <div class="w-full userDusty-container">
     <el-form label-position="top" :rules="rules" :model="form">
-      <el-form-item :label="$t('称呼（选填）')" prop="surname">
-        <el-input
-          size="large"
-          class="rounded-full"
-          v-model="form.surname"
-          :placeholder="$t('例如张女士、李先生')"
-        ></el-input>
-      </el-form-item>
-      <el-form-item :label="$t('公司名称（选填）')" prop="company">
-        <el-input
-          size="large"
-          v-model="form.company"
-          :placeholder="$t('请输入公司名称')"
-        ></el-input>
-      </el-form-item>
+      <el-form-item :label="$t('称呼（选填）')" prop="surname"> </el-form-item>
       <el-form-item :label="$t('职位')" prop="job">
         <el-select
           v-model="form.job"
@@ -41,11 +27,31 @@ const emit = defineEmits(['handleChange'])
 const rules = reactive({
   job: [{ required: true, message: '请选择您在公司中的职责角色', trigger: 'blur' }]
 })
+const identityList = [
+  {
+    name: '企业用户',
+    icon: 'enterprise-users',
+    label: '公司名称',
+    placeholder: '请输入公司名称'
+  },
+  {
+    name: '个人用户',
+    icon: 'individual-users',
+    label: '您的称呼',
+    placeholder: '例如张女士、李先生'
+  },
+  {
+    name: '其他组织',
+    icon: 'others-users',
+    label: '组织名称',
+    placeholder: '请输入组织名称'
+  }
+]
 
 const form = reactive({
   surname: '',
   company: '',
-  job: ''
+  input: ''
 })
 
 watch(form, (v) => {
