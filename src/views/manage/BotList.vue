@@ -7,7 +7,7 @@
     >
       <div
         data-script="Chato-createBot"
-        class="bg-white rounded-lg leading-5 flex flex-col items-center justify-center gap-4 transition cursor-pointer h-full hover:shadow-lg hover:-translate-y-2 lg:p-4 lg:gap-3 lg:h-auto"
+        class="bg-white rounded-lg leading-5 flex flex-col items-center justify-center gap-4 transition cursor-pointer h-full hover:shadow-lg hover:-translate-y-2 lg:p-4 lg:gap-3 lg:h-auto lg:hover:-translate-y-0"
         @click="onNew"
       >
         <div

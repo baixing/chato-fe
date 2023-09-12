@@ -3,6 +3,7 @@
     <Chat
       :isread-route-param="true"
       :internal-props="true"
+      :is-chating-practice="true"
       @correctAnswer="onCorrectAnswer"
       @showDrawer="onOpenDrawer"
     />

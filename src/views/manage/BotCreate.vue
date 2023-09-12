@@ -28,7 +28,7 @@
       </Topbar>
       <div class="bot-create-center-padding mb-16 flex-1 overflow-y-auto bot-create-block">
         <h3 class="text-[#303133] font-medium text-xl mb-6">{{ t('创建机器人') }}</h3>
-        <div class="inline-block p-4 bg-[#F2F3F5] rounded-lg mb-10">
+        <div class="inline-block p-4 bg-[#F2F3F5] rounded-lg mb-10 lg:block">
           <p class="text-xs text-[#596780] leading-5 mb-3">
             {{ t('通过以下两种方式之一，只要 20 秒即可快速填充基础信息') }}
           </p>
@@ -85,12 +85,15 @@
             <template #icon><svg-icon name="document" svg-class="w-4 h-4" /></template>
             {{ t('录入文档') }}
           </el-button>
-          <el-button @click="QAModalVisible = true">
+          <el-button @click="onOpenQAModal">
             <template #icon><svg-icon name="qa" svg-class="w-4 h-4" /></template>
             {{ t('录入问答') }}
           </el-button>
         </div>
-        <div v-loading="uploadFilesListLoading" class="mt-4 mb-8 space-y-3">
+        <div
+          v-loading="uploadFilesListLoading"
+          class="mt-4 mb-8 space-y-3 max-h-[240px] overflow-y-auto"
+        >
           <p
             v-for="item in uploadFilesList"
             :key="item.id"
@@ -190,22 +193,23 @@
     @setSuccess="onCloseEnterModal"
     @closeDialogVisble="onCloseEnterModal"
   />
-  <Modal
+  <el-drawer
     v-if="isMobile"
-    v-model:visible="chatMobileModalVisible"
-    :footer="false"
-    fullscreen
-    class="chat-mobile-modal relative"
+    v-model="chatMobileModalVisible"
+    :with-header="false"
+    size="100%"
+    append-to-body
+    class="chat-mobile-chat-drawer relative"
   >
     <BotCreateChat class="!w-full !h-full" />
-    <el-button
-      :icon="Close"
-      size="large"
-      link
-      class="absolute top-4 right-4 z-[51]"
+    <el-icon
+      :size="24"
+      class="!absolute top-4 right-4 z-[51] !text-[#4F4F4F] cursor-pointer hover:opacity-80"
       @click="chatMobileModalVisible = false"
-    />
-  </Modal>
+    >
+      <Close />
+    </el-icon>
+  </el-drawer>
 </template>
 
 <script setup lang="ts">
@@ -218,7 +222,6 @@ import EnterQa from '@/components/EnterAnswer/EnterQa.vue'
 import type { ImgUplaodProps } from '@/components/ImgUpload/data'
 import ImgUpload from '@/components/ImgUpload/index.vue'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
-import Modal from '@/components/Modal/index.vue'
 import SLTitle from '@/components/Title/SLTitle.vue'
 import Topbar from '@/components/Topbar/index.vue'
 import { useBasicLayout } from '@/composables/useBasicLayout'
@@ -389,13 +392,15 @@ const apiUploadPath = computed(() => {
     doc: `${uri}/document`
   }
 })
-const DOCFormState = ref<IDocumentForm>({})
-let QAFormState = reactive<IQAForm>({
+const defaultQAFormState: IQAForm = {
   title: '',
   question_id: 0,
   content: '',
-  images: []
-})
+  images: [],
+  modalType: EDocumentOperateType.create
+}
+const DOCFormState = ref<IDocumentForm>({})
+let QAFormState = reactive<IQAForm>({ ...defaultQAFormState })
 
 const QAModalVisible = ref(false)
 const DOCModalVisible = ref(false)
@@ -413,6 +418,11 @@ const initFilesList = async () => {
   } finally {
     uploadFilesListLoading.value = false
   }
+}
+
+const onOpenQAModal = () => {
+  QAFormState = Object.assign(QAFormState, { ...defaultQAFormState })
+  QAModalVisible.value = true
 }
 
 let refreshFilesIntervaler = null
@@ -620,11 +630,10 @@ onBeforeUnmount(() => {
 </style>
 
 <style lang="scss">
-.chat-mobile-modal {
-  border-radius: 0;
-
-  .el-dialog__body {
+.chat-mobile-chat-drawer {
+  .el-drawer__body {
     padding: 0;
+    overflow: hidden;
     width: 100%;
     height: 100%;
   }

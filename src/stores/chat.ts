@@ -1,4 +1,5 @@
 import { getChatList } from '@/api/chatList'
+import type { IDomainInfo } from '@/interface/domain'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
@@ -19,10 +20,16 @@ export const useChatStore = defineStore('chat', () => {
     chatingInfo.value = chatList.value.filter((item) => item.slug === slug)[0] || {}
   }
 
+  const addNewChatToList = (domain: IDomainInfo) => {
+    chatList.value.unshift(domain)
+    chatingInfo.value = domain
+  }
+
   return {
     chatList,
     chatingInfo,
     initChatList,
-    switchChatingInfo
+    switchChatingInfo,
+    addNewChatToList
   }
 })

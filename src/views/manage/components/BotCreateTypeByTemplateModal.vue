@@ -11,7 +11,7 @@
         v-for="item in templateTypeKeys"
         :key="item"
         :class="[
-          'cursor-pointer px-6 py-2 text-xs text-[#303133] bg-[#F2F3F5] w-fit rounded-[18px] transition-colors hover:text-[#7C5CFC]',
+          'cursor-pointer px-6 py-2 text-xs text-[#303133] bg-[#F2F3F5] w-fit rounded-[18px] transition-colors lg:px-4 lg:py-1 hover:text-[#7C5CFC]',
           activeTemplateType === item && '!bg-[#7C5CFC] text-white font-medium hover:!text-white'
         ]"
         @click="activeTemplateType = item"

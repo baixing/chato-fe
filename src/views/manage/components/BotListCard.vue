@@ -1,6 +1,6 @@
 <template>
   <div
-    class="relative bg-white rounded-lg p-6 space-y-5 transition cursor-pointer hover:shadow-lg hover:-translate-y-2 lg:p-4 lg:space-y-3"
+    class="relative bg-white rounded-lg p-6 space-y-5 transition cursor-pointer hover:shadow-lg hover:-translate-y-2 lg:p-4 lg:space-y-3 lg:hover:-translate-y-0"
     @click="onCardClick"
   >
     <div class="flex gap-3 items-center">
@@ -100,6 +100,7 @@
           type="primary"
           plain
           :icon="ChatDotRound"
+          @click.stop="() => onLinkTo(RoutesMap.chat.c)"
           class="shrink-0 !border-[#E4E7ED] !text-[#3D3D3D] !font-normal !bg-transparent hover:!bg-[#7C5CFC] hover:!border-[#7C5CFC] hover:!text-white"
         >
           {{ t('对话') }}
@@ -122,6 +123,7 @@ import { EDomainStatus } from '@/enum/domain'
 import type { IDomainInfo } from '@/interface/domain'
 import { RoutesMap } from '@/router'
 import { useBase } from '@/stores/base'
+import { useChatStore } from '@/stores/chat'
 import { useDomainStore } from '@/stores/domain'
 import {
   ChatDotRound,
@@ -139,7 +141,7 @@ import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 
 const props = defineProps<{
-  bot?: Partial<IDomainInfo>
+  bot?: IDomainInfo
 }>()
 
 const emit = defineEmits(['delete', 'sync', 'cloneRobot'])
@@ -150,10 +152,11 @@ const PrivilegeUser = '18116404787'
 const { t } = useI18n()
 const router = useRouter()
 const domainStoreI = useDomainStore()
+const chatStoreI = useChatStore()
 const baseStoreI = useBase()
 const { userInfo } = storeToRefs(baseStoreI)
 
-const internalBot = computed(() => props.bot || {})
+const internalBot = computed(() => props.bot)
 const isPrivilege = computed(() => userInfo.value.mobile === PrivilegeUser)
 const isAllowedDelete = computed(
   () =>
@@ -165,9 +168,18 @@ const onLinkTo = (routeName: string) => {
   domainStoreI.$patch({
     domainInfo: internalBot.value
   })
+
+  if (routeName === RoutesMap.chat.c) {
+    chatStoreI.addNewChatToList(internalBot.value)
+  }
+
   router.push({
     name: routeName,
-    params: { botId: internalBot.value.id, slug: internalBot.value.slug }
+    params: {
+      botId: internalBot.value.id,
+      slug: internalBot.value.slug,
+      botSlug: internalBot.value.slug
+    }
   })
 }
 

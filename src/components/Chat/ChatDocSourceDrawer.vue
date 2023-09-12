@@ -126,6 +126,10 @@ watch(internalVisible, (v) => {
     font-weight: 500;
   }
 
+  .el-drawer__body {
+    padding: var(--el-drawer-padding-primary) !important;
+  }
+
   .el-collapse-item__header {
     line-height: calc(1em + 2px);
   }

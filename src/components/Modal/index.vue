@@ -59,7 +59,7 @@ const props = withDefaults(
   }>(),
   {
     width: '40%',
-    mobileWidth: '80%',
+    mobileWidth: '90%',
     showClose: true,
     footer: true,
     closeOnClickMask: false,

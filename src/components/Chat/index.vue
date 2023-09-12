@@ -885,7 +885,7 @@ async function clearMessage() {
   } catch (err) {}
 }
 
-const correctTicketExpired = ref(false)
+const correctTicketExpired = ref(true)
 
 const checkCorrectTicketExpired = async () => {
   if (route.name !== RoutesMap.chat.release || !route.query.ticket) {
