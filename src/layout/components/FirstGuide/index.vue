@@ -4,7 +4,6 @@
       <div class="px-[40px]">
         <div class="flex justify-between items-center mb-1 font-medium text-[18px]">
           <span>{{ $t('欢迎加入Chato') }}</span>
-          <span class="text-[14px]">{{ index }}/3</span>
         </div>
         <p class="md:mb-[12px] mb-[32px]">{{ $t('我们将根据你的回答，提供更好地服务') }}</p>
         <p class="text-sm font-medium md:mb-2 mb-4" v-if="index !== 3">
@@ -164,9 +163,9 @@ const init = async () => {
 }
 
 const watchUserInfo = watch(userInfo, () => {
-  const showAuth =
-    userInfo.value.id === userInfo.value.org.owner_id && !userInfo.value.org.additions
-  showAuth && !authToken ? init() : (visible.value = false)
+  const contrastId = userInfo.value.id === userInfo.value.org.owner_id
+  const showAuth = contrastId && !userInfo.value.org.additions
+  !showAuth && !authToken ? init() : (visible.value = false)
 })
 
 onUnmounted(() => {
