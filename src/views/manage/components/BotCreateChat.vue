@@ -1,28 +1,36 @@
 <template>
-  <Chat
-    :b-slug="domainSlug"
-    :isread-route-param="true"
-    :internal-props="true"
-    @correctAnswer="onCorrectAnswer"
-    @showDrawer="onOpenDrawer"
-  />
-  <!-- 文档来源 -->
-  <DocSourceDrawer
-    v-model:visible="currentDrawer.visible"
-    :question-id="currentDrawer.questionId"
-    :slug="currentDrawer.slug"
-  />
-  <EnterQa
-    :activeNames="EDocumentTabType.inputText"
-    :defaultForm="defaultForm"
-    :domainId="domainId"
-    :sizeLimit="sizeLimit"
-    :qtyLimit="qtyLimit"
-    :apiUpload="apiUpload"
-    :dialogVisible="dialogVisibleQa"
-    hidden-batch
-    @closeDialogVisble="() => (dialogVisibleQa = false)"
-  />
+  <div class="w-2/5 shrink-0 bg-white relative">
+    <Chat
+      :isread-route-param="true"
+      :internal-props="true"
+      @correctAnswer="onCorrectAnswer"
+      @showDrawer="onOpenDrawer"
+    />
+    <div
+      v-if="!draftDomain?.system_prompt"
+      class="absolute top-0 left-0 right-0 bottom-0 bg-[#00000033] text-white text-sm z-50 flex flex-col items-center justify-center gap-4 px-4"
+    >
+      <svg-icon name="lock" svg-class="w-8 h-8 text-white" />
+      <p class="text-center">{{ t('完成角色设定即可预览调试') }}</p>
+    </div>
+    <!-- 文档来源 -->
+    <DocSourceDrawer
+      v-model:visible="currentDrawer.visible"
+      :question-id="currentDrawer.questionId"
+      :slug="currentDrawer.slug"
+    />
+    <EnterQa
+      :activeNames="EDocumentTabType.inputText"
+      :defaultForm="defaultForm"
+      :domainId="domainId"
+      :sizeLimit="sizeLimit"
+      :qtyLimit="qtyLimit"
+      :apiUpload="apiUpload"
+      :dialogVisible="dialogVisibleQa"
+      hidden-batch
+      @closeDialogVisble="() => (dialogVisibleQa = false)"
+    />
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -31,22 +39,21 @@ import Chat from '@/components/Chat/index.vue'
 import EnterQa from '@/components/EnterAnswer/EnterQa.vue'
 import { currentEnvConfig } from '@/config'
 import { USER_ROLES } from '@/constant/common'
+import { DraftDomainSymbol } from '@/constant/domain'
 import { EDocumentTabType } from '@/enum/knowledge'
 import type { IDomainInfo } from '@/interface/domain'
 import { useBase } from '@/stores/base'
 import { getMarkDownUrl, replaceMarkdownUrl } from '@/utils/help'
 import { removewRegReplaceA } from '@/utils/reg'
 import * as url from '@/utils/url'
-import { computed, reactive, ref } from 'vue'
+import { computed, inject, reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
-const props = defineProps<{
-  domain: Partial<IDomainInfo>
-}>()
-
+const { t } = useI18n()
 const base = useBase()
 
-const domainId = computed(() => props.domain?.id?.toString() || '')
-const domainSlug = computed(() => props.domain?.slug || '')
+const draftDomain = inject<IDomainInfo>(DraftDomainSymbol)
+const domainId = computed(() => draftDomain?.id?.toString() || '')
 const apiUpload = computed(() =>
   url.join(currentEnvConfig.uploadBaseURL, `/chato/api/domains/${domainId.value}/files/upload/qa`)
 )

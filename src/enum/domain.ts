@@ -6,7 +6,8 @@ export const enum EDomainType {
 export const enum EDomainStatus {
   able = 0, // 正常
   disable = 1, // 被禁用
-  draft = 2 // 草稿
+  temporaryDraft = 2, // 临时草稿
+  draft = 3 // 草稿
 }
 
 export enum brandDomainStatusType {

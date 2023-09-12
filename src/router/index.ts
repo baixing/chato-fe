@@ -50,8 +50,7 @@ export const RoutesMap = {
   manager: {
     managerName: 'manager',
     center: 'managerCenter',
-    create: 'managerCreate',
-    createNew: 'managerCreateNew'
+    create: 'managerCreate'
   },
   namespace: {
     namespaceName: 'namespace',
@@ -323,14 +322,8 @@ const managerRoutes = [
       },
       {
         name: RoutesMap.manager.create,
-        path: 'create',
+        path: 'create/:slug?',
         component: () => import('@/views/manage/BotCreate.vue')
-        // meta: { title: '创建机器人' }
-      },
-      {
-        name: RoutesMap.manager.createNew,
-        path: 'createNew',
-        component: () => import('@/views/manage/BotCreateNew.vue')
         // meta: { title: '创建机器人' }
       }
     ]

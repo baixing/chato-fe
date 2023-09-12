@@ -16,9 +16,9 @@
 </template>
 
 <script setup lang="ts">
-import SSE from '@/utils/sse'
 import type { EDomainAIGenerateType } from '@/enum/domain'
 import { useDomainStore } from '@/stores/domain'
+import SSE from '@/utils/sse'
 import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -32,7 +32,7 @@ const props = defineProps<{
 const emit = defineEmits(['update:generateStr', 'start', 'end'])
 
 const internalGenerateStr = computed({
-  get: () => props.generateStr,
+  get: () => props.generateStr || '',
   set: (v) => emit('update:generateStr', v)
 })
 

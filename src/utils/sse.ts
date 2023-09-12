@@ -39,6 +39,13 @@ export default class SSE {
         }
 
         const result = JSON.parse(ev.data)
+
+        if ('status' in result && result.status === 'error') {
+          const errMsg = result?.chunk_message || result?.message || 'SSE 请求错误'
+          handleRequestError(errMsg)
+          throw errMsg
+        }
+
         if (responseAll) {
           fn(result)
         } else if ('code' in result && result.code === 200) {

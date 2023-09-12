@@ -22,7 +22,7 @@
       </div>
       <div
         v-else
-        :class="['chat-history', route.name === RoutesMap.chat.c && '!px-4']"
+        :class="['chat-history', isNeedChatXPadding && '!px-4']"
         @scroll="onChatHistoryScroll"
         ref="refChatHistory"
       >
@@ -97,7 +97,7 @@
         ></div>
       </div>
 
-      <div :class="['input-box', route.name === RoutesMap.chat.c && '!px-4']">
+      <div :class="['input-box', isNeedChatXPadding && '!px-4']">
         <el-tooltip
           :disabled="isMobile"
           :content="$t(`清空历史消息`)"
@@ -222,7 +222,7 @@ import {
   ChatMessageMoreAction,
   SymChatDomainDetail
 } from '@/constant/chat'
-import { MidJourneyDomainSlug } from '@/constant/domain'
+import { DraftDomainSymbol, MidJourneyDomainSlug } from '@/constant/domain'
 import { PaidCommercialTypes } from '@/constant/space'
 import { XSSOptions } from '@/constant/xss'
 import {
@@ -234,6 +234,7 @@ import {
 } from '@/enum/message'
 import { ESpaceRightsType } from '@/enum/space'
 import type { ChatHistoryParams } from '@/interface/chat'
+import type { IDomainInfo } from '@/interface/domain'
 import type { IMessageDetail, IMessageItem } from '@/interface/message'
 import router, { RoutesMap } from '@/router'
 import { useAuthStore } from '@/stores/auth'
@@ -252,7 +253,18 @@ import 'highlight.js/styles/default.css'
 import { random, remove } from 'lodash'
 import { storeToRefs } from 'pinia'
 import qs from 'query-string'
-import { computed, nextTick, onBeforeUnmount, onMounted, provide, reactive, ref, watch } from 'vue'
+import {
+  computed,
+  inject,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  provide,
+  reactive,
+  ref,
+  toRaw,
+  watch
+} from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import Watermark from 'watermark-plus'
@@ -276,6 +288,8 @@ const props = withDefaults(defineProps<Props>(), {
   isreadRouteParam: false
 })
 
+const draftDomain = inject<IDomainInfo>(DraftDomainSymbol)
+
 const sseStore = useSSEStore()
 const { sseMsgResult } = storeToRefs(sseStore)
 
@@ -288,13 +302,16 @@ const authStoreI = useAuthStore()
 const { authToken } = storeToRefs(authStoreI)
 const $uid = useStorage('uid', '')
 const emit = defineEmits(['showDrawer', 'correctAnswer'])
-const botSlug = computed(() =>
-  props.internalProps
+const botSlug = computed(() => {
+  if (draftDomain?.slug) {
+    return draftDomain.slug
+  }
+  return props.internalProps
     ? props.isreadRouteParam
       ? (route.params.botSlug as string)
       : props.bSlug
     : (route.params.botSlug as string)
-)
+})
 const isInternal = props.internalProps || false // 是否处于 Chato 内部环境
 const query_p = (qs.parseUrl(window.location.href).query.p as string) || ''
 const source = (qs.parseUrl(window.location.href).query.source as string) || ''
@@ -314,6 +331,9 @@ const socketResult = ref({
 const watermark = ref<Watermark>()
 const showPreview = ref(false)
 const previewImageUrl = ref('')
+const isNeedChatXPadding = computed(() =>
+  [RoutesMap.chat.c, RoutesMap.manager.create].includes(route.name as string)
+)
 
 const DefaultChatHistoryPage = {
   total: 0,
@@ -448,7 +468,7 @@ function getBotInfo() {
           ? JSON.parse(res.data.data.shortcuts)
           : []
       inputLength.value = detail.value.question_max_length
-      !sseStore.isExistInPeddingDomains(botSlug.value) && sayWelcome(detail.value.welcome)
+      !sseStore.isExistInPeddingDomains(botSlug.value) && !draftDomain && sayWelcome()
       shareWeixinInit(detail.value)
       // 健硕需求p参数
       $notnull(query_p) ? submit(query_p) : ''
@@ -528,14 +548,14 @@ const getHistoryChat = async (scrollBottomTag = true) => {
   }
 }
 
-function sayWelcome(welcome: string) {
-  if (welcome) {
+function sayWelcome() {
+  if (detail.value.welcome) {
     history.value.push({
       first: true,
       displayType: EMessageDisplayType.answer,
       id: `welcome-a`,
       isWelcome: true,
-      content: regReplaceA(welcome, {
+      content: regReplaceA(detail.value.welcome, {
         class: 'welcome-a',
         id: 'Chato_chat_label_click'
       })
@@ -642,12 +662,13 @@ const onTerminateRetry = async () => {
       cutoff_continue_qid: lastAnswer.questionId,
       domain_slug: detail.value.slug,
       token: isInternal ? authToken.value : $uid.value,
-      visitor_type: isInternal ? (props.isreadRouteParam ? 'chat' : 'owner') : 'vistor'
+      visitor_type: isInternal ? (props.isreadRouteParam ? 'chat' : 'owner') : 'vistor',
+      fake_domain: draftDomain ? { system_prompt: draftDomain.system_prompt } : undefined
     }
 
     ws.value && ws.value.close()
     sseStore.terminatedSSEResultMap(lastAnswer, detail.value.slug)
-    SSEInstance.request('/chato/chat/close', terminateParams)
+    await SSEInstance.request('/chato/chat/close', terminateParams)
 
     if (!lastAnswer.questionId) {
       lastAnswer.content = t('回答已终止')
@@ -708,7 +729,8 @@ async function sendMsgRequest(message) {
     domain_slug: detail.value.slug,
     token: isInternal ? authToken.value : $uid.value,
     visitor_type: isInternal ? (props.isreadRouteParam ? 'chat' : 'owner') : 'vistor',
-    navit_msg_id: isMidJourneyDomain.value ? random(1000000, 9999999) : undefined
+    navit_msg_id: isMidJourneyDomain.value ? random(1000000, 9999999) : undefined,
+    fake_domain: draftDomain ? { system_prompt: draftDomain.system_prompt } : undefined
   }
 
   sseStore.$patch({ sseMsgId: message.msg_id })
@@ -716,12 +738,20 @@ async function sendMsgRequest(message) {
   try {
     let sseUrl = '/chato/sse'
     isMidJourneyDomain.value && (sseUrl += '/mj')
-    SSEInstance.request(sseUrl, params, (str) => sseStore.setSSEResultMap(str), {
-      responseAll: true
-    })
-
+    await SSEInstance.request(
+      sseUrl,
+      params,
+      (str) => {
+        sseStore.setSSEResultMap(str)
+      },
+      {
+        responseAll: true
+      }
+    )
     sseStore.setAbortControllerMap(detail.value.slug, SSEInstance.abortCtrl)
   } catch (err) {
+    history.value[history.value.length - 1].status = EWsMessageStatus.error
+    history.value[history.value.length - 1].content = err
     isLoadingAnswer.value = false
   }
 }
@@ -1154,6 +1184,31 @@ watch(
     v && generateMessage(v)
   },
   { deep: true }
+)
+
+watch(
+  draftDomain,
+  (v) => {
+    if (v) {
+      const { avatar, name, desc, system_prompt, welcome } = v
+      detail.value = { ...detail.value, avatar, name, desc, system_prompt, welcome }
+      if (welcome) {
+        const hisWelcomeItem = history.value.find((item) => item.isWelcome)
+        if (hisWelcomeItem) {
+          hisWelcomeItem.content = regReplaceA(welcome, {
+            class: 'welcome-a',
+            id: 'Chato_chat_label_click'
+          })
+        } else {
+          sayWelcome()
+        }
+      } else if (!welcome) {
+        const newHistory = toRaw(history.value).filter((item) => item.isWelcome)
+        history.value = newHistory
+      }
+    }
+  },
+  { immediate: true }
 )
 
 provide(SymChatDomainDetail, detail)

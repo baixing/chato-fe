@@ -115,7 +115,7 @@ import { useBasicLayout } from '@/composables/useBasicLayout'
 import { currentEnvConfig } from '@/config'
 import { UPLOAD_TEMPLATE_FILE_TYPES } from '@/constant/common'
 import { EDocumentTabType } from '@/enum/knowledge'
-import type { questionAFormI } from '@/interface/konwledgeQa'
+import type { IQAForm } from '@/interface/konwledgeQa'
 import { useAuthStore } from '@/stores/auth'
 import { useDomainStore } from '@/stores/domain'
 import { $notnull } from '@/utils/help'
@@ -135,9 +135,10 @@ interface Props {
   sizeLimit?: number
   qtyLimit?: number
   activeNames: EDocumentTabType.uploadDoc | EDocumentTabType.inputText
-  defaultForm?: questionAFormI
+  defaultForm?: IQAForm
   specailTipVisible?: number
   hiddenBatch?: boolean
+  domainSlug?: string
 }
 
 const props = defineProps<Props>()
@@ -147,7 +148,9 @@ const { isMobile } = useBasicLayout()
 const baseURL = currentEnvConfig.uploadBaseURL
 const domainStoreI = useDomainStore()
 const { domainInfo } = storeToRefs(domainStoreI)
-const currentDomainSlug = route.params?.botSlug || domainInfo.value?.slug
+const currentDomainSlug = computed(
+  () => props?.domainSlug || route.params?.botSlug || domainInfo.value?.slug
+)
 const apiUploadImg = url.join(baseURL, '/chato/api/file/upload/file')
 const acceptFileTypes = UPLOAD_TEMPLATE_FILE_TYPES.join(',')
 const visible = ref<boolean>(false)
@@ -225,7 +228,7 @@ async function submitInputText(formEl: FormInstance) {
         background: 'rgba(0, 0, 0, 0.7)'
       })
       apiFile
-        .uploadQa(currentDomainSlug, { ...inputTextForm, ticket: route.query.ticket })
+        .uploadQa(currentDomainSlug.value, { ...inputTextForm, ticket: route.query.ticket })
         .then(() => {
           Notification.success(t('保存成功'))
           inputTextForm.content_html = ''

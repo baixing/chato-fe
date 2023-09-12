@@ -21,14 +21,14 @@ export interface IDocumentList {
   type: string
   title: string
   domain: IDomainInfo
-  status: string
+  status: LearningStatesPerformanceType
   raw_size: number
   raw_file_url: string
   raw_file_hash: string
-  content_html: null
+  content_html: any
   processed_file_url: string
   creator: IUserInfo
-  updater: null
+  updater: IUserInfo
   business_type: string
   template: string
   image: string
@@ -49,7 +49,7 @@ export interface IQAForm {
 export interface GetFilesByDomainIdType {
   page: number
   page_size?: number
-  business_type: EKnowledgeBusinessType
+  business_type?: EKnowledgeBusinessType
   status?: LearningStatesPerformanceType
   keyword?: string
 }

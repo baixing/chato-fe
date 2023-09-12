@@ -1,7 +1,7 @@
 <template>
   <div
     class="relative bg-white rounded-lg p-6 space-y-5 transition cursor-pointer hover:shadow-lg hover:-translate-y-2 lg:p-4 lg:space-y-3"
-    @click="() => onLinkTo(RoutesMap.tranning.botPersona)"
+    @click="onCardClick"
   >
     <div class="flex gap-3 items-center">
       <el-image
@@ -11,14 +11,14 @@
         class="w-11 h-11 rounded-full overflow-hidden shrink-0 lg:w-9 lg:h-9"
       />
       <span class="inline-block truncate font-medium text-[#3D3D3D]">
-        {{ $t(internalBot.name) }}
+        {{ t(internalBot.name) }}
       </span>
     </div>
 
     <p
       class="text-xs text-[#B5BED0] leading-5 line-clamp-2 break-all whitespace-pre-wrap h-10 lg:h-auto"
     >
-      {{ $t(internalBot.desc) }}
+      {{ t(internalBot.desc) }}
     </p>
 
     <div class="flex items-center justify-between">
@@ -28,26 +28,27 @@
           :icon="Delete"
           @click="() => emit('delete', internalBot)"
           class="hover:!text-[#f56c6c]"
-          >{{ $t('删除') }}
+          >{{ t('删除') }}
         </IconBtn>
         <el-button
           type="primary"
           plain
+          @click="() => onLinkTo(RoutesMap.manager.create)"
           class="shrink-0 w-[73%] max-w-[220px] !border-[#E4E7ED] !text-[#3D3D3D] !font-normal !bg-transparent hover:!bg-[#7C5CFC] hover:!border-[#7C5CFC] hover:!text-white"
         >
           <template #icon>
             <svg-icon name="create-continue" svg-class="w-4 h-4" />
           </template>
-          {{ $t('继续创建') }}
+          {{ t('继续创建') }}
         </el-button>
       </template>
       <template v-else>
-        <div class="gap-5 flex items-center justify-between">
+        <div class="gap-4 flex items-center justify-between">
           <IconBtn :icon="Edit" @click="() => onLinkTo(RoutesMap.tranning.botUser)">
-            {{ $t('编辑') }}
+            {{ t('编辑') }}
           </IconBtn>
           <IconBtn :icon="Position" @click="() => onLinkTo(RoutesMap.tranning.botRelease)">
-            {{ $t('发布') }}
+            {{ t('发布') }}
           </IconBtn>
           <el-popover
             trigger="click"
@@ -68,7 +69,7 @@
                 name="clone-robot"
                 @click="() => emit('cloneRobot', internalBot.slug, internalBot.name)"
               >
-                {{ $t('克隆') }}
+                {{ t('克隆') }}
               </IconBtn>
               <template v-if="isPrivilege">
                 <IconBtn
@@ -90,7 +91,7 @@
                 @click="() => emit('delete', internalBot)"
                 class="hover:!text-[#f56c6c]"
               >
-                {{ $t('删除') }}
+                {{ t('删除') }}
               </IconBtn>
             </div>
           </el-popover>
@@ -101,16 +102,16 @@
           :icon="ChatDotRound"
           class="shrink-0 !border-[#E4E7ED] !text-[#3D3D3D] !font-normal !bg-transparent hover:!bg-[#7C5CFC] hover:!border-[#7C5CFC] hover:!text-white"
         >
-          {{ $t('对话') }}
+          {{ t('对话') }}
         </el-button>
       </template>
     </div>
 
     <span
       v-if="EDomainStatus.draft === internalBot.status"
-      class="absolute right-0 top-0 inline-block !m-0 text-center w-12 h-6 rounded-tr-md rounded-bl-md leading-6 bg-[#FFC7C7] text-xs text-[#EA0000]"
+      class="absolute right-0 top-0 inline-block !m-0 text-center px-2 py-1 rounded-tr-md rounded-bl-md bg-[#FFC7C7] text-xs text-[#EA0000]"
     >
-      {{ $t('草稿') }}
+      {{ t('草稿') }}
     </span>
   </div>
 </template>
@@ -164,6 +165,17 @@ const onLinkTo = (routeName: string) => {
   domainStoreI.$patch({
     domainInfo: internalBot.value
   })
-  router.push({ name: routeName, params: { botId: internalBot.value.id } })
+  router.push({
+    name: routeName,
+    params: { botId: internalBot.value.id, slug: internalBot.value.slug }
+  })
+}
+
+const onCardClick = () => {
+  const linkRouteName =
+    EDomainStatus.draft === internalBot.value.status
+      ? RoutesMap.manager.create
+      : RoutesMap.tranning.botPersona
+  onLinkTo(linkRouteName)
 }
 </script>

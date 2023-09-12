@@ -80,3 +80,5 @@ export const DomainReplyParagraph = [
   { label: '三段', value: 3 },
   { label: '四段', value: 4 }
 ]
+
+export const DraftDomainSymbol = Symbol('temporary-draft-domain')

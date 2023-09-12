@@ -1,5 +1,5 @@
 <template>
-  <Topbar :title="$t('我的机器人')" class="!mb-0 lg:!mb-4" />
+  <Topbar :title="t('我的机器人')" class="!mb-0 lg:!mb-4" />
   <ContentLayout class="pt-8 lg:pt-0">
     <div
       v-loading="initing"
@@ -15,8 +15,8 @@
         >
           <el-icon :size="20" class="text-[#596780]"><Plus /></el-icon>
         </div>
-        <p class="font-medium text-sm text-[#7C5CFC]">{{ $t('创建机器人') }}</p>
-        <p class="text-[#9DA3AF] text-[13px]">{{ $t('快速创建一个属于你的机器人吧！') }}</p>
+        <p class="font-medium text-sm text-[#7C5CFC]">{{ t('创建机器人') }}</p>
+        <p class="text-[#9DA3AF] text-[13px]">{{ t('快速创建一个属于你的机器人吧！') }}</p>
       </div>
       <BotListCard
         v-for="item in domainList"
@@ -33,9 +33,9 @@
       :width="isMobile ? '80%' : '40%'"
     >
       <el-row align="middle" class="mb-5">
-        <el-col :span="5">{{ $t('机器人分类') }}</el-col>
+        <el-col :span="5">{{ t('机器人分类') }}</el-col>
         <el-col :span="19">
-          <el-select v-model="opDomain.category" :placeholder="$t(`请选择机器人分类`)">
+          <el-select v-model="opDomain.category" :placeholder="t(`请选择机器人分类`)">
             <el-option
               v-for="item in DomainCategoryOptions"
               :key="item.value"
@@ -47,9 +47,9 @@
       </el-row>
       <template #footer>
         <div class="flex justify-end items-center gap-3">
-          <el-button @click="onClose">{{ $t('取消') }}</el-button>
+          <el-button @click="onClose">{{ t('取消') }}</el-button>
           <el-button type="primary" @click="onSync" :loading="syncSubmiting">
-            {{ $t(' 确认 ') }}
+            {{ t(' 确认 ') }}
           </el-button>
         </div>
       </template>
@@ -72,7 +72,7 @@ import { useDomainStore } from '@/stores/domain'
 import type { Action } from 'element-plus'
 import { ElLoading, ElMessage, ElMessageBox, ElNotification, ElSelect } from 'element-plus'
 import { storeToRefs } from 'pinia'
-import { reactive, ref, watch } from 'vue'
+import { onMounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import BotListCard from './components/BotListCard.vue'
@@ -98,8 +98,7 @@ const onNew = async () => {
   if (needUpgrade) {
     return
   }
-  // router.push({ name: RoutesMap.manager.create })
-  router.push({ name: RoutesMap.manager.createNew })
+  router.push({ name: RoutesMap.manager.create })
 }
 
 const onRefresh = async () => {
@@ -242,4 +241,8 @@ watch(
   },
   { immediate: true }
 )
+
+onMounted(() => {
+  onRefresh()
+})
 </script>

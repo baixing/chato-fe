@@ -23,16 +23,6 @@ body {
   overflow-y: auto;
 }
 
-* {
-  &:focus {
-    outline: none;
-  }
-
-  &:focus-visible {
-    outline: none;
-  }
-}
-
 ::-webkit-scrollbar {
   width: 5px;
   height: 6px;
@@ -57,6 +47,16 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background-color: #cecece;
+}
+
+* {
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
+    outline: none;
+  }
 }
 
 a {

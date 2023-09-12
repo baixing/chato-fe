@@ -1,5 +1,5 @@
 import type { EDocumentOperateType, QuestionMateEnumType } from '@/enum/knowledge'
-export interface questionAFormI {
+export interface IQAForm {
   title?: string
   content?: string
   id?: number
