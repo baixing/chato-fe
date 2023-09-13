@@ -75,6 +75,7 @@
           type="textarea"
           :rows="6"
           size="large"
+          :limit="HansLimit.system_prompt"
           :disabled="AIGenerateInputDisabled.system_prompt"
           class="w-full mb-8"
         />
@@ -126,6 +127,7 @@
           type="textarea"
           :rows="6"
           size="large"
+          :limit="HansLimit.desc"
           :disabled="AIGenerateInputDisabled.desc"
           class="w-full mb-8"
         />
@@ -145,6 +147,7 @@
           type="textarea"
           :rows="6"
           size="large"
+          :limit="HansLimit.welcome"
           :disabled="AIGenerateInputDisabled.welcome"
           class="w-full mb-8"
         />
@@ -241,9 +244,10 @@ import { RoutesMap } from '@/router'
 import { useBase } from '@/stores/base'
 import { getFileStatusName } from '@/utils/formatter'
 import { openPreviewUrl } from '@/utils/help'
+import { getStringWidth } from '@/utils/string'
 import * as url from '@/utils/url'
 import { Close } from '@element-plus/icons-vue'
-import { ElLoading, ElMessageBox, ElNotification } from 'element-plus'
+import { ElLoading, ElMessage, ElMessageBox, ElNotification } from 'element-plus'
 import { isEqual } from 'lodash'
 import { computed, onBeforeUnmount, onMounted, provide, reactive, ref, toRaw, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -274,10 +278,9 @@ const onLinkBots = () => {
 
 const HansLimit = {
   name: 20,
+  system_prompt: 900,
   desc: 300,
-  welcome: 500,
-  brandName: 40,
-  adText: 100
+  welcome: 500
 }
 const defaultFormState: Partial<IDomainInfo> = {
   id: 0,
@@ -308,7 +311,11 @@ const isFormStateSameTemplate = computed(() => {
   return isEqual({ name, system_prompt, desc, welcome }, originalTemplateFormState)
 })
 const canSave = computed(
-  () => formState.name || formState.system_prompt || formState.desc || formState.welcome
+  () =>
+    (formState.name || formState.system_prompt || formState.desc || formState.welcome) &&
+    !AIGenerateInputDisabled.desc &&
+    !AIGenerateInputDisabled.system_prompt &&
+    !AIGenerateInputDisabled.welcome
 )
 
 const syncOriginalFormState = () => {
@@ -540,8 +547,32 @@ const checkNeedContinueToEdit = () => {
   })
 }
 
+const beforeSaveCheck = () => {
+  let msg = ''
+
+  if (getStringWidth(formState.name) > HansLimit.name) {
+    msg = t('机器人名称不能超过 {limitNum} 字符', { limitNum: HansLimit.name })
+  } else if (getStringWidth(formState.system_prompt) > HansLimit.system_prompt) {
+    msg = t('角色设定不能超过 {limitNum} 字符', { limitNum: HansLimit.system_prompt })
+  } else if (getStringWidth(formState.desc) > HansLimit.desc) {
+    msg = t('角色简介不能超过 {limitNum} 字符', { limitNum: HansLimit.desc })
+  } else if (getStringWidth(formState.welcome) > HansLimit.welcome) {
+    msg = t('欢迎语不能超过 {limitNum} 字符', { limitNum: HansLimit.welcome })
+  }
+
+  if (msg) {
+    ElMessage.warning(msg)
+    return false
+  }
+
+  return true
+}
+
 const onSave = async (type?: 'draft') => {
   try {
+    if (!type && !beforeSaveCheck()) {
+      return
+    }
     loading.value = ElLoading.service({
       lock: true,
       text: t('保存中'),
