@@ -1,27 +1,15 @@
 import { ESpaceCommercialType, ESpaceRightsType } from '@/enum/space'
 
 export const SpaceRightsLimitTips = {
-  [ESpaceRightsType.bot]: ['创建机器人个数已用完。', '如需创建更多，请联系产品顾问进一步了解。'],
-  [ESpaceRightsType.quota]: [
-    '电力值已用完。',
-    '如需更多电力值继续会话，请联系产品顾问进一步了解。'
-  ],
-  [ESpaceRightsType.paintQuota]: ['图像值已用完。', '如需更多图像值，请联系产品顾问进一步了解。'],
-  [ESpaceRightsType.usage]: ['使用时间已到期。', '如需继续使用本产品，请联系产品顾问进一步了解。'],
-  [ESpaceRightsType.space]: [
-    '空间成员名额已满。',
-    '如需继续使用本产品，请联系产品顾问进一步了解。'
-  ],
-  [ESpaceRightsType.groupChatFree]: [
-    '升级后可创建群聊。',
-    '如需继续创建群聊，请联系产品顾问进一步了解。'
-  ],
-  [ESpaceRightsType.groupChat]: [
-    '群聊个数已用完。',
-    '如需创建更多群聊，请联系产品顾问进一步了解。'
-  ],
-  [ESpaceRightsType.brand]: ['当前版本不可使用该功能。', '如需使用，请联系产品顾问进一步了解。'],
-  [ESpaceRightsType.default]: ['如需版本升级，请联系产品顾问。']
+  [ESpaceRightsType.bot]: ['联系产品顾问进一步解锁更多资源。'],
+  [ESpaceRightsType.quota]: ['增加电力值后可继续会话，或联系产品顾问进一步解锁更多资源。'],
+  [ESpaceRightsType.paintQuota]: ['增加图像值后可继续会话，或联系产品顾问进一步解锁更多资源。'],
+  [ESpaceRightsType.usage]: ['联系产品顾问获取最新套餐折扣。'],
+  [ESpaceRightsType.space]: ['联系产品顾问进一步解锁更多资源。'],
+  [ESpaceRightsType.groupChatFree]: ['联系产品顾问进一步解锁更多资源。'],
+  [ESpaceRightsType.groupChat]: ['联系产品顾问进一步解锁更多资源。'],
+  [ESpaceRightsType.brand]: ['联系产品顾问进一步解锁高级能力。'],
+  [ESpaceRightsType.default]: ['联系产品顾问获取最新套餐折扣。']
 }
 
 // 付费权益版本
