@@ -2,8 +2,8 @@
   <el-button
     plain
     type="primary"
-    size="small"
-    :disabled="generating || !internalGenerateStr.length"
+    size="default"
+    :disabled="!internalRole || generating || !internalGenerateStr.length"
     style="
       --el-button-hover-text-color: #7c5cfc;
       --el-button-hover-bg-color: white;
@@ -17,9 +17,7 @@
 
 <script setup lang="ts">
 import type { EDomainAIGenerateType } from '@/enum/domain'
-import { useDomainStore } from '@/stores/domain'
 import SSE from '@/utils/sse'
-import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -27,6 +25,7 @@ const { t } = useI18n()
 const props = defineProps<{
   generateStr: string
   type: EDomainAIGenerateType
+  role: string
 }>()
 
 const emit = defineEmits(['update:generateStr', 'start', 'end'])
@@ -36,8 +35,7 @@ const internalGenerateStr = computed({
   set: (v) => emit('update:generateStr', v)
 })
 
-const domainStoreI = useDomainStore()
-const { domainInfo } = storeToRefs(domainStoreI)
+const internalRole = computed(() => props.role)
 
 const clickCount = ref(0)
 const generating = ref(false)
@@ -56,7 +54,7 @@ const onAIGenerate = async () => {
     await SSEInstance.request(
       '/prompt/generated',
       {
-        role: domainInfo.value.name,
+        role: internalRole.value,
         user_prompt: promptStr,
         generate_type: props.type
       },

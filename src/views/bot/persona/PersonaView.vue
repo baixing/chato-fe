@@ -103,6 +103,7 @@
                 <AIGenerateBtn
                   ref="generateBtnRef"
                   v-model:generateStr="formData.system_prompt"
+                  :role="domainInfo.name"
                   :type="EDomainAIGenerateType.role"
                   @start="systemPromptDisabled = true"
                   @end="systemPromptDisabled = false"

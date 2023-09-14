@@ -64,6 +64,7 @@
           <SLTitle>{{ t('角色设定') }}</SLTitle>
           <AIGenerateBtn
             v-model:generateStr="formState.system_prompt"
+            :role="formState.name"
             :type="EDomainAIGenerateType.role"
             @start="AIGenerateInputDisabled.system_prompt = true"
             @end="AIGenerateInputDisabled.system_prompt = false"
@@ -111,6 +112,7 @@
           <SLTitle>{{ t('角色简介') }}</SLTitle>
           <AIGenerateBtn
             v-model:generateStr="formState.desc"
+            :role="formState.name"
             :type="EDomainAIGenerateType.intro"
             @start="AIGenerateInputDisabled.desc = true"
             @end="AIGenerateInputDisabled.desc = false"
@@ -129,6 +131,7 @@
           <SLTitle>{{ t('欢迎语') }}</SLTitle>
           <AIGenerateBtn
             v-model:generateStr="formState.welcome"
+            :role="formState.name"
             :type="EDomainAIGenerateType.welcome"
             @start="AIGenerateInputDisabled.welcome = true"
             @end="AIGenerateInputDisabled.welcome = false"

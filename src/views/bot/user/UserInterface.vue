@@ -42,6 +42,7 @@
                   <AIGenerateBtn
                     ref="generateIntroBtnRef"
                     v-model:generateStr="settingForm.domain.desc"
+                    :role="domainInfo.name"
                     :type="EDomainAIGenerateType.intro"
                     @start="descInputDisabled = true"
                     @end="descInputDisabled = false"
@@ -65,10 +66,11 @@
           <el-form-item>
             <template #label>
               <div class="flex items-center justify-between">
-                {{ $t('欢迎语')
-                }}<AIGenerateBtn
+                {{ $t('欢迎语') }}
+                <AIGenerateBtn
                   ref="generateWelcomeBtnRef"
                   v-model:generateStr="settingForm.domain.welcome"
+                  :role="domainInfo.name"
                   :type="EDomainAIGenerateType.welcome"
                   @start="welcomeInputDisabled = true"
                   @end="welcomeInputDisabled = false"
