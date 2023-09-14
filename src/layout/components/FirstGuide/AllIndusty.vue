@@ -1,7 +1,7 @@
 <template>
   <div class="w-full cursor-pointer text-[14px] text-[#596780] overflow-hidden">
     <el-skeleton v-if="!list.length" :rows="5" />
-    <template v-else-if="index === 1">
+    <template v-else-if="index === 2">
       <div
         :class="[
           currentSelect === item ? 'industy-item-selected' : '',
