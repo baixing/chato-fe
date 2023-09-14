@@ -666,7 +666,6 @@ const onTerminateRetry = async () => {
       fake_domain: draftDomain ? { system_prompt: draftDomain.system_prompt } : undefined
     }
 
-    ws.value && ws.value.close()
     sseStore.terminatedSSEResultMap(lastAnswer, detail.value.slug)
     await SSEInstance.request('/chato/chat/close', terminateParams)
 
@@ -738,7 +737,7 @@ async function sendMsgRequest(message) {
   try {
     let sseUrl = '/chato/sse'
     isMidJourneyDomain.value && (sseUrl += '/mj')
-    await SSEInstance.request(
+    const SSEFetching = SSEInstance.request(
       sseUrl,
       params,
       (str) => {
@@ -749,6 +748,7 @@ async function sendMsgRequest(message) {
       }
     )
     sseStore.setAbortControllerMap(detail.value.slug, SSEInstance.abortCtrl)
+    await SSEFetching
   } catch (err) {
     history.value[history.value.length - 1].status = EWsMessageStatus.error
     history.value[history.value.length - 1].content = err
@@ -1062,11 +1062,6 @@ const chatHisListener = (event) => {
   }
 }
 
-const closeSocketConnect = () => {
-  if (!ws.value) return
-  ws.value.close()
-}
-
 const customerFormState = reactive<{
   visible: boolean
   formId: string
@@ -1145,7 +1140,6 @@ onMounted(() => {
 
   observer.observe(document.body, { childList: true, subtree: true })
 
-  window.addEventListener('beforeunload', closeSocketConnect)
   window.showPreview = (imageUrl: string) => {
     previewImageUrl.value = imageUrl
     showPreview.value = true
@@ -1154,7 +1148,6 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   observer.disconnect()
-  window.removeEventListener('beforeunload', closeSocketConnect)
   document.removeEventListener('click', onElClick)
   refChatHistory.value?.removeEventListener('click', chatHisListener)
   watermark.value && watermark.value.destroy()
