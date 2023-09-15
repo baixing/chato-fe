@@ -185,9 +185,9 @@
   <JoinDemoModal v-model:visible="joinMask" />
 </template>
 <script setup lang="ts">
+import baixingAI from '@/assets/img/home/baixing-ai.png'
 import homeInvestJoin from '@/assets/img/home/home-invest-join.png'
 import nashCrcode from '@/assets/img/nash-crcode.jpeg'
-import baixingAI from '@/assets/img/home/baixing-ai.png'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import useGlobalProperties from '@/composables/useGlobalProperties'
 import useSpaceRights from '@/composables/useSpaceRights'
@@ -265,7 +265,7 @@ const onEnter = (type?: string) => {
     return
   }
 
-  if (type === 'Chato_bottom_conact_click') {
+  if (type === 'Chato_bottom_conact_click' || type === 'Chato_case_bottom_wechat_click') {
     checkRightsTypeNeedUpgrade(ESpaceRightsType.default)
     return
   }

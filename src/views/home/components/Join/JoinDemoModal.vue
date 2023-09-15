@@ -1,16 +1,26 @@
 <template>
-  <el-dialog
-    v-model="internalVisible"
-    class="join-modal"
+  <Modal
+    v-model:visible="internalVisible"
+    :width="300"
+    :mobile-width="300"
     :show-close="false"
     align-center
     :style="backgroundStyle"
+    class="join-modal"
   >
-    <JoinForm @submit="internalVisible = false" />
-  </el-dialog>
+    <JoinForm @submit="onClose" />
+    <el-icon
+      :size="20"
+      class="!absolute top-2 right-2 cursor-pointer hover:opacity-80"
+      @click="onClose"
+    >
+      <Close />
+    </el-icon>
+  </Modal>
 </template>
 
 <script setup lang="ts">
+import Modal from '@/components/Modal/index.vue'
 import useImagePath from '@/composables/useImagePath'
 import { computed } from 'vue'
 import JoinForm from './JoinForm.vue'
@@ -26,11 +36,14 @@ const internalVisible = computed({
 const backgroundStyle = computed(() => ({
   backgroundImage: `url(${ImagePath.value})`
 }))
+
+const onClose = () => {
+  internalVisible.value = false
+}
 </script>
 
 <style lang="scss">
 .join-modal {
-  width: 300px;
   height: 515px;
   border-radius: 16px;
   overflow: hidden;
@@ -44,6 +57,7 @@ const backgroundStyle = computed(() => ({
   }
   .el-dialog__body {
     padding-top: 140px;
+    position: relative;
   }
 }
 </style>

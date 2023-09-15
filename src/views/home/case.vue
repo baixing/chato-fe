@@ -9,7 +9,7 @@
       <h2 class="font-normal lg:px-2">
         {{ $t('用 Chato，连接企业智慧，超越传统运营，实现 AI 赋能') }}
       </h2>
-      <div class="flex gap-6 flex-wrap justify-center mt-16 lg:gap-3 lg:mt-10">
+      <div class="flex gap-5 flex-wrap justify-center mt-16 lg:gap-3 lg:mt-10">
         <div
           v-for="(item, index) in caseTypeList"
           :key="item.icon"
@@ -140,6 +140,7 @@
         type="primary"
         plain
         :icon="ChatDotRound"
+        id="Chato_case_bottom_wechat_click"
         @click="onEnter('Chato_case_bottom_wechat_click')"
       >
         {{ $t('微信联系') }}
@@ -160,8 +161,8 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 const emit = defineEmits(['enter'])
 
-const onEnter = () => {
-  emit('enter')
+const onEnter = (type?: string) => {
+  emit('enter', type)
 }
 
 const caseTypeList = [

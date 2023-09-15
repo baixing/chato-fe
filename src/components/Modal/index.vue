@@ -5,6 +5,7 @@
     :width="internalWidth"
     :title="t(title || '')"
     :fullscreen="fullscreen"
+    :align-center="alignCenter"
     :append-to-body="appendToBody"
     :close-on-click-modal="closeOnClickMask"
     :close-on-press-escape="closeOnPressEscape"
@@ -41,11 +42,12 @@ import { useI18n } from 'vue-i18n'
 const props = withDefaults(
   defineProps<{
     visible: boolean
-    width?: string
-    mobileWidth?: string
+    width?: string | number
+    mobileWidth?: string | number
     title?: string
     footer?: boolean
     fullscreen?: boolean
+    alignCenter?: boolean
     appendToBody?: boolean
     showClose?: boolean
     closeOnClickMask?: boolean

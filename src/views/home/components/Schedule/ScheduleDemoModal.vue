@@ -1,16 +1,25 @@
 <template>
-  <el-dialog
-    v-model="internalVisible"
+  <Modal
+    v-model:visible="internalVisible"
     :width="300"
+    :mobile-width="300"
     :show-close="false"
     align-center
-    class="schedule-modal"
     :style="backgroundStyle"
+    class="schedule-modal"
   >
-    <ScheduleForm :submit-btn-text="$t(`立即预约`)" @submit="internalVisible = false" />
-  </el-dialog>
+    <ScheduleForm :submit-btn-text="$t(`立即预约`)" @submit="onClose" />
+    <el-icon
+      :size="20"
+      class="!absolute top-2 right-2 cursor-pointer hover:opacity-80"
+      @click="onClose"
+    >
+      <Close />
+    </el-icon>
+  </Modal>
 </template>
 <script lang="ts" setup>
+import Modal from '@/components/Modal/index.vue'
 import useImagePath from '@/composables/useImagePath'
 import { computed } from 'vue'
 import ScheduleForm from './ScheduleForm.vue'
@@ -28,6 +37,10 @@ const internalVisible = computed({
   get: () => props.visible,
   set: (v) => emit('update:visible', v)
 })
+
+const onClose = () => {
+  internalVisible.value = false
+}
 </script>
 <style lang="scss">
 .schedule-modal {
@@ -41,6 +54,7 @@ const internalVisible = computed({
 
   .el-dialog__body {
     padding-top: 140px;
+    position: relative;
   }
 }
 </style>
