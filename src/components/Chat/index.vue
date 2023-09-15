@@ -2,7 +2,7 @@
   <div class="container-preview-page bg-white">
     <div
       v-if="route.name !== RoutesMap.tranning.botChat && detail.avatar_show && detail.name_show"
-      class="flex items-center justify-center h-[52px] bg-white mb-0 text-sm font-medium gap-2 shrink-0"
+      class="flex items-center justify-center h-14 bg-white mb-0 text-sm font-medium gap-2 shrink-0"
       style="border-bottom: 1px solid #eee"
     >
       <img
@@ -13,7 +13,7 @@
       <span>{{ detail.name || '...' }}</span>
     </div>
     <div
-      class="flex flex-col max-w-[800px] mx-auto h-full w-full overflow-hidden"
+      :class="['flex flex-col max-w-[800px] mx-auto h-full w-full overflow-hidden', chatClassName]"
       v-loading="$isLoading"
       element-loading-background="#F2F3F5"
     >
@@ -28,7 +28,7 @@
       >
         <div class="MessageItem" ref="MessageItemContainer">
           <!-- 机器人简介 -->
-          <div v-if="detail.desc_show" class="quick-message-container" style="margin-bottom: 20px">
+          <div v-if="detail.desc_show" class="quick-message-container mb-5">
             <div class="quick-span-desc">
               <img :src="detail.avatar" alt="logo" />
               <div class="desc-right">
@@ -46,15 +46,11 @@
                 :isInternal="isInternal && isChatingPractice"
                 :is-loading-answer="isLoadingAnswer"
                 :correct-visible="isInternal || (detail.qa_modifiable && !correctTicketExpired)"
-                :currentPlayId="currentPlayId"
-                :audioLoading="audioLoading"
-                :isPlaying="isPlaying"
                 @evaluate="onEvaluate"
                 @send-message="submit"
                 @show-more-action="onShowMoreAction"
                 @receive-question-answer="(mItem) => emit('correctAnswer', mItem)"
                 @click-source="(questionId) => emit('showDrawer', questionId, botSlug)"
-                @handleAudio="voiceAnnounements"
               />
             </template>
             <template v-else-if="item.displayType === 'remove'">
@@ -72,8 +68,8 @@
         v-show="isLoadingAnswer"
         data-sensors-click
         id="Chato_chat_stop_click"
-        :data-sensors-question-id="history?.[history.length - 1]?.questionId"
-        class="shrink-0 mb-4 mt-3 mx-auto flex items-center gap-[6px] text-[#303133] text-xs cursor-pointer px-4 py-3 rounded-md bg-[#F2F3F5] w-fit hover:opacity-80"
+        :data-sensors-question-id="sensorsQuestionId"
+        class="shrink-0 mb-4 mt-3 mx-auto flex items-center gap-2 text-[#303133] text-xs cursor-pointer px-4 py-3 rounded-md bg-[#F2F3F5] w-fit hover:opacity-80"
         @click="onTerminateRetry"
       >
         <el-icon class="text-base"> <VideoPause /> </el-icon>{{ $t('终止') }}
@@ -97,66 +93,20 @@
         ></div>
       </div>
 
-      <div :class="['input-box', isNeedChatXPadding && '!px-4']">
-        <el-tooltip
-          :disabled="isMobile"
-          :content="$t(`清空历史消息`)"
-          placement="top"
-          :hide-after="0"
-        >
-          <el-icon
-            data-sensors-click
-            id="Chato_chat_delete_click"
-            :data-sensors-question-id="history?.[history.length - 1]?.questionId"
-            :size="20"
-            :class="[
-              '!w-10 !h-10 mr-1 text-center rounded-full shrink-0 cursor-pointer hover:bg-[#f2f3f5]',
-              isMidJourneyDomain && '!hidden'
-            ]"
-            @click="clearMessage"
-          >
-            <svg-icon name="clear-message"></svg-icon>
-          </el-icon>
-        </el-tooltip>
-        <div class="input-box-content pr-2">
-          <el-input
-            class="input-textarea"
-            resize="none"
-            type="textarea"
-            :autosize="{ minRows: 1, maxRows: 5 }"
-            v-model="input"
-            :placeholder="inputPlaceHolder"
-            ref="refInput"
-            :disabled="inputDisabled || isLoadingAnswer"
-            @click="scrollChatHistory"
-            @keydown.enter="Keydown"
-          />
-          <ChatRecorder
-            v-model:str="input"
-            :disabled="isLoadingAnswer"
-            ref="chatRecorderRef"
-            @recording="onRecording"
-          />
-          <el-tooltip :disabled="isMobile" :content="$t(`发送`)" placement="top" :hide-after="0">
-            <div
-              data-script="Chato-send-question"
-              class="input-box-btn transition-colors"
-              :disabled="isLoadingAnswer"
-              @click="() => submit('')"
-            >
-              <svg-icon svg-class="w-6 h-6 text-[#9DA3AF]" name="chat-send" />
-            </div>
-          </el-tooltip>
-        </div>
-        <div
-          v-show="isLoadingAnswer"
-          class="absolute top-0 right-0 bottom-0 left-0 cursor-not-allowed bg-[#ffffffa3] z-[1]"
-        ></div>
-      </div>
+      <ChatEnter
+        v-model:value="inputText"
+        :last-question-id="sensorsQuestionId"
+        :hidden-clear="isMidJourneyDomain"
+        :disabled="isLoadingAnswer"
+        @input-click="scrollChatHistory"
+        @clear="clearChatHistory"
+        @submit="submit"
+      />
+
       <div v-if="footerBrand.show" class="page-main-power site-logo">
         <!-- TODO: 放到 ChatFooter -->
         <div v-if="isInternal && !props.isreadRouteParam" class="flex items-center">
-          {{ $t('目前为训练演示视角， 如需用户视角') }}
+          {{ $t('目前为训练演示视角，如需用户视角') }}
           <el-link
             :href="`/b/${botSlug}`"
             type="primary"
@@ -182,9 +132,9 @@
     :message="currentMessage"
     :actions="currentMoreActions"
     :position="currentMoreActionPosition"
-    @play-audio="voiceAnnounements"
     @send-message="submit"
     @receive-question-answer="(message) => emit('correctAnswer', message)"
+    @play-audio="onPlayAudio"
     @delete-success="onDeleteSuccess"
     @translate-success="onTranslateSuccess"
     @like-dislike-success="onLikeDislikeSuccess"
@@ -195,36 +145,35 @@
     :uid="customerFormState.uId"
   />
   <el-image-viewer v-if="showPreview" :url-list="[previewImageUrl]" @close="showPreview = false" />
+  <AudioPlayer />
 </template>
 
 <script lang="ts" setup>
-import {
-  chatToBotHistoryB,
-  chatToBotHistoryC,
-  clearSession,
-  evaluate,
-  getVoiceAnnounements
-} from '@/api/chat'
+import { chatToBotHistoryB, chatToBotHistoryC, clearSession, evaluate } from '@/api/chat'
 import {
   checkDomainCorrectTicketIsExpired,
   getDomainDetailPublic,
   getDomainQuotaInPlatformC
 } from '@/api/domain'
 import DefaultAvatar from '@/assets/img/avatar.png'
+import AudioPlayer from '@/components/AudioPlayer/index.vue'
+import ChatEnter from '@/components/Chat/ChatEnter.vue'
 import MessageItem from '@/components/Chat/ChatMessageItem.vue'
-import useAudioPlayer from '@/composables/useAudio'
-import { useBasicLayout, useIsMobile } from '@/composables/useBasicLayout'
+import useAudioPlayer from '@/composables/useAudioPlayer'
+import useSSEAudio from '@/composables/useSSEAudio'
 import useSpaceRights from '@/composables/useSpaceRights'
 import { DefaultBrandLogo } from '@/constant/brand'
 import {
   ChatBubbleColorList,
   ChatMessageFinalStatus,
   ChatMessageMoreAction,
-  SymChatDomainDetail
+  SymChatDomainDetail,
+  SymChatToken
 } from '@/constant/chat'
 import { DraftDomainSymbol, MidJourneyDomainSlug } from '@/constant/domain'
 import { PaidCommercialTypes } from '@/constant/space'
 import { XSSOptions } from '@/constant/xss'
+import { EDomainConversationMode } from '@/enum/domain'
 import {
   EMessageActionType,
   EMessageDisplayType,
@@ -236,6 +185,7 @@ import { ESpaceRightsType } from '@/enum/space'
 import type { ChatHistoryParams } from '@/interface/chat'
 import type { IDomainInfo } from '@/interface/domain'
 import type { IMessageDetail, IMessageItem } from '@/interface/message'
+import type { ITTSParams } from '@/interface/tts'
 import router, { RoutesMap } from '@/router'
 import { useAuthStore } from '@/stores/auth'
 import { useBase } from '@/stores/base'
@@ -262,7 +212,6 @@ import {
   provide,
   reactive,
   ref,
-  toRaw,
   watch
 } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -271,7 +220,6 @@ import Watermark from 'watermark-plus'
 import xss from 'xss'
 import ChatFooter from './ChatFooter.vue'
 import ChatMessageMore from './ChatMessageMore.vue'
-import ChatRecorder from './ChatRecorder/index.vue'
 
 const { t } = useI18n()
 interface Props {
@@ -279,6 +227,8 @@ interface Props {
   bSlug?: string
   isChatingPractice?: boolean
   isreadRouteParam?: boolean
+  chatClassName?: string
+  chatByAudio?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -288,14 +238,12 @@ const props = withDefaults(defineProps<Props>(), {
   isreadRouteParam: false
 })
 
-const draftDomain = inject<IDomainInfo>(DraftDomainSymbol)
+const draftDomain = inject<IDomainInfo>(DraftDomainSymbol, null)
 
 const sseStore = useSSEStore()
 const { sseMsgResult } = storeToRefs(sseStore)
 
-const { isMobile } = useBasicLayout()
 const route = useRoute()
-const mobileDevice = useIsMobile()
 const base = useBase()
 const { userInfo } = storeToRefs(base)
 const authStoreI = useAuthStore()
@@ -318,9 +266,7 @@ const source = (qs.parseUrl(window.location.href).query.source as string) || ''
 const detail = ref<IMessageDetail>({} as IMessageDetail) // 机器人详情
 const refChatHistory = ref<HTMLDivElement>(null) // 聊天记录容器的 DOM 引用
 const MessageItemContainer = ref(null)
-const refInput = ref() // 输入框的 DOM 引用
-const input = ref('')
-const chatRecorderRef = ref()
+const inputText = ref('')
 const $isLoading = ref<boolean>(true) // 是否处于全屏加载状态
 const history = ref<IMessageItem[]>([])
 const inputLength = ref<number>(3000)
@@ -334,30 +280,20 @@ const previewImageUrl = ref('')
 const isNeedChatXPadding = computed(() =>
   [RoutesMap.chat.c, RoutesMap.manager.create].includes(route.name as string)
 )
+const sensorsQuestionId = computed(() => history.value?.[history.value.length - 1]?.questionId)
 
 const DefaultChatHistoryPage = {
   total: 0,
   page_count: 0,
   currentTotal: 0
 }
-const ws = ref(null)
 let chatHistoryPage = reactive({ ...DefaultChatHistoryPage })
 const chatHistoryParams: ChatHistoryParams = reactive({
   page: 1,
   page_size: 10
 })
-const inputPlaceHolder = computed(() => {
-  return !mobileDevice ? t('输入问题，换行可通过shift+回车') : t('请输入问题')
-})
-
-const realInput = computed(() => String(input.value).trim())
 
 const SSEInstance = new SSE()
-
-const { isPlaying, handlePlay, handlePause, checkExistAudioUrl, addLocalAudioUrl } =
-  useAudioPlayer()
-const currentPlayId = ref<string>('')
-const audioLoading = ref<boolean>(false)
 
 // 水印
 const watermarkFunc = () => {
@@ -461,6 +397,9 @@ function getBotInfo() {
   getDomainDetailPublic(botSlug.value)
     .then((res) => {
       detail.value = res.data?.data || {}
+      if (props.chatByAudio) {
+        detail.value.conversation_mode = EDomainConversationMode.audio
+      }
       const cur_list = ChatBubbleColorList.filter((item) => item.bg === detail.value.message_style)
       detail.value.message_style_color = cur_list.length > 0 ? cur_list[0].cl : ''
       detail.value.shortcuts =
@@ -563,15 +502,19 @@ function sayWelcome() {
   }
 }
 
-function Keydown(e) {
-  // 兼容pc端模拟手机端
-  if (!e.shiftKey && e.keyCode == 13 && !mobileDevice) {
-    e.cancelBubble = true //ie阻止冒泡行为
-    e.stopPropagation() //Firefox阻止冒泡行为
-    e.preventDefault() //取消事件的默认动作*换行
-    //以下处理发送消息代码
-    submit('')
+const { initAudios, onResetPlayingAudio } = useAudioPlayer()
+let lastAudioPlayerId = ''
+const onPlayAudio = async (text: string, playerId: string) => {
+  const TTSParams: ITTSParams = {
+    text,
+    audio_key: playerId,
+    domain_slug: botSlug.value,
+    token: chatToken.value,
+    finish_reason: 'full'
   }
+
+  await initAudios(TTSParams, lastAudioPlayerId)
+  lastAudioPlayerId = playerId
 }
 
 const beforeSubmit = async () => {
@@ -585,18 +528,9 @@ const beforeSubmit = async () => {
   return true
 }
 
-async function submit(retryString: string) {
+const submit = async (str = '') => {
   const beforeSubmitCheckRes = await beforeSubmit()
-  const text = retryString ? retryString : realInput.value
-
-  // 语音播放
-  handlePause()
-
-  // 未关闭录音，就点击发送，暂停录音
-  if (chatRecorderRef.value?.isRecording) {
-    inputDisabled.value = false
-    chatRecorderRef.value.stopRecording(!beforeSubmitCheckRes)
-  }
+  const text = String(str || inputText.value).trim()
 
   // 无额度
   if (!beforeSubmitCheckRes) {
@@ -605,7 +539,7 @@ async function submit(retryString: string) {
   }
 
   if (!text) {
-    input.value = ''
+    inputText.value = ''
     return
   }
 
@@ -618,7 +552,7 @@ async function submit(retryString: string) {
   isTerminated.value = false
   const msg_id = randomString(32)
   const _id = `${Date.now()}-${Math.random()}`
-  input.value = ''
+  inputText.value = ''
   const xssFilterText = xss(text, XSSOptions)
   history.value.push({
     displayType: EMessageDisplayType.question,
@@ -628,23 +562,19 @@ async function submit(retryString: string) {
   })
   commonRequestSocket(xssFilterText, msg_id, _id)
   sseStore.updatePeddingDomains(botSlug.value)
+  // 语音播放重置
+  onResetPlayingAudio()
 }
 
 // 是否被终止
 const isTerminated = ref(false)
 // 是否正在加载回答的消息内容
 const isLoadingAnswer = ref(false)
-// 文本框禁止输入：录音时、回答正在返回时
-const inputDisabled = ref(false)
 
-// 触发录音
-const onRecording = (tag: 'start' | 'end') => {
-  if (tag === 'start') {
-    inputDisabled.value = true
-  } else {
-    inputDisabled.value = false
-  }
-}
+const chatToken = computed(() => (isInternal ? authToken.value : $uid.value))
+const needsSSEAudio = computed(
+  () => EDomainConversationMode.audio === detail.value.conversation_mode
+)
 
 // 触发终止和重试
 const onTerminateRetry = async () => {
@@ -661,13 +591,24 @@ const onTerminateRetry = async () => {
       text: removewRegReplaceA(lastAnswer.content),
       cutoff_continue_qid: lastAnswer.questionId,
       domain_slug: detail.value.slug,
-      token: isInternal ? authToken.value : $uid.value,
+      token: chatToken.value,
       visitor_type: isInternal ? (props.isreadRouteParam ? 'chat' : 'owner') : 'vistor',
       fake_domain: draftDomain ? { system_prompt: draftDomain.system_prompt } : undefined
     }
 
     sseStore.terminatedSSEResultMap(lastAnswer, detail.value.slug)
     await SSEInstance.request('/chato/chat/close', terminateParams)
+    const SSEAudioDoneParams = {
+      chunk_message: '',
+      status: EWsMessageStatus.done,
+      question_id: lastAnswer.questionId
+    }
+    needsSSEAudio.value &&
+      (await SSETextToAudio({
+        sseRes: SSEAudioDoneParams,
+        domainSlug: botSlug.value,
+        token: chatToken.value
+      }))
 
     if (!lastAnswer.questionId) {
       lastAnswer.content = t('回答已终止')
@@ -720,28 +661,31 @@ function doRequest(message) {
   sendMsgRequest(message)
 }
 
+const { SSETextToAudio } = useSSEAudio()
+
 async function sendMsgRequest(message) {
   const params = {
     ...message,
     type: isMidJourneyDomain.value ? 'mj_image' : 'chat',
     source,
     domain_slug: detail.value.slug,
-    token: isInternal ? authToken.value : $uid.value,
+    token: chatToken.value,
     visitor_type: isInternal ? (props.isreadRouteParam ? 'chat' : 'owner') : 'vistor',
     navit_msg_id: isMidJourneyDomain.value ? random(1000000, 9999999) : undefined,
     fake_domain: draftDomain ? { system_prompt: draftDomain.system_prompt } : undefined
   }
 
   sseStore.$patch({ sseMsgId: message.msg_id })
-
   try {
     let sseUrl = '/chato/sse'
     isMidJourneyDomain.value && (sseUrl += '/mj')
     const SSEFetching = SSEInstance.request(
       sseUrl,
       params,
-      (str) => {
-        sseStore.setSSEResultMap(str)
+      async (res) => {
+        sseStore.setSSEResultMap(res)
+        needsSSEAudio.value &&
+          (await SSETextToAudio({ sseRes: res, domainSlug: botSlug.value, token: chatToken.value }))
       },
       {
         responseAll: true
@@ -853,14 +797,14 @@ const onEvaluate = async (questionId: number, evValue: EMessageEvalution) => {
 }
 
 // 清除会话记录
-async function clearMessage() {
+async function clearChatHistory() {
   const lastHistory = history.value.slice(-1)
   if (!lastHistory.length || lastHistory[0].displayType === EMessageDisplayType.remove) return
   try {
     const params = {
       visitor_type: isInternal ? 'owner' : 'vistor',
       domain_slug: detail.value.slug,
-      token: isInternal ? authToken.value : $uid.value
+      token: chatToken.value
     }
 
     const { data } = await clearSession(params)
@@ -1083,27 +1027,6 @@ const onElClick = (event) => {
   }
 }
 
-// 语音播报
-const voiceAnnounements = async (status: boolean, text: string, id: string) => {
-  currentPlayId.value = id
-  try {
-    if (status) {
-      return handlePause()
-    }
-    let audioUrl = checkExistAudioUrl(id)
-    if (!audioUrl) {
-      audioLoading.value = true
-      const res = await getVoiceAnnounements({ domain_slug: botSlug.value, text })
-      audioLoading.value = false
-      audioUrl = res.data.data.url
-      addLocalAudioUrl(id, audioUrl)
-    }
-    handlePlay(audioUrl)
-  } catch (e) {
-    console.error(e)
-  }
-}
-
 watch(refChatHistory, (v) => {
   v && v.addEventListener('click', chatHisListener)
 })
@@ -1182,29 +1105,32 @@ watch(
 watch(
   draftDomain,
   (v) => {
-    if (v) {
-      const { avatar, name, desc, system_prompt, welcome } = v
-      detail.value = { ...detail.value, avatar, name, desc, system_prompt, welcome }
-      if (welcome) {
-        const hisWelcomeItem = history.value.find((item) => item.isWelcome)
-        if (hisWelcomeItem) {
-          hisWelcomeItem.content = regReplaceA(welcome, {
-            class: 'welcome-a',
-            id: 'Chato_chat_label_click'
-          })
-        } else {
-          sayWelcome()
-        }
-      } else if (!welcome) {
-        const newHistory = toRaw(history.value).filter((item) => item.isWelcome)
-        history.value = newHistory
+    if (!v) {
+      return
+    }
+
+    const { avatar, name, desc, system_prompt, welcome } = v
+    detail.value = { ...detail.value, avatar, name, desc, system_prompt, welcome }
+    if (welcome) {
+      const hisWelcomeItem = history.value.find((item) => item.isWelcome)
+      if (hisWelcomeItem) {
+        hisWelcomeItem.content = regReplaceA(welcome, {
+          class: 'welcome-a',
+          id: 'Chato_chat_label_click'
+        })
+      } else {
+        sayWelcome()
       }
+    } else {
+      const newHistory = history.value.filter((item) => item.isWelcome)
+      history.value = newHistory
     }
   },
   { immediate: true }
 )
 
 provide(SymChatDomainDetail, detail)
+provide(SymChatToken, chatToken)
 </script>
 <style lang="scss" scoped>
 .container-preview-page {
@@ -1222,15 +1148,11 @@ provide(SymChatDomainDetail, detail)
   flex-wrap: wrap;
   justify-content: flex-start;
   align-items: center;
-  padding: 5px 16px 0;
+  @apply px-4 pt-1 pb-0;
 
   .quick-item {
-    border-radius: 15px;
+    @apply rounded-2xl leading-4 text-xs px-3 py-1 mr-1 mb-1;
     background: #f2f3f5;
-    line-height: 17px;
-    font-size: 12px;
-    padding: 6px 12px;
-    margin: 0 5px 5px 0;
     cursor: pointer;
 
     &:last-of-type {
@@ -1240,11 +1162,10 @@ provide(SymChatDomainDetail, detail)
 }
 
 .chat-history {
+  @apply px-1 pt-4 pb-5;
   flex: auto 1 1;
   box-sizing: border-box;
   display: flex;
-  padding: 16px 4px;
-  padding-bottom: 20px;
   max-width: 100vw;
   overflow-x: hidden;
   overflow-y: auto;
@@ -1259,38 +1180,32 @@ provide(SymChatDomainDetail, detail)
     align-items: flex-start;
 
     .quick-span-desc {
+      @apply p-4 mb-2 rounded-lg;
       display: flex;
       justify-content: flex-start;
       align-items: flex-start;
       width: 100%;
       flex-shrink: 0;
-      margin-bottom: 10px;
-      padding: 16px;
       line-height: 1.5;
       color: #2f3447;
       background-color: #f2f3f5;
-      border-radius: 8px;
       cursor: pointer;
 
       img {
-        width: 56px;
-        height: 56px;
+        @apply w-14 h-14;
         border-radius: 100%;
         flex-shrink: 0;
         object-fit: cover;
       }
 
       .desc-right {
+        @apply text-xs leading-5 ml-3;
         color: #596780;
-        font-size: 13px;
-        line-height: 22px;
-        margin-left: 12px;
         word-break: break-word;
 
         .desc-right-title {
-          margin-bottom: 8px;
+          @apply mb-2 text-base;
           color: #3d3d3d;
-          font-size: 16px;
           font-weight: 500;
         }
       }
@@ -1304,16 +1219,14 @@ provide(SymChatDomainDetail, detail)
   }
 
   .divider-tip {
-    font-size: 12px;
+    @apply text-xs;
     color: #dcdfe6;
   }
 
   .divider-desc-seesion {
-    margin-bottom: 12px;
+    @apply mb-3 rounded-lg text-xs;
     text-align: center;
-    border-radius: 8px;
     color: #9da3af;
-    font-size: 12px;
   }
 }
 
@@ -1324,104 +1237,12 @@ provide(SymChatDomainDetail, detail)
   opacity: 0.5;
 }
 
-.input-box {
-  display: flex;
-  align-items: center;
-  flex: 0 0 auto;
-  margin-bottom: 8px;
-  background-color: #fff;
-
-  // 这是为顶部外投影准备的，防止被对话气泡遮挡
-  position: relative;
-  z-index: 20;
-
-  .input-box-content {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    border: 1px solid #dcdfe6;
-    min-height: 48px;
-    box-sizing: border-box;
-
-    :deep(.el-textarea.is-disabled .el-textarea__inner) {
-      background-color: transparent;
-      color: var(--el-input-text-color);
-    }
-  }
-
-  :deep(.el-textarea) {
-    display: flex;
-    align-items: center;
-  }
-
-  :deep(.el-textarea__inner) {
-    box-shadow: none;
-  }
-
-  textarea {
-    &:focus {
-      outline: none !important;
-      box-shadow: none;
-    }
-  }
-
-  input,
-  button {
-    display: block;
-    appearance: none;
-    font-size: $fs-s;
-    line-height: 20px;
-    border: none;
-    outline: none;
-    transition: opacity 0.3s;
-    background-color: #fff;
-
-    &:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-  }
-
-  input {
-    flex: 1 1 auto;
-    padding: 10px;
-    border-radius: 8px 0 0 8px;
-    color: #192a3e;
-
-    &::placeholder {
-      color: $color-placeholder;
-    }
-  }
-
-  .input-box-btn {
-    color: white;
-    height: 32px;
-    border-radius: 4px;
-    white-space: nowrap;
-    padding: 4px;
-    margin: 0;
-    cursor: pointer;
-    border-radius: 100%;
-    box-sizing: border-box;
-
-    &:hover {
-      background-color: #f2f3f5;
-      svg {
-        color: #7c5cfc;
-      }
-    }
-  }
-}
-
 .site-logo {
+  @apply h-4 mb-3 leading-4 text-xs;
   box-sizing: border-box;
   display: flex;
-  height: 14px;
-  margin-bottom: 12px;
   justify-content: center;
   color: #596780;
   text-align: center;
-  line-height: 14px;
-  font-size: 12px;
 }
 </style>

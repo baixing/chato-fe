@@ -35,3 +35,9 @@ export const enum EDomainAIGenerateType {
   role = '角色设定',
   welcome = '欢迎语'
 }
+
+export const enum EDomainConversationMode {
+  text = 'text',
+  audio = 'audio',
+  video = 'video'
+}

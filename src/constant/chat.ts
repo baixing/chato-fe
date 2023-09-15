@@ -1,6 +1,8 @@
 import { EMessageActionType, EMessageDisplayType, EWsMessageStatus } from '@/enum/message'
 
 export const SymChatDomainDetail = Symbol('chat-domain-detail')
+export const SymChatToken = Symbol('chat-token')
+export const SymChatMessageAudioTTSParams = Symbol('chat-message-audio-tts-params')
 
 export const ChatMessageMoreAction = {
   viewC: {

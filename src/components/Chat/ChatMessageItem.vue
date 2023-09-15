@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import useAudioPlayer from '@/composables/useAudioPlayer'
+import { SymChatMessageAudioTTSParams, SymChatToken } from '@/constant/chat'
 import {
   EMessageDisplayType,
   EMessageEvalution,
@@ -6,9 +8,10 @@ import {
   EWsMessageStatus
 } from '@/enum/message'
 import type { IMessageDetail, IMessageItem } from '@/interface/message'
+import type { ITTSParams } from '@/interface/tts'
 import { generatePreviewImgUrl } from '@/utils/help'
 import { detectMarkdown, renderMarkdown } from '@/utils/markdown'
-import { computed, ref } from 'vue'
+import { computed, inject, provide, ref, type Ref } from 'vue'
 import ChatMessageAudio from './ChatMessageAudio.vue'
 import ChatMessageStatus from './ChatMessageStatus.vue'
 
@@ -19,24 +22,28 @@ const props = defineProps<{
   isLast: boolean
   isLoadingAnswer?: boolean
   correctVisible?: boolean
-  currentPlayId?: string
-  isPlaying?: boolean
-  audioLoading?: boolean
 }>()
 
 const bubbleRef = ref<HTMLDivElement>()
 
+const { checkShowCurrentAudioPlayer } = useAudioPlayer()
+
 const isAnswerMessage = computed(() => props.message.displayType === EMessageDisplayType.answer)
 const isQuestionMessage = computed(() => props.message.displayType === EMessageDisplayType.question)
 const internalCorrectVisible = computed(() => props.correctVisible)
+const internalAudioPlayerId = computed(
+  () => `${props.message.questionId}_${isAnswerMessage.value ? 'a' : 'q'}`
+)
+const audioVisible = computed(
+  () => isAnswerMessage.value && checkShowCurrentAudioPlayer(internalAudioPlayerId.value)
+)
 
 const emit = defineEmits([
   'clickSource',
   'evaluate',
   'showMoreAction',
   'receiveQuestionAnswer',
-  'sendMessage',
-  'handleAudio'
+  'sendMessage'
 ])
 
 const messageContent = computed(() => {
@@ -59,17 +66,34 @@ const onMore = (e, message: IMessageItem) => {
 }
 
 const mjProgress = computed(() => `${Number(props.message?.progress || 0) * 100}%`)
+
+const chatToken = inject<Ref<string>>(SymChatToken)
+
+const audioTTSParams = computed<ITTSParams>(() => {
+  return {
+    text: props.message.content,
+    audio_key: internalAudioPlayerId.value,
+    domain_slug: props.detail.slug,
+    token: chatToken.value,
+    finish_reason: 'full'
+  }
+})
+
+provide(SymChatMessageAudioTTSParams, audioTTSParams)
 </script>
 
 <template>
   <div
-    :class="['flex flex-col items-start mb-[1.5em]', isQuestionMessage && '!flex-row justify-end']"
+    :class="['flex flex-col items-start mb-6', isQuestionMessage && '!flex-row justify-end']"
     :data-id="message.id"
     :data-script="isLast ? 'Chato-lastest-message' : ''"
   >
     <div class="cursor-pointer max-w-full" ref="bubbleRef" id="bubbleContainer">
       <div class="flex justify-start items-center">
-        <div v-if="message.status === EWsMessageStatus.pending" class="message-box !py-0">
+        <div
+          v-if="message.status === EWsMessageStatus.pending"
+          class="message-box !py-0 !rounded-tl-none"
+        >
           <div class="dot-loading">
             <div class="dot-flashing"></div>
           </div>
@@ -78,7 +102,7 @@ const mjProgress = computed(() => `${Number(props.message?.progress || 0) * 100}
           v-else
           :class="[
             'message-box relative',
-            !message.first && (isQuestionMessage ? 'ml-[50px]' : 'mr-[50px]')
+            !message.first && (isQuestionMessage ? 'ml-12 !rounded-br-sm !rounded-tl-2xl' : 'mr-12')
           ]"
           :style="{
             backgroundColor: isQuestionMessage ? detail.message_style : 'auto',
@@ -87,8 +111,8 @@ const mjProgress = computed(() => `${Number(props.message?.progress || 0) * 100}
         >
           <div
             :class="[
-              'w-10 h-10 leading-[30px] text-xl absolute top-1/2 -translate-y-1/2 text-center cursor-pointer text-[#878787] rounded-full hover:bg-[#f2f3f5]',
-              isQuestionMessage ? '-left-[50px]' : '-right-[50px]',
+              'w-10 h-10 leading-7 text-xl absolute top-1/2 -translate-y-1/2 text-center cursor-pointer text-[#878787] rounded-full hover:bg-[#f2f3f5]',
+              isQuestionMessage ? '-left-12' : '-right-12',
               (message.displayType === EMessageDisplayType.answer &&
                 message.questionId &&
                 !isLoadingAnswer) ||
@@ -124,22 +148,18 @@ const mjProgress = computed(() => `${Number(props.message?.progress || 0) * 100}
             </p>
           </div>
           <div v-else class="overflow-hidden w-auto markdown-body">
+            <ChatMessageAudio v-if="audioVisible" :player-id="internalAudioPlayerId" />
             <div
               v-if="detectMarkdown(messageContent)"
               v-html="renderMarkdown(messageContent)"
               class="markdown-container-chato markdown-body"
             ></div>
-            <div v-else v-html="messageContent" class="whitespace-pre-line break-words"></div>
-            <ChatMessageAudio
-              v-if="
-                isAnswerMessage &&
-                message.status === EWsMessageStatus.done &&
-                currentPlayId == message.id
-              "
-              :isPlaying="isPlaying"
-              :audioLoading="audioLoading"
-              @handleAudio="(e: boolean) => emit('handleAudio', e, messageContent, message.id)"
-            />
+            <div
+              v-else
+              v-html="messageContent"
+              class="whitespace-pre-line break-words"
+              style="line-break: anywhere"
+            ></div>
           </div>
         </div>
       </div>
@@ -173,7 +193,7 @@ const mjProgress = computed(() => `${Number(props.message?.progress || 0) * 100}
           !isLoadingAnswer &&
           message.status !== EWsMessageStatus.pending
         "
-        class="relative flex justify-start items-center ml-3 mt-3 text-[#596780] text-sm leading-[22px] cursor-pointer"
+        class="relative flex justify-start items-center ml-3 mt-3 text-[#596780] text-sm leading-5 cursor-pointer"
       >
         <!-- 段落来源 -->
         <div
@@ -182,7 +202,7 @@ const mjProgress = computed(() => `${Number(props.message?.progress || 0) * 100}
           @click.stop="() => emit('clickSource', message.questionId)"
         >
           <svg-icon name="folder-open" color="#596780"></svg-icon>
-          <span style="margin-left: 5px">
+          <span class="ml-1">
             {{ $t('文档：来源于{num}个段落', { num: message.ref_source_len }) }}
           </span>
         </div>
@@ -236,62 +256,56 @@ const mjProgress = computed(() => `${Number(props.message?.progress || 0) * 100}
 <style lang="scss" scoped>
 .message-box {
   max-width: 100%;
-  @apply min-h-[32px] p-3 leading-normal text-[#2f3447] whitespace-pre-wrap break-all bg-[#f2f3f5] rounded-lg text-left text-[15px];
+  @apply min-h-[32px] p-3 leading-normal text-[#2f3447] whitespace-pre-wrap break-all bg-[#f2f3f5] rounded-tr-2xl rounded-bl-2xl rounded-tl-sm rounded-br-2xl text-left text-base;
 }
 
 .dot-loading {
+  @apply w-10;
   display: inline-block;
   box-sizing: border-box;
-  width: 40px;
   vertical-align: sub;
 
   .dot-flashing {
+    @apply w-2 h-2;
     position: relative;
-    width: 8px;
-    height: 8px;
     border-radius: 100%;
     animation: dotFlashing 0.6s infinite linear alternate;
     animation-delay: 0s;
 
     &::before,
     &::after {
+      @apply w-2 h-2;
       content: '';
       display: inline-block;
       position: absolute;
       top: 0;
-      width: 8px;
-      height: 8px;
       border-radius: 100%;
       animation: dotFlashing 0.6s infinite alternate;
     }
 
     &::before {
-      left: 15px;
+      @apply left-4;
       animation-delay: 0.3s;
     }
 
     &::after {
-      left: 30px;
+      @apply left-8;
       animation-delay: 0.6s;
     }
   }
 }
 
-$-color-dark: #000;
-$-color-light1: #fff;
-$-color-light2: #fff;
-
 @keyframes dotFlashing {
   0% {
-    background-color: $-color-dark;
+    background-color: #000;
   }
 
   75% {
-    background-color: $-color-light1;
+    background-color: #fff;
   }
 
   100% {
-    background-color: $-color-light2;
+    background-color: #fff;
   }
 }
 </style>

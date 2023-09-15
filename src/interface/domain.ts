@@ -1,4 +1,9 @@
-import type { EDomainLLMType, EDomainStatus, EDomainType } from '@/enum/domain'
+import type {
+  EDomainConversationMode,
+  EDomainLLMType,
+  EDomainStatus,
+  EDomainType
+} from '@/enum/domain'
 
 export interface IDomainInfo {
   id: number
@@ -44,6 +49,7 @@ export interface IDomainInfo {
   keyword_block: string[]
   keyword_block_reply: string
   keyword_block_show: boolean
+  conversation_mode: EDomainConversationMode // 机器人对话类型
 }
 
 export interface IDomainShortcut {

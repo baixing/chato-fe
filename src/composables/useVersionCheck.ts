@@ -1,3 +1,4 @@
+import { getCurrentEnv } from '@/config'
 import { useStorage } from '@vueuse/core'
 import { ElNotification } from 'element-plus'
 import { onBeforeUnmount, onMounted } from 'vue'
@@ -28,6 +29,10 @@ export default function useVersionCheck() {
   }
 
   onMounted(() => {
+    const env = getCurrentEnv()
+    if (env === 'dev') {
+      return
+    }
     fetchVersion()
     !intervaler &&
       (intervaler = setInterval(() => {

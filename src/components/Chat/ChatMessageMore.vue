@@ -143,7 +143,7 @@ const onEvaluate = async (questionId: number, evaluation: string) => {
 }
 
 const onMoreAction = (action: EMessageActionType) => {
-  const { content, questionId, id } = internalMessage.value
+  const { content, questionId, displayType } = internalMessage.value
   switch (action) {
     case EMessageActionType.save:
       downloadImg(generatePreviewImgUrl(content))
@@ -184,9 +184,11 @@ const onMoreAction = (action: EMessageActionType) => {
     case EMessageActionType.retry:
       emit('sendMessage', content)
       break
-    case EMessageActionType.audio:
-      emit('playAudio', false, content, id)
+    case EMessageActionType.audio: {
+      const suffix = displayType === EMessageDisplayType.question ? 'q' : 'a'
+      emit('playAudio', content, `${questionId}_${suffix}`)
       break
+    }
     default:
   }
 }

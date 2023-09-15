@@ -1,0 +1,387 @@
+<template>
+  <div class="input-box lg:!p-0">
+    <el-tooltip :disabled="isMobile" :content="t(`清空历史消息`)" placement="top" :hide-after="0">
+      <span
+        data-sensors-click
+        id="Chato_chat_delete_click"
+        :data-sensors-question-id="internalLastQuestionId"
+        :class="[
+          'w-12 h-12 flex items-center justify-center rounded-full shrink-0 cursor-pointer transition-colors hover:bg-[#f2f3f5]',
+          internalHiddenClear && 'hidden'
+        ]"
+        @click="emit('clear')"
+      >
+        <svg-icon name="chat-clear" svg-class="w-6 h-6 text-[#303133]" />
+      </span>
+    </el-tooltip>
+    <template v-if="chatEnterType === EDomainConversationMode.audio">
+      <el-tooltip :disabled="isMobile" :content="t('语音输入')" placement="top" :hide-after="0">
+        <span
+          @click="onRecording"
+          class="mx-14 flex w-12 h-12 rounded-full overflow-hidden bg-[#7C5CFC] items-center justify-center cursor-pointer transition-opacity hover:opacity-80"
+        >
+          <svg-icon svg-class="w-6 h-6 text-white" name="chat-sound" />
+        </span>
+      </el-tooltip>
+      <el-tooltip :disabled="isMobile" :content="t('切换键盘')" placement="top" :hide-after="0">
+        <span
+          class="w-12 h-12 flex items-center justify-center rounded-full shrink-0 cursor-pointer transition-colors hover:bg-[#f2f3f5]"
+          @click="chatEnterType = EDomainConversationMode.text"
+        >
+          <svg-icon name="chat-keyboard" svg-class="w-6 h-6 text-[#303133]" />
+        </span>
+      </el-tooltip>
+    </template>
+    <template v-else>
+      <div class="input-box-content">
+        <el-input
+          resize="none"
+          type="textarea"
+          :autosize="{ minRows: 1, maxRows: 5 }"
+          v-model="internalValue"
+          :placeholder="t(inputPlaceholder)"
+          :disabled="internalEnterDisabled"
+          @click="emit('inputClick')"
+          @keydown.enter="onKeydownEnter"
+        />
+        <el-tooltip :disabled="isMobile" :content="t(`发送`)" placement="top" :hide-after="0">
+          <span
+            :disabled="internalEnterDisabled"
+            @click="onSend"
+            data-script="Chato-send-question"
+            class="send-btn transition-colors"
+          >
+            <svg-icon svg-class="w-6 h-6 text-[#B5BED0]" name="chat-send" />
+          </span>
+        </el-tooltip>
+      </div>
+      <el-tooltip :disabled="isMobile" :content="t('语音输入')" placement="top" :hide-after="0">
+        <span
+          @click="onRecording"
+          class="flex w-12 h-12 rounded-full overflow-hidden items-center justify-center cursor-pointer transition-colors hover:bg-[#f2f3f5]"
+        >
+          <svg-icon svg-class="w-6 h-6 text-[#303133]" name="chat-sound" />
+        </span>
+      </el-tooltip>
+    </template>
+    <div
+      v-show="internalEnterDisabled"
+      class="absolute top-0 right-0 bottom-0 left-0 cursor-not-allowed bg-[#ffffffa3] z-[1]"
+    />
+    <div v-show="chatRecordingEnterVisible" class="recorder-container">
+      <el-icon size="16" color="#596780" @click="onCloseRecorder" class="close-icon">
+        <Close />
+      </el-icon>
+      <el-input
+        v-if="internalValue"
+        v-model="internalValue"
+        :disabled="isRecording"
+        resize="none"
+        :rows="4"
+        type="textarea"
+        class="pr-5"
+      />
+      <div v-else class="text-center text-sm leading-5 space-y-2 mt-7">
+        <p class="font-medium">{{ t('想问什么，说来听听...') }}</p>
+        <p class="text-[#9DA3AF] leading-4 text-xs">{{ t('点击下方语音图标可停止录音') }}</p>
+      </div>
+      <div class="flex gap-10 items-center justify-center relative">
+        <el-button link type="info" :disabled="!internalValue" @click="onClearRecorder">
+          {{ t('清空') }}
+        </el-button>
+        <span
+          @click="onRecording"
+          class="flex w-9 h-9 rounded-full overflow-hidden bg-[#7C5CFC] items-center justify-center cursor-pointer transition-opacity hover:opacity-80"
+        >
+          <svg-icon svg-class="w-5 h-5 text-white" name="chat-sound" />
+        </span>
+        <el-button link type="info" :disabled="!internalValue" @click="onSend">
+          {{ t('发送') }}
+        </el-button>
+        <div v-show="isRecording" class="recorder-popup"></div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import useAudioPlayer from '@/composables/useAudioPlayer'
+import { useBasicLayout } from '@/composables/useBasicLayout'
+import useRecognizer from '@/composables/useRecognizer'
+import { SymChatDomainDetail } from '@/constant/chat'
+import { EDomainConversationMode } from '@/enum/domain'
+import type { IMessageDetail } from '@/interface/message'
+import { debounce } from 'lodash'
+import { computed, inject, nextTick, onBeforeUnmount, ref, watch, type Ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const props = defineProps<{
+  value: string
+  disabled?: boolean
+  lastQuestionId?: number
+  hiddenClear?: boolean
+}>()
+
+const emit = defineEmits(['update:value', 'inputClick', 'clear', 'submit'])
+
+const { t } = useI18n()
+const { isMobile } = useBasicLayout()
+
+const domainDetail = inject<Ref<IMessageDetail>>(SymChatDomainDetail)
+
+const chatRecordingEnterVisible = ref(false)
+const chatEnterType = ref<EDomainConversationMode>(EDomainConversationMode.text)
+
+const internalValue = computed({
+  get: () => props.value,
+  set: (v) => emit('update:value', v)
+})
+const internalEnterDisabled = computed({
+  get: () => props.disabled,
+  set: (v) => v
+})
+const internalHiddenClear = computed(() => props.hiddenClear)
+const internalLastQuestionId = computed(() => props.lastQuestionId)
+
+const inputPlaceholder = computed(() =>
+  isMobile.value ? '请输入问题' : '输入问题，换行可通过shift+回车'
+)
+
+// 是否语音对话模式的机器人
+const isAudioChatModeDomain = computed(
+  () => EDomainConversationMode.audio === domainDetail.value?.conversation_mode
+)
+
+// --- 语音对话逻辑 start ---
+const audioSendTime = 3000
+
+const onAudioSend = debounce(() => {
+  onSend()
+  chatRecordingEnterVisible.value = false
+}, audioSendTime)
+
+const onAudioChat = (str) => {
+  if (!isAudioChatModeDomain.value || !str) {
+    return
+  }
+  chatRecordingEnterVisible.value = true
+  onAudioSend()
+}
+// --- 语音对话逻辑 end ---
+
+const onRecorderUpdateStr = (str) => {
+  emit('update:value', str)
+  onAudioChat(str)
+}
+
+const { audioPlaying } = useAudioPlayer()
+
+const onRecorderNeedReopen = (): boolean => {
+  if (
+    isAudioChatModeDomain.value &&
+    !isRecording.value &&
+    !internalEnterDisabled.value &&
+    !audioPlaying.value
+  ) {
+    return true
+  }
+  return false
+}
+
+const { startRecording, stopRecording, resetAsr, isRecording } = useRecognizer({
+  updateStr: onRecorderUpdateStr,
+  checkNeedReopen: onRecorderNeedReopen
+})
+
+// 触发录音
+const onRecording = () => {
+  chatRecordingEnterVisible.value = true
+  internalEnterDisabled.value = !isRecording.value
+  isRecording.value ? stopRecording() : startRecording(internalValue.value)
+}
+
+const onKeydownEnter = (e: KeyboardEvent) => {
+  if (!e.shiftKey && e.keyCode === 13 && !isMobile.value) {
+    e.cancelBubble = true
+    e.stopPropagation()
+    e.preventDefault()
+    onSend()
+  }
+}
+
+const onClearRecorder = () => {
+  resetAsr()
+  nextTick(() => {
+    internalValue.value = ''
+  })
+}
+
+const onCloseRecorder = () => {
+  if (isRecording.value) {
+    stopRecording()
+  }
+  internalEnterDisabled.value = false
+  chatRecordingEnterVisible.value = false
+  onClearRecorder()
+}
+
+// 消息发送
+const onSend = () => {
+  emit('submit')
+  onCloseRecorder()
+}
+
+// 语音对话，进来就开启录音
+watch([isAudioChatModeDomain, internalEnterDisabled, audioPlaying], () => {
+  if (!isAudioChatModeDomain.value) {
+    return
+  }
+
+  if (isRecording.value && internalEnterDisabled.value) {
+    stopRecording()
+    return
+  }
+
+  if (audioPlaying.value && isRecording.value) {
+    stopRecording()
+    return
+  }
+
+  if (!isRecording.value && !internalEnterDisabled.value && !audioPlaying.value) {
+    startRecording(internalValue.value)
+  }
+})
+
+watch(
+  domainDetail,
+  (v) => {
+    if (!v) {
+      return
+    }
+
+    chatEnterType.value = domainDetail.value.conversation_mode
+  },
+  { immediate: true }
+)
+
+onBeforeUnmount(() => {
+  onCloseRecorder()
+})
+</script>
+
+<style lang="scss" scoped>
+.input-box {
+  @apply gap-2 mb-3 pl-4 pr-2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  background-color: #fff;
+  position: relative;
+
+  .input-box-content {
+    @apply rounded-3xl p-2;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    border: 1px solid #e4e7ed;
+    min-height: 48px;
+    box-sizing: border-box;
+  }
+
+  .send-btn {
+    @apply w-9 h-9;
+    cursor: pointer;
+    border-radius: 100%;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      background-color: #f2f3f5;
+      svg {
+        color: #7c5cfc;
+      }
+    }
+  }
+
+  :deep(.el-textarea) {
+    display: flex;
+    align-items: center;
+  }
+
+  :deep(.el-textarea__inner) {
+    @apply text-base;
+    box-shadow: none;
+    font-weight: normal;
+    flex: 1;
+    color: #303133;
+
+    &::placeholder {
+      color: #9da3af;
+    }
+  }
+
+  :deep(.el-textarea.is-disabled .el-textarea__inner) {
+    color: #303133;
+    background-color: transparent;
+  }
+}
+
+.recorder-container {
+  @apply left-2 right-2 h-44 rounded-2xl px-5 py-4 text-sm leading-6;
+  position: absolute;
+  z-index: 3;
+  bottom: 0;
+  box-shadow: 0px 0px 8px 2px rgba(0, 0, 0, 0.16);
+  box-sizing: border-box;
+  background-color: #fff;
+  border: 1px solid #e4e7ed;
+  color: #303133;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  .close-icon {
+    @apply right-4 top-4;
+    cursor: pointer;
+    position: absolute;
+    z-index: 2;
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+
+  :deep(.el-textarea__inner) {
+    padding: 0;
+  }
+}
+
+@keyframes ball-animation {
+  0% {
+    @apply w-11 h-11;
+  }
+
+  50% {
+    @apply w-20 h-20;
+  }
+
+  to {
+    @apply w-11 h-11;
+  }
+}
+
+.recorder-popup {
+  @apply w-11 h-11;
+  z-index: -1;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background-image: url('https://gips0.baidu.com/it/u=2532549250,2178754814&fm=3028&app=3028&f=PNG&fmt=auto&q=100&size=f460_460');
+  animation: ball-animation 2.4s ease-in-out infinite;
+  background-size: contain;
+}
+</style>

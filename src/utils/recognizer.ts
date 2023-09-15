@@ -1,7 +1,7 @@
 import Recorder from 'recorder-core'
 import 'recorder-core/src/engine/pcm'
 
-export default class ChartRecognizer {
+export default class Recognizer {
   public rec = null
   public SampleRate = 16000
   public testBitRate = 16
@@ -139,7 +139,7 @@ export default class ChartRecognizer {
       })
       latestSend && this.RealTimeSendTry(this.rec, true) //最后一次发送
     } catch (ex) {
-      // recordClose();
+      // this.recordClose()
     }
   }
 

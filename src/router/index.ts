@@ -88,6 +88,14 @@ const coreRoutes = [
     // meta: { title: '云南纳什智能科技有限公司' }
   },
   {
+    path: '/wxh/:botSlug',
+    component: () => import('@/views/wxh/index.vue')
+  },
+  {
+    path: '/wjs/:botSlug',
+    component: () => import('@/views/wjs/index.vue')
+  },
+  {
     name: RoutesMap.auth.login,
     path: '/auth/login',
     component: () => import('@/views/auth/LoginView.vue')

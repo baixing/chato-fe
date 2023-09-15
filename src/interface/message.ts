@@ -1,3 +1,4 @@
+import type { EDomainConversationMode } from '@/enum/domain'
 import type {
   EMessageActionType,
   EMessageDisplayType,
@@ -68,6 +69,7 @@ export interface IMessageDetail {
   brand_name: string
   brand_show: boolean
   qa_modifiable: boolean
+  conversation_mode: EDomainConversationMode // 机器人对话类型
 }
 
 export interface IMessageCurrentSetting {
@@ -86,9 +88,4 @@ export interface IMessageMoreControl {
   [EMessageActionType.translate]?: boolean // 翻译
   [EMessageActionType.expand]?: boolean // 拓展
   [EMessageActionType.retry]?: boolean // 重试
-}
-
-export interface IMessageCapactityCovert {
-  domain_slug: string
-  text: string
 }

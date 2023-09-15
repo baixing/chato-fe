@@ -1,6 +1,6 @@
 import { ETerminal } from '@/enum/common'
 import type { ChatHistoryParams, ChatToBotRes, IChatCitationSource } from '@/interface/chat'
-import type { IMessageCapactityCovert } from '@/interface/message'
+import type { ITTSList, ITTSParams } from '@/interface/tts'
 import request from '@/utils/request'
 
 export function getMessages(orgId) {
@@ -116,16 +116,11 @@ export const getCitationSource = ({ slug, question_id, terminal = ETerminal.B })
   })
 }
 
-/**
- * @function
- * @description 语音播报
- * @param {IMessageCapactityCovert}
- * @returns {Promise<{ url: string }>}
- */
-export const getVoiceAnnounements = (data: IMessageCapactityCovert) => {
-  return request<{ url: string }>({
+// 文本转语音
+export const getTTS = (data: ITTSParams) => {
+  return request<ITTSList>({
     method: 'post',
-    url: '/api/tts/text',
+    url: '/api/tts/stream',
     data
   })
 }

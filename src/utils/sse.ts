@@ -17,7 +17,7 @@ export default class SSE {
   request(
     url: string,
     bodyData: Record<string, any>,
-    fn?: (data: string) => void,
+    fn?: (data: any) => void,
     initConfig?: { responseAll?: boolean }
   ) {
     const currentlocales = useLocalStorage('locale', ELangKey.zh_cn)

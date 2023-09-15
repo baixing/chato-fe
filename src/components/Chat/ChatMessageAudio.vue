@@ -1,46 +1,146 @@
 <template>
-  <div
-    v-loading="audioLoading"
-    class="flex justify-start items-center py-2 rounded w-[83px] pl-[5px] chat-message-audio cursor-pointer"
-    @click="emit('handleAudio', isPlaying)"
-  >
-    <svg-icon :name="isPlaying ? 'audio-play' : 'audio-pause'" class="w-[16px] h-[16px] mr-[8px]" />
-    <img
-      v-if="!isPlaying"
-      class="!w-[46px] !h-[16px] !mb-[0] !bg-[#F2F3F5] !mr-0"
-      :src="WaveAduioPause"
-      alt=""
-    />
-    <img
+  <div class="flex gap-2">
+    <span v-if="isCurrentAudioLoading" v-loading="isCurrentAudioLoading" class="audio-loading" />
+    <el-icon
       v-else
-      class="!w-[46px] !h-[16px] !bg-[#F2F3F5] !mb-[0] !mr-0"
-      :src="WaveAudioPlay"
-      alt="audio"
-    />
+      size="20"
+      color="#5240FF"
+      @click="onAudioClick(internalAudioPlayerId)"
+      class="cursor-pointer hover:opacity-80"
+    >
+      <VideoPause v-if="isCurrentAudioPlaying" />
+      <VideoPlay v-else />
+    </el-icon>
+    <div
+      :class="[
+        'audio-groove',
+        isCurrentAudioPlaying && 'playing-groove',
+        isCurrentAudioLoading && 'opacity-30'
+      ]"
+    ></div>
   </div>
 </template>
 
 <script setup lang="ts">
-import WaveAduioPause from '@/assets/img/message/wave-audio-pause.png'
-import WaveAudioPlay from '@/assets/img/message/wave-audio-play.gif'
+import useAudioPlayer from '@/composables/useAudioPlayer'
+import { computed } from 'vue'
 
-defineProps<{
-  isPlaying: boolean
-  audioLoading: boolean
+const props = defineProps<{
+  playerId: string
 }>()
 
-const emit = defineEmits(['handleAudio'])
+const internalAudioPlayerId = computed(() => props.playerId)
+
+const { onAudioClick, checkIsCurrentAudioPlaying, checkIsCurrentAudioLoading } = useAudioPlayer()
+
+const isCurrentAudioPlaying = computed(() =>
+  checkIsCurrentAudioPlaying(internalAudioPlayerId.value)
+)
+const isCurrentAudioLoading = computed(() =>
+  checkIsCurrentAudioLoading(internalAudioPlayerId.value)
+)
 </script>
 
-<style scoped lang="scss">
-.chat-message-audio {
-  :deep(.el-loading-mask) {
-    border-radius: 8px;
+<style lang="scss" scoped>
+@keyframes grooveScroll {
+  0% {
+    background-position: 0 0;
   }
+  5% {
+    background-position: -390px 0;
+  }
+  10% {
+    background-position: -780px 0;
+  }
+  15% {
+    background-position: -1170px 0;
+  }
+  20% {
+    background-position: -1560px 0;
+  }
+  25% {
+    background-position: -1950px 0;
+  }
+  30% {
+    background-position: -2340px 0;
+  }
+  35% {
+    background-position: 0 -56px;
+  }
+  40% {
+    background-position: -390px -56px;
+  }
+  45% {
+    background-position: -780px -56px;
+  }
+  50% {
+    background-position: -1170px -56px;
+  }
+  55% {
+    background-position: -1560px -56px;
+  }
+  60% {
+    background-position: -1950px -56px;
+  }
+  65% {
+    background-position: -2340px -56px;
+  }
+  70% {
+    background-position: 0 -112px;
+  }
+  75% {
+    background-position: -390px -112px;
+  }
+  80% {
+    background-position: -780px -112px;
+  }
+  85% {
+    background-position: -1170px -112px;
+  }
+  90% {
+    background-position: -1560px -112px;
+  }
+  95% {
+    background-position: -1950px -112px;
+  }
+  100% {
+    background-position: -2340px -112px;
+  }
+}
+
+.audio-loading {
+  width: 20px;
+  height: 20px;
+
+  :deep(.el-loading-mask) {
+    border-radius: 100%;
+    background-color: rgba(124, 92, 252, 0.1);
+  }
+
   :deep(.el-loading-spinner) {
-    .circular {
-      width: 20px !important;
+    margin-top: -11px;
+    top: 0;
+
+    svg {
+      width: 16px;
     }
   }
+}
+
+.audio-groove {
+  background-image: url('@/assets/img/audio-stream.png');
+  width: 390px;
+  height: 56px;
+  background-size: auto;
+  transform: scale(0.33333);
+  cursor: pointer;
+  margin-left: -130px;
+  margin-right: -130px;
+  margin-top: -18px;
+  margin-bottom: -10px;
+}
+
+.playing-groove {
+  animation: grooveScroll 0.84s steps(1) infinite;
 }
 </style>

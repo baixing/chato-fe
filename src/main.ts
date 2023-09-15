@@ -51,3 +51,6 @@ app.mount('#app')
 useFavicon()
 useBaiduPromotion()
 useSentry(app, router)
+
+// 删除语音缓存，运行一段时候后删除
+localStorage.removeItem('localAudioUrl')
