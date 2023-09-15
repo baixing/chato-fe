@@ -43,6 +43,7 @@
                     ref="generateIntroBtnRef"
                     v-model:generateStr="settingForm.domain.desc"
                     :role="domainInfo.name"
+                    :system-prompt="domainInfo?.system_prompt"
                     :type="EDomainAIGenerateType.intro"
                     @start="descInputDisabled = true"
                     @end="descInputDisabled = false"
@@ -71,6 +72,7 @@
                   ref="generateWelcomeBtnRef"
                   v-model:generateStr="settingForm.domain.welcome"
                   :role="domainInfo.name"
+                  :system-prompt="domainInfo?.system_prompt"
                   :type="EDomainAIGenerateType.welcome"
                   @start="welcomeInputDisabled = true"
                   @end="welcomeInputDisabled = false"
@@ -194,11 +196,11 @@ import { $notnull, confirmAndSubmit } from '@/utils/help'
 import { getStringWidth } from '@/utils/string'
 import * as url from '@/utils/url'
 import { ElLoading, ElMessage, ElNotification as Notification } from 'element-plus'
+import { cloneDeep } from 'lodash-es'
 import { storeToRefs } from 'pinia'
 import { computed, reactive, ref, toRaw, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { cloneDeep } from 'lodash-es'
-import { useRoute, onBeforeRouteLeave } from 'vue-router'
+import { onBeforeRouteLeave, useRoute } from 'vue-router'
 import ChatShortcuts from './components/ChatShortcuts.vue'
 import ColorPicker from './components/ColorPicker.vue'
 import PreviewBot from './components/PreviewBot.vue'

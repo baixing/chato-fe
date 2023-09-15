@@ -1,18 +1,23 @@
 <template>
-  <el-button
-    plain
-    type="primary"
-    size="default"
-    :disabled="!internalRole || generating || !internalGenerateStr.length"
-    style="
-      --el-button-hover-text-color: #7c5cfc;
-      --el-button-hover-bg-color: white;
-      --el-color-primary-light-9: white;
-    "
-    @click="onAIGenerate"
-  >
-    {{ btnText }}
-  </el-button>
+  <el-tooltip :disabled="!disabled || generating || !disabledTip" placement="left-start">
+    <template #content>
+      {{ t(disabledTip) }}
+    </template>
+    <el-button
+      plain
+      type="primary"
+      size="default"
+      :disabled="disabled || generating"
+      style="
+        --el-button-hover-text-color: #7c5cfc;
+        --el-button-hover-bg-color: white;
+        --el-color-primary-light-9: white;
+      "
+      @click="onAIGenerate"
+    >
+      {{ btnText }}
+    </el-button>
+  </el-tooltip>
 </template>
 
 <script setup lang="ts">
@@ -24,8 +29,12 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 const props = defineProps<{
   generateStr: string
+  systemPrompt: string
   type: EDomainAIGenerateType
   role: string
+  roleRequirement: string
+  disabled?: boolean
+  disabledTip?: string
 }>()
 
 const emit = defineEmits(['update:generateStr', 'start', 'end'])
@@ -36,10 +45,12 @@ const internalGenerateStr = computed({
 })
 
 const internalRole = computed(() => props.role)
+const internalRoleRequirement = computed(() => props.roleRequirement)
+const internalSystemPrompt = computed(() => props.systemPrompt)
 
 const clickCount = ref(0)
 const generating = ref(false)
-const btnText = computed(() => (clickCount.value ? t('换一个') : t('一键 AI 优化')))
+const btnText = computed(() => (clickCount.value ? t('换一个') : t('AI 一键生成')))
 
 const SSEInstance = new SSE()
 
@@ -55,6 +66,8 @@ const onAIGenerate = async () => {
       '/prompt/generated',
       {
         role: internalRole.value,
+        role_requirement: internalRoleRequirement.value,
+        system_prompt: internalSystemPrompt.value,
         user_prompt: promptStr,
         generate_type: props.type
       },

@@ -65,7 +65,11 @@
           <AIGenerateBtn
             v-model:generateStr="formState.system_prompt"
             :role="formState.name"
+            :role-requirement="roleRequirement"
+            :system-prompt="formState.system_prompt"
             :type="EDomainAIGenerateType.role"
+            :disabled="!formState.name"
+            disabled-tip="请填写名字后生成"
             @start="AIGenerateInputDisabled.system_prompt = true"
             @end="AIGenerateInputDisabled.system_prompt = false"
           />
@@ -117,7 +121,11 @@
           <AIGenerateBtn
             v-model:generateStr="formState.desc"
             :role="formState.name"
+            :role-requirement="roleRequirement"
+            :system-prompt="formState.system_prompt"
             :type="EDomainAIGenerateType.intro"
+            :disabled="!formState.system_prompt || !formState.name"
+            disabled-tip="请填写名字和角色设定后生成"
             @start="AIGenerateInputDisabled.desc = true"
             @end="AIGenerateInputDisabled.desc = false"
           />
@@ -137,7 +145,11 @@
           <AIGenerateBtn
             v-model:generateStr="formState.welcome"
             :role="formState.name"
+            :role-requirement="roleRequirement"
+            :system-prompt="formState.system_prompt"
             :type="EDomainAIGenerateType.welcome"
+            :disabled="!formState.system_prompt || !formState.name"
+            disabled-tip="请填写名字和角色设定后生成"
             @start="AIGenerateInputDisabled.welcome = true"
             @end="AIGenerateInputDisabled.welcome = false"
           />
@@ -302,6 +314,7 @@ let AIGenerateInputDisabled = reactive({ ...defaultAIGenerateInputDisabled })
 const chatMobileModalVisible = ref(false)
 const templateModalVisible = ref(false)
 const AIModalVisible = ref(false)
+const roleRequirement = ref('')
 
 // 是否修改过
 const isModified = computed(() => !isEqual(formState, originalFormState))
@@ -348,13 +361,14 @@ const onTemplateTypeModalSubmit = (
   formState = Object.assign(formState, { name, system_prompt, desc, welcome })
 }
 
-const onAITypeModalSubmit = (name: string) => {
+const onAITypeModalSubmit = (name: string, roleReq: string) => {
   AIGenerateInputDisabled = Object.assign(AIGenerateInputDisabled, {
     desc: true,
     system_prompt: true,
     welcome: true
   })
 
+  roleRequirement.value = roleReq
   formState = Object.assign(formState, { name, system_prompt: '', desc: '', welcome: '' })
 }
 

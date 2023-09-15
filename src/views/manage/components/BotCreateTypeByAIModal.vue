@@ -70,13 +70,15 @@ const formRules = reactive<FormRules>({
 })
 
 const SSEInstance = new SSE()
+let SSEPromptRes = ''
 
-const onSSE = (type: EDomainAIGenerateType) => {
+const onSSE = (type: EDomainAIGenerateType, prompt?: string) => {
   return SSEInstance.request(
     '/prompt/generated',
     {
       role: formState.role,
-      user_prompt: formState.role_requirement,
+      role_requirement: formState.role_requirement,
+      system_prompt: prompt,
       generate_type: type
     },
     (str) => {
@@ -85,6 +87,7 @@ const onSSE = (type: EDomainAIGenerateType) => {
           emit('updateDomainField', 'desc', str)
           break
         case EDomainAIGenerateType.role:
+          SSEPromptRes += str
           emit('updateDomainField', 'system_prompt', str)
           break
         case EDomainAIGenerateType.welcome:
@@ -98,12 +101,11 @@ const onSSE = (type: EDomainAIGenerateType) => {
 const onSubmit = async () => {
   try {
     await formRef.value.validate()
-    emit('submit', formState.role)
-    const allPromises = [
-      EDomainAIGenerateType.intro,
-      EDomainAIGenerateType.role,
-      EDomainAIGenerateType.welcome
-    ].map((item) => onSSE(item))
+    emit('submit', formState.role, formState.role_requirement)
+    const res = await onSSE(EDomainAIGenerateType.role)
+    const allPromises = [EDomainAIGenerateType.intro, EDomainAIGenerateType.welcome].map((item) =>
+      onSSE(item, SSEPromptRes)
+    )
     await Promise.all(allPromises)
   } catch (e) {
   } finally {

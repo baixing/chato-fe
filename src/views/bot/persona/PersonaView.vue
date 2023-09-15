@@ -104,6 +104,7 @@
                   ref="generateBtnRef"
                   v-model:generateStr="formData.system_prompt"
                   :role="domainInfo.name"
+                  :system-prompt="domainInfo?.system_prompt"
                   :type="EDomainAIGenerateType.role"
                   @start="systemPromptDisabled = true"
                   @end="systemPromptDisabled = false"
@@ -279,15 +280,15 @@ import {
 import { EDomainAIGenerateType, EDomainLLMType } from '@/enum/domain'
 import { ESpaceCommercialType, ESpaceRightsType } from '@/enum/space'
 import { useDomainStore } from '@/stores/domain'
-import { getStringWidth } from '@/utils/string'
 import { confirmAndSubmit } from '@/utils/help'
+import { getStringWidth } from '@/utils/string'
 import { debouncedWatch } from '@vueuse/core'
 import { ElInput, ElNotification as Notification } from 'element-plus'
-import { storeToRefs } from 'pinia'
-import { computed, nextTick, reactive, ref, watch, toRaw } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { useRoute, onBeforeRouteLeave } from 'vue-router'
 import { cloneDeep } from 'lodash-es'
+import { storeToRefs } from 'pinia'
+import { computed, nextTick, reactive, ref, toRaw, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { onBeforeRouteLeave, useRoute } from 'vue-router'
 
 const { t } = useI18n()
 const route = useRoute()
