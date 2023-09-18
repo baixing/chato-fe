@@ -9,7 +9,8 @@ export const SpaceRightsLimitTips = {
   [ESpaceRightsType.groupChatFree]: ['联系产品顾问进一步解锁更多资源。'],
   [ESpaceRightsType.groupChat]: ['联系产品顾问进一步解锁更多资源。'],
   [ESpaceRightsType.brand]: ['联系产品顾问进一步解锁高级能力。'],
-  [ESpaceRightsType.default]: ['联系产品顾问获取最新套餐折扣。']
+  [ESpaceRightsType.default]: ['联系产品顾问获取最新套餐折扣。'],
+  [ESpaceRightsType.weixinAccount]: ['联系产品顾问获取创建账号的能力。']
 }
 
 // 付费权益版本

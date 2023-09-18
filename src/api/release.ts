@@ -1,37 +1,53 @@
-import type { EChannelType } from '@/enum/release'
+import type { EChannelType, EQrCodeHookType } from '@/enum/release'
 import type {
   IApplicationFormData,
-  ICreateGroupChatResponse,
+  IGroupList,
   IBrandDomainType,
   IBrandDomainTypeKeyFile,
-  ICreatePublicStatus,
+  ISingelGroupList,
   IFeishuPublicSerachRes,
   IFeishuSwitchConfigType,
   IFeishuiPublicFormType,
   IPatchChannelType,
   IWeixinConfigType,
-  IDingDingPublicFormType
+  IDingDingPublicFormType,
+  IJoinGroupChatAPI,
+  ICreateSingleChatAPI,
+  ICreateAccountParams,
+  ICreateAccountEmpowerRes,
+  ICreateGroupRes
 } from '@/interface/release'
 import request from '@/utils/request'
 
-// 创建群聊
-export function createPublic(domainId, data) {
-  return request({
+// 创建新群
+export function createGroupAPI(domainId: number, data: IJoinGroupChatAPI) {
+  return request<ICreateGroupRes>({
     method: 'post',
     url: `/chato/weixin_group/${domainId}/create`,
     data
   })
 }
 
-// 查询当前创建的群聊
-export function serachPublicCreateStatus(orgId: number) {
-  return request<ICreatePublicStatus>({
-    url: `/chato/weixin_group/${orgId}/is_done`
+// 拉入已有群
+export function joinGroupChatAPI(domainId: number, data: IJoinGroupChatAPI) {
+  return request<ICreateGroupRes>({
+    method: 'post',
+    url: `/chato/weixin_group/v2/${domainId}/invite_by_user`,
+    data
   })
 }
 
-// 编辑群聊
-export function editPublic(domainId, data) {
+// 创建单聊
+export function createSingleChatAPI(data: ICreateSingleChatAPI) {
+  return request<ICreateGroupRes>({
+    method: 'post',
+    url: `/chato/weixin_group/single_chat`,
+    data
+  })
+}
+
+// 转移群聊
+export function transferGroupAPI(domainId: number, data) {
   return request({
     method: 'post',
     url: `/chato/weixin_group/${domainId}/update/v2`,
@@ -39,15 +55,22 @@ export function editPublic(domainId, data) {
   })
 }
 
-// 获取群聊接口
-export function getPubliclist(domainId: number) {
-  return request<ICreateGroupChatResponse[]>({
-    url: `/chato/weixin_group/${domainId}/list`
+// 获取群聊
+export function getGroupListAPI(domainId: number) {
+  return request<IGroupList[]>({
+    url: `/chato/weixin_group/v3/${domainId}/list`
+  })
+}
+
+// 获取单聊
+export function getSingleGroupListAPI(domainId: number) {
+  return request<ISingelGroupList[]>({
+    url: `/chato/weixin_group/single_chat/${domainId}`
   })
 }
 
 // 获取群聊图片
-export function getPublicCodeImg(domainId, id) {
+export function getGroupImgAPI(domainId: number, id: string) {
   return request({
     url: `/chato/weixin_group/${domainId}/refresh/${id}`
   })
@@ -161,30 +184,6 @@ export function patchChannelType(
     data
   })
 }
-// 进入已有群 < 200人
-export function postWeixinPublicInviteMini(domain_id: number, data: any) {
-  return request({
-    method: 'post',
-    url: `/chato/weixin_group/${domain_id}/invite_qr_code_img`,
-    data
-  })
-}
-
-// 进入已有群 > 200 人
-export function postWeixinPublicInviteLarge(domain_id: number, data: any) {
-  return request({
-    method: 'post',
-    url: `/chato/weixin_group/${domain_id}/invite_by_user`,
-    data
-  })
-}
-
-// 进入已有群获取机器人二维码
-export function getWeixinPublicRobotQrCode(domain_id: number) {
-  return request({
-    url: `/chato/weixin_group/${domain_id}/available/wxuser/qrcode`
-  })
-}
 
 // 配置钉钉
 export function postDingDingConfig(data: IDingDingPublicFormType, domain_slug) {
@@ -192,5 +191,52 @@ export function postDingDingConfig(data: IDingDingPublicFormType, domain_slug) {
     method: 'post',
     url: `/chato/api/v1/dingding/account/${domain_slug}`,
     data
+  })
+}
+
+// 账号列表
+export function serachAccountListAPI(orgId: number) {
+  return request({
+    url: `/chato/weixin_group/org/${orgId}/robots`
+  })
+}
+
+// 创建账号-账号二维码
+export function getAccountQrCode(hook_type: EQrCodeHookType) {
+  return request({
+    url: '/chato/weixin_group/open_hook_client',
+    data: { hook_type }
+  })
+}
+
+// 创建账号-查询绑定状态
+export function getAccountBindingStatus(orgId: number, params: ICreateAccountParams) {
+  return request<ICreateAccountEmpowerRes>({
+    url: `/chato/weixin_group/${orgId}/online`,
+    params
+  })
+}
+
+// 账号重启
+export function postAccountRestartAPI(params: { wx_host_user_id: string }) {
+  return request({
+    url: '/chato/weixin_group/restart/robot',
+    params
+  })
+}
+
+// 账号下线
+export function postAccountOfflineAPI(params: { wx_host_user_id: string }) {
+  return request({
+    url: '/chato/weixin_group/shutdown/robot',
+    params
+  })
+}
+
+// 退出群
+export function deleteGroupChatAPI(roomId: string) {
+  return request({
+    method: 'delete',
+    url: `/chato/weixin_group/remove/group/${roomId}`
   })
 }

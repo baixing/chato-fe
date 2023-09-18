@@ -7,45 +7,39 @@
     class="create-drawer-container"
     :size="isMobile ? '100%' : '40%'"
   >
-    <Agreement v-if="index === 1" @nextClick="(i: number) => emit('handleIndex', i)" />
+    <Agreement v-if="step === 1" @nextClick="(i: number) => step = i" />
     <CnameSet
-      :status="status"
+      :status="brandDomainStatus"
       :brandDomainInfo="brandDomainInfo"
       :slug="slug"
-      v-if="index === 2"
-      @handleSubmitSuccess="emit('handleSubmitSuccess')"
-      @nextClick="(i: number) => emit('handleIndex', i)"
+      v-if="step === 2"
+      @handleSubmitSuccess="getBrandDomainList"
+      @nextClick="(i: number) => step = i"
     />
-    <Examine
-      v-if="index === 3"
-      @nextClick="emit('handleIndex', 1)"
-      :brandDomainInfo="brandDomainInfo"
-    />
+    <Examine v-if="step === 3" @nextClick="step = 1" :brandDomainInfo="brandDomainInfo" />
     <DomainDetail
-      v-if="index === 4"
+      v-if="step === 4"
       :brandDomainInfo="brandDomainInfo"
-      @nextClick="(i: number) => emit('handleIndex', i)"
+      @nextClick="(i: number) => step = i"
     />
   </el-drawer>
 </template>
 
 <script setup lang="ts">
 import { useBasicLayout } from '@/composables/useBasicLayout'
-import type { EBrandCreateEditStatusType } from '@/enum/domain'
+import { EBrandCreateEditStatusType, EBrandDomainStatusType } from '@/enum/domain'
 import type { IBrandDomainTypeKeyFile } from '@/interface/release'
-import { computed } from 'vue'
+import { computed, watch, ref } from 'vue'
 import Agreement from './components/Agreement.vue'
 import CnameSet from './components/CnameSet.vue'
 import DomainDetail from './components/DomainDetail.vue'
 import Examine from './components/Examine.vue'
+import { getBrandDomain } from '@/api/release'
 
-const emit = defineEmits(['update:value', 'handleIndex', 'handleSubmitSuccess'])
+const emit = defineEmits(['update:value'])
 const props = defineProps<{
   value: boolean
-  index: number
   slug: string
-  status: EBrandCreateEditStatusType
-  brandDomainInfo: IBrandDomainTypeKeyFile
 }>()
 const { isMobile } = useBasicLayout()
 
@@ -53,4 +47,33 @@ const visible = computed({
   get: () => props.value,
   set: (val) => emit('update:value', val)
 })
+const brandDomainStatus = ref<EBrandCreateEditStatusType>(EBrandCreateEditStatusType.create)
+const brandDomainList = ref<IBrandDomainTypeKeyFile[]>([])
+const brandDomainInfo = ref<IBrandDomainTypeKeyFile>()
+const step = ref<number>(1)
+
+const getBrandDomainList = async () => {
+  const res = await getBrandDomain(props.slug)
+  brandDomainList.value = res.data.data
+  if (brandDomainList.value.length) {
+    try {
+      const resDomainInfo = brandDomainList.value[0]
+      brandDomainInfo.value = {
+        ...resDomainInfo,
+        pri_key: JSON.parse(resDomainInfo.pri_key as string),
+        pub_key: JSON.parse(resDomainInfo.pub_key as string)
+      }
+      step.value = brandDomainInfo.value.s_status === EBrandDomainStatusType.normal ? 4 : 3
+    } catch (e) {}
+  } else {
+    step.value = 1
+  }
+}
+
+watch(
+  () => props.value,
+  (v) => {
+    v && getBrandDomainList()
+  }
+)
 </script>

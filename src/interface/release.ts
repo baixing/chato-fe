@@ -1,5 +1,5 @@
 import type { EBrandCreateEditStatusType, EBrandDomainStatusType } from '@/enum/domain'
-import type { EAfficialAccountStatusType } from '@/enum/release'
+import type { EAfficialAccountStatusType, EQrCodeHookType } from '@/enum/release'
 import type { UploadUserFile } from 'element-plus'
 
 export interface IApplicationFormData {
@@ -71,6 +71,40 @@ export type IBrandDomainTypeKeyFile = IBrandDomainType & {
 
 export interface ICreatePublicStatus {
   is_done: boolean
+}
+
+export interface IAccountList {
+  avatar: string
+  corp_name: string
+  groups: string[]
+  name: string
+  people_cnt: number
+  status: string
+  wx_user_id: string
+}
+
+export interface IGroupList {
+  group_name: string
+  is_system_robot: boolean
+  id: number
+  room_id: string
+  robot_qr_code_data: string
+  group_qr_code_data: string
+  name: string
+  status: string
+  people_cnt: number
+  token: string
+  corp_name: string
+}
+
+export interface ISingelGroupList {
+  secret: string
+  qrcode_data: string
+  name: string
+  corp_name: string
+  status: string
+  people_cnt: number
+  token: string
 }
 
 export interface ICreateGroupChatResponse {
@@ -148,16 +182,7 @@ export interface IWeixinCreateConfigType {
   new_user_in_group_msg?: string
   robot_nickname?: string
   endpoint?: string
-  extra?: string
-  base64_data?: string
-  weixinName?: string
-  slug?: string
-  id?: number
-}
-
-export interface IRobotQrCodeInfoProps {
-  url?: string
-  secret?: string
+  account?: string
 }
 
 export interface IDingDingPublicFormType {
@@ -165,4 +190,52 @@ export interface IDingDingPublicFormType {
   app_secret: string
   s_status?: EAfficialAccountStatusType
   url?: string
+}
+
+export interface IJoinGroupChatAPI {
+  name: string
+  owner_phone_number: string
+  custom_robot_wx_user_id: string
+  robot_nickname: string
+  new_user_msg: string
+  robot_response_type: number
+  endpoint: string
+  domain_id: number
+  org_id: number
+}
+
+export interface ICreateSingleChatAPI {
+  robot_wx_user_id: string
+  org_id: number
+  domain_id: number
+  new_user_msg: string
+  endpoint: string
+}
+
+export interface ICreateGroupRes {
+  qrcode_data: string
+  room_id?: string
+  secret?: string
+}
+
+export interface ICreateAccountRes {
+  clientId: number
+  hookId: string
+  qrCode: string
+  qrCodeKey: string
+  qrCodeUrl: string
+  title?: string
+  wx_user_id?: string
+}
+
+export interface ICreateAccountParams {
+  hook_type: EQrCodeHookType
+  qr_code_key: string
+  is_restart: boolean
+  wx_user_id: string
+}
+
+export interface ICreateAccountEmpowerRes {
+  is_online: boolean
+  is_expired: boolean
 }

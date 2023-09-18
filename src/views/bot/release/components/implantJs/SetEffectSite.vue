@@ -42,7 +42,7 @@ const props = defineProps<{
   slug: string
 }>()
 
-const emit = defineEmits(['update:value', 'handleUpSitesList', 'showDrawerSite'])
+const emit = defineEmits(['update:value', 'showDrawerSite'])
 
 const internalVisible = computed({
   get: () => props.value,
@@ -72,7 +72,6 @@ async function submitCreateSite(formEl, data: SiteData) {
         })
         if (res.data.code === 200) {
           emit('update:value', false)
-          emit('handleUpSitesList')
           emit('showDrawerSite')
         }
       } catch (e) {

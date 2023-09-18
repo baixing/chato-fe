@@ -21,21 +21,21 @@
               <div
                 class="copy-code-container markdown-body"
                 v-html="renderMarkdown('```html' + item.codeIframeHtml)"
-              ></div>
+              />
               <p class="copy-code-title">
                 {{ $t('添加聊天气泡，请复制添加到您的 html中') }}
               </p>
               <div
                 class="copy-code-container markdown-body"
                 v-html="renderMarkdown('```js' + item.codeContent)"
-              ></div>
+              />
             </div>
 
             <el-row class="w-full mt-2 mr-0" justify="end" :gutter="8">
               <el-col :lg="4" :xl="4" :xs="12" :sm="12" :md="12">
-                <el-button size="large" @click="removeSite(item.id, item.source)">{{
-                  $t('删除')
-                }}</el-button>
+                <el-button size="large" @click="removeSite(item.id, item.source)">
+                  {{ $t('删除') }}
+                </el-button>
               </el-col>
               <el-col :lg="4" :xl="4" :xs="12" :sm="12" :md="12">
                 <el-button
@@ -44,8 +44,9 @@
                   @click="
                     submitEditSite(slotProps.ruleFormCreateSiteRef, slotProps.submit, item.id)
                   "
-                  >{{ $t('更新') }}</el-button
                 >
+                  {{ $t('更新') }}
+                </el-button>
               </el-col>
             </el-row>
           </SitePublic>
@@ -55,7 +56,7 @@
   </el-drawer>
 </template>
 <script lang="ts" setup>
-import { createDeleteEditSites } from '@/api/iframe'
+import { createDeleteEditSites, getCreateSites } from '@/api/iframe'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import type { ICreateDeleteEditSitesData, ICreateSitesChannelsRes } from '@/interface/release'
 import { renderMarkdown } from '@/utils/markdown'
@@ -79,17 +80,45 @@ const props = defineProps<{
   suspend_style: string
   chato_script_checkDomain: string
   chatScript: string
-  sitesList: ICreateSitesChannelsRes[]
-  defaultActiveNames: string
 }>()
-
-const emit = defineEmits(['update:value', 'handleUpSitesList'])
-const loading = ref()
-const activeNames = ref('')
+const emit = defineEmits(['update:value'])
 const visible = computed({
   get: () => props.value,
   set: (val) => emit('update:value', val)
 })
+const loading = ref()
+const activeNames = ref('')
+const sitesList = ref<ICreateSitesChannelsRes[]>([])
+
+const codeIframeHtml = (source: string) => {
+  const iframeSrc = `${props.chatWebPage}?source=${source}`
+  return `
+    <iframe
+    src="${iframeSrc}"
+    width="408px"
+    height="594px"
+    frameborder="0"
+    />
+  `
+}
+
+const codeContent = (source) => {
+  const scriptSrc = `${props.chatWebPage}?source=${source}`
+  return `
+    <script>
+    window.tip_chato_color="${props.tip_chato_color}";
+    window.tip_chato_bg="${props.suspend_style}";
+    window.chato_iframe_src = "${scriptSrc}";
+    window.chato_script_checkDomain = "${props.chato_script_checkDomain}";
+    var st = document.createElement("script");
+    st.type="text/javascript";
+    st.async = true;
+    st.src = "${props.chatScript}";
+    var header = document.getElementsByTagName("head")[0];
+    header.appendChild(st);
+    </scr${'ipt>'}
+  `
+}
 
 const submitEditSite = async (formEl: FormInstance, data: EidtSiteData, id: number) => {
   if (!formEl) return
@@ -140,15 +169,30 @@ const updateSites = async (data: ICreateDeleteEditSitesData) => {
     type: res.data.code === 200 ? 'success' : 'error',
     message: res.data.message
   })
-  res.data.code === 200 ? emit('handleUpSitesList') : ''
+  res.data.code === 200 ? initSitesList() : ''
 }
 
-watch(
-  () => props.defaultActiveNames,
-  (v) => {
-    activeNames.value = v
+const initSitesList = async () => {
+  const res = await getCreateSites(props.slug)
+  if (res.data.code === 200) {
+    const channels = res.data.data.channels
+    sitesList.value = channels.map((item) => ({
+      ...item,
+      codeContent: codeContent(item.source),
+      codeIframeHtml: codeIframeHtml(item.source)
+    }))
   }
-)
+}
+
+watch(sitesList, (v) => {
+  activeNames.value = v.length > 0 ? v[v.length - 1].source : ''
+})
+
+watch([() => props.value, () => props.slug], ([newValue1, newValue2], [oldValue1, oldValue2]) => {
+  if (newValue1 === true || newValue2 !== oldValue2) {
+    initSitesList()
+  }
+})
 </script>
 <style lang="scss" scoped>
 .copy-code-title {

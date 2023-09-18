@@ -23,7 +23,7 @@
         ><MessageTab
           @handleCloseDialog="emit('update:value', false)"
           @handleEventSet="handleEventSet"
-          :slug_id="slug_id"
+          :slugId="slugId"
       /></el-tab-pane>
     </el-tabs>
     <SketchDialog v-model:value="sketchDialogVisible" :url="previewUrl" />
@@ -45,7 +45,7 @@ const emit = defineEmits(['update:value', 'handleCopyLink'])
 const props = defineProps<{
   value: boolean
   link: string
-  slug_id: string
+  slugId: string
 }>()
 const qrcode = useQRCode(props.link, {
   errorCorrectionLevel: 'H',

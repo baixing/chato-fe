@@ -29,19 +29,11 @@
 <script lang="ts" setup>
 import { EBrandDomainStatusType } from '@/enum/domain'
 import type { IBrandDomainTypeKeyFile } from '@/interface/release'
-import { watch } from 'vue'
 
 const emit = defineEmits(['nextClick'])
-const props = defineProps<{
+defineProps<{
   brandDomainInfo: IBrandDomainTypeKeyFile
 }>()
-watch(
-  () => props.brandDomainInfo,
-  (e) => {
-    console.log(e)
-  },
-  { immediate: true }
-)
 </script>
 <style lang="scss" scoped>
 .examine-container {

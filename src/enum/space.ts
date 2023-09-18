@@ -7,7 +7,8 @@ export const enum ESpaceRightsType {
   groupChatFree = 'groupChatFree',
   groupChat = 'groupChat',
   brand = 'brand',
-  default = 'default'
+  default = 'default',
+  weixinAccount = 'weixinAccount'
 }
 
 export const enum ESpaceCommercialType {

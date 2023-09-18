@@ -148,7 +148,7 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 
 const props = defineProps<{
-  slug_id: string
+  slugId: string
 }>()
 
 const emit = defineEmits(['handleEventSet', 'handleCloseDialog'])
@@ -202,13 +202,13 @@ const submitForm = async () => {
     ? (data.s_status = EAfficialAccountStatusType.normal)
     : (data.s_status = EAfficialAccountStatusType.disabled)
   delete data.status
-  await createAfficialAccount(props.slug_id, data)
+  await createAfficialAccount(props.slugId, data)
   init()
   loading.value = false
 }
 
 const init = async () => {
-  const res = await serachAfficialAccount(props.slug_id)
+  const res = await serachAfficialAccount(props.slugId)
   afficialAccountList.value = res.data.data
   const defaultAfficialAccount =
     afficialAccountList.value.length > 0 ? afficialAccountList.value[0] : null

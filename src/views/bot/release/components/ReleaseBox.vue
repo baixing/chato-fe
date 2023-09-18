@@ -1,5 +1,5 @@
 <template>
-  <div class="release-box-container w-[45%] md:w-[100%]">
+  <div class="release-box-container w-[49%] md:w-[100%]">
     <div class="r-b-left">
       <svg-icon :name="svgName"></svg-icon>
     </div>
@@ -30,7 +30,7 @@ defineProps<{
   justify-content: flex-start;
   float: left;
   padding: 20px;
-  margin: 0 20px 20px 0;
+  margin-bottom: 20px;
   border-radius: 8px;
   border: 1px solid #e4e7ed;
   .r-b-left {
@@ -44,6 +44,7 @@ defineProps<{
       color: #303133;
     }
     .r-desc {
+      word-break: break-all;
       margin: 10px 0 24px;
       font-size: 12px;
       color: #9da3af;

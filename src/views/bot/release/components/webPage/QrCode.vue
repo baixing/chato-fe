@@ -43,8 +43,6 @@ const qrcode = useQRCode(props.value, {
     light: props.backgroundColor // 背景色
   }
 })
-// const qrcode = useQRCode(props.value)
-console.log(qrcode)
 </script>
 <template>
   <div class="m-qrcode" :class="{ bordered: bordered }" :style="`border-color: ${borderColor};`">

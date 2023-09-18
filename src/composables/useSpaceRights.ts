@@ -1,4 +1,4 @@
-import { getPubliclist } from '@/api/release'
+import { getGroupListAPI } from '@/api/release'
 import { checkSpaceRightsTypeCanShow } from '@/api/space'
 import { ESpaceCommercialType, ESpaceRightsType } from '@/enum/space'
 import { useBase } from '@/stores/base'
@@ -49,7 +49,7 @@ export default function useSpaceRights() {
       }
       case ESpaceRightsType.groupChat:
       case ESpaceRightsType.groupChatFree: {
-        const res = await getPubliclist(domainInfo.value.id)
+        const res = await getGroupListAPI(domainInfo.value.id)
         isUpperLimited = res.data.data.length >= currentRights.value.wx_group_num
         break
       }
@@ -65,7 +65,8 @@ export default function useSpaceRights() {
     ESpaceRightsType.default,
     ESpaceRightsType.brand,
     ESpaceRightsType.quota,
-    ESpaceRightsType.paintQuota
+    ESpaceRightsType.paintQuota,
+    ESpaceRightsType.weixinAccount
   ]
 
   const checkRightsTypeNeedUpgrade = async (type: ESpaceRightsType) => {

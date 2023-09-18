@@ -1,6 +1,6 @@
 <template>
   <div class="w-full">
-    <el-dropdown class="w-full" trigger="click" :teleported="false" max-height="300">
+    <el-dropdown class="w-full" trigger="click" placement="bottom" max-height="300">
       <div
         class="h-[40px] w-full px-[16px] border border-solid rounded-sm border-[#D8D8D8] flex justify-between items-center"
       >
@@ -38,12 +38,13 @@
 <script setup lang="ts">
 import { $notnull } from '@/utils/help'
 import { computed } from 'vue'
+import type { IDomainInfo } from '@/interface/domain'
 
 const emit = defineEmits(['update:value'])
 const props = withDefaults(
   defineProps<{
-    value: any
-    list: any[]
+    value: IDomainInfo
+    list: IDomainInfo[]
     placeholder: string
   }>(),
   {
@@ -56,5 +57,3 @@ const currentSelect = computed({
   set: (val) => emit('update:value', val)
 })
 </script>
-
-<style scoped></style>

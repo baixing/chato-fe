@@ -20,19 +20,6 @@ export enum EWeixinConfigType {
   app_secret = 'app_secret'
 }
 
-export enum ETabPublicType {
-  invite = 'invite',
-  create = 'create'
-}
-
-export enum ECreatePublicType {
-  edit = 'edit',
-  invite = 'invite',
-  friends = 'friends',
-  create = 'create',
-  transfer = 'transfer'
-}
-
 export const enum EChannelType {
   FEISHU = 'feishu',
   WECHAT_KF = 'wechat_kf',
@@ -45,4 +32,35 @@ export enum EReleaseSettingExampleType {
   doc = 'doc',
   correct = 'correct',
   ad = 'ad'
+}
+
+export enum EQrCodeHookType {
+  wxwork = 'wxwork'
+}
+
+export enum EAccountCreateStatus {
+  create = 'create',
+  failed = 'failed',
+  success = 'success'
+}
+
+export enum EAccountSettingStatus {
+  creating = 'creating',
+  restart = 'restart'
+}
+
+export enum ECreateChatType {
+  groupChat = 'groupChat',
+  singleChat = 'singleChat'
+}
+
+export enum EActivateGroupType {
+  joinGroupChat = 'joinGroupChat',
+  createGroupChat = 'createGroupChat',
+  singleGroupChat = 'singleGroupChat'
+}
+
+export enum EAccountStatus {
+  online = '在线',
+  offline = '离线'
 }

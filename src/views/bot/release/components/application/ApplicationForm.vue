@@ -62,8 +62,8 @@ import PlatFormList from './components/PlatFormList.vue'
 const { t } = useI18n()
 
 const props = defineProps<{
-  org_id: number
-  org_user_id: number
+  orgId: number
+  orgUserId: number
 }>()
 
 const emit = defineEmits(['handleUpdateOrgInfo'])
@@ -93,7 +93,8 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
         background: 'rgba(0, 0, 0, 0.7)'
       })
       const data = {
-        ...props,
+        org_id: props.orgId,
+        org_user_id: props.orgUserId,
         ...applicationForm
       }
       const res = await applicationFormSave(data)
