@@ -10,7 +10,7 @@
         <el-collapse-item v-for="(item, index) in sourcesData" :key="item.id" :name="item.id">
           <template #title>
             <p class="leading-5 line-clamp-2 break-all">
-              <span>文档 {{ index + 1 }}:</span>
+              <span>{{ $t('文档') }} {{ index + 1 }}:</span>
               <template v-if="slotAfterTitle">
                 <slot name="afterTitle" :item="item"></slot>
               </template>
@@ -22,7 +22,7 @@
                 >
                   {{ item.title }}
                 </a>
-                <span>相关性：{{ Math.round(item.score * 100) }}%</span>
+                <span>{{ $t('相关性') }}：{{ Math.round(item.score * 100) }}%</span>
               </template>
             </p>
           </template>

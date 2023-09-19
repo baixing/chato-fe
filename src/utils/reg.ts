@@ -1,5 +1,5 @@
 export function regReplaceA(str: string, properties?: Record<string, string | number>) {
-  const regex = /#([^#\s]+)#/g
+  const regex = /#\s*([^#\s]+)\s*#/g
   return str.replace(regex, (match, content) => {
     if (content.trim() === '') {
       // 如果# #中间只有空格，则直接返回空字符串，不进行替换

@@ -63,7 +63,8 @@ export const FILE_STATUS_NAMES = {
   parsing: '正在解析',
   learning: '学习中',
   learned: '学习完成',
-  error: '学习失败'
+  error: '学习失败',
+  crawl_error: '爬取失败'
 }
 export function getFileStatusName(status) {
   return FILE_STATUS_NAMES[status] || status || '-'

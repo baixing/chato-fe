@@ -182,7 +182,9 @@ const mjProgress = computed(() => `${Number(props.message?.progress || 0) * 100}
           @click.stop="() => emit('clickSource', message.questionId)"
         >
           <svg-icon name="folder-open" color="#596780"></svg-icon>
-          <span style="margin-left: 5px">文档：来源于{{ message.ref_source_len }}个段落</span>
+          <span style="margin-left: 5px">
+            {{ $t('文档：来源于{num}个段落', { num: message.ref_source_len }) }}
+          </span>
         </div>
         <!-- 赞和踩 -->
         <div

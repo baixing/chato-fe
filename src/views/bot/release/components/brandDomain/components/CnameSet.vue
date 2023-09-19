@@ -6,11 +6,8 @@
           <p class="font-medium">{{ $t('1.配置CNAME') }}</p>
         </template>
         <p>
-          {{
-            $t(
-              '腾讯云备案，请在域名服务网址上添加CNAME记录指向：lb-ni22fj7z-behsioq6t9mx2w15.clb.ap-shanghai.tencentclb.com'
-            )
-          }}
+          {{ $t('腾讯云备案，请在域名服务网址上添加CNAME记录指向') }}
+          ：lb-dakiz3dz-xqijdy8pkuzsm4gw.clb.ap-shanghai.tencentclb.com
         </p>
         <p class="mt-[16px]">
           <el-checkbox v-model="checked">{{ $t('已完成配置') }}</el-checkbox>

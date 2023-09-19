@@ -39,6 +39,14 @@ const emit = defineEmits([
   'update:multipleSelection'
 ])
 
+const selectableDeclarationsDoc = [
+  ...selectableDeclarations,
+  {
+    label: FILE_STATUS_NAMES.crawl_error,
+    value: LearningStatesPerformanceType.crawl_error
+  }
+]
+
 const { isMobile } = useBasicLayout()
 
 const internalLoading = computed({
@@ -138,7 +146,7 @@ const handleSelectionChange = (val: IDocumentList[]) => {
         <template #header>
           <el-dropdown class="mt-[5px]">
             <div class="cursor-pointer text-[#303133] flex items-center">
-              {{ FILE_STATUS_NAMES[internalSelectStatus] }}
+              {{ $t(FILE_STATUS_NAMES[internalSelectStatus]) }}
               <el-icon class="ml-[12px]">
                 <arrow-down />
               </el-icon>
@@ -146,19 +154,20 @@ const handleSelectionChange = (val: IDocumentList[]) => {
             <template #dropdown>
               <el-dropdown-menu>
                 <el-dropdown-item
-                  v-for="item in selectableDeclarations"
+                  v-for="item in selectableDeclarationsDoc"
                   :key="item.value"
                   :value="item.value"
                   @click="internalSelectStatus = item.value"
-                  >{{ item.label }}</el-dropdown-item
                 >
+                  {{ $t(item.label) }}
+                </el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
         </template>
         <template #default="scope">
           <span data-script="Chato-learn-status" class="flex items-center">
-            {{ getFileStatusName(scope.row.status) }}
+            {{ $t(getFileStatusName(scope.row.status)) }}
             <el-tooltip
               v-if="scope.row.status === LearningStatesPerformanceType.error"
               effect="dark"

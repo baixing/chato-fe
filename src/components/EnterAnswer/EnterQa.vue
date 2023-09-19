@@ -28,12 +28,14 @@
             class="input-text-form special-text-form"
           >
             <el-form-item prop="title">
-              <el-input
+              <HansInputLimit
+                v-model:value="inputTextForm.title"
                 type="text"
-                v-model="inputTextForm.title"
-                :placeholder="t('输入问题')"
-                maxlength="30"
-              ></el-input>
+                :placeholder="t('输入问题，请输入 300 以内的字符。')"
+                :limit="limit.titlePrompt"
+                :specifyInputStrLen="getStringWidth(inputTextForm.title || '')"
+                class="w-full mb-4"
+              />
             </el-form-item>
             <el-form-item prop="content_html" class="content_html_item">
               <HansInputLimit
@@ -41,7 +43,7 @@
                 type="textarea"
                 :placeholder="t('输入答案，请输入 3000 以内的字符。')"
                 :rows="isMobile ? 5 : 10"
-                :limit="limit.text_prompt"
+                :limit="limit.contentHtmlPrompt"
                 :specifyInputStrLen="getStringWidth(inputTextForm.content_html || '')"
                 class="w-full mb-4"
               />
@@ -197,7 +199,8 @@ const inputTextForm = reactive({
 })
 
 const limit = reactive({
-  text_prompt: 3000
+  titlePrompt: 300,
+  contentHtmlPrompt: 3000
 })
 const rules = reactive<FormRules>({
   title: [
@@ -213,13 +216,22 @@ const rules = reactive<FormRules>({
     }
   ]
 })
-const $textExceedLimit = computed(() => {
-  return getStringWidth(inputTextForm.content_html + inputTextForm.title || '') > limit.text_prompt
+const $textExceedTitleLimit = computed(() => {
+  return getStringWidth(inputTextForm.title || '') > limit.titlePrompt
+})
+
+const $textExceedContentLimit = computed(() => {
+  return getStringWidth(inputTextForm.content_html || '') > limit.contentHtmlPrompt
 })
 
 async function submitInputText(formEl: FormInstance) {
   if (!formEl) return
-  if ($textExceedLimit.value) return ElMessage.warning(t('问题加答案长度不能超过 3000 字符！'))
+  if ($textExceedTitleLimit.value)
+    return ElMessage.warning(t('问题长度不能超过{length}字符！', { length: limit.titlePrompt }))
+  if ($textExceedContentLimit.value)
+    return ElMessage.warning(
+      t('答案长度不能超过{length}字符！', { length: limit.contentHtmlPrompt })
+    )
   await formEl.validate((valid, fields) => {
     if (valid) {
       const loading = ElLoading.service({
