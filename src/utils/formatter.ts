@@ -48,9 +48,10 @@ export function getFileTypeName(type) {
 }
 
 export function getFileName(fileName: string) {
-  const fileHeadName = fileName.match(/^(.+?)(\.[^.]*$|$)/)[1] || ''
   const fileExtension = fileName.match(/\.([^.]+)$/)?.[1] // 使用正则表达式从文件名末尾提取文件后缀
+
   if (fileExtension && UPLOAD_FILE_VIDEO_AUDIO_TYPES.includes(`.${fileExtension}`)) {
+    const fileHeadName = fileName.replace(/\.[^.]+$/, '') // 使用正则表达式去除文件名末尾的后缀
     return `${fileHeadName} [${fileExtension}转txt]`
   }
 
