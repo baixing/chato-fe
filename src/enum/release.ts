@@ -64,3 +64,18 @@ export enum EAccountStatus {
   online = '在线',
   offline = '离线'
 }
+
+export enum ESiteShowLocationType {
+  full = 'full',
+  lower_right = 'lower_right'
+}
+
+export enum ESitePopupType {
+  passive = 0,
+  active = 1
+}
+export enum ESiteStatus {
+  create = 'create',
+  update = 'update',
+  delete = 'delete'
+}

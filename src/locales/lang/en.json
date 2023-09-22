@@ -1200,5 +1200,17 @@
   "3.激活机器人后，在群内@机器人提问": "3. After activating the robot, @mention the robot in the group to ask questions",
   "4.勿在企微中更改机器人群昵称，更改会导致机器人不回复；如需更改，请前往「形象」更改": "4. Do not change the robot's group nickname in the enterprise WeChat, as it will cause the robot to not respond. If you need to make changes, please go to 'Profile' to modify",
   "修改": "Modify",
-  "注：该功能为内测阶段，可能存在不稳定情况": "Note: This function is in the internal testing stage and may have unstable situations"
+  "注：该功能为内测阶段，可能存在不稳定情况": "Note: This feature is in the beta phase and may be unstable",
+  "添加聊天气泡，请将以下代码嵌入到你的网站中": "To add a chat bubble, embed the following code in your website",
+  "请以下iframe 嵌入到您的网站中目标位置": "Please embed the following iframe into the desired location on your website",
+  "嵌入到网站中": "Embed into the website",
+  "展现形式": "Display style",
+  "弹出频率": "Popup frequency",
+  "访问停留": "Visit duration",
+  "秒后自动弹出": "Auto-pop up after seconds",
+  "右下角": "Bottom right",
+  "全页面": "Full page",
+  "主动弹出": "Initiate popup",
+  "不主动弹出": "Do not initiate popup",
+  "确认并查看": "Confirm and view"
 }

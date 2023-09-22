@@ -79,6 +79,7 @@ export interface IDomainDetail {
     desc_show: boolean
     question_ref_source_show: boolean
     suspend_style: string
+    suspend_style_color: string
     message_style: string
     qa_modifiable: boolean
   }

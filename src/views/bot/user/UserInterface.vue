@@ -256,7 +256,8 @@ const settingForm = reactive({
     brand_show: false,
     ad_show: true,
     message_style: '#4C83F3',
-    suspend_style: '#4C83F3'
+    suspend_style: '#4C83F3',
+    suspend_style_color: '#fff'
   },
   shortcuts: [],
   domain: {
@@ -335,6 +336,7 @@ const onSave = async () => {
     background: 'rgba(0, 0, 0, 0.7)'
   })
   try {
+    settingForm.show.suspend_style_color = svgIconColor.value
     // TODO: 推进后端接口改动，支持只传递要修改的字段，而不是全部的字段
     await saveDomainV2(slug.value, { ...domainDetailRes, ...settingForm })
     Notification.success(t('保存成功'))

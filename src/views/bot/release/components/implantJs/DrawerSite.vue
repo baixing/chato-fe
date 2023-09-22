@@ -12,23 +12,31 @@
           <p class="leading-5 break-all">{{ $t('站点') }}{{ index + 1 }}：{{ item.source }}</p>
         </template>
         <div>
-          <SitePublic v-slot="slotProps" :name="item.source">
+          <SitePublic
+            v-slot="slotProps"
+            :source="item.source"
+            :popupFrequency="item.popup_frequency"
+            :popup="item.popup"
+            :showLocation="item.show_location"
+            :visible="visible"
+          >
             <div class="text-xs">
-              <p class="text-[#303133] text-sm mb-[12px]">{{ $t('JS代码') }}</p>
-              <p class="copy-code-title">
-                {{ $t('机器人代码，请将此 iframe 添加到您的 html 代码中') }}
-              </p>
-              <div
-                class="copy-code-container markdown-body"
-                v-html="renderMarkdown('```html' + item.codeIframeHtml)"
-              />
-              <p class="copy-code-title">
-                {{ $t('添加聊天气泡，请复制添加到您的 html中') }}
-              </p>
-              <div
-                class="copy-code-container markdown-body"
-                v-html="renderMarkdown('```js' + item.codeContent)"
-              />
+              <p class="text-[#303133] text-sm mb-[12px]">{{ $t('嵌入到网站中') }}</p>
+              <template v-if="slotProps.submit.show_location === ESiteShowLocationType.full">
+                <p class="mb-4 text-[#606266]">
+                  {{ $t('请以下iframe 嵌入到您的网站中目标位置') }}
+                </p>
+                <div
+                  class="markdown-body"
+                  v-html="renderMarkdown('```html' + item.codeIframeHtml)"
+                />
+              </template>
+              <template v-else>
+                <p class="mb-4 text-[#606266]">
+                  {{ $t('添加聊天气泡，请将以下代码嵌入到你的网站中') }}
+                </p>
+                <div class="markdown-body" v-html="renderMarkdown('```js' + item.codeContent)" />
+              </template>
             </div>
 
             <el-row class="w-full mt-2 mr-0" justify="end" :gutter="8">
@@ -37,7 +45,14 @@
                   {{ $t('删除') }}
                 </el-button>
               </el-col>
-              <el-col :lg="4" :xl="4" :xs="12" :sm="12" :md="12">
+              <el-col
+                :lg="4"
+                :xl="4"
+                :xs="12"
+                :sm="12"
+                :md="12"
+                v-if="slotProps.submit.show_location === ESiteShowLocationType.lower_right"
+              >
                 <el-button
                   type="primary"
                   size="large"
@@ -58,7 +73,12 @@
 <script lang="ts" setup>
 import { createDeleteEditSites, getCreateSites } from '@/api/iframe'
 import { useBasicLayout } from '@/composables/useBasicLayout'
-import type { ICreateDeleteEditSitesData, ICreateSitesChannelsRes } from '@/interface/release'
+import type {
+  ICreateDeleteEditSitesData,
+  ICreateSitesChannelsRes,
+  ISetSiteFormType
+} from '@/interface/release'
+import { ESiteShowLocationType, ESiteStatus } from '@/enum/release'
 import { renderMarkdown } from '@/utils/markdown'
 import type { FormInstance } from 'element-plus'
 import { ElLoading, ElMessageBox, ElNotification as Notification } from 'element-plus'
@@ -68,18 +88,13 @@ import SitePublic from './SitePublic.vue'
 const { t } = useI18n()
 const { isMobile } = useBasicLayout()
 
-interface EidtSiteData {
-  name: string
-}
-
 const props = defineProps<{
   slug: string
   value: boolean
-  chatWebPage: string
-  tip_chato_color: string
-  suspend_style: string
-  chato_script_checkDomain: string
   chatScript: string
+  chatWebPage: string
+  wwwBaseURL: string
+  baseURL: string
 }>()
 const emit = defineEmits(['update:value'])
 const visible = computed({
@@ -91,36 +106,35 @@ const activeNames = ref('')
 const sitesList = ref<ICreateSitesChannelsRes[]>([])
 
 const codeIframeHtml = (source: string) => {
-  const iframeSrc = `${props.chatWebPage}?source=${source}`
   return `
-    <iframe
-    src="${iframeSrc}"
-    width="408px"
-    height="594px"
-    frameborder="0"
-    />
+  <iframe
+  src="${props.chatWebPage}?source=${source}"
+  style="width: 100%;height: 100%;min-height: 700px;"
+  frameborder="0"
+  allow="microphone">
+  </iframe>
   `
 }
 
-const codeContent = (source) => {
-  const scriptSrc = `${props.chatWebPage}?source=${source}`
+const codeContent = (id: number) => {
   return `
-    <script>
-    window.tip_chato_color="${props.tip_chato_color}";
-    window.tip_chato_bg="${props.suspend_style}";
-    window.chato_iframe_src = "${scriptSrc}";
-    window.chato_script_checkDomain = "${props.chato_script_checkDomain}";
-    var st = document.createElement("script");
-    st.type="text/javascript";
-    st.async = true;
-    st.src = "${props.chatScript}";
-    var header = document.getElementsByTagName("head")[0];
-    header.appendChild(st);
-    </scr${'ipt>'}
+  <script>
+  window.ChatoBotConfig = {
+    baseURL: "${props.baseURL}",
+    wwwBaseURL: "${props.wwwBaseURL}",
+    token: "${props.slug}",
+    id: ${id}
+  }
+  var st = document.createElement("script");
+  st.type="text/javascript";
+  st.async = true;st.src = "${props.chatScript}";
+  var header = document.getElementsByTagName("head")[0];
+  header.appendChild(st);
+  <\/script>
   `
 }
 
-const submitEditSite = async (formEl: FormInstance, data: EidtSiteData, id: number) => {
+const submitEditSite = async (formEl: FormInstance, data: ISetSiteFormType, id: number) => {
   if (!formEl) return
   await formEl.validate(async (valid, fields) => {
     if (valid) {
@@ -132,8 +146,8 @@ const submitEditSite = async (formEl: FormInstance, data: EidtSiteData, id: numb
         })
         const postData = {
           id,
-          source: data.name,
-          status: 'update'
+          status: ESiteStatus.update,
+          ...data
         }
         updateSites(postData)
         loading.value.close()
@@ -147,7 +161,7 @@ const submitEditSite = async (formEl: FormInstance, data: EidtSiteData, id: numb
 }
 
 const removeSite = (id: number, source: string) => {
-  ElMessageBox.confirm(t('删除不可恢复，你确认要删除吗？'), t('温馨提示'), {
+  ElMessageBox.confirm(t('删除后，请移除嵌入到你网站中的代码，你确认要删除吗？'), t('温馨提示'), {
     confirmButtonText: t('确认'),
     cancelButtonText: t('取消'),
     type: 'warning'
@@ -156,7 +170,7 @@ const removeSite = (id: number, source: string) => {
       const data = {
         id,
         source,
-        status: 'delete'
+        status: ESiteStatus.delete
       }
       updateSites(data)
     })
@@ -165,76 +179,47 @@ const removeSite = (id: number, source: string) => {
 
 const updateSites = async (data: ICreateDeleteEditSitesData) => {
   const res = await createDeleteEditSites(props.slug, data)
+  initSitesList()
   Notification({
-    type: res.data.code === 200 ? 'success' : 'error',
+    type: 'success',
     message: res.data.message
   })
-  res.data.code === 200 ? initSitesList() : ''
 }
 
 const initSitesList = async () => {
   const res = await getCreateSites(props.slug)
-  if (res.data.code === 200) {
-    const channels = res.data.data.channels
-    sitesList.value = channels.map((item) => ({
-      ...item,
-      codeContent: codeContent(item.source),
-      codeIframeHtml: codeIframeHtml(item.source)
-    }))
-  }
+  const channels = res.data.data.channels
+  sitesList.value = channels.map((item) => ({
+    ...item,
+    codeContent: codeContent(item.id),
+    codeIframeHtml: codeIframeHtml(item.source)
+  }))
 }
 
 watch(sitesList, (v) => {
-  activeNames.value = v.length > 0 ? v[v.length - 1].source : ''
+  activeNames.value = v.length ? v[v.length - 1].source : ''
 })
 
-watch([() => props.value, () => props.slug], ([newValue1, newValue2], [oldValue1, oldValue2]) => {
+watch([() => props.value, () => props.slug], ([newValue1, newValue2], [, oldValue2]) => {
   if (newValue1 === true || newValue2 !== oldValue2) {
     initSitesList()
   }
 })
 </script>
-<style lang="scss" scoped>
-.copy-code-title {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  color: #606266;
-  font: 12px/12px Source Han Sans CN;
-}
 
-.copy-code-container {
-  overflow: scroll;
-  width: 100%;
-  margin-bottom: 16px;
-  border-radius: 8px;
-  color: rgba(61, 61, 61, 0.35);
-  word-break: break-all;
-
-  pre {
-    code {
-      white-space: break-spaces;
-    }
-  }
-}
-</style>
 <style lang="scss">
 .create-drawer-container {
   .el-drawer__header {
-    margin-bottom: 20px;
-    color: #303133;
-    font-weight: 500;
+    @apply mb-5 text-[#303133] font-medium;
   }
   .el-drawer__body {
-    padding-top: 0;
+    @apply pt-0;
   }
   .el-collapse {
-    border-top: none;
+    @apply border-t-0;
   }
   .el-form-item__label {
-    color: #303133;
-    font-size: 14px;
+    @apply text-[#303133] text-sm;
   }
 }
 </style>

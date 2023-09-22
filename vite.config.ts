@@ -109,7 +109,7 @@ export default defineConfig(({ command, mode }) => {
       rollupOptions: {
         input: {
           index: resolve(__dirname, "index.html"),
-          iframe: resolve(__dirname, "src/build/iframe.js"),
+          iframe: resolve(__dirname, "src/build/iframe.ts"),
         },
         output: {
           chunkFileNames: "assets/[name].[hash].js", // 打包出来的chunk文件名

@@ -1,5 +1,10 @@
 import type { EBrandCreateEditStatusType, EBrandDomainStatusType } from '@/enum/domain'
-import type { EAfficialAccountStatusType, EQrCodeHookType } from '@/enum/release'
+import type {
+  EAfficialAccountStatusType,
+  ESitePopupType,
+  ESiteShowLocationType,
+  EQrCodeHookType
+} from '@/enum/release'
 import type { UploadUserFile } from 'element-plus'
 
 export interface IApplicationFormData {
@@ -44,12 +49,19 @@ export interface ICreateSitesChannelsRes {
   id: number
   modified: string
   source: string
+  show_location: ESiteShowLocationType
+  popup_frequency: number
+  popup: ESitePopupType
   codeIframeHtml?: string
   codeContent?: string
 }
 
 export interface ICreateSitesRes {
   channels: ICreateSitesChannelsRes[]
+}
+
+export interface ISerachSitesRes extends ICreateSitesChannelsRes {
+  suspend_style: string
 }
 
 export interface IBrandDomainType {
@@ -238,4 +250,11 @@ export interface ICreateAccountParams {
 export interface ICreateAccountEmpowerRes {
   is_online: boolean
   is_expired: boolean
+}
+
+export interface ISetSiteFormType {
+  source: string
+  popup_frequency: number
+  popup: ESitePopupType
+  show_location: ESiteShowLocationType
 }

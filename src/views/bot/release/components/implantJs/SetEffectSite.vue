@@ -15,8 +15,9 @@
             type="primary"
             size="large"
             @click="submitCreateSite(slotProps.ruleFormCreateSiteRef, slotProps.submit)"
-            >{{ $t('确认') }}</el-button
           >
+            {{ $t('确认并查看') }}
+          </el-button>
         </el-col>
       </el-row>
     </SitePublic>
@@ -30,26 +31,23 @@ import { ElLoading, ElNotification as Notification } from 'element-plus'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import SitePublic from './SitePublic.vue'
-const { t } = useI18n()
-const loading = ref()
-
-interface SiteData {
-  name: string
-}
+import type { ISetSiteFormType } from '@/interface/release'
+import { ESiteStatus } from '@/enum/release'
 
 const props = defineProps<{
   value: boolean
   slug: string
 }>()
-
 const emit = defineEmits(['update:value', 'showDrawerSite'])
 
+const { t } = useI18n()
+const loading = ref()
 const internalVisible = computed({
   get: () => props.value,
   set: (v) => emit('update:value', v)
 })
 
-async function submitCreateSite(formEl, data: SiteData) {
+async function submitCreateSite(formEl, data: ISetSiteFormType) {
   if (!formEl) return
   await formEl.validate(async (valid, fields) => {
     if (valid) {
@@ -61,8 +59,8 @@ async function submitCreateSite(formEl, data: SiteData) {
         })
         const postData = {
           id: 0,
-          source: data.name,
-          status: 'create'
+          status: ESiteStatus.create,
+          ...data
         }
         const res = await createDeleteEditSites(props.slug, postData)
         loading.value.close()

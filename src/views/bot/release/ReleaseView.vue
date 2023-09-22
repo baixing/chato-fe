@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import useSpaceRights from '@/composables/useSpaceRights'
 import { currentEnvConfig } from '@/config'
-import { ChatBubbleColorList } from '@/constant/chat'
 import { PaidCommercialTypes } from '@/constant/space'
 import { ESpaceCommercialType, ESpaceRightsType } from '@/enum/space'
 import { EAccountSettingStatus } from '@/enum/release'
@@ -74,17 +73,14 @@ const { currentRights } = storeToRefs(spaceStoreI)
 const { domainInfo } = storeToRefs(domainStoreI)
 const userRoute = `/t/bot/${domainInfo.value.id}/user`
 const botSlug = computed(() => domainInfo.value.slug)
-const chatWebPageBaseURL = `${currentEnvConfig.wwwBaseURL}`
+const chatWebPageBaseURL = `${currentEnvConfig.baseURL}`
 const chatReleaseURL = computed(() => {
   return {
-    chatWebPage: `${chatWebPageBaseURL}/b/${botSlug.value}`,
-    chatAPI: `${currentEnvConfig.baseURL}/chato/api-public/domains/${botSlug.value}/chat`,
-    chato_script_checkDomain: `${currentEnvConfig.baseURL}/chato/api/v1/domains/${botSlug.value}/whitelist_sites/check`
+    chatWebPage: `${currentEnvConfig.wwwBaseURL}/b/${botSlug.value}`,
+    chatAPI: `${chatWebPageBaseURL}/chato/api-public/domains/${botSlug.value}/chat`
   }
 })
 const chatScript = `${currentEnvConfig.scriptURL}/assets/iframe.min.js`
-const chta_List = ChatBubbleColorList.filter((item) => item.bg === domainInfo.value.suspend_style)
-const tip_chato_color = chta_List.length > 0 ? chta_List[0].cl : '#fff'
 const wssApiDocs =
   'https://apifox.com/apidoc/shared-74401769-7cc9-4d75-a57e-892dc6aa5960/api-95610185'
 const weixinServiceDocs = 'https://baixingwang.feishu.cn/docx/CXyTdSKF6oPCiLxAQTacrHvUnfe'
@@ -440,11 +436,10 @@ onMounted(() => {
     <DrawerSite
       v-model:value="siteListVisible"
       :slug="botSlug"
-      :chatWebPage="chatReleaseURL.chatWebPage"
-      :tip_chato_color="tip_chato_color"
-      :suspend_style="domainInfo.suspend_style"
-      :chato_script_checkDomain="chatReleaseURL.chato_script_checkDomain"
       :chatScript="chatScript"
+      :chatWebPage="chatReleaseURL.chatWebPage"
+      :wwwBaseURL="currentEnvConfig.wwwBaseURL"
+      :baseURL="chatWebPageBaseURL"
     >
     </DrawerSite>
     <OfficialAccont

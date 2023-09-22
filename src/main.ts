@@ -29,6 +29,12 @@ declare module 'vue' {
 declare global {
   interface Window {
     showPreview(url: string): void
+    ChatoBotConfig: {
+      wwwBaseURL: string
+      baseURL: string
+      token: string
+      id: number
+    }
   }
 }
 
