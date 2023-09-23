@@ -1,7 +1,7 @@
 import { currentEnvConfig } from '@/config'
 import Recognizer from '@/utils/recognizer'
 import { ElNotification } from 'element-plus'
-import { ref, toRaw } from 'vue'
+import { onBeforeUnmount, ref, toRaw } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 export default function useRecognizer({
@@ -124,7 +124,7 @@ export default function useRecognizer({
   }
 
   const stopRecording = (latestSend = true) => {
-    if (ws.value.readyState === 1) {
+    if (ws.value?.readyState === 1) {
       ws.value?.send(JSON.stringify({ signal: 'end' }))
     }
     srInstantiation.value && srInstantiation.value.recordClose(latestSend)
@@ -141,6 +141,10 @@ export default function useRecognizer({
   const resetAsr = () => {
     asrStr.value = ''
   }
+
+  onBeforeUnmount(() => {
+    ws.value = null
+  })
 
   return {
     isRecording: isStart,
