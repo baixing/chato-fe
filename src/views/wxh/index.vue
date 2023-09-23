@@ -1,21 +1,23 @@
 <template>
-  <div class="h-screen w-screen bg-black pt-[33vw] wxh-container relative">
+  <div class="h-screen w-screen bg-black pt-[260px] wxh-container relative">
     <img
       src="@/assets/img/wxh/xh.png"
-      class="absolute w-[68vw] object-cover left-0 top-[11.5vw] z-[2]"
+      class="absolute w-[760px] object-cover left-0 top-10 z-[2]"
     />
-    <div class="px-[16vw] text-right mb-20 flex flex-col items-end">
-      <p class="text-white font-bold text-9xl mb-40">王小慧</p>
-      <p class="text-[#CEADFC] font-medium text-8xl mb-24">扫码体验</p>
-      <img
-        src="@/assets/img/wxh/crcode.png"
-        class="w-96 h-96 object-cover rounded-2xl overflow-hidden"
-      />
+    <div class="flex justify-end pr-[120px]">
+      <div class="inline-flex text-right mb-10 flex-col items-center justify-end">
+        <p class="inline-block text-white font-bold text-7xl mb-14">王小慧</p>
+        <p class="inline-block text-[#CEADFC] font-medium text-4xl mb-12">扫码体验</p>
+        <img
+          src="@/assets/img/wxh/crcode.png"
+          class="w-48 h-48 object-cover rounded-xl overflow-hidden"
+        />
+      </div>
     </div>
     <div
-      class="box-border w-[84vw] h-[86vw] px-20 py-14 mx-auto overflow-hidden rounded-[4vw] mb-[1vw] linear-bg-block"
+      class="box-border w-[912px] h-[937px] p-6 mx-auto overflow-hidden rounded-[64px] mb-9 linear-bg-block"
     >
-      <div class="overflow-hidden h-full rounded-[4vw] relative z-[3]">
+      <div class="overflow-hidden h-full rounded-[64px] relative z-[3]">
         <Chat
           :isChatingPractice="true"
           :isreadRouteParam="true"
@@ -24,14 +26,14 @@
         />
       </div>
     </div>
-    <div class="rounded-[4vw] box-border w-[84vw] h-[12vw] p-5 mx-auto linear-bg-block-1">
-      <div class="rounded-[4vw] box-border bg-black h-full p-5">
-        <div class="rounded-[4vw] box-border h-full linear-bg-block-2 p-2">
+    <div class="rounded-[64px] box-border w-[914px] h-[163px] p-2 mx-auto linear-bg-block-1">
+      <div class="rounded-[64px] box-border bg-black h-full p-5">
+        <div class="rounded-[64px] box-border h-full linear-bg-block-2 p-1">
           <div
-            class="rounded-[4vw] box-border bg-black h-full py-6 flex items-center justify-center gap-40"
+            class="rounded-[64px] box-border bg-black h-full py-6 flex items-center justify-center gap-14"
           >
-            <img src="@/assets/img/wxh/chato.png" class="w-[21vw] h-[5vw] object-cover" />
-            <img src="@/assets/img/wxh/baixing.png" class="w-[18vw] h-[4vw] object-cover" />
+            <img src="@/assets/img/wxh/chato.png" class="w-[229px] h-[57px] object-cover" />
+            <img src="@/assets/img/wxh/baixing.png" class="w-[201px] h-[48px] object-cover" />
           </div>
         </div>
       </div>
@@ -55,7 +57,7 @@ import Chat from '@/components/Chat/index.vue'
 
   .chat-wxh {
     max-width: none;
-    padding: 2vw 4vw;
+    padding: 0 24px;
     width: 100%;
     box-sizing: border-box;
     font-size: 100px;

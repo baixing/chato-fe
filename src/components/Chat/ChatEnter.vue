@@ -153,7 +153,7 @@ const isAudioChatModeDomain = computed(
 )
 
 // --- 语音对话逻辑 start ---
-const audioSendTime = 3000
+const audioSendTime = 2000
 
 const onAudioSend = debounce(() => {
   onSend()
