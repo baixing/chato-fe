@@ -15,6 +15,8 @@ export default function useSSEAudio() {
   const { audioRef, audioPlayingId, audioLoading, audioListMap, audioPlaying } =
     storeToRefs(audioStoreI)
 
+  const finalSymbol = ['.', ',', '!', '?', ';', '。', '，', '！', '？', '；']
+
   const SSETextToAudio = ({
     sseRes,
     domainSlug,
@@ -34,7 +36,7 @@ export default function useSSEAudio() {
       audioStoreI.initAudioListByPlayerId(playerId)
     }
     const isFinish = finishReason || ChatMessageFinalStatus.includes(status)
-    if (chunkText === '。' || isFinish) {
+    if (finalSymbol.includes(chunkText) || isFinish) {
       const textStr = isFinish ? sseText : `${sseText}。`
       sseText = ''
       sseTextArr.push({
