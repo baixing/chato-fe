@@ -380,7 +380,7 @@ onBeforeUnmount(() => {
   left: 50%;
   transform: translate(-50%, -50%);
   border-radius: 50%;
-  background-image: url('https://gips0.baidu.com/it/u=2532549250,2178754814&fm=3028&app=3028&f=PNG&fmt=auto&q=100&size=f460_460');
+  background-image: url('@/assets/img/recorder-bg.webp');
   animation: ball-animation 2.4s ease-in-out infinite;
   background-size: contain;
 }
