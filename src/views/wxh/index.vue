@@ -19,6 +19,7 @@
     >
       <div class="overflow-hidden h-full rounded-[64px] relative z-[3]">
         <Chat
+          ref="chatRef"
           :isChatingPractice="true"
           :isreadRouteParam="true"
           chat-by-audio
@@ -43,6 +44,19 @@
 
 <script setup lang="ts">
 import Chat from '@/components/Chat/index.vue'
+import { ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
+
+const chatRef = ref()
+const route = useRoute()
+
+watch(chatRef, (v) => {
+  if (!v) {
+    return
+  }
+
+  v.onClearHistoryRelation(route.params.botSlug)
+})
 </script>
 
 <style lang="scss">

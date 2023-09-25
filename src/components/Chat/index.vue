@@ -796,18 +796,24 @@ const onEvaluate = async (questionId: number, evValue: EMessageEvalution) => {
   } catch (e) {}
 }
 
+// 清除历史对话记录关联，slug 参数透传基于展馆需求，临时 hard code，后期可直接 del
+const onClearHistoryRelation = async (slug?: string) => {
+  const params = {
+    visitor_type: isInternal ? 'owner' : 'vistor',
+    domain_slug: slug || detail.value.slug,
+    token: chatToken.value
+  }
+  const res = await clearSession(params)
+
+  return res
+}
+
 // 清除会话记录
 async function clearChatHistory() {
   const lastHistory = history.value.slice(-1)
   if (!lastHistory.length || lastHistory[0].displayType === EMessageDisplayType.remove) return
   try {
-    const params = {
-      visitor_type: isInternal ? 'owner' : 'vistor',
-      domain_slug: detail.value.slug,
-      token: chatToken.value
-    }
-
-    const { data } = await clearSession(params)
+    const { data } = await onClearHistoryRelation()
     if (data.code === 200) {
       const newHistory = [...history.value]
       const newHistoryLastIndex = newHistory.length - 1
@@ -1131,6 +1137,10 @@ watch(
 
 provide(SymChatDomainDetail, detail)
 provide(SymChatToken, chatToken)
+
+defineExpose({
+  onClearHistoryRelation
+})
 </script>
 <style lang="scss" scoped>
 .container-preview-page {
