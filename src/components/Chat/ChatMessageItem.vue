@@ -154,7 +154,12 @@ provide(SymChatMessageAudioTTSParams, audioTTSParams)
               v-html="renderMarkdown(messageContent)"
               class="markdown-container-chato markdown-body"
             ></div>
-            <div v-else v-html="messageContent" class="whitespace-pre-line break-words"></div>
+            <div
+              v-else
+              v-html="messageContent"
+              class="whitespace-pre-line break-words"
+              style="word-break: break-word"
+            ></div>
           </div>
         </div>
       </div>
