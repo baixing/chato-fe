@@ -191,17 +191,17 @@ provide(SymChatMessageAudioTTSParams, audioTTSParams)
           !isLoadingAnswer &&
           message.status !== EWsMessageStatus.pending
         "
-        class="relative flex justify-start items-center ml-3 mt-3 text-[#596780] text-sm leading-5 cursor-pointer"
+        class="relative flex justify-start items-center ml-2 mt-2 text-[#303133] text-sm cursor-pointer"
       >
         <!-- 段落来源 -->
         <div
           v-if="(isInternal || detail.question_ref_source_show) && message.ref_source_len"
-          class="flex items-center mr-2"
+          class="flex items-center gap-1 mr-5 h-5"
           @click.stop="() => emit('clickSource', message.questionId)"
         >
-          <svg-icon name="folder-open" color="#596780"></svg-icon>
-          <span class="ml-1">
-            {{ $t('文档：来源于{num}个段落', { num: message.ref_source_len }) }}
+          <svg-icon name="folder-open" svg-class="w-5 h-5 text-[#303133]" />
+          <span class="text-xs mt-[2px]">
+            {{ $t('文档：来源于 {num} 个段落', { num: message.ref_source_len }) }}
           </span>
         </div>
         <!-- 赞和踩 -->
@@ -232,19 +232,19 @@ provide(SymChatMessageAudioTTSParams, audioTTSParams)
             {{ $t('修正') }}
           </div>
         </div>
-        <div v-else-if="isLast" class="flex items-center gap-5 text-[#596780] text-lg">
-          <el-icon
-            :class="[`hover:!text-[${detail.message_style}]`]"
+        <div v-else-if="isLast" class="flex items-center gap-2">
+          <svg-icon
+            name="good-default"
+            svg-class="w-5 h-5 text-[#303133] cursor-pointer transition-colors hover:!text-[var(--hoverColor)]"
+            :style="{ '--hoverColor': detail.message_style }"
             @click="emit('evaluate', message.questionId, EMessageEvalution.like)"
-          >
-            <svg-icon name="good-default" />
-          </el-icon>
-          <el-icon
-            :class="[`hover:!text-[${detail.message_style}]`]"
+          />
+          <svg-icon
+            name="no-good-default"
+            svg-class="w-5 h-5 text-[#303133] cursor-pointer transition-colors hover:!text-[var(--hoverColor)]"
+            :style="{ '--hoverColor': detail.message_style }"
             @click="emit('evaluate', message.questionId, EMessageEvalution.dislike)"
-          >
-            <svg-icon name="no-good-default" />
-          </el-icon>
+          />
         </div>
       </div>
     </div>

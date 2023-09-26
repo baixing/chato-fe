@@ -95,13 +95,14 @@
         <el-button link type="info" :disabled="!internalValue" @click="onSendRecorder">
           {{ t('发送') }}
         </el-button>
-        <div v-show="isRecording" class="recorder-popup"></div>
+        <WaterRipples v-show="isRecording" />
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import WaterRipples from '@/components/Animations/WaterRipples.vue'
 import useAudioPlayer from '@/composables/useAudioPlayer'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import useRecognizer from '@/composables/useRecognizer'
@@ -383,18 +384,5 @@ onBeforeUnmount(() => {
   to {
     @apply w-11 h-11;
   }
-}
-
-.recorder-popup {
-  @apply w-11 h-11;
-  z-index: -1;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  background-image: url('@/assets/img/recorder-bg.webp');
-  animation: ball-animation 2.4s ease-in-out infinite;
-  background-size: contain;
 }
 </style>

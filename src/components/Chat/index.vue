@@ -75,7 +75,7 @@
         <el-icon class="text-base"> <VideoPause /> </el-icon>{{ $t('终止') }}
       </div>
 
-      <div v-if="detail.shortcuts" class="quick-message-bottom relative">
+      <div v-if="detail.shortcuts" class="quick-message-bottom relative chat-center">
         <span
           v-for="(item, index) in detail.shortcuts"
           :key="index"
@@ -526,7 +526,6 @@ const beforeSubmit = async () => {
 
 const submit = async (str = '') => {
   const beforeSubmitCheckRes = await beforeSubmit()
-  // alert(JSON.stringify({ inputText: inputText.value, str, beforeSubmitCheckRes }))
   const text = String(str || inputText.value).trim()
 
   // 无额度
@@ -1155,7 +1154,7 @@ defineExpose({
   flex-wrap: wrap;
   justify-content: flex-start;
   align-items: center;
-  @apply px-4 pt-1 pb-0;
+  @apply pt-1 pb-0;
 
   .quick-item {
     @apply rounded-2xl leading-4 text-xs px-3 py-1 mr-1 mb-1;

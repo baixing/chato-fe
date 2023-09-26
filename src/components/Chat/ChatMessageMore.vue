@@ -1,7 +1,7 @@
 <template>
   <ul class="message-more-container" :style="internalPositionStyle" ref="messageMoreRef">
     <li v-for="item in internalMoreActions" :key="item.type" @click="onMoreAction(item.type)">
-      <el-icon :size="16">
+      <el-icon :size="18">
         <svg-icon
           v-if="EMessageActionType.like === item.type"
           :name="

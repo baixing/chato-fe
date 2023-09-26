@@ -1,12 +1,12 @@
+import BasicSSL from '@vitejs/plugin-basic-ssl'
 import vue from "@vitejs/plugin-vue"
 import { fileURLToPath, URL } from "node:url"
 import { resolve } from "path"
-import { defineConfig, loadEnv } from "vite"
-// import { visualizer } from "rollup-plugin-visualizer"
 import AutoImport from "unplugin-auto-import/vite"
 import ElementPlus from "unplugin-element-plus/vite"
 import { ElementPlusResolver } from "unplugin-vue-components/resolvers"
 import Components from "unplugin-vue-components/vite"
+import { defineConfig, loadEnv } from "vite"
 import eslintPlugin from 'vite-plugin-eslint'
 import { prismjsPlugin } from 'vite-plugin-prismjs'
 import type { ViteSentryPluginOptions } from 'vite-plugin-sentry'
@@ -14,9 +14,12 @@ import viteSentry from 'vite-plugin-sentry'
 import { createSvgIconsPlugin } from "vite-plugin-svg-icons"
 import buildConfig from "./plugins/build-id"
 
+// import { visualizer } from "rollup-plugin-visualizer"
+
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, process.cwd(), "")
+  const devWithHttps = Boolean(env?.HTTPS || false)
   const isProd = env.VITE_APP_ENV === 'prod'
 
   const sentryConfig: ViteSentryPluginOptions = {
@@ -40,11 +43,13 @@ export default defineConfig(({ command, mode }) => {
   return {
     server: {
       port: 8001,
+      https: devWithHttps,
       open: true,
       host: true
     },
     plugins: [
       vue(),
+      devWithHttps && BasicSSL(),
       // 按需引入，主题色的配置，需要加上 importStyle: 'sass'
       Components({
         resolvers: [
