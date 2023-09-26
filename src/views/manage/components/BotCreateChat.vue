@@ -6,6 +6,7 @@
       :is-chating-practice="true"
       @correctAnswer="onCorrectAnswer"
       @showDrawer="onOpenDrawer"
+      chatClassName="chat-debug"
     />
     <div
       v-if="!draftDomain?.system_prompt"
@@ -94,3 +95,11 @@ const onCorrectAnswer = (e) => {
   dialogVisibleQa.value = true
 }
 </script>
+
+<style lang="scss">
+.chat-debug {
+  .chat-center {
+    padding: 16px !important;
+  }
+}
+</style>

@@ -91,7 +91,7 @@ export default function useRecognizer({
     }
   }
 
-  const startRecording = (str: string) => {
+  const startRecording = (str: string = '') => {
     try {
       timer && clearTimeout(timer)
       isStart.value = true

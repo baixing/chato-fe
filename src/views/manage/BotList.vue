@@ -7,7 +7,7 @@
     >
       <div
         data-script="Chato-createBot"
-        class="bg-white rounded-lg leading-5 flex flex-col items-center justify-center gap-4 transition cursor-pointer h-full hover:shadow-lg hover:-translate-y-2 lg:p-4 lg:gap-3 lg:h-auto lg:hover:-translate-y-0"
+        class="bg-white rounded-lg min-h-[200px] leading-5 flex flex-col items-center justify-center gap-4 transition cursor-pointer h-full hover:shadow-lg hover:-translate-y-2 lg:p-4 lg:gap-3 lg:h-auto lg:hover:-translate-y-0"
         @click="onNew"
       >
         <div
@@ -69,7 +69,6 @@ import ContentLayout from '@/layout/ContentLayout.vue'
 import { RoutesMap } from '@/router'
 import { useChatStore } from '@/stores/chat'
 import { useDomainStore } from '@/stores/domain'
-import type { Action } from 'element-plus'
 import { ElLoading, ElMessage, ElMessageBox, ElNotification, ElSelect } from 'element-plus'
 import { storeToRefs } from 'pinia'
 import { onMounted, reactive, ref, watch } from 'vue'
@@ -216,17 +215,13 @@ const cloneRobot = async (id: string, name: string) => {
     .catch(() => {})
 }
 
-watch(
-  domainList,
-  (d) => {
-    if (!d.length) {
-      router.push({ name: RoutesMap.manager.create })
-    }
-  },
-  { immediate: true }
-)
-
 onMounted(() => {
   onRefresh()
+})
+
+watch(domainList, (d) => {
+  if (!d.length) {
+    router.push({ name: RoutesMap.manager.create })
+  }
 })
 </script>

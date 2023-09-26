@@ -986,7 +986,7 @@ const chatHisListener = (event) => {
     const content = target.getAttribute('data-chref')
     const msg_id = target.getAttribute('data-cid')
 
-    if (target.classList.contains('welcome-a') && $notnull(content)) {
+    if (target.classList.contains('welcome-a') && $notnull(content) && !isLoadingAnswer.value) {
       submit(content)
     }
     if (

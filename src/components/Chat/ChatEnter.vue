@@ -196,9 +196,10 @@ const { startRecording, stopRecording, resetAsr, isRecording } = useRecognizer({
 
 // 触发录音
 const onRecording = () => {
+  internalValue.value = ''
   chatRecordingEnterVisible.value = true
   internalEnterDisabled.value = !isRecording.value
-  isRecording.value ? stopRecording() : startRecording(internalValue.value)
+  isRecording.value ? stopRecording() : startRecording()
 }
 
 const onKeydownEnter = (e: KeyboardEvent) => {
@@ -220,8 +221,8 @@ const onClearRecorder = () => {
 const onCloseRecorder = () => {
   if (isRecording.value) {
     stopRecording()
-    onClearRecorder()
   }
+  onClearRecorder()
   internalEnterDisabled.value = false
   chatRecordingEnterVisible.value = false
 }
@@ -264,6 +265,8 @@ watch(
       return
     }
 
+    onCloseRecorder()
+    internalValue.value = ''
     chatEnterType.value = domainDetail.value.conversation_mode
   },
   { immediate: true }
