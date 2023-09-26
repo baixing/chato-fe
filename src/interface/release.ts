@@ -1,10 +1,6 @@
 import type { EBrandCreateEditStatusType, EBrandDomainStatusType } from '@/enum/domain'
 import type { EAfficialAccountStatusType } from '@/enum/release'
 import type { UploadUserFile } from 'element-plus'
-export interface IPlatFormListProps {
-  title: string
-  icon: string
-}
 
 export interface IApplicationFormData {
   org_id: number

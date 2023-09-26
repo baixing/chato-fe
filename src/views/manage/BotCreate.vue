@@ -292,7 +292,7 @@ const HansLimit = {
   name: 20,
   system_prompt: 900,
   desc: 300,
-  welcome: 500
+  welcome: 2000
 }
 const defaultFormState: Partial<IDomainInfo> = {
   id: 0,

@@ -25,20 +25,10 @@
       >
     </div>
     <template v-else>
-      <div class="flex justify-between items-center flex-wrap gap-4">
-        <p class="tab-describe">
-          {{ $t('完成录入后，AI 通过 5-10 分钟消化知识，并最终优先根据问答知识回复，可前往')
-          }}<RouterLink
-            :to="{
-              name: RoutesMap.tranning.botChat,
-              params: { botId: domainId }
-            }"
-            >{{ $t('聊天演示') }}</RouterLink
-          >{{ $t('测试效果。') }}
-        </p>
-        <el-button type="primary" size="large" @click="() => (dialogVisibleQa = true)">{{
-          $t('录入问答')
-        }}</el-button>
+      <div class="flex justify-end items-center flex-wrap gap-4">
+        <el-button type="primary" size="large" @click="() => (dialogVisibleQa = true)">
+          {{ $t('录入问答') }}
+        </el-button>
       </div>
       <div class="flex justify-between items-center mt-[31px] flex-wrap">
         <div>

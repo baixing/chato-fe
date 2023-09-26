@@ -1,7 +1,15 @@
 export const FULL_SITE_NAME = 'Chato - 基于AI技术 轻松创建对话机器人'
 export const SITE_NAME = 'Chato'
 
-export const UPLOAD_FILE_VIDEO_AUDIO_TYPES = ['.mp3', '.mp4', '.mpeg', '.m4a', '.wav', '.webm']
+export const UPLOAD_FILE_VIDEO_AUDIO_TYPES = [
+  '.mp3',
+  '.mp4',
+  '.mpeg',
+  '.m4a',
+  '.wav',
+  '.webm',
+  '.epub'
+]
 
 export const UPLOAD_FILE_TYPES = [
   '.pdf',

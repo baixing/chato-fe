@@ -17,7 +17,13 @@
           class="w-[140px] h-auto cursor-pointer lg:w-[100px]"
           @click="onEnter()"
         />
-        <el-tag round size="small" effect="light" class="!text-gray-500 !border-none !bg-gray-200">
+        <el-tag
+          v-if="!isMobile"
+          round
+          size="small"
+          effect="light"
+          class="!text-gray-500 !border-none !bg-gray-200"
+        >
           Beta
         </el-tag>
         <ul v-if="!isMobile" class="flex gap-8 text-[#303133] text-sm ml-12">
@@ -144,9 +150,6 @@
           >
             <p class="mb-[5px] text-[#3D3D3D]">{{ $t(item.label) }}</p>
             <p>{{ $t(item.desc) }}</p>
-            <p v-if="item.tel">
-              <a class="text-[#9DA3AF]" :href="'tel:' + item.tel">{{ $t(item.tel) }}</a>
-            </p>
           </div>
           <img :src="item.img" class="w-[106px] h-[106px]" alt="" />
         </div>
@@ -231,6 +234,7 @@ const { userInfo } = storeToRefs(baseStoreI)
 
 const homeContainer = ref<HTMLElement>(null)
 const headerShowBg = ref(false)
+const userCommunityLink = 'https://support.qq.com/products/600388/'
 
 const scrollCallback = useDebounceFn((e) => {
   if (e.target.scrollTop > 80) {
@@ -303,22 +307,29 @@ const menuRouteList = [
   { title: t('首页'), key: RoutesMap.home.index },
   { title: t('客户案例'), key: RoutesMap.home.case },
   { title: t('联系我们'), key: 'menu_schedule' },
-  { title: t('渠道合作'), key: 'menu_join' }
+  { title: t('渠道合作'), key: 'menu_join' },
+  { title: t('用户社区'), key: 'menu_community' }
 ]
 
 const footerQrCode = [
-  { label: '关注BaixingAI', desc: '掌握AI前沿资讯', img: baixingAI },
+  { label: '百姓AI', desc: '掌握AI前沿资讯', img: baixingAI },
   { label: '关注纳什智能', desc: '先人一步运用AI', img: nashCrcode },
-  { label: '渠道合作', desc: '郑经理', tel: '13916182066', img: homeInvestJoin }
+  { label: '渠道负责人', desc: '沈经理', tel: '13916182066', img: homeInvestJoin }
 ]
 
 const onLinkRoute = (key: string) => {
-  if (key === 'menu_join') {
-    onFormModal(joinMask)
-  } else if (key === 'menu_schedule') {
-    onFormModal(scheduleMask)
-  } else {
-    router.push({ name: key })
+  switch (key) {
+    case 'menu_join':
+      onFormModal(joinMask)
+      break
+    case 'menu_schedule':
+      onFormModal(scheduleMask)
+      break
+    case 'menu_community':
+      window.open(userCommunityLink)
+      break
+    default:
+      router.push({ name: key })
   }
 }
 

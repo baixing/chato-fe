@@ -197,39 +197,23 @@ const cloneDomainRobotSubmit = async (slug: string, is_need_document: 0 | 1, nam
   }
 }
 
-const cloneRobotSubmit = (slug: string, robotName: string, is_need_document: 0 | 1) => {
+const cloneRobot = async (id: string, name: string) => {
   ElMessageBox.confirm(
-    t('复制并新建{robotName}，新建后{slot1}包含知识库', {
-      robotName: robotName,
-      slot1: is_need_document === 0 ? t('不') : ''
-    }),
+    t(
+      '复制并新建此机器人。<br> 克隆范围包含角色信息和知识库，不包含对外发布及数据报表。请确认是否克隆该机器人？'
+    ),
     t('克隆机器人'),
-
     {
       confirmButtonText: t('确认'),
       cancelButtonText: t('取消'),
+      dangerouslyUseHTMLString: true,
       type: 'warning'
     }
   )
     .then(() => {
-      cloneDomainRobotSubmit(slug, is_need_document, robotName)
+      cloneDomainRobotSubmit(id, 1, name)
     })
     .catch(() => {})
-}
-
-const cloneRobot = async (id: string, name: string) => {
-  ElMessageBox.confirm(t('复制并新建此机器人，是否需要包含知识库？'), t('克隆机器人'), {
-    confirmButtonText: t('包含'),
-    cancelButtonText: t('不包含'),
-    distinguishCancelAndClose: true,
-    type: 'warning'
-  })
-    .then(() => {
-      cloneRobotSubmit(id, name, 1)
-    })
-    .catch((action: Action) => {
-      action === 'cancel' ? cloneRobotSubmit(id, name, 0) : ''
-    })
 }
 
 watch(

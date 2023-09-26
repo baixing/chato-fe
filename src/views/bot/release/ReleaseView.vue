@@ -19,7 +19,6 @@ import { EBrandCreateEditStatusType, EBrandDomainStatusType } from '@/enum/domai
 import { ECreatePublicType, ETabPublicType } from '@/enum/release'
 import { ESpaceCommercialType, ESpaceRightsType } from '@/enum/space'
 import type {
-  IPlatFormListProps,
   IRobotQrCodeInfoProps,
   IBrandDomainTypeKeyFile,
   ICreateSitesChannelsRes,
@@ -44,7 +43,6 @@ import { storeToRefs } from 'pinia'
 import { computed, onMounted, onUnmounted, ref, watch, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
-import PlatFormList from './components/PlatFormList.vue'
 import ReleaseBox from './components/ReleaseBox.vue'
 import SerachApi from './components/apiCall/SerachApi.vue'
 import ApplicationForm from './components/application/ApplicationForm.vue'
@@ -277,12 +275,6 @@ const createPublicDialog = async () => {
   createPublicVisible.value = true
   robotQrCodeInfo.value = {}
 }
-
-const platformList: IPlatFormListProps[] = [
-  { title: 'QQ', icon: 'qq' },
-  { title: 'APP', icon: 'app-store' },
-  { title: t('小程序'), icon: 'applets' }
-]
 
 // 蒙层
 const maskVisible = computed(() => {
@@ -615,13 +607,20 @@ onMounted(() => {
           </ReleaseBox>
         </div>
       </div>
-      <PlatFormList :platformList="platformList" />
+      <div class="flex justify-center items-center text-[#9da3af] font-medium text-sm mt-[36px]">
+        {{ $t('发布平台持续迭代中，如有其他发布诉求请反馈至') }}
+        <el-button
+          type="primary"
+          link
+          @click="checkRightsTypeNeedUpgrade(ESpaceRightsType.default)"
+        >
+          {{ $t('产品顾问') }}
+        </el-button>
+      </div>
     </div>
-
     <ApplicationForm
       v-else
       @handleUpdateOrgInfo="handleUpdateOrgInfo"
-      :platformList="platformList"
       :org_id="userInfo.org.id"
       :org_user_id="userInfo.id"
     />
