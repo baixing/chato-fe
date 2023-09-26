@@ -92,11 +92,9 @@ provide(SymChatMessageAudioTTSParams, audioTTSParams)
       <div class="flex justify-start items-center">
         <div
           v-if="message.status === EWsMessageStatus.pending"
-          class="message-box !py-0 !rounded-tl-none"
+          class="message-box !rounded-tl-none"
         >
-          <div class="dot-loading">
-            <div class="dot-flashing"></div>
-          </div>
+          <div class="cursor-flash"></div>
         </div>
         <div
           v-else
@@ -111,8 +109,8 @@ provide(SymChatMessageAudioTTSParams, audioTTSParams)
         >
           <div
             :class="[
-              'w-10 h-10 leading-7 text-xl absolute top-1/2 -translate-y-1/2 text-center cursor-pointer text-[#878787] rounded-full hover:bg-[#f2f3f5]',
-              isQuestionMessage ? '-left-12' : '-right-12',
+              'absolute bottom-3 flex items-end justify-center text-[#B5BED0] cursor-pointer rounded-full transition-colors hover:text-[#303133]',
+              isQuestionMessage ? '-left-5' : '-right-5',
               (message.displayType === EMessageDisplayType.answer &&
                 message.questionId &&
                 !isLoadingAnswer) ||
@@ -122,7 +120,7 @@ provide(SymChatMessageAudioTTSParams, audioTTSParams)
             ]"
             @click="(e) => onMore(e, message)"
           >
-            ...
+            <svg-icon name="more-vertical" svg-class="w-4 h-4" />
           </div>
           <div
             v-if="
@@ -256,56 +254,27 @@ provide(SymChatMessageAudioTTSParams, audioTTSParams)
 <style lang="scss" scoped>
 .message-box {
   max-width: 100%;
-  @apply min-h-[32px] p-3 leading-normal text-[#2f3447] whitespace-pre-wrap break-all bg-[#f2f3f5] rounded-tr-2xl rounded-bl-2xl rounded-tl-sm rounded-br-2xl text-left text-base;
+  @apply min-h-[32px] py-3 px-4 leading-normal text-[#2f3447] whitespace-pre-wrap break-all bg-[#f2f3f5] rounded-tr-2xl rounded-bl-2xl rounded-tl-sm rounded-br-2xl text-left text-[15px];
 }
 
-.dot-loading {
-  @apply w-10;
-  display: inline-block;
-  box-sizing: border-box;
-  vertical-align: sub;
-
-  .dot-flashing {
-    @apply w-2 h-2;
-    position: relative;
-    border-radius: 100%;
-    animation: dotFlashing 0.6s infinite linear alternate;
-    animation-delay: 0s;
-
-    &::before,
-    &::after {
-      @apply w-2 h-2;
-      content: '';
-      display: inline-block;
-      position: absolute;
-      top: 0;
-      border-radius: 100%;
-      animation: dotFlashing 0.6s infinite alternate;
-    }
-
-    &::before {
-      @apply left-4;
-      animation-delay: 0.3s;
-    }
-
-    &::after {
-      @apply left-8;
-      animation-delay: 0.6s;
-    }
-  }
+.cursor-flash {
+  width: 4px;
+  height: 20px;
+  background: #303133;
+  animation: 0.6s flicker infinite;
 }
 
-@keyframes dotFlashing {
-  0% {
-    background-color: #000;
+@keyframes flicker {
+  from {
+    opacity: 0;
   }
 
-  75% {
-    background-color: #fff;
+  50% {
+    opacity: 1;
   }
 
   100% {
-    background-color: #fff;
+    opacity: 0;
   }
 }
 </style>

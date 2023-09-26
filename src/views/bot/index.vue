@@ -38,6 +38,7 @@
     :key="route.name"
     :class="['bg-white pt-8 lg:pt-4', route.name === RoutesMap.tranning.botChat && '!p-0']"
     :center-full="route.name === RoutesMap.tranning.botChat"
+    :full="route.name === RoutesMap.tranning.botChat"
   >
     <router-view />
   </ContentLayout>

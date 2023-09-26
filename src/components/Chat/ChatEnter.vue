@@ -1,14 +1,11 @@
 <template>
-  <div class="input-box lg:!p-0">
+  <div class="input-box">
     <el-tooltip :disabled="isMobile" :content="t(`清空历史消息`)" placement="top" :hide-after="0">
       <span
         data-sensors-click
         id="Chato_chat_delete_click"
         :data-sensors-question-id="internalLastQuestionId"
-        :class="[
-          'w-12 h-12 flex items-center justify-center rounded-full shrink-0 cursor-pointer transition-colors hover:bg-[#f2f3f5]',
-          internalHiddenClear && 'hidden'
-        ]"
+        :class="['input-icon-btn', internalHiddenClear && '!hidden']"
         @click="emit('clear')"
       >
         <svg-icon name="chat-clear" svg-class="w-6 h-6 text-[#303133]" />
@@ -24,10 +21,7 @@
         </span>
       </el-tooltip>
       <el-tooltip :disabled="isMobile" :content="t('切换键盘')" placement="top" :hide-after="0">
-        <span
-          class="w-12 h-12 flex items-center justify-center rounded-full shrink-0 cursor-pointer transition-colors hover:bg-[#f2f3f5]"
-          @click="chatEnterType = EDomainConversationMode.text"
-        >
+        <span class="input-icon-btn" @click="chatEnterType = EDomainConversationMode.text">
           <svg-icon name="chat-keyboard" svg-class="w-6 h-6 text-[#303133]" />
         </span>
       </el-tooltip>
@@ -37,7 +31,7 @@
         <el-input
           resize="none"
           type="textarea"
-          :autosize="{ minRows: 1, maxRows: 5 }"
+          :autosize="{ maxRows: 5 }"
           v-model="internalValue"
           :placeholder="t(inputPlaceholder)"
           :disabled="internalEnterDisabled"
@@ -51,15 +45,18 @@
             data-script="Chato-send-question"
             class="send-btn transition-colors"
           >
-            <svg-icon svg-class="w-6 h-6 text-[#B5BED0]" name="chat-send" />
+            <svg-icon
+              :svg-class="[
+                'w-6 h-6 text-[#B5BED0] transition-colors',
+                internalValue && '!text-[#7C5CFC]'
+              ]"
+              name="chat-send"
+            />
           </span>
         </el-tooltip>
       </div>
       <el-tooltip :disabled="isMobile" :content="t('语音输入')" placement="top" :hide-after="0">
-        <span
-          @click="onRecording"
-          class="flex w-12 h-12 rounded-full overflow-hidden items-center justify-center cursor-pointer transition-colors hover:bg-[#f2f3f5]"
-        >
+        <span @click="onRecording" class="input-icon-btn">
           <svg-icon svg-class="w-6 h-6 text-[#303133]" name="chat-sound" />
         </span>
       </el-tooltip>
@@ -95,7 +92,7 @@
         >
           <svg-icon svg-class="w-5 h-5 text-white" name="chat-sound" />
         </span>
-        <el-button link type="info" :disabled="!internalValue" @click="onSend">
+        <el-button link type="info" :disabled="!internalValue" @click="onSendRecorder">
           {{ t('发送') }}
         </el-button>
         <div v-show="isRecording" class="recorder-popup"></div>
@@ -170,6 +167,9 @@ const onAudioChat = (str) => {
 // --- 语音对话逻辑 end ---
 
 const onRecorderUpdateStr = (str) => {
+  if (internalEnterDisabled.value) {
+    return
+  }
   emit('update:value', str)
   onAudioChat(str)
 }
@@ -219,16 +219,20 @@ const onClearRecorder = () => {
 const onCloseRecorder = () => {
   if (isRecording.value) {
     stopRecording()
+    onClearRecorder()
   }
   internalEnterDisabled.value = false
   chatRecordingEnterVisible.value = false
-  onClearRecorder()
+}
+
+const onSendRecorder = () => {
+  onCloseRecorder()
+  onSend()
 }
 
 // 消息发送
 const onSend = () => {
   emit('submit')
-  onCloseRecorder()
 }
 
 // 语音对话，进来就开启录音
@@ -271,21 +275,26 @@ onBeforeUnmount(() => {
 
 <style lang="scss" scoped>
 .input-box {
-  @apply gap-2 mb-3 pl-4 pr-2;
+  @apply gap-1 mb-3 px-4;
   display: flex;
   align-items: center;
   justify-content: center;
   flex: 0 0 auto;
   background-color: #fff;
   position: relative;
+  box-sizing: border-box;
+
+  .input-icon-btn {
+    @apply w-12 h-12 flex items-center justify-center rounded-full shrink-0 cursor-pointer transition-colors hover:bg-[#f2f3f5] lg:w-8 lg:h-8;
+  }
 
   .input-box-content {
-    @apply rounded-3xl p-2;
+    @apply rounded-3xl py-1 pl-4 pr-1;
     flex: 1;
     display: flex;
     align-items: center;
     border: 1px solid #e4e7ed;
-    min-height: 48px;
+    min-height: 44px;
     box-sizing: border-box;
   }
 
@@ -297,6 +306,7 @@ onBeforeUnmount(() => {
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 
     &:hover {
       background-color: #f2f3f5;
@@ -312,11 +322,14 @@ onBeforeUnmount(() => {
   }
 
   :deep(.el-textarea__inner) {
-    @apply text-base;
     box-shadow: none;
     font-weight: normal;
     flex: 1;
     color: #303133;
+    padding: 0 12px 0 0;
+    font-size: 15px;
+    line-height: 15px;
+    min-height: 15px !important;
 
     &::placeholder {
       color: #9da3af;
@@ -330,11 +343,11 @@ onBeforeUnmount(() => {
 }
 
 .recorder-container {
-  @apply left-2 right-2 h-44 rounded-2xl px-5 py-4 text-sm leading-6;
+  @apply left-[24%] right-[24%] lg:left-4 lg:right-4 xl:left-[12%] xl:right-[12%] 2xl:left-[18%] 2xl:right-[18%] h-44 rounded-2xl px-5 py-4 text-sm leading-6;
   position: absolute;
   z-index: 3;
   bottom: 0;
-  box-shadow: 0px 0px 8px 2px rgba(0, 0, 0, 0.16);
+  box-shadow: 0px 8px 32px 0px rgba(0, 0, 0, 0.16);
   box-sizing: border-box;
   background-color: #fff;
   border: 1px solid #e4e7ed;

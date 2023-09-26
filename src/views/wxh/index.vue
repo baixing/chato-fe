@@ -71,10 +71,18 @@ watch(chatRef, (v) => {
 
   .chat-wxh {
     max-width: none;
-    padding: 0 24px;
     width: 100%;
     box-sizing: border-box;
     font-size: 100px;
+
+    .chat-center {
+      padding: 0 24px !important;
+    }
+
+    .recorder-container {
+      left: 24px !important;
+      right: 24px !important;
+    }
   }
 
   .linear-bg-block {

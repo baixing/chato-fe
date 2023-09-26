@@ -31,7 +31,7 @@
         <svg-icon name="audio" color="#2F3447" v-else-if="item.type === EMessageActionType.audio" />
         <component v-else :is="item.icon" />
       </el-icon>
-      {{ $t(item.title) }}
+      {{ t(item.title) }}
     </li>
   </ul>
 </template>
@@ -54,6 +54,7 @@ import {
 } from '@element-plus/icons-vue'
 import { ElMessageBox, ElNotification } from 'element-plus'
 import { computed, inject, nextTick, ref, watch, type HTMLAttributes, type Ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{
   message: IMessageItem
@@ -97,6 +98,8 @@ const internalMoreActions = computed(() =>
 )
 const internalPositionStyle = ref<HTMLAttributes['style']>()
 
+const { t } = useI18n()
+
 const onTranslate = async (content: string, questionId: number) => {
   try {
     const params = {
@@ -109,14 +112,14 @@ const onTranslate = async (content: string, questionId: number) => {
     } = await translate(params)
     emit('translateSuccess', questionId, data.text)
   } catch (err) {
-    ElNotification.error('翻译失败！')
+    ElNotification.error(t('翻译失败'))
   }
 }
 
 const onDelete = async (questionId: number) => {
-  await ElMessageBox.confirm('是否删除该条消息？', '删除消息', {
-    confirmButtonText: '确认',
-    cancelButtonText: '取消',
+  await ElMessageBox.confirm(t('是否删除该条消息？'), t('删除消息'), {
+    confirmButtonText: t('确认'),
+    cancelButtonText: t('取消'),
     type: 'warning'
   })
 
@@ -133,7 +136,7 @@ const onDelete = async (questionId: number) => {
   }
 
   await deleteSession(params)
-  ElNotification.success('删除成功！')
+  ElNotification.success(t('删除成功'))
   emit('deleteSuccess', questionId, internalMessage.value.displayType)
 }
 
@@ -179,7 +182,7 @@ const onMoreAction = (action: EMessageActionType) => {
       onDelete(questionId)
       break
     case EMessageActionType.expand:
-      emit('sendMessage', '请你拓展出更多的回答')
+      emit('sendMessage', t('请你拓展出更多的回答'))
       break
     case EMessageActionType.retry:
       emit('sendMessage', content)

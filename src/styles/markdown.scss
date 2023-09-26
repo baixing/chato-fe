@@ -70,6 +70,7 @@ pre code {
   color: inherit;
   white-space: normal;
   background-color: transparent;
+  font-size: 15px;
   pre {
     background-color: #272822 !important;
   }
@@ -117,5 +118,10 @@ pre code {
     height: 1px;
     margin: 16px 0;
     background-color: #d2d8e5;
+  }
+
+  a:hover {
+    opacity: 0.8;
+    text-decoration: none;
   }
 }

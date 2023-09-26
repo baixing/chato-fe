@@ -13,7 +13,7 @@
       <span>{{ detail.name || '...' }}</span>
     </div>
     <div
-      :class="['flex flex-col max-w-[800px] mx-auto h-full w-full overflow-hidden', chatClassName]"
+      :class="['flex flex-col h-full w-full overflow-hidden', chatClassName]"
       v-loading="$isLoading"
       element-loading-background="#F2F3F5"
     >
@@ -22,7 +22,7 @@
       </div>
       <div
         v-else
-        :class="['chat-history', isNeedChatXPadding && '!px-4']"
+        class="chat-history chat-center"
         @scroll="onChatHistoryScroll"
         ref="refChatHistory"
       >
@@ -101,6 +101,7 @@
         @input-click="scrollChatHistory"
         @clear="clearChatHistory"
         @submit="submit"
+        class="chat-center"
       />
 
       <div v-if="footerBrand.show" class="page-main-power site-logo">
@@ -277,9 +278,6 @@ const socketResult = ref({
 const watermark = ref<Watermark>()
 const showPreview = ref(false)
 const previewImageUrl = ref('')
-const isNeedChatXPadding = computed(() =>
-  [RoutesMap.chat.c, RoutesMap.manager.create].includes(route.name as string)
-)
 const sensorsQuestionId = computed(() => history.value?.[history.value.length - 1]?.questionId)
 
 const DefaultChatHistoryPage = {
@@ -519,17 +517,16 @@ const onPlayAudio = async (text: string, playerId: string) => {
 
 const beforeSubmit = async () => {
   // C 端对话额度限制，B 端对话额度限制走流式
-  if (!isInternal) {
-    if (quotaUpperLimit.value) {
-      ElMessage.warning(t('电力值不足，更多电力值请咨询产品顾问'))
-      return false
-    }
+  if (!isInternal && quotaUpperLimit.value) {
+    ElMessage.warning(t('电力值不足，更多电力值请咨询产品顾问'))
+    return false
   }
   return true
 }
 
 const submit = async (str = '') => {
   const beforeSubmitCheckRes = await beforeSubmit()
+  // alert(JSON.stringify({ inputText: inputText.value, str, beforeSubmitCheckRes }))
   const text = String(str || inputText.value).trim()
 
   // 无额度
@@ -1179,6 +1176,10 @@ defineExpose({
   max-width: 100vw;
   overflow-x: hidden;
   overflow-y: auto;
+}
+
+.chat-center {
+  @apply px-[24%] lg:px-4 xl:px-[12%] 2xl:px-[18%];
 }
 
 .MessageItem {
