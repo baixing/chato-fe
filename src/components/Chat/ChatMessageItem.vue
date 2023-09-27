@@ -235,13 +235,13 @@ provide(SymChatMessageAudioTTSParams, audioTTSParams)
         <div v-else-if="isLast" class="flex items-center gap-2">
           <svg-icon
             name="good-default"
-            svg-class="w-5 h-5 text-[#303133] cursor-pointer transition-colors hover:!text-[var(--hoverColor)]"
+            svg-class="w-4 h-4 text-[#303133] cursor-pointer transition-colors hover:!text-[var(--hoverColor)]"
             :style="{ '--hoverColor': detail.message_style }"
             @click="emit('evaluate', message.questionId, EMessageEvalution.like)"
           />
           <svg-icon
             name="no-good-default"
-            svg-class="w-5 h-5 text-[#303133] cursor-pointer transition-colors hover:!text-[var(--hoverColor)]"
+            svg-class="w-4 h-4 text-[#303133] cursor-pointer transition-colors hover:!text-[var(--hoverColor)]"
             :style="{ '--hoverColor': detail.message_style }"
             @click="emit('evaluate', message.questionId, EMessageEvalution.dislike)"
           />
@@ -258,8 +258,8 @@ provide(SymChatMessageAudioTTSParams, audioTTSParams)
 }
 
 .cursor-flash {
-  width: 4px;
-  height: 20px;
+  width: 6px;
+  height: 16px;
   background: #303133;
   animation: 0.6s flicker infinite;
 }

@@ -65,39 +65,41 @@
       v-show="internalEnterDisabled"
       class="absolute top-0 right-0 bottom-0 left-0 cursor-not-allowed bg-[#ffffffa3] z-[1]"
     />
-    <div v-show="chatRecordingEnterVisible" class="recorder-container">
-      <el-icon size="16" color="#596780" @click="onCloseRecorder" class="close-icon">
-        <Close />
-      </el-icon>
-      <el-input
-        v-if="internalValue"
-        v-model="internalValue"
-        :disabled="isRecording"
-        resize="none"
-        :rows="4"
-        type="textarea"
-        class="pr-5"
-      />
-      <div v-else class="text-center text-sm leading-5 space-y-2 mt-7">
-        <p class="font-medium">{{ t('想问什么，说来听听...') }}</p>
-        <p class="text-[#9DA3AF] leading-4 text-xs">{{ t('点击下方语音图标可停止录音') }}</p>
+    <Teleport to="body">
+      <div v-show="chatRecordingEnterVisible" class="recorder-container">
+        <el-icon size="16" color="#596780" @click="onCloseRecorder" class="close-icon">
+          <Close />
+        </el-icon>
+        <el-input
+          v-if="internalValue"
+          v-model="internalValue"
+          :disabled="isRecording"
+          resize="none"
+          :rows="4"
+          type="textarea"
+          class="pr-5"
+        />
+        <div v-else class="text-center text-sm leading-5 space-y-2 mt-7">
+          <p class="font-medium">{{ t('想问什么，说来听听...') }}</p>
+          <p class="text-[#9DA3AF] leading-4 text-xs">{{ t('点击下方语音图标可停止录音') }}</p>
+        </div>
+        <div class="flex gap-10 items-center justify-center relative">
+          <el-button link type="info" :disabled="!internalValue" @click="onClearRecorder">
+            {{ t('清空') }}
+          </el-button>
+          <span
+            @click="onRecording"
+            class="flex w-9 h-9 rounded-full overflow-hidden bg-[#7C5CFC] items-center justify-center cursor-pointer transition-opacity hover:opacity-80"
+          >
+            <svg-icon svg-class="w-5 h-5 text-white" name="chat-sound" />
+          </span>
+          <el-button link type="info" :disabled="!internalValue" @click="onSendRecorder">
+            {{ t('发送') }}
+          </el-button>
+          <WaterRipples v-show="isRecording" />
+        </div>
       </div>
-      <div class="flex gap-10 items-center justify-center relative">
-        <el-button link type="info" :disabled="!internalValue" @click="onClearRecorder">
-          {{ t('清空') }}
-        </el-button>
-        <span
-          @click="onRecording"
-          class="flex w-9 h-9 rounded-full overflow-hidden bg-[#7C5CFC] items-center justify-center cursor-pointer transition-opacity hover:opacity-80"
-        >
-          <svg-icon svg-class="w-5 h-5 text-white" name="chat-sound" />
-        </span>
-        <el-button link type="info" :disabled="!internalValue" @click="onSendRecorder">
-          {{ t('发送') }}
-        </el-button>
-        <WaterRipples v-show="isRecording" />
-      </div>
-    </div>
+    </Teleport>
   </div>
 </template>
 
@@ -350,7 +352,7 @@ onBeforeUnmount(() => {
   @apply left-[24%] right-[24%] lg:left-4 lg:right-4 xl:left-[12%] xl:right-[12%] 2xl:left-[18%] 2xl:right-[18%] h-44 rounded-2xl px-5 py-4 text-sm leading-6;
   position: absolute;
   z-index: 3;
-  bottom: 0;
+  bottom: 8px;
   box-shadow: 0px 8px 32px 0px rgba(0, 0, 0, 0.16);
   box-sizing: border-box;
   background-color: #fff;
@@ -372,6 +374,12 @@ onBeforeUnmount(() => {
 
   :deep(.el-textarea__inner) {
     padding: 0;
+    font-size: 15px;
+    line-height: 1.5;
+    border: none;
+    box-shadow: none;
+    color: #303133;
+    background-color: transparent;
   }
 }
 
