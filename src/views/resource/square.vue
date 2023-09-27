@@ -28,7 +28,9 @@
             <div class="text-[#596780] text-sm font-medium mb-2 truncate pr-6 lg:pr-0">
               {{ c.name }}
             </div>
-            <p class="text-[#9DA3AF] text-xs line-clamp-2 h-8">{{ c.desc }}</p>
+            <p class="text-[#9DA3AF] text-xs line-clamp-2 h-8" style="word-break: break-all">
+              {{ c.desc }}
+            </p>
           </div>
           <el-icon class="enter-icon text-[#596780]"><SortUp /></el-icon>
         </div>
