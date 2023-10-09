@@ -1124,7 +1124,7 @@ watch(
         sayWelcome()
       }
     } else {
-      const newHistory = history.value.filter((item) => item.isWelcome)
+      const newHistory = history.value.filter((item) => !item.isWelcome)
       history.value = newHistory
     }
   },

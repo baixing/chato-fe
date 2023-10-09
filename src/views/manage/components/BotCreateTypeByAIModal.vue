@@ -42,7 +42,7 @@ import Modal from '@/components/Modal/index.vue'
 import { EDomainAIGenerateType } from '@/enum/domain'
 import SSE from '@/utils/sse'
 import type { FormInstance, FormRules } from 'element-plus'
-import { computed, reactive, ref, watch } from 'vue'
+import { computed, nextTick, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{
@@ -57,13 +57,12 @@ const internalVisible = computed({
 
 const { t } = useI18n()
 
-let formState = reactive<{
-  role: string
-  role_requirement: string
-}>({
+const defaultFormState = {
   role: '',
   role_requirement: ''
-})
+}
+
+let formState = reactive({ ...defaultFormState })
 const formRef = ref<FormInstance>()
 const formRules = reactive<FormRules>({
   role: [{ required: true, message: t('角色名字不能为空'), trigger: 'change' }]
@@ -101,6 +100,7 @@ const onSSE = (type: EDomainAIGenerateType, prompt?: string) => {
 const onSubmit = async () => {
   try {
     await formRef.value.validate()
+    SSEPromptRes = ''
     emit('submit', formState.role, formState.role_requirement)
     const res = await onSSE(EDomainAIGenerateType.role)
     const allPromises = [EDomainAIGenerateType.intro, EDomainAIGenerateType.welcome].map((item) =>
@@ -114,7 +114,13 @@ const onSubmit = async () => {
 }
 
 watch(internalVisible, (v) => {
-  v && (formState.role = '')
+  if (!v) {
+    return
+  }
+  Object.assign(formState, defaultFormState)
+  nextTick(() => {
+    formRef.value?.clearValidate()
+  })
 })
 </script>
 <style lang="scss" scoped>

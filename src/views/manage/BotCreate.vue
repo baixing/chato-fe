@@ -56,6 +56,11 @@
             type="text"
             size="default"
             :limit="HansLimit.name"
+            :disabled="
+              AIGenerateInputDisabled.system_prompt &&
+              AIGenerateInputDisabled.desc &&
+              AIGenerateInputDisabled.welcome
+            "
             class="flex-1"
           />
         </div>
@@ -68,7 +73,7 @@
             :role-requirement="roleRequirement"
             :system-prompt="formState.system_prompt"
             :type="EDomainAIGenerateType.role"
-            :disabled="!formState.name"
+            :disabled="!formState.name || AIGenerateInputDisabled.system_prompt"
             disabled-tip="请填写名字后生成"
             @start="AIGenerateInputDisabled.system_prompt = true"
             @end="AIGenerateInputDisabled.system_prompt = false"
@@ -124,7 +129,7 @@
             :role-requirement="roleRequirement"
             :system-prompt="formState.system_prompt"
             :type="EDomainAIGenerateType.intro"
-            :disabled="!formState.system_prompt || !formState.name"
+            :disabled="!formState.system_prompt || !formState.name || AIGenerateInputDisabled.desc"
             disabled-tip="请填写名字和角色设定后生成"
             @start="AIGenerateInputDisabled.desc = true"
             @end="AIGenerateInputDisabled.desc = false"
@@ -148,7 +153,9 @@
             :role-requirement="roleRequirement"
             :system-prompt="formState.system_prompt"
             :type="EDomainAIGenerateType.welcome"
-            :disabled="!formState.system_prompt || !formState.name"
+            :disabled="
+              !formState.system_prompt || !formState.name || AIGenerateInputDisabled.welcome
+            "
             disabled-tip="请填写名字和角色设定后生成"
             @start="AIGenerateInputDisabled.welcome = true"
             @end="AIGenerateInputDisabled.welcome = false"
@@ -614,6 +621,17 @@ watch(
   () => formState.id,
   (v) => {
     v && initFilesList()
+  }
+)
+
+watch(
+  () => formState.name,
+  (newName, oldName) => {
+    if (newName !== oldName && (formState.system_prompt || formState.welcome || formState.desc)) {
+      formState.desc = ''
+      formState.welcome = ''
+      formState.system_prompt = ''
+    }
   }
 )
 
