@@ -78,7 +78,7 @@
 <script setup lang="ts">
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
 import type { FormInstance, FormRules } from 'element-plus'
-import { reactive, ref, computed, watch } from 'vue'
+import { reactive, ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { IAccountList } from '@/interface/release'
 
@@ -87,7 +87,6 @@ const props = withDefaults(
     userRoute: string
     nameRequired: boolean
     accountList: IAccountList[]
-    visible: boolean
   }>(),
   {
     nameRequired: false
@@ -109,21 +108,16 @@ const rulesCreateGroup = reactive<FormRules>({
       message: t('请输入群聊名称')
     }
   ],
-  robot_response_type: [{ required: true, trigger: 'blur', message: t('请选择回复方式') }],
-  custom_robot_wx_user_id: [
-    {
-      required: true,
-      trigger: 'blur',
-      message: t('请选择账号')
-    }
-  ]
+  robot_response_type: [{ required: true, trigger: 'blur', message: t('请选择回复方式') }]
 })
 
 const inputCreateGroupForm = reactive({
   name: '',
   robot_response_type: '1',
   new_user_msg: '',
-  custom_robot_wx_user_id: ''
+  custom_robot_wx_user_id: accountListSelect.value.length
+    ? accountListSelect.value[0].wx_user_id
+    : ''
 })
 
 const handleStep = async (formEl: FormInstance | undefined) => {
@@ -136,12 +130,4 @@ const handleStep = async (formEl: FormInstance | undefined) => {
     }
   })
 }
-
-watch(
-  () => props.visible,
-  () => {
-    inputCreateGroupForm.custom_robot_wx_user_id = ''
-  },
-  { immediate: true }
-)
 </script>
