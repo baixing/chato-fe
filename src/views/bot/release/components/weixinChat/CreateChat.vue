@@ -27,13 +27,12 @@
             <UpgrateVersion
               v-if="!isShowInvite"
               class="!justify-start"
-              class-name="h-[200px] md:w-full md:h-auto w-[80%]"
+              class-name="md:w-full md:h-auto w-[80%]"
             />
             <CreateGroupForm
               v-else
               :userRoute="userRoute"
               :account-list="accountList"
-              :visible="visible"
               @handleSubmit="handleCreateGroup"
               @handleCreateAccount="handleCreateAccount"
             />
@@ -43,7 +42,6 @@
             v-else
             :userRoute="userRoute"
             :name-required="true"
-            :visible="visible"
             :account-list="accountList"
             @handleSubmit="handleCreateGroup"
             @handleCreateAccount="handleCreateAccount"
