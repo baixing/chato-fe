@@ -61,6 +61,7 @@
               AIGenerateInputDisabled.desc &&
               AIGenerateInputDisabled.welcome
             "
+            @change="onRoleNameChange"
             class="flex-1"
           />
         </div>
@@ -568,6 +569,12 @@ const checkNeedContinueToEdit = () => {
   })
 }
 
+const onRoleNameChange = () => {
+  formState.desc = ''
+  formState.welcome = ''
+  formState.system_prompt = ''
+}
+
 const beforeSaveCheck = () => {
   let msg = ''
 
@@ -621,17 +628,6 @@ watch(
   () => formState.id,
   (v) => {
     v && initFilesList()
-  }
-)
-
-watch(
-  () => formState.name,
-  (newName, oldName) => {
-    if (newName !== oldName && (formState.system_prompt || formState.welcome || formState.desc)) {
-      formState.desc = ''
-      formState.welcome = ''
-      formState.system_prompt = ''
-    }
   }
 )
 

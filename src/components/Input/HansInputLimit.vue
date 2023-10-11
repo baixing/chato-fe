@@ -9,6 +9,7 @@
       :autosize="autosize"
       :placeholder="placeholder"
       :disabled="internalDisabled"
+      @change="emit('change')"
       @blur="emit('blurInput')"
       @keyup.enter="emit('keyupEnter')"
       :style="{
@@ -57,13 +58,16 @@ const props = withDefaults(
 
 const { limit, type, size, rows, autosize, placeholder } = toRefs(props)
 
-const emit = defineEmits(['update:value', 'blurInput', 'keyupEnter'])
+const emit = defineEmits(['update:value', 'blurInput', 'keyupEnter', 'change'])
 
 const innerLimitEl = ref<HTMLDivElement>()
 
 const internalValue = computed({
   get: () => props.value,
-  set: (val) => emit('update:value', val)
+  set: (val) => {
+    emit('update:value', val)
+    emit('change')
+  }
 })
 
 const internalDisabled = computed(() => props.disabled)
