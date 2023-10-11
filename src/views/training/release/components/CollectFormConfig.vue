@@ -33,86 +33,95 @@
       @change="onFormAbled"
     />
   </div>
-  <el-dialog
-    v-model="dialogVisible"
-    :title="$t('收集表单')"
-    :width="isMobile ? '80%' : '40%'"
-    @close="onCloseDialog"
-  >
-    <el-form ref="formRef" label-position="top" :model="formState" class="collect-form">
-      <el-form-item :label="$t('表单标题')" prop="title" required :rules="formRules.title">
+  <Modal v-model:visible="dialogVisible" title="收集表单" @close="onCloseDialog">
+    <el-form ref="formRef" label-position="top" :model="formState" class="chato-form">
+      <el-form-item
+        :label="$t('表单标题')"
+        prop="title"
+        required
+        :rules="formRules.title"
+        class="!mb-4"
+      >
         <el-input
           v-model="formState.title"
           :placeholder="$t('标题将展示在广告内，用户可点击后展开表单')"
         />
       </el-form-item>
-      <div class="mb-3 text-[#303133]">{{ $t('表单条目') }}</div>
-      <el-row :gutter="8" class="mb-3 text-[#596780]">
-        <el-col :span="6">{{ $t('类型') }}</el-col>
-        <el-col :span="11">{{ $t('问题') }}</el-col>
-        <el-col :span="3">{{ $t('必填') }}</el-col>
-        <el-col :span="4">{{ $t('操作') }}</el-col>
-      </el-row>
-      <draggable
-        tag="ul"
-        v-model="formState.fields"
-        group="fields"
-        handle=".handle"
-        item-key="sort"
-        @start="drag = true"
-        @end="drag = false"
-      >
-        <template #item="{ element, index }">
-          <el-row :gutter="12" :key="`fields_${index}`">
-            <el-col :span="6">
-              <el-form-item :prop="`fields.${index}.type`" :rules="formRules.fieldType">
-                <el-select
-                  v-model="element.type"
-                  :placeholder="$t('请选择表单类型')"
-                  :options="CustomerFormFieldTypeOptions"
-                >
-                  <el-option
-                    v-for="item in CustomerFormFieldTypeOptions"
-                    :key="item.value"
-                    :label="$t(item.label)"
-                    :value="item.value"
-                  />
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="11">
-              <el-form-item :prop="`fields.${index}.name`" :rules="formRules.fieldName">
-                <el-input v-model="element.name" :placeholder="$t('请输入问题')" />
-              </el-form-item>
-            </el-col>
-            <el-col :span="3">
-              <el-form-item :prop="`fields.${index}.required`">
-                <el-checkbox v-model="element.required" />
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              <span class="flex items-center gap-3 h-8">
-                <el-button
-                  v-show="formState.fields.length !== 1"
-                  :icon="Delete"
-                  type="danger"
-                  link
-                  class="!w-fit"
-                  @click="onRemoveFormField(index)"
-                />
-                <svg-icon
-                  name="dragger"
-                  svg-class="w-4 h-4 text-[#303133] cursor-move hover:opacity-80"
-                  class="handle"
-                ></svg-icon>
-              </span>
-            </el-col>
+      <el-form-item :label="$t('表单条目')">
+        <div>
+          <el-row :gutter="8" class="mb-3 text-[#596780]">
+            <el-col :span="6">{{ $t('类型') }}</el-col>
+            <el-col :span="11">{{ $t('问题') }}</el-col>
+            <el-col :span="3">{{ $t('必填') }}</el-col>
+            <el-col :span="4">{{ $t('操作') }}</el-col>
           </el-row>
-        </template>
-      </draggable>
-      <el-button v-show="formState.fields.length !== 5" link type="primary" @click="onAddFormField">
-        {{ $t('新增一项') }}
-      </el-button>
+          <draggable
+            tag="ul"
+            v-model="formState.fields"
+            group="fields"
+            handle=".handle"
+            item-key="sort"
+            @start="drag = true"
+            @end="drag = false"
+          >
+            <template #item="{ element, index }">
+              <el-row :gutter="12" :key="`fields_${index}`" class="mb-3">
+                <el-col :span="6">
+                  <el-form-item :prop="`fields.${index}.type`" :rules="formRules.fieldType">
+                    <el-select
+                      v-model="element.type"
+                      :placeholder="$t('请选择表单类型')"
+                      :options="CustomerFormFieldTypeOptions"
+                    >
+                      <el-option
+                        v-for="item in CustomerFormFieldTypeOptions"
+                        :key="item.value"
+                        :label="$t(item.label)"
+                        :value="item.value"
+                      />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="11">
+                  <el-form-item :prop="`fields.${index}.name`" :rules="formRules.fieldName">
+                    <el-input v-model="element.name" :placeholder="$t('请输入问题')" />
+                  </el-form-item>
+                </el-col>
+                <el-col :span="3">
+                  <el-form-item :prop="`fields.${index}.required`">
+                    <el-checkbox v-model="element.required" />
+                  </el-form-item>
+                </el-col>
+                <el-col :span="4">
+                  <span class="flex items-center gap-3 h-8">
+                    <el-button
+                      v-show="formState.fields.length !== 1"
+                      :icon="Delete"
+                      type="danger"
+                      link
+                      class="!w-fit"
+                      @click="onRemoveFormField(index)"
+                    />
+                    <svg-icon
+                      name="dragger"
+                      svg-class="w-4 h-4 text-[#303133] cursor-move hover:opacity-80"
+                      class="handle"
+                    />
+                  </span>
+                </el-col>
+              </el-row>
+            </template>
+          </draggable>
+          <el-button
+            v-show="formState.fields.length !== 5"
+            link
+            type="primary"
+            @click="onAddFormField"
+          >
+            {{ $t('新增一项') }}
+          </el-button>
+        </div>
+      </el-form-item>
     </el-form>
     <template #footer>
       <span>
@@ -120,19 +129,14 @@
         <el-button type="primary" @click="onSubmit">{{ $t('确认') }}</el-button>
       </span>
     </template>
-  </el-dialog>
+  </Modal>
 
-  <el-dialog
-    v-model="previewVisible"
-    :title="$t('预览表单')"
-    :width="isMobile ? '80%' : '40%'"
-    class="preview-dialog"
-  >
+  <Modal v-model:visible="previewVisible" title="预览表单" class="preview-dialog">
     <div class="p-4 bg-white rounded">
       <p class="text-[#303133] font-medium leading-7 text-base mb-4">{{ $t('留下联系方式') }}</p>
       <CustomerForm :id="formState.id" disabled />
     </div>
-  </el-dialog>
+  </Modal>
 </template>
 
 <script setup lang="ts">
@@ -142,6 +146,7 @@ import {
   updateCustomerFormConfigStatus
 } from '@/api/customerForm'
 import CustomerForm from '@/components/Customer/CustomerForm.vue'
+import Modal from '@/components/Modal/index.vue'
 import SwitchWithStateMsg from '@/components/SwitchWithStateMsg/index.vue'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import { CustomerFormFieldTypeOptions } from '@/constant/customerForm'
@@ -343,14 +348,6 @@ defineExpose({
   onUpdateAbleAdForm
 })
 </script>
-
-<style lang="scss" scoped>
-.collect-form {
-  :deep(.el-form-item__label) {
-    color: #303133;
-  }
-}
-</style>
 
 <style lang="scss">
 .preview-dialog {

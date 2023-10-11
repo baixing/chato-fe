@@ -1,83 +1,72 @@
 <template>
-  <div>
-    <el-dialog
-      v-model="visible"
-      :title="title"
-      :width="isMobile ? '85%' : '50%'"
-      class="dialog-box-container"
-      :before-close="() => handleCloseDialogVisble()"
-      append-to-body
+  <Modal v-model:visible="visible" :title="title" append-to-body @cancel="handleCloseDialogVisble">
+    <el-form
+      ref="ruleFormRef"
+      size="large"
+      :disabled="inputTextForm.status === 'preview'"
+      :rules="rules"
+      :model="inputTextForm"
+      class="input-text-form special-text-form"
+      @submit.prevent
     >
-      <el-form
-        ref="ruleFormRef"
-        size="large"
-        :disabled="inputTextForm.status === 'preview'"
-        :rules="rules"
-        :model="inputTextForm"
-        class="input-text-form special-text-form"
-        @submit.prevent
-      >
-        <p style="margin-top: 8px; margin-bottom: 8px; height: 24px">
-          {{ $t('关键词') }}
-        </p>
-        <el-form-item prop="title">
-          <HansInputLimit
-            v-model:value="inputTextForm.title"
-            type="text"
-            size="large"
-            :placeholder="$t(`输入关键词`)"
-            :limit="20"
-            class="w-full"
-          />
-        </el-form-item>
-        <p style="margin-top: 8px; margin-bottom: 8px; height: 24px">
-          {{ $t('回复内容') }}
-        </p>
-        <el-form-item prop="response" class="content_html_item">
-          <HansInputLimit
-            v-model:value="inputTextForm.response"
-            type="textarea"
-            :placeholder="
-              $t(`输入回复内容。如需网页链接跳转，请直接填写域名，例如:http://chato.cn`)
-            "
-            :rows="4"
-            :limit="limitTextPrompt"
-            class="w-full mb-4"
-          />
-        </el-form-item>
-        <p style="margin-bottom: 8px; height: 24px">
-          {{ $t('图片（最多上传9张）') }}
-        </p>
-        <el-form-item prop="images" class="content_html_item">
-          <ImgUpload
-            :value="inputTextForm.images"
-            @onChange="handleChange"
-            v-bind="uploadConfig"
-            :disabled="inputTextForm.status === 'preview'"
-          />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <span class="dialog-footer" v-if="inputTextForm.status !== 'preview'">
-          <el-button @click="() => emit('closeDialogVisble')">{{ $t('取消') }}</el-button>
-          <el-button type="primary" @click="submitInputText(ruleFormRef)">{{
-            $t(' 确认 ')
-          }}</el-button>
-        </span>
-      </template>
-    </el-dialog>
-  </div>
+      <p style="margin-top: 8px; margin-bottom: 8px; height: 24px">
+        {{ $t('关键词') }}
+      </p>
+      <el-form-item prop="title">
+        <HansInputLimit
+          v-model:value="inputTextForm.title"
+          type="text"
+          size="large"
+          :placeholder="$t(`输入关键词`)"
+          :limit="20"
+          class="w-full"
+        />
+      </el-form-item>
+      <p style="margin-top: 8px; margin-bottom: 8px; height: 24px">
+        {{ $t('回复内容') }}
+      </p>
+      <el-form-item prop="response" class="content_html_item">
+        <HansInputLimit
+          v-model:value="inputTextForm.response"
+          type="textarea"
+          :placeholder="$t(`输入回复内容。如需网页链接跳转，请直接填写域名，例如:http://chato.cn`)"
+          :rows="4"
+          :limit="limitTextPrompt"
+          class="w-full mb-4"
+        />
+      </el-form-item>
+      <p style="margin-bottom: 8px; height: 24px">
+        {{ $t('图片（最多上传9张）') }}
+      </p>
+      <el-form-item prop="images" class="content_html_item">
+        <ImgUpload
+          :value="inputTextForm.images"
+          @onChange="handleChange"
+          v-bind="uploadConfig"
+          :disabled="inputTextForm.status === 'preview'"
+        />
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <span class="dialog-footer" v-if="inputTextForm.status !== 'preview'">
+        <el-button @click="emit('closeDialogVisble')">{{ $t('取消') }}</el-button>
+        <el-button type="primary" @click="submitInputText(ruleFormRef)">
+          {{ $t('确认') }}
+        </el-button>
+      </span>
+    </template>
+  </Modal>
 </template>
 
 <script setup lang="ts">
 import type { MediaItem } from '@/components/ImgUpload/data'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
-import { useBasicLayout } from '@/composables/useBasicLayout'
+import Modal from '@/components/Modal/index.vue'
 import type { TDefaultShortcutProps } from '@/interface/userInterface'
 import { $notnull } from '@/utils/help'
 import { getStringWidth } from '@/utils/string'
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
-import { computed, onUnmounted, reactive, ref, watch } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
@@ -97,7 +86,7 @@ const title = computed<string>(() => {
   }
   return t('{ope}菜单栏', { ope: ope })
 })
-const { isMobile } = useBasicLayout()
+
 const visible = ref(false)
 const ruleFormRef = ref<FormInstance>()
 const uploadConfig = {
@@ -199,7 +188,7 @@ const handleCloseDialogVisble = () => {
   emit('closeDialogVisble')
 }
 
-const watchProps = watch(
+watch(
   props,
   (v) => {
     visible.value = v.dialogVisible
@@ -219,33 +208,8 @@ const watchProps = watch(
   },
   { immediate: true, deep: true }
 )
-
-onUnmounted(() => {
-  watchProps()
-})
 </script>
 <style lang="scss" scoped>
-:deep(.el-dialog__header) {
-  margin-bottom: 0 !important;
-  margin-right: 0 !important;
-}
-
-:deep(.dialog-box-container) {
-  .my-header {
-    cursor: pointer;
-    color: #54595e !important;
-    @apply flex items-center justify-between;
-
-    :deep(.el-dialog__title) {
-      color: #54595e !important;
-    }
-  }
-
-  .el-dialog__body {
-    padding: 5px 24px 0px;
-  }
-}
-
 .content_html_item {
   :deep(.el-form-item__error) {
     bottom: 0 !important;

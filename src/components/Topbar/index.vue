@@ -1,7 +1,7 @@
 <template>
   <header
     :class="[
-      'flex',
+      'flex shrink-0',
       title ? 'mt-10 mb-8 lg:my-4' : 'h-16',
       center && 'justify-center',
       slotExtra && 'justify-between'
@@ -13,12 +13,13 @@
         @click="drawerVisible = true"
         class="inline-block w-fit cursor-pointer rounded-full"
       >
-        <svg-icon name="menu-more" svg-class="w-10 h-10 text-[#303133] mt-1"></svg-icon>
+        <svg-icon name="menu-more" svg-class="w-10 h-10 text-[#303133] mt-1" />
       </span>
       <h3 v-if="title" class="text-[#303133] font-medium text-xl">{{ title }}</h3>
       <slot></slot>
     </div>
     <slot v-if="!extraInMobile || (extraInMobile && isMobile)" name="extra"></slot>
+    <slot name="secondBar"></slot>
   </header>
 </template>
 <script setup lang="ts">

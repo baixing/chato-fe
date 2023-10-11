@@ -1,10 +1,11 @@
 <template>
-  <el-dialog v-model="internalVisible" title="留下联系方式" :width="isMobile ? '80%' : '40%'">
+  <Modal v-model:visible="internalVisible" title="留下联系方式" :footer="false">
     <CustomerForm :id="internalFormId" :uid="internalUid" @cancel="onClose" @success="onClose" />
-  </el-dialog>
+  </Modal>
 </template>
 
 <script setup lang="ts">
+import Modal from '@/components/Modal/index.vue'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import { computed } from 'vue'
 import CustomerForm from './CustomerForm.vue'

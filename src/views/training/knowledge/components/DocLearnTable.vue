@@ -16,8 +16,8 @@ import { convertSize, openPreviewUrl } from '@/utils/help'
 import { ElMessageBox, ElNotification as Notification } from 'element-plus'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { selectableDeclarations } from '../config'
 import ReplaceFile from './ReplaceFile.vue'
+import { selectableDeclarations } from './config'
 
 const { t } = useI18n()
 

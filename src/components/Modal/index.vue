@@ -18,7 +18,7 @@
     <template v-if="footer" #footer>
       <slot v-if="slotFooter" name="footer"></slot>
       <span v-else>
-        <el-button @click="onCancel">{{ t('取消') }}</el-button>
+        <el-button plain @click="onCancel">{{ t('取消') }}</el-button>
         <el-button
           type="primary"
           :disabled="internalSubmitDisabled"
@@ -99,7 +99,7 @@ const onSubmit = () => {
 
 <style lang="scss">
 .chato-modal {
-  border-radius: 8px;
+  border-radius: 8px !important;
 
   .el-dialog__header {
     font-size: 20px;

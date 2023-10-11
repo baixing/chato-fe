@@ -1,11 +1,9 @@
 <template>
-  <p class="flex items-center text-sm text-[#303133] tracking-[0.13px] font-medium">
+  <div class="flex items-center text-sm text-[#303133] tracking-[0.13px] font-medium">
     <slot></slot>
-    <el-tooltip placement="right">
+    <el-tooltip v-if="tips || slotTips" placement="right">
       <template #content>
-        <p v-if="tips" class="lg:max-w-[214px]">
-          {{ tips }}
-        </p>
+        <p class="lg:max-w-[214px]">{{ tips }}</p>
         <slot name="tips"></slot>
       </template>
       <svg-icon
@@ -15,7 +13,7 @@
       />
     </el-tooltip>
     <slot name="extra"></slot>
-  </p>
+  </div>
 </template>
 
 <script setup lang="ts">

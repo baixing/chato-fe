@@ -1,10 +1,8 @@
 <template>
   <div class="w-2/5 shrink-0 bg-white relative">
     <Chat
-      :isread-route-param="true"
       :internal-props="true"
       :is-chating-practice="true"
-      type="create"
       @correctAnswer="onCorrectAnswer"
       @showDrawer="onOpenDrawer"
       chatClassName="chat-debug"

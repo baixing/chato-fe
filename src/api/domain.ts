@@ -1,4 +1,4 @@
-import type { IDomainDetail, IDomainInfo } from '@/interface/domain'
+import type { IDomainInfo } from '@/interface/domain'
 import request from '@/utils/request'
 
 export function getDomainsByOrgId(orgId) {
@@ -26,36 +26,6 @@ export const updateDomain = (domainId: string | number, data) => {
   return request<IDomainInfo | string[]>({
     method: 'patch',
     url: `/chato/api/domains/${domainId}`,
-    data
-  })
-}
-
-export function getDomainDetailV2(domainId) {
-  return request<IDomainDetail>({
-    url: `/chato/api/v2/domains/${domainId}/detail`
-  })
-}
-
-export function saveDomainV2(domainId, data) {
-  return request({
-    method: 'post',
-    url: `/chato/api/v1/domains/${domainId}/save`,
-    data
-  })
-}
-
-export function saveDomain(domain_slug, data) {
-  return request({
-    method: 'post',
-    url: `/chato/api/v1/domains/${domain_slug}/whitelist_sites/save`,
-    data
-  })
-}
-
-export function checkDomain(domain_slug, data) {
-  return request({
-    method: 'get',
-    url: `/chato/api/v1/domains/${domain_slug}/whitelist_sites/check`,
     data
   })
 }

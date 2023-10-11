@@ -60,12 +60,12 @@
         <SearchInput v-model:value="keyword" size="large" />
       </div>
       <div v-if="!isMobile" class="button-container">
-        <el-button v-if="multipleSelection.size > 0" type="primary" @click="() => handleExport()">{{
-          $t('导出当前')
-        }}</el-button>
-        <el-button type="primary" @click="() => handleExport(true)">{{
-          $t(' 导出全部 ')
-        }}</el-button>
+        <el-button v-if="multipleSelection.size > 0" type="primary" @click="() => handleExport()">
+          {{ $t('导出当前') }}
+        </el-button>
+        <el-button type="primary" @click="() => handleExport(true)">
+          {{ $t(' 导出全部 ') }}
+        </el-button>
       </div>
     </div>
 
@@ -133,9 +133,9 @@
         <el-table-column fixed="right" :label="$t(`操作`)" :width="isMobile ? 60 : 150">
           <template #default="{ row }">
             <el-button type="primary" link @click="correctAnswer(row)">{{ $t('修正') }}</el-button>
-            <el-button v-if="!isMobile" type="primary" link @click="onLinkContext(row)">{{
-              $t('查看上下文')
-            }}</el-button>
+            <el-button v-if="!isMobile" type="primary" link @click="onLinkContext(row)">
+              {{ $t('查看上下文') }}
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -354,9 +354,10 @@ const handleEvaluationCommand = (command) => {
 const onLinkContext = (row) => {
   const { id } = row
   router.push({
-    name: RoutesMap.tranning.reportContext,
+    name: RoutesMap.tranning.report,
     params: {
       ...route.params,
+      type: 'context',
       chatId: `${id}_q`
     }
   })
@@ -458,7 +459,6 @@ watch(domainId, (v) => v && init(), { immediate: true })
   padding-top: 24px;
   margin: auto;
   width: 100%;
-  overflow-x: scroll;
   .expand-ul {
     padding: 10px;
     li {

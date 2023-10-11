@@ -7,8 +7,8 @@
     class="w-[46px]"
   />
   <el-input
-    v-show="inputVisible"
     ref="inputRef"
+    v-show="inputVisible"
     v-model="internalValue"
     clearable
     :size="size"
@@ -69,7 +69,7 @@ const onInputFocus = () => {
 
 <style lang="scss" scoped>
 .search-input {
-  max-width: 240px;
+  max-width: 200px;
   :deep(.el-input-group__prepend) {
     background-color: white;
   }

@@ -62,6 +62,7 @@ init()
   scrollbar-width: none; /* Firefox */
   &::-webkit-scrollbar {
     display: none;
+    width: 0;
   }
 }
 </style>

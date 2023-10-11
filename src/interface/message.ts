@@ -1,4 +1,3 @@
-import type { EDomainConversationMode } from '@/enum/domain'
 import type {
   EMessageActionType,
   EMessageDisplayType,
@@ -6,7 +5,6 @@ import type {
   EMessageType,
   EWsMessageStatus
 } from '@/enum/message'
-import type { IOrg } from './user'
 
 export interface IMessageItem {
   type?: EMessageType
@@ -31,45 +29,6 @@ export interface IMessageShortcut {
   image: string
   response: string
   title: string
-}
-
-export interface IMessageDetail {
-  avatar: string
-  avatar_show: boolean
-  created: string
-  creator: number
-  customer_limit: string
-  desc: string
-  desc_show: number
-  file_count: number
-  id: number
-  lang: string
-  message_style: string
-  message_style_color: string
-  modified: string
-  name: string
-  name_show: boolean
-  org: IOrg
-  question_max_length: number
-  question_ref_source_show: number
-  reply_length: number
-  reply_tone: string
-  shortcuts: IMessageShortcut[]
-  slug: string
-  status: number
-  suspend_style: string
-  system_prompt: string
-  temperature: number
-  type: number
-  updater: number
-  visible: number
-  welcome: string
-  whitelist_sites: string
-  brand_logo: string
-  brand_name: string
-  brand_show: boolean
-  qa_modifiable: boolean
-  conversation_mode: EDomainConversationMode // 机器人对话类型
 }
 
 export interface IMessageCurrentSetting {

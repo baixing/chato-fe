@@ -2,11 +2,11 @@ import { ChatMessageImgLimit, ChatMessageImgLimit_Size_800 } from '@/constant/ch
 import { MANGER_ROLES } from '@/constant/common'
 import router from '@/router'
 import { useClipboard } from '@vueuse/core'
-import { ElNotification, ElMessageBox } from 'element-plus'
 import type { Action } from 'element-plus'
-import { validateURL } from './validate'
+import { ElMessageBox, ElNotification } from 'element-plus'
+import { isEqual } from 'lodash-es'
 import type { NavigationGuardNext } from 'vue-router'
-import { isEqual } from 'lodash'
+import { validateURL } from './validate'
 
 export const $notnull = (target) => {
   if (target === undefined) return false

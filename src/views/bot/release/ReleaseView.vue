@@ -2,33 +2,33 @@
 import useSpaceRights from '@/composables/useSpaceRights'
 import { currentEnvConfig } from '@/config'
 import { PaidCommercialTypes } from '@/constant/space'
-import { ESpaceCommercialType, ESpaceRightsType } from '@/enum/space'
 import { EAccountSettingStatus } from '@/enum/release'
+import { ESpaceCommercialType, ESpaceRightsType } from '@/enum/space'
 import type { ICreateAccountRes } from '@/interface/release'
 import { useBase } from '@/stores/base'
 import { useDomainStore } from '@/stores/domain'
 import { useSpaceStore } from '@/stores/space'
 import { copyPaste } from '@/utils/help'
 import {
+  ChatDotRound,
   CirclePlus,
   CopyDocument,
   Document,
   FullScreen,
   Tools,
   UploadFilled,
-  View,
-  ChatDotRound
+  View
 } from '@element-plus/icons-vue'
 import { storeToRefs } from 'pinia'
 import {
   computed,
+  defineAsyncComponent,
   onMounted,
   onUnmounted,
-  ref,
   reactive,
+  ref,
   toRefs,
   watch,
-  defineAsyncComponent,
   type Ref
 } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -71,7 +71,7 @@ const domainStoreI = useDomainStore()
 const { userInfo, orgInfo, userCommercialType } = storeToRefs(base)
 const { currentRights } = storeToRefs(spaceStoreI)
 const { domainInfo } = storeToRefs(domainStoreI)
-const userRoute = `/t/bot/${domainInfo.value.id}/user`
+const userRoute = `/t/bot/${domainInfo.value.id}/roleInfo`
 const botSlug = computed(() => domainInfo.value.slug)
 const chatWebPageBaseURL = `${currentEnvConfig.baseURL}`
 const chatReleaseURL = computed(() => {

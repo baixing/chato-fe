@@ -7,7 +7,8 @@ import {
   EMessageType,
   EWsMessageStatus
 } from '@/enum/message'
-import type { IMessageDetail, IMessageItem } from '@/interface/message'
+import type { IDomainInfo } from '@/interface/domain'
+import type { IMessageItem } from '@/interface/message'
 import type { ITTSParams } from '@/interface/tts'
 import { generatePreviewImgUrl } from '@/utils/help'
 import { detectMarkdown, renderMarkdown } from '@/utils/markdown'
@@ -18,7 +19,7 @@ import ChatMessageStatus from './ChatMessageStatus.vue'
 const props = defineProps<{
   message: IMessageItem
   isInternal: boolean
-  detail: IMessageDetail
+  detail: IDomainInfo
   isLast: boolean
   isLoadingAnswer?: boolean
   correctVisible?: boolean
@@ -88,7 +89,7 @@ provide(SymChatMessageAudioTTSParams, audioTTSParams)
     :data-id="message.id"
     :data-script="isLast ? 'Chato-lastest-message' : ''"
   >
-    <div class="cursor-pointer max-w-full" ref="bubbleRef" id="bubbleContainer">
+    <div class="max-w-full" ref="bubbleRef" id="bubbleContainer">
       <div class="flex justify-start items-center">
         <div
           v-if="message.status === EWsMessageStatus.pending"
@@ -104,7 +105,7 @@ provide(SymChatMessageAudioTTSParams, audioTTSParams)
           ]"
           :style="{
             backgroundColor: isQuestionMessage ? detail.message_style : 'auto',
-            color: isQuestionMessage ? detail.message_style_color : 'auto'
+            color: isQuestionMessage ? '#fff' : 'auto'
           }"
         >
           <div

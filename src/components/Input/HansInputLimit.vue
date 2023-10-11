@@ -6,6 +6,7 @@
       :type="type"
       :size="size"
       :rows="rows"
+      resize="none"
       :autosize="autosize"
       :placeholder="placeholder"
       :disabled="internalDisabled"
@@ -52,7 +53,7 @@ const props = withDefaults(
     disabled?: boolean
   }>(),
   {
-    size: 'large'
+    size: 'default'
   }
 )
 

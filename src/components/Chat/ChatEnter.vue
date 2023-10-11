@@ -65,41 +65,42 @@
       v-show="internalEnterDisabled"
       class="absolute top-0 right-0 bottom-0 left-0 cursor-not-allowed bg-[#ffffffa3] z-[1]"
     />
-    <Teleport to="body">
-      <div v-show="chatRecordingEnterVisible" class="recorder-container">
-        <el-icon size="16" color="#596780" @click="onCloseRecorder" class="close-icon">
-          <Close />
-        </el-icon>
-        <el-input
-          v-if="internalValue"
-          v-model="internalValue"
-          :disabled="isRecording"
-          resize="none"
-          :rows="4"
-          type="textarea"
-          class="pr-5"
-        />
-        <div v-else class="text-center text-sm leading-5 space-y-2 mt-7">
-          <p class="font-medium">{{ t('想问什么，说来听听...') }}</p>
-          <p class="text-[#9DA3AF] leading-4 text-xs">{{ t('点击下方语音图标可停止录音') }}</p>
-        </div>
-        <div class="flex gap-10 items-center justify-center relative">
-          <el-button link type="info" :disabled="!internalValue" @click="onClearRecorder">
-            {{ t('清空') }}
-          </el-button>
-          <span
-            @click="onRecording"
-            class="flex w-9 h-9 rounded-full overflow-hidden bg-[#7C5CFC] items-center justify-center cursor-pointer transition-opacity hover:opacity-80"
-          >
-            <svg-icon svg-class="w-5 h-5 text-white" name="chat-sound" />
-          </span>
-          <el-button link type="info" :disabled="!internalValue" @click="onSendRecorder">
-            {{ t('发送') }}
-          </el-button>
-          <WaterRipples v-show="isRecording" />
-        </div>
+    <div
+      v-show="chatRecordingEnterVisible"
+      :class="['recorder-container', footerBrandShow && '!-bottom-8']"
+    >
+      <el-icon size="16" color="#596780" @click="onCloseRecorder" class="close-icon">
+        <Close />
+      </el-icon>
+      <el-input
+        v-if="internalValue"
+        v-model="internalValue"
+        :disabled="isRecording"
+        resize="none"
+        :rows="4"
+        type="textarea"
+        class="pr-5"
+      />
+      <div v-else class="text-center text-sm leading-5 space-y-2 mt-7">
+        <p class="font-medium">{{ t('想问什么，说来听听...') }}</p>
+        <p class="text-[#9DA3AF] leading-4 text-xs">{{ t('点击下方语音图标可停止录音') }}</p>
       </div>
-    </Teleport>
+      <div class="flex gap-10 items-center justify-center relative">
+        <el-button link type="info" :disabled="!internalValue" @click="onClearRecorder">
+          {{ t('清空') }}
+        </el-button>
+        <span
+          @click="onRecording"
+          class="flex w-9 h-9 rounded-full overflow-hidden bg-[#7C5CFC] items-center justify-center cursor-pointer transition-opacity hover:opacity-80"
+        >
+          <svg-icon svg-class="w-5 h-5 text-white" name="chat-sound" />
+        </span>
+        <el-button link type="info" :disabled="!internalValue" @click="onSendRecorder">
+          {{ t('发送') }}
+        </el-button>
+        <WaterRipples v-show="isRecording" />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -109,8 +110,9 @@ import useAudioPlayer from '@/composables/useAudioPlayer'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import useRecognizer from '@/composables/useRecognizer'
 import { SymChatDomainDetail } from '@/constant/chat'
+import { PaidCommercialTypes } from '@/constant/space'
 import { EDomainConversationMode } from '@/enum/domain'
-import type { IMessageDetail } from '@/interface/message'
+import type { IDomainInfo } from '@/interface/domain'
 import { debounce } from 'lodash'
 import { computed, inject, nextTick, onBeforeUnmount, ref, watch, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -127,7 +129,7 @@ const emit = defineEmits(['update:value', 'inputClick', 'clear', 'submit'])
 const { t } = useI18n()
 const { isMobile } = useBasicLayout()
 
-const domainDetail = inject<Ref<IMessageDetail>>(SymChatDomainDetail)
+const domainDetail = inject<Ref<IDomainInfo>>(SymChatDomainDetail)
 
 const chatRecordingEnterVisible = ref(false)
 const chatEnterType = ref<EDomainConversationMode>(EDomainConversationMode.text)
@@ -146,6 +148,14 @@ const internalLastQuestionId = computed(() => props.lastQuestionId)
 const inputPlaceholder = computed(() =>
   isMobile.value ? '请输入问题' : '输入问题，换行可通过shift+回车'
 )
+
+const footerBrandShow = computed(() => {
+  if (PaidCommercialTypes.includes(domainDetail.value.org?.type)) {
+    return domainDetail.value.brand_show
+  } else {
+    return true
+  }
+})
 
 // 是否语音对话模式的机器人
 const isAudioChatModeDomain = computed(
@@ -281,7 +291,7 @@ onBeforeUnmount(() => {
 
 <style lang="scss" scoped>
 .input-box {
-  @apply gap-1 mb-3 px-4;
+  @apply gap-1 my-2 px-4;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -349,10 +359,11 @@ onBeforeUnmount(() => {
 }
 
 .recorder-container {
-  @apply left-[24%] right-[24%] lg:left-4 lg:right-4 xl:left-[12%] xl:right-[12%] 2xl:left-[18%] 2xl:right-[18%] h-44 rounded-2xl px-5 py-4 text-sm leading-6;
+  // left-[24%] right-[24%] xl:left-[12%] xl:right-[12%] 2xl:left-[18%] 2xl:right-[18%]
+  @apply lg:left-4 lg:right-4 left-4 right-4 h-44 rounded-2xl px-5 py-4 text-sm leading-6;
   position: absolute;
   z-index: 3;
-  bottom: 8px;
+  bottom: 0;
   box-shadow: 0px 8px 32px 0px rgba(0, 0, 0, 0.16);
   box-sizing: border-box;
   background-color: #fff;

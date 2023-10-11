@@ -23,8 +23,8 @@
     >
   </div>
 
-  <div class="flex flex-wrap gap-5">
-    <div v-for="item in spaceRightsCardList" :key="item.icon" class="rights-card lg:!w-full">
+  <div class="grid grid-cols-3 gap-5 lg:grid-cols-1 xl:grid-cols-2 lg:gap-4">
+    <div v-for="item in spaceRightsCardList" :key="item.icon" class="rights-card">
       <div
         class="rounded-lg w-8 h-8 flex items-center justify-center shrink-0"
         :style="`background-color: ${item.bg};`"
@@ -162,6 +162,5 @@ init()
   padding: 24px;
   display: flex;
   gap: 16px;
-  width: calc(33% - 10px);
 }
 </style>

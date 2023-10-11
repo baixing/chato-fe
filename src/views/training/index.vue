@@ -1,5 +1,9 @@
 <template>
-  <Topbar class="bg-white lg:relative" style="border-bottom: 1px solid #e4e7ed">
+  <Topbar
+    :center="false"
+    class="bg-white relative px-16 lg:px-4 lg:h-auto lg:flex-col"
+    style="border-bottom: 1px solid #e4e7ed"
+  >
     <el-popover
       v-model:visible="popoverVisible"
       placement="bottom"
@@ -9,7 +13,7 @@
     >
       <template #reference>
         <div
-          class="flex gap-2 items-center cursor-pointer mx-auto lg:-translate-x-1/2 lg:absolute lg:left-1/2 lg:mx-0"
+          class="flex gap-2 items-center cursor-pointer lg:-translate-x-1/2 lg:absolute lg:left-1/2"
         >
           <Avatar :avatar="domainInfo.avatar || DefaultAvatar" :size="28" />
           <p class="max-w-[120px] truncate text-sm font-medium">
@@ -33,27 +37,38 @@
         </li>
       </ul>
     </el-popover>
+    <template #secondBar>
+      <HorizontalMenu
+        v-if="!isMobile"
+        :active="activeMenu"
+        :menus="menus"
+        @select="onMenuSelect"
+        class="!absolute -translate-x-1/2 left-1/2"
+      />
+    </template>
   </Topbar>
-  <ContentLayout
-    :key="route.name"
-    :class="['bg-white pt-8 lg:pt-4', route.name === RoutesMap.tranning.botChat && '!p-0']"
-    :center-full="route.name === RoutesMap.tranning.botChat"
-    :full="route.name === RoutesMap.tranning.botChat"
-  >
-    <router-view />
-  </ContentLayout>
+  <HorizontalMenu
+    v-if="isMobile"
+    :active="activeMenu"
+    :menus="menus"
+    :height="45"
+    @select="onMenuSelect"
+    class="w-full !px-4"
+  />
+  <router-view />
 </template>
 
 <script setup lang="ts">
 import DefaultAvatar from '@/assets/img/avatar.png'
 import Avatar from '@/components/Avatar/index.vue'
+import HorizontalMenu from '@/components/HorizontalMenu/index.vue'
 import Topbar from '@/components/Topbar/index.vue'
 import { useBasicLayout } from '@/composables/useBasicLayout'
-import ContentLayout from '@/layout/ContentLayout.vue'
+import type { IMenuItem } from '@/interface/common'
 import { RoutesMap } from '@/router'
 import { useDomainStore } from '@/stores/domain'
 import { storeToRefs } from 'pinia'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
@@ -63,6 +78,23 @@ const domainStoreI = useDomainStore()
 const { domainInfo, domainList } = storeToRefs(domainStoreI)
 
 const popoverVisible = ref(false)
+
+const activeMenu = computed(() => route.name as string)
+
+const menus: IMenuItem[] = [
+  { title: '角色信息', routeName: RoutesMap.tranning.roleInfo },
+  { title: '知识库', routeName: RoutesMap.tranning.knowledge },
+  { title: '对外发布', routeName: RoutesMap.tranning.release },
+  { title: '数据报表', routeName: RoutesMap.tranning.report }
+]
+
+const onMenuSelect = (routeName: string) => {
+  router.push({
+    name: routeName,
+    // botId 复写意义防止部分菜单未含有 botId 跳转至需要 botId 的页面
+    params: { ...route.params, botId: domainInfo.value.id, type: undefined }
+  })
+}
 
 const changeCurrentBot = async (item) => {
   popoverVisible.value = false

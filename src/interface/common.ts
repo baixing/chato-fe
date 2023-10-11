@@ -24,6 +24,7 @@ export type IPageFilter<T> = Pick<IPage, 'page' | 'page_size'> & {
 
 export interface IMenuItem {
   title?: string
+  activeKey?: string
   routeName?: string
   icon?: Component
   children?: IMenuItem[]

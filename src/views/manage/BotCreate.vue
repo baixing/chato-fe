@@ -61,7 +61,6 @@
               AIGenerateInputDisabled.desc &&
               AIGenerateInputDisabled.welcome
             "
-            @change="onRoleNameChange"
             class="flex-1"
           />
         </div>
@@ -92,11 +91,11 @@
 
         <SLTitle class="mb-4">{{ t('知识') }}</SLTitle>
         <div class="flex gap-4">
-          <el-button @click="DOCModalVisible = true">
+          <el-button plain @click="DOCModalVisible = true">
             <template #icon><svg-icon name="document" svg-class="w-4 h-4" /></template>
             {{ t('录入文档') }}
           </el-button>
-          <el-button @click="onOpenQAModal">
+          <el-button plain @click="onOpenQAModal">
             <template #icon><svg-icon name="qa" svg-class="w-4 h-4" /></template>
             {{ t('录入问答') }}
           </el-button>
@@ -173,7 +172,7 @@
         />
       </div>
       <div
-        class="bot-create-center-padding py-4 box-border flex justify-end items-center gap-6 bg-white absolute z-[2] bottom-0 left-0 right-0"
+        class="bot-create-center-padding py-4 box-border flex justify-end items-center gap-4 bg-white absolute z-[2] bottom-0 left-0 right-0"
         style="border-top: 1px solid #e4e7ed"
       >
         <el-button :disabled="!canSave" @click="onSave('draft')">{{ t('存为草稿') }}</el-button>
@@ -236,7 +235,7 @@
 </template>
 
 <script setup lang="ts">
-import { createDraftDomain, getDomainDetailV2, saveDomainV2 } from '@/api/domain'
+import { createDraftDomain, getDomainDetail, updateDomain } from '@/api/domain'
 import { deleteFile, getFilesByDomainId } from '@/api/file'
 import DefaultAvatar from '@/assets/img/avatar.png'
 import AIGenerateBtn from '@/components/AIGenerateBtn/index.vue'
@@ -250,13 +249,10 @@ import Topbar from '@/components/Topbar/index.vue'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import { currentEnvConfig } from '@/config'
 import { USER_ROLES } from '@/constant/common'
-import { DraftDomainSymbol } from '@/constant/domain'
+import { DebugDomainSymbol } from '@/constant/domain'
+import { KnowledgeLearningFinalStatus } from '@/constant/knowledge'
 import { EDomainAIGenerateType, EDomainStatus } from '@/enum/domain'
-import {
-  EDocumentOperateType,
-  EDocumentTabType,
-  LearningStatesPerformanceType
-} from '@/enum/knowledge'
+import { EDocumentOperateType, EDocumentTabType } from '@/enum/knowledge'
 import type { IDomainInfo } from '@/interface/domain'
 import type { IDocumentForm, IDocumentList } from '@/interface/knowledge'
 import type { IQAForm } from '@/interface/konwledgeQa'
@@ -268,7 +264,7 @@ import { getStringWidth } from '@/utils/string'
 import * as url from '@/utils/url'
 import { Close } from '@element-plus/icons-vue'
 import { ElLoading, ElMessage, ElMessageBox, ElNotification } from 'element-plus'
-import { isEqual } from 'lodash'
+import { isEqual } from 'lodash-es'
 import { computed, onBeforeUnmount, onMounted, provide, reactive, ref, toRaw, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
@@ -461,12 +457,7 @@ watch(
     if (!v.length && refreshFilesIntervaler) {
       clearInterval(refreshFilesIntervaler)
     } else {
-      const needsRefresh = v.some(
-        (item) =>
-          ![LearningStatesPerformanceType.learned, LearningStatesPerformanceType.error].includes(
-            item.status
-          )
-      )
+      const needsRefresh = v.some((item) => !KnowledgeLearningFinalStatus.includes(item.status))
 
       if (needsRefresh && !refreshFilesIntervaler) {
         refreshFilesIntervaler = setInterval(() => initFilesList(), 10000)
@@ -539,9 +530,9 @@ const initDomainDetail = async () => {
 
     const {
       data: { data }
-    } = await getDomainDetailV2(route.params.slug)
+    } = await getDomainDetail(route.params.botId)
 
-    formState = Object.assign(formState, { ...defaultFormState, ...data.domain })
+    formState = Object.assign(formState, data)
     await initFilesList()
     syncOriginalFormState()
   } catch (err) {
@@ -567,12 +558,6 @@ const checkNeedContinueToEdit = () => {
       resolve('')
     }
   })
-}
-
-const onRoleNameChange = () => {
-  formState.desc = ''
-  formState.welcome = ''
-  formState.system_prompt = ''
 }
 
 const beforeSaveCheck = () => {
@@ -612,7 +597,7 @@ const onSave = async (type?: 'draft') => {
     }
 
     formState.status = type ? EDomainStatus.draft : EDomainStatus.able
-    await saveDomainV2(formState.slug, { domain: formState })
+    await updateDomain(formState.id, formState)
     syncOriginalFormState()
     ElNotification.success(t('保存成功'))
     router.push({ name: RoutesMap.manager.center, params: { botId: formState.id } })
@@ -622,7 +607,7 @@ const onSave = async (type?: 'draft') => {
   }
 }
 
-provide(DraftDomainSymbol, formState)
+provide(DebugDomainSymbol, formState)
 
 watch(
   () => formState.id,
@@ -649,7 +634,7 @@ onBeforeRouteLeave(async (to, from, next) => {
 })
 
 onMounted(() => {
-  if (route.params.slug) {
+  if (route.params.botId) {
     initDomainDetail()
   } else {
     onNewDraft()
@@ -670,7 +655,7 @@ onBeforeUnmount(() => {
 
 <style lang="scss" scoped>
 .bot-create-center-padding {
-  @apply px-20 lg:px-4;
+  @apply px-16 lg:px-4;
 }
 
 .bot-create-block {
@@ -684,17 +669,6 @@ onBeforeUnmount(() => {
 
   .create-input-label {
     @apply flex items-center justify-between mb-4;
-  }
-}
-</style>
-
-<style lang="scss">
-.chat-mobile-chat-drawer {
-  .el-drawer__body {
-    padding: 0;
-    overflow: hidden;
-    width: 100%;
-    height: 100%;
   }
 }
 </style>

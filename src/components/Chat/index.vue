@@ -1,7 +1,7 @@
 <template>
-  <div class="container-preview-page bg-white">
+  <div class="container-preview-page bg-white relative">
     <div
-      v-if="route.name !== RoutesMap.tranning.botChat && detail.avatar_show && detail.name_show"
+      v-if="detail.name_and_avatar_show"
       class="flex items-center justify-center h-14 bg-white mb-0 text-sm font-medium gap-2 shrink-0"
       style="border-bottom: 1px solid #eee"
     >
@@ -15,7 +15,7 @@
     <div
       :class="['flex flex-col h-full w-full overflow-hidden', chatClassName]"
       v-loading="$isLoading"
-      element-loading-background="#F2F3F5"
+      element-loading-background="#fffc"
     >
       <div v-if="!history.length" class="empty h-full">
         {{ $t('请在下方输入框提问吧～') }}
@@ -30,7 +30,7 @@
           <!-- 机器人简介 -->
           <div v-if="detail.desc_show" class="quick-message-container mb-5">
             <div class="quick-span-desc">
-              <img :src="detail.avatar" alt="logo" />
+              <img :src="detail.avatar || DefaultAvatar" />
               <div class="desc-right">
                 <div class="desc-right-title">{{ detail.name || '...' }}</div>
                 <span>{{ detail.desc }}</span>
@@ -75,9 +75,9 @@
         <el-icon class="text-base"> <VideoPause /> </el-icon>{{ $t('终止') }}
       </div>
 
-      <div v-if="detail.shortcuts" class="quick-message-bottom relative chat-center">
+      <div v-if="detail.shortcuts" class="chat-center quick-message-bottom relative">
         <span
-          v-for="(item, index) in detail.shortcuts"
+          v-for="(item, index) in detailShortcutsArr"
           :key="index"
           class="quick-item"
           data-sensors-click
@@ -103,30 +103,16 @@
         @submit="submit"
         class="chat-center"
       />
-
-      <div v-if="footerBrand.show" class="page-main-power site-logo">
-        <!-- TODO: 放到 ChatFooter -->
-        <div v-if="isInternal && !props.isreadRouteParam" class="flex items-center">
-          {{ $t('目前为训练演示视角，如需用户视角') }}
-          <el-link
-            :href="`/b/${botSlug}`"
-            type="primary"
-            :underline="false"
-            class="!text-xs !font-normal"
-            target="_blank"
-            id="Chato_manager_test_click_here"
-          >
-            {{ $t('请点击此处前往') }}
-          </el-link>
-        </div>
-        <ChatFooter
-          v-else
-          :name="footerBrand.name"
-          :logo="footerBrand.logo"
-          :class="[!isCustomerBrand && 'cursor-pointer']"
-          @click="onFooterBrandLink"
-        />
-      </div>
+      <ChatFooter
+        v-if="detail.brand_show"
+        :name="detail.brand_name"
+        :logo="detail.brand_logo"
+        :class="[
+          'mb-2 leading-4 text-xs flex justify-center text-[#596780] text-center shrink-0',
+          !isCustomerBrand && 'cursor-pointer'
+        ]"
+        @click="onFooterBrandLink"
+      />
     </div>
   </div>
   <ChatMessageMore
@@ -163,15 +149,13 @@ import MessageItem from '@/components/Chat/ChatMessageItem.vue'
 import useAudioPlayer from '@/composables/useAudioPlayer'
 import useSSEAudio from '@/composables/useSSEAudio'
 import useSpaceRights from '@/composables/useSpaceRights'
-import { DefaultBrandLogo } from '@/constant/brand'
 import {
-  ChatBubbleColorList,
   ChatMessageFinalStatus,
   ChatMessageMoreAction,
   SymChatDomainDetail,
   SymChatToken
 } from '@/constant/chat'
-import { DraftDomainSymbol, MidJourneyDomainSlug } from '@/constant/domain'
+import { DebugDomainSymbol, MidJourneyDomainSlug } from '@/constant/domain'
 import { PaidCommercialTypes } from '@/constant/space'
 import { XSSOptions } from '@/constant/xss'
 import { EDomainConversationMode } from '@/enum/domain'
@@ -185,7 +169,7 @@ import {
 import { ESpaceRightsType } from '@/enum/space'
 import type { ChatHistoryParams } from '@/interface/chat'
 import type { IDomainInfo } from '@/interface/domain'
-import type { IMessageDetail, IMessageItem } from '@/interface/message'
+import type { IMessageItem } from '@/interface/message'
 import type { ITTSParams } from '@/interface/tts'
 import router, { RoutesMap } from '@/router'
 import { useAuthStore } from '@/stores/auth'
@@ -222,7 +206,6 @@ import xss from 'xss'
 import ChatFooter from './ChatFooter.vue'
 import ChatMessageMore from './ChatMessageMore.vue'
 
-const { t } = useI18n()
 interface Props {
   internalProps?: boolean
   bSlug?: string
@@ -230,6 +213,7 @@ interface Props {
   isreadRouteParam?: boolean
   chatClassName?: string
   chatByAudio?: boolean
+  type?: 'create'
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -239,8 +223,9 @@ const props = withDefaults(defineProps<Props>(), {
   isreadRouteParam: false
 })
 
-const draftDomain = inject<IDomainInfo>(DraftDomainSymbol, null)
+const debugDomain = inject<IDomainInfo>(DebugDomainSymbol, null)
 
+const { t } = useI18n()
 const sseStore = useSSEStore()
 const { sseMsgResult } = storeToRefs(sseStore)
 
@@ -252,8 +237,8 @@ const { authToken } = storeToRefs(authStoreI)
 const $uid = useStorage('uid', '')
 const emit = defineEmits(['showDrawer', 'correctAnswer'])
 const botSlug = computed(() => {
-  if (draftDomain?.slug) {
-    return draftDomain.slug
+  if (debugDomain?.slug) {
+    return debugDomain.slug
   }
   return props.internalProps
     ? props.isreadRouteParam
@@ -264,7 +249,16 @@ const botSlug = computed(() => {
 const isInternal = props.internalProps || false // 是否处于 Chato 内部环境
 const query_p = (qs.parseUrl(window.location.href).query.p as string) || ''
 const source = (qs.parseUrl(window.location.href).query.source as string) || ''
-const detail = ref<IMessageDetail>({} as IMessageDetail) // 机器人详情
+const detail = ref<IDomainInfo>({} as IDomainInfo) // 机器人详情
+const detailShortcutsArr = computed(() => {
+  if (detail.value?.shortcuts) {
+    return typeof detail.value?.shortcuts === 'string'
+      ? JSON.parse(detail.value.shortcuts)
+      : detail.value?.shortcuts
+  } else {
+    return []
+  }
+})
 const refChatHistory = ref<HTMLDivElement>(null) // 聊天记录容器的 DOM 引用
 const MessageItemContainer = ref(null)
 const inputText = ref('')
@@ -398,14 +392,15 @@ function getBotInfo() {
       if (props.chatByAudio) {
         detail.value.conversation_mode = EDomainConversationMode.audio
       }
-      const cur_list = ChatBubbleColorList.filter((item) => item.bg === detail.value.message_style)
-      detail.value.message_style_color = cur_list.length > 0 ? cur_list[0].cl : ''
+      // TODO: 旧的深浅气泡对应的字体逻辑，by 新优化需求研发重写
+      // const cur_list = ChatBubbleColorList.filter((item) => item.bg === detail.value.message_style)
+      // detail.value.message_style_color = cur_list.length > 0 ? cur_list[0].cl : ''
       detail.value.shortcuts =
         $notnull(res.data.data) && res.data.data.shortcuts
           ? JSON.parse(res.data.data.shortcuts)
           : []
       inputLength.value = detail.value.question_max_length
-      !sseStore.isExistInPeddingDomains(botSlug.value) && !draftDomain && sayWelcome()
+      !sseStore.isExistInPeddingDomains(botSlug.value) && props.type && sayWelcome()
       shareWeixinInit(detail.value)
       // 健硕需求p参数
       $notnull(query_p) ? submit(query_p) : ''
@@ -589,7 +584,7 @@ const onTerminateRetry = async () => {
       domain_slug: detail.value.slug,
       token: chatToken.value,
       visitor_type: isInternal ? (props.isreadRouteParam ? 'chat' : 'owner') : 'vistor',
-      fake_domain: draftDomain ? { system_prompt: draftDomain.system_prompt } : undefined
+      fake_domain: debugDomain || undefined
     }
 
     sseStore.terminatedSSEResultMap(lastAnswer, detail.value.slug)
@@ -668,7 +663,7 @@ async function sendMsgRequest(message) {
     token: chatToken.value,
     visitor_type: isInternal ? (props.isreadRouteParam ? 'chat' : 'owner') : 'vistor',
     navit_msg_id: isMidJourneyDomain.value ? random(1000000, 9999999) : undefined,
-    fake_domain: draftDomain ? { system_prompt: draftDomain.system_prompt } : undefined
+    fake_domain: debugDomain || undefined
   }
 
   sseStore.$patch({ sseMsgId: message.msg_id })
@@ -859,7 +854,7 @@ const currentMoreActions = computed<EMessageActionType[]>(() => {
   if (isMidJourneyDomain.value) {
     currentActionType = 'viewMidjourney'
   } else {
-    currentActionType = route.name === RoutesMap.tranning.botChat ? 'viewTranning' : 'viewC'
+    currentActionType = route.name === RoutesMap.chat.release ? 'viewC' : 'viewTranning'
   }
 
   const currentMessageIndex = history.value.findIndex((item) => item.id === currentMessage.value.id)
@@ -931,21 +926,7 @@ function shareWeixinInit(detail) {
 }
 
 // 底部品牌设置
-const ComDefaultBrandName = 'Powered by Chato'
 const isCustomerBrand = computed(() => PaidCommercialTypes.includes(detail.value.org?.type))
-const footerBrand = computed(() => {
-  let res = {
-    name: detail.value.brand_name || ComDefaultBrandName,
-    logo: detail.value.brand_logo || DefaultBrandLogo,
-    show: true
-  }
-
-  if (isCustomerBrand.value) {
-    res.show = detail.value.brand_show
-  }
-
-  return res
-})
 
 const handleCopyButtonClick = (e) => {
   e.stopPropagation()
@@ -1105,18 +1086,17 @@ watch(
 )
 
 watch(
-  draftDomain,
+  debugDomain,
   (v) => {
     if (!v) {
       return
     }
 
-    const { avatar, name, desc, system_prompt, welcome } = v
-    detail.value = { ...detail.value, avatar, name, desc, system_prompt, welcome }
-    if (welcome) {
+    detail.value = { ...detail.value, ...v }
+    if (v.welcome) {
       const hisWelcomeItem = history.value.find((item) => item.isWelcome)
       if (hisWelcomeItem) {
-        hisWelcomeItem.content = regReplaceA(welcome, {
+        hisWelcomeItem.content = regReplaceA(v.welcome, {
           class: 'welcome-a',
           id: 'Chato_chat_label_click'
         })
@@ -1128,7 +1108,7 @@ watch(
       history.value = newHistory
     }
   },
-  { immediate: true }
+  { immediate: true, deep: true }
 )
 
 provide(SymChatDomainDetail, detail)
@@ -1139,6 +1119,19 @@ defineExpose({
 })
 </script>
 <style lang="scss" scoped>
+.chat-history {
+  @apply px-1 pt-4 pb-5;
+  flex: auto 1 1;
+  box-sizing: border-box;
+  display: flex;
+  max-width: 100vw;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.chat-center {
+  @apply px-[24%] lg:px-4 xl:px-[12%] 2xl:px-[18%];
+}
 .container-preview-page {
   width: 100%;
   margin: 0 auto;
@@ -1154,10 +1147,10 @@ defineExpose({
   flex-wrap: wrap;
   justify-content: flex-start;
   align-items: center;
-  @apply pt-1 pb-0;
+  padding-top: 8px;
 
   .quick-item {
-    @apply rounded-2xl leading-4 text-xs px-3 py-1 mr-1 mb-1;
+    @apply rounded-2xl leading-4 text-xs px-3 py-2 mr-1;
     background: #f2f3f5;
     cursor: pointer;
 
@@ -1165,20 +1158,6 @@ defineExpose({
       margin-right: 0;
     }
   }
-}
-
-.chat-history {
-  @apply px-1 pt-4 pb-5;
-  flex: auto 1 1;
-  box-sizing: border-box;
-  display: flex;
-  max-width: 100vw;
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-
-.chat-center {
-  @apply px-[24%] lg:px-4 xl:px-[12%] 2xl:px-[18%];
 }
 
 .MessageItem {
@@ -1245,14 +1224,5 @@ defineExpose({
   text-align: center;
   color: $color-minor;
   opacity: 0.5;
-}
-
-.site-logo {
-  @apply h-4 mb-3 leading-4 text-xs;
-  box-sizing: border-box;
-  display: flex;
-  justify-content: center;
-  color: #596780;
-  text-align: center;
 }
 </style>

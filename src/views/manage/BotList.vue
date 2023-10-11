@@ -49,7 +49,7 @@
         <div class="flex justify-end items-center gap-3">
           <el-button @click="onClose">{{ t('取消') }}</el-button>
           <el-button type="primary" @click="onSync" :loading="syncSubmiting">
-            {{ t(' 确认 ') }}
+            {{ t('确认') }}
           </el-button>
         </div>
       </template>

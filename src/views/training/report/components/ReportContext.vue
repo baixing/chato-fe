@@ -1,7 +1,7 @@
 <template>
   <div
     v-loading="loading"
-    class="max-w-[680px] w-full mx-auto overflow-hidden flex flex-col gap-2 h-[calc(100vh-130px)] lg:h-[calc(100vh-100px)]"
+    class="max-w-[680px] w-full mx-auto overflow-hidden flex flex-col gap-2 h-[calc(100vh-200px)] lg:h-[calc(100vh-220px)]"
   >
     <virtual-list
       ref="virtualRef"
@@ -61,13 +61,15 @@ import ChatMessageMore from '@/components/Chat/ChatMessageMore.vue'
 import EnterQa from '@/components/EnterAnswer/EnterQa.vue'
 import VirtualList from '@/components/VirtualList/index.vue'
 import { currentEnvConfig } from '@/config'
-import { ChatBubbleColorList, ChatMessageMoreAction, SymChatDomainDetail } from '@/constant/chat'
+import { ChatMessageMoreAction, SymChatDomainDetail } from '@/constant/chat'
 import { USER_ROLES } from '@/constant/common'
 import { EDocumentTabType } from '@/enum/knowledge'
-import { EMessageActionType, EMessageDisplayType } from '@/enum/message'
-import type { IMessageDetail, IMessageItem } from '@/interface/message'
+import { EMessageActionType, EMessageDisplayType, EWsMessageStatus } from '@/enum/message'
+import type { IDomainInfo } from '@/interface/domain'
+import type { IMessageItem } from '@/interface/message'
 import { useBase } from '@/stores/base'
 import { useDomainStore } from '@/stores/domain'
+import { formatChatMessageAnswer } from '@/utils/chat'
 import * as url from '@/utils/url'
 import 'github-markdown-css/github-markdown-light.css'
 import 'highlight.js/styles/default.css'
@@ -76,7 +78,7 @@ import { computed, onBeforeUnmount, onMounted, provide, reactive, ref, watch } f
 import { useRoute } from 'vue-router'
 
 const chatList = ref([])
-const detail = ref<IMessageDetail>() // 机器人详情
+const detail = ref<IDomainInfo>() // 机器人详情
 const loading = ref(false)
 const virtualRef = ref()
 const showPreview = ref(false)
@@ -103,10 +105,8 @@ const initBotInfo = async () => {
     return
   }
 
-  const cur_list = ChatBubbleColorList.filter((item) => item.bg === data.message_style)
   detail.value = {
     ...data,
-    message_style_color: cur_list.length > 0 ? cur_list[0].cl : '',
     shortcuts: data?.shortcuts ? JSON.parse(data.shortcuts) : []
   }
 }
@@ -124,24 +124,25 @@ const initQuestions = async () => {
   for (let i = 0; i < data.length; i++) {
     const list_item = data[i]
     const question = {
-      first: true,
       type: list_item.type,
       displayType: EMessageDisplayType.question,
       id: `${list_item.id}_q`,
       content: list_item.question,
       questionId: list_item.id,
       evaluation: list_item.evaluation,
-      question: list_item.question
+      question: list_item.question,
+      status: EWsMessageStatus.done
     }
     const answer = {
       type: list_item.type,
       displayType: EMessageDisplayType.answer,
       id: `${list_item.id}_a`,
-      content: list_item.answer,
+      content: formatChatMessageAnswer({ content: list_item.answer }),
       ref_source_len: list_item.ref_source_len,
       questionId: list_item.id,
       evaluation: list_item.evaluation,
-      question: list_item.question
+      question: list_item.question,
+      status: EWsMessageStatus.done
     }
     res.unshift(question, answer)
   }

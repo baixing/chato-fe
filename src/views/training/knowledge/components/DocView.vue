@@ -15,24 +15,13 @@
       <p class="text-[#9DA3AF] text-xs mb-6">
         {{ $t('您还没有录入文档，快去录入吧！') }}
       </p>
-      <el-button
-        type="primary"
-        size="large"
-        plain
-        @click="() => (dialogVisible = true)"
-        class="bg-white"
-      >
+      <el-button plain @click="() => (dialogVisible = true)">
         {{ $t('录入文档') }}
       </el-button>
     </div>
     <template v-else>
-      <div class="flex justify-end items-center flex-wrap gap-4">
-        <el-button type="primary" size="large" @click="() => (dialogVisible = true)">
-          {{ $t('录入文档') }}
-        </el-button>
-      </div>
-      <div class="flex justify-between items-center mt-[31px] flex-wrap">
-        <div>
+      <div class="flex justify-between items-center flex-wrap gap-4">
+        <div class="flex gap-4 items-center flex-wrap">
           <el-button @click="handleTriggerMate">{{ $t('批量操作') }}</el-button>
           <el-button
             :disabled="!multipleSelection.length"
@@ -44,8 +33,16 @@
             <el-icon class="mr-[4px]"><Delete /></el-icon>
             {{ $t(' 删除') }}
           </el-button>
+          <SearchInput v-model:value="searchInput" />
         </div>
-        <SearchInput v-model:value="searchInput" />
+        <div class="space-x-6 lg:space-x-0 lg:space-y-4">
+          <span class="text-xs text-[#9DA3AF] lg:block">
+            {{ $t('完成录入后，AI 通过 5-10 分钟消化知识，并最终优先根据问答知识回复') }}
+          </span>
+          <el-button type="primary" @click="() => (dialogVisible = true)">
+            {{ $t('录入文档') }}
+          </el-button>
+        </div>
       </div>
       <DocLearnTable
         :batchRemove="batchRemove"
@@ -81,6 +78,7 @@ import SearchInput from '@/components/Input/SearchInput.vue'
 import useImagePath from '@/composables/useImagePath'
 import { currentEnvConfig } from '@/config'
 import { USER_ROLES } from '@/constant/common'
+import { KnowledgeLearningFinalStatus } from '@/constant/knowledge'
 import {
   DeleteRetryFileMateStatusType,
   EDocumentOperateType,
@@ -92,16 +90,17 @@ import type { GetFilesByDomainIdType, IDocumentForm, IDocumentList } from '@/int
 import { useBase } from '@/stores/base'
 import { useDomainStore } from '@/stores/domain'
 import * as url from '@/utils/url'
+import { debouncedWatch } from '@vueuse/core'
 import { ElLoading, ElMessageBox, ElNotification } from 'element-plus'
-import { debounce } from 'lodash'
 import { storeToRefs } from 'pinia'
 import { computed, onUnmounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
-import DocLearnTable from './components/DocLearnTable.vue'
-const { ImagePath: emptydocImg } = useImagePath('empty-doc')
+import DocLearnTable from './DocLearnTable.vue'
 
 const { t } = useI18n()
+const { ImagePath: emptydocImg } = useImagePath('empty-doc')
+
 let timer = null
 const base = useBase()
 const route = useRoute()
@@ -237,13 +236,7 @@ const handleBatchRemove = () => {
     .catch(() => {})
 }
 
-const delayedAPICall = debounce(() => {
-  initDocList()
-}, 100)
-
-watch(searchInput, () => {
-  delayedAPICall()
-})
+debouncedWatch(searchInput, () => initDocList(), { debounce: 300 })
 
 watch(
   tableData,
@@ -253,7 +246,9 @@ watch(
       return
     }
 
-    const startTag = tableData.value.some((item) => item.status !== 'learned')
+    const startTag = tableData.value.some(
+      (item) => !KnowledgeLearningFinalStatus.includes(item.status)
+    )
     if (startTag) {
       if (!timer) {
         timer = setInterval(() => {

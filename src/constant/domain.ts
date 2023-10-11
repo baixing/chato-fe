@@ -74,11 +74,13 @@ export const DomainReplyLength = [
 ]
 
 export const DomainReplyParagraph = [
-  { label: '零段', value: 0 },
+  { label: '不使用知识库', value: 0 },
   { label: '一段', value: 1 },
   { label: '二段', value: 2 },
   { label: '三段', value: 3 },
   { label: '四段', value: 4 }
 ]
 
-export const DraftDomainSymbol = Symbol('temporary-draft-domain')
+export const DebugDomainSymbol = Symbol('temporary-debug-domain')
+export const DomainEditSymbol = Symbol('domain-edit')
+export const DomainHansLimitSymbol = Symbol('domain-hans-limit')

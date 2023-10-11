@@ -25,7 +25,6 @@
     <Sidebar />
   </el-drawer>
   <UpgradeRightsModal />
-  <SuspendHelp />
   <FirstGuide />
 </template>
 <script setup lang="ts">
@@ -45,7 +44,6 @@ import { RouterView, useRoute } from 'vue-router'
 import FirstGuide from './components/FirstGuide/index.vue'
 import Sidebar from './components/Sidebar/MainSidebar.vue'
 import Skeleton from './components/Skeleton/index.vue'
-import SuspendHelp from './components/SuspendHelp/index.vue'
 
 const { drawerVisible } = useSidebar()
 const { isMobile } = useBasicLayout()

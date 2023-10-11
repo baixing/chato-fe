@@ -15,35 +15,34 @@
       <p class="text-[#9DA3AF] text-xs mb-6">
         {{ $t('您还没有录入问答，快去录入吧！') }}
       </p>
-      <el-button
-        type="primary"
-        size="large"
-        plain
-        @click="() => (dialogVisibleQa = true)"
-        class="bg-white"
-        >{{ $t('录入问答') }}</el-button
-      >
+      <el-button type="primary" plain @click="() => (dialogVisibleQa = true)">
+        {{ $t('录入问答') }}
+      </el-button>
     </div>
     <template v-else>
-      <div class="flex justify-end items-center flex-wrap gap-4">
-        <el-button type="primary" size="large" @click="() => (dialogVisibleQa = true)">
-          {{ $t('录入问答') }}
-        </el-button>
-      </div>
-      <div class="flex justify-between items-center mt-[31px] flex-wrap">
-        <div>
+      <div class="flex justify-between items-center flex-wrap gap-4">
+        <div class="flex gap-4 items-center flex-wrap">
           <el-button @click="handleTriggerMate">{{ $t('批量操作') }}</el-button>
+          <SearchInput v-model:value="searchInput" />
           <el-button
             :disabled="!multipleSelection.length"
             v-if="batchRemove"
             @click="handleBatchRemove"
             link
-            class="ml-[16px] text-[#303133]"
+            class="text-[#303133]"
           >
-            <el-icon class="mr-[4px]"><Delete /></el-icon>{{ $t(' 删除') }}</el-button
-          >
+            <el-icon class="mr-[4px]"><Delete /></el-icon>
+            {{ $t(' 删除') }}
+          </el-button>
         </div>
-        <SearchInput v-model:value="searchInput" />
+        <div class="space-x-6 lg:space-x-0 lg:space-y-4">
+          <span class="text-xs text-[#9DA3AF] lg:block">
+            {{ $t('完成录入后，AI 通过 5-10 分钟消化知识，并最终优先根据问答知识回复') }}
+          </span>
+          <el-button type="primary" @click="() => (dialogVisibleQa = true)">
+            {{ $t('录入问答') }}
+          </el-button>
+        </div>
       </div>
       <QaLearnTable
         v-model:selectStatus="QaSelectStatus"
@@ -81,6 +80,7 @@ import SearchInput from '@/components/Input/SearchInput.vue'
 import useImagePath from '@/composables/useImagePath'
 import { currentEnvConfig } from '@/config'
 import { USER_ROLES } from '@/constant/common'
+import { KnowledgeLearningFinalStatus } from '@/constant/knowledge'
 import {
   DeleteRetryFileMateStatusType,
   EDocumentOperateType,
@@ -94,16 +94,17 @@ import { useBase } from '@/stores/base'
 import { useDomainStore } from '@/stores/domain'
 import { $notnull } from '@/utils/help'
 import * as url from '@/utils/url'
+import { debouncedWatch } from '@vueuse/core'
 import { ElLoading, ElMessageBox, ElNotification } from 'element-plus'
-import { debounce } from 'lodash'
 import { storeToRefs } from 'pinia'
 import { computed, onUnmounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
-import QaLearnTable from './components/QaLearnTable.vue'
-const { ImagePath: emptyQAPath } = useImagePath('empty-qa')
+import QaLearnTable from './QaLearnTable.vue'
 
 const { t } = useI18n()
+const { ImagePath: emptyQAPath } = useImagePath('empty-qa')
+
 let timer = null
 const route = useRoute()
 const base = useBase()
@@ -251,10 +252,6 @@ const handleBatchRemove = () => {
     .catch(() => {})
 }
 
-const delayedAPICall = debounce(() => {
-  initQAList()
-}, 100)
-
 watch(
   tableData,
   () => {
@@ -263,7 +260,9 @@ watch(
       return
     }
 
-    const startTag = tableData.value.some((item) => item.status !== 'learned')
+    const startTag = tableData.value.some(
+      (item) => !KnowledgeLearningFinalStatus.includes(item.status)
+    )
     if (startTag) {
       if (!timer) {
         timer = setInterval(() => {
@@ -277,9 +276,7 @@ watch(
   { deep: true }
 )
 
-watch(searchInput, () => {
-  delayedAPICall()
-})
+debouncedWatch(searchInput, () => initQAList(), { debounce: 300 })
 
 watch(
   [() => pagination.value.page, domainId, QaSelectStatus],
@@ -299,30 +296,10 @@ onUnmounted(() => {
 :deep(.el-message-box) {
   --el-messagebox-width: 461px;
 }
-.tab-describe {
-  font-size: 12px;
-  color: #9da3af;
-  line-height: 20px;
 
-  a {
-    color: #7c5cfc;
-  }
-}
 .qa-container {
   :deep(.file-list) {
     margin-top: 31px;
   }
-}
-.mate-item {
-  margin-right: 6px;
-  padding-bottom: 12px;
-  font-size: 16px;
-  color: #596780;
-}
-.mate-selected {
-  width: 64px;
-  color: #303133;
-  font-weight: 500;
-  border-bottom: 2px solid #303133;
 }
 </style>

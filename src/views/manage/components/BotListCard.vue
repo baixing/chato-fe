@@ -11,14 +11,14 @@
         class="w-11 h-11 rounded-full overflow-hidden shrink-0 lg:w-9 lg:h-9"
       />
       <span class="inline-block truncate font-medium text-[#3D3D3D]">
-        {{ t(internalBot.name) }}
+        {{ internalBot.name }}
       </span>
     </div>
 
     <p
       class="text-xs text-[#B5BED0] leading-5 line-clamp-2 break-all whitespace-pre-wrap h-10 lg:h-auto"
     >
-      {{ t(internalBot.desc) }}
+      {{ internalBot.desc }}
     </p>
 
     <div class="flex items-center justify-between">
@@ -44,10 +44,10 @@
       </template>
       <template v-else>
         <div class="gap-4 flex items-center justify-between">
-          <IconBtn :icon="Edit" @click="() => onLinkTo(RoutesMap.tranning.botUser)">
+          <IconBtn :icon="Edit" @click="() => onLinkTo(RoutesMap.tranning.roleInfo)">
             {{ t('编辑') }}
           </IconBtn>
-          <IconBtn :icon="Position" @click="() => onLinkTo(RoutesMap.tranning.botRelease)">
+          <IconBtn :icon="Position" @click="() => onLinkTo(RoutesMap.tranning.release)">
             {{ t('发布') }}
           </IconBtn>
           <el-popover
@@ -164,7 +164,7 @@ const isAllowedDelete = computed(
     userInfo.value.id === internalBot.value.creator
 )
 
-const onLinkTo = (routeName: string) => {
+const onLinkTo = (routeName: string, routeParams?: Record<string, string>) => {
   domainStoreI.$patch({
     domainInfo: internalBot.value
   })
@@ -178,7 +178,8 @@ const onLinkTo = (routeName: string) => {
     params: {
       botId: internalBot.value.id,
       slug: internalBot.value.slug,
-      botSlug: internalBot.value.slug
+      botSlug: internalBot.value.slug,
+      ...routeParams
     }
   })
 }

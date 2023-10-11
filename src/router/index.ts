@@ -29,23 +29,13 @@ export const RoutesMap = {
   },
   resource: 'resource',
   tranning: {
-    information: 'information',
-    release: 'release',
-    kownlwedge: 'kownlwedge',
     bot: 'tranningBot',
-    botUser: 'tranningBotUser',
-    botPersona: 'tranningBotPersona',
-    botContentQA: 'tranningBotContentQA',
-    botContentDoc: 'tranningBotContentDoc',
-    botRelease: 'tranningBotRelease',
-    botReleaseChannel: 'tranningBotReleaseChannel',
-    botReleaseSetting: 'tranningBotReleaseSetting',
-    botChat: 'tranningBotChat',
+    roleInfo: 'tranningRoleInfo',
+    knowledge: 'tranningKnowledge',
+    release: 'tranningRelease',
     report: 'tranningReport',
-    reportDetail: 'tranningReportDetail',
     reportContext: 'tranningReportContext',
-    reportCollectForm: 'tranningReportCollectForm',
-    detail: 'tranningDetail'
+    botChat: 'tranningBotChat'
   },
   manager: {
     managerName: 'manager',
@@ -203,7 +193,7 @@ const resourceSquareRoutes = [
 const trainningRoutes = [
   {
     path: 't',
-    component: () => import('@/views/bot/index.vue'),
+    component: () => import('@/views/training/index.vue'),
     redirect: '/error/404',
     children: [
       {
@@ -213,97 +203,24 @@ const trainningRoutes = [
         meta: { requiresAuth: true },
         children: [
           {
-            name: RoutesMap.tranning.botUser,
-            path: 'user',
-            component: () => import('@/views/bot/user/UserInterface.vue')
-            // meta: { title: '形象' }
+            name: RoutesMap.tranning.roleInfo,
+            path: 'roleInfo/:type?',
+            component: () => import('@/views/training/roleInfo/index.vue')
           },
           {
-            name: RoutesMap.tranning.botPersona,
-            path: 'persona',
-            component: () => import('@/views/bot/persona/PersonaView.vue')
-            // meta: { title: '规则' }
+            name: RoutesMap.tranning.knowledge,
+            path: 'knowledge/:type?',
+            component: () => import('@/views/training/knowledge/index.vue')
           },
           {
-            path: 'content',
-            component: RouterView,
-            redirect: { name: RoutesMap.tranning.botContentQA },
-            children: [
-              {
-                name: RoutesMap.tranning.botContentQA,
-                path: 'qa',
-                component: () => import('@/views/bot/content/QAView.vue')
-                // meta: { title: '问答式' }
-              },
-              {
-                name: RoutesMap.tranning.botContentDoc,
-                path: 'doc',
-                component: () => import('@/views/bot/content/DocView.vue')
-                // meta: { title: '文档式' }
-              }
-            ]
+            name: RoutesMap.tranning.release,
+            path: 'release/:type?',
+            component: () => import('@/views/training/release/index.vue')
           },
           {
-            name: RoutesMap.tranning.botRelease,
-            path: 'release',
-            component: RouterView,
-            redirect: { name: RoutesMap.tranning.botReleaseChannel },
-            children: [
-              {
-                name: RoutesMap.tranning.botReleaseChannel,
-                path: '',
-                component: () => import('@/views/bot/release/ReleaseView.vue')
-                // meta: { title: '发布媒介' }
-              },
-              {
-                name: RoutesMap.tranning.botReleaseSetting,
-                path: 'setting',
-                component: () => import('@/views/bot/release/ReleaseSetting.vue')
-                // meta: { title: '发布设置' }
-              }
-            ]
-          },
-          {
-            name: RoutesMap.tranning.botChat,
-            path: 'chat',
-            component: () => import('@/views/bot/chat/ChatView.vue')
-            // meta: { title: '调试' }
-          },
-          {
-            path: 'report',
-            component: RouterView,
-            redirect: { name: RoutesMap.tranning.report },
-            children: [
-              {
-                name: RoutesMap.tranning.report,
-                path: '',
-                component: () => import('@/views/bot/report/ReportView.vue')
-                // meta: { title: '数据概览' }
-              },
-              {
-                name: RoutesMap.tranning.reportCollectForm,
-                path: 'collect',
-                component: () => import('@/views/bot/report/ReportCollectForm.vue')
-              },
-              {
-                path: 'detail',
-                component: RouterView,
-                children: [
-                  {
-                    name: RoutesMap.tranning.reportDetail,
-                    path: '',
-                    component: () => import('@/views/bot/report/ReportDetail.vue')
-                    // meta: { title: '对话消息明细' }
-                  },
-                  {
-                    name: RoutesMap.tranning.reportContext,
-                    path: 'context/:chatId',
-                    component: () => import('@/views/bot/report/ReportContext.vue')
-                    // meta: { title: '上下文信息' }
-                  }
-                ]
-              }
-            ]
+            name: RoutesMap.tranning.report,
+            path: 'report/:type?/:chatId?',
+            component: () => import('@/views/training/report/index.vue')
           }
         ]
       }
@@ -330,7 +247,7 @@ const managerRoutes = [
       },
       {
         name: RoutesMap.manager.create,
-        path: 'create/:slug?',
+        path: 'create/:botId?',
         component: () => import('@/views/manage/BotCreate.vue')
         // meta: { title: '创建机器人' }
       }

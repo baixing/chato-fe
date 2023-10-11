@@ -7,20 +7,32 @@
     :show-arrow="false"
   >
     <template #reference>
-      <div class="flex flex-col gap-3 items-center cursor-pointer">
-        <Avatar
-          :avatar="userInfo.org.avatar"
-          :name="$t('空间')"
-          :commercial-type="userCommercialType"
-          with-rights
-          show-all-name
-        />
-        <el-button
-          plain
-          class="!text-[#7C5CFC] !border-[#7C5CFC] !leading-4 !text-xs !rounded-md !px-[10px] box-border !py-[2px] !h-fit !bg-transparent hover:opacity-90 mb-5"
-        >
-          {{ $t('切换') }}
-        </el-button>
+      <div class="cursor-pointer w-full rounded-lg border border-solid border-[#394457] px-2 py-3">
+        <div class="flex items-center gap-2 text-[#B5BED0] mb-4">
+          <Avatar
+            :avatar="userInfo.org.avatar"
+            :name="$t('空间')"
+            :commercial-type="userCommercialType"
+            :size="36"
+            with-rights
+            show-all-name
+          />
+          <p class="truncate text-xs leading-[18px] pl-2 flex-1">{{ orgInfo.name }}</p>
+          <svg-icon name="arrow-expand" svg-class="w-4 h-4 shrink-0" />
+        </div>
+        <div class="relative bg-[#242B40] rounded-lg overflow-hidden h-1 mb-2">
+          <p
+            :class="['absolute bg-[#7C5CFC] rounded-lg top-0 left-0 h-1']"
+            :style="{ width: spaceQuotaConsumedScale }"
+          />
+        </div>
+        <div class="flex items-center justify-between text-xs leading-4 text-[#596780]">
+          <span>{{ $t('电力值') }}</span>
+          <span>
+            <span class="text-[#7C5CFC]">{{ spaceQuota.consumed }}</span>
+            / {{ spaceQuota.total }}
+          </span>
+        </div>
       </div>
     </template>
     <div class="flex flex-col -mx-3 px-5 flex-1 box-border overflow-hidden">
@@ -29,7 +41,7 @@
         <Avatar :avatar="selectedSpace?.org.avatar" :name="$t('空间')" :size="28" show-all-name />
         <div class="space-more ml-2">
           <p class="flex-1 text-[#7c5cfc] truncate text-sm">{{ selectedSpace?.org.name }}</p>
-          <el-icon class="!mr-0 text-[#7c5cfc]">
+          <el-icon class="!mr-0 !text-[#7c5cfc]">
             <Check />
           </el-icon>
         </div>
@@ -62,16 +74,29 @@ import Avatar from '@/components/Avatar/index.vue'
 import useSpace from '@/composables/useSpace'
 import type { IUserInfo } from '@/interface/user'
 import { useBase } from '@/stores/base'
+import { useSpaceStore } from '@/stores/space'
 import { storeToRefs } from 'pinia'
 import { computed, ref, watch } from 'vue'
 
 const baseStoreI = useBase()
+const spaceStoreI = useSpaceStore()
 const { switchSpace } = useSpace()
 
 const selectedSpace = ref<IUserInfo>()
 const popoverVisible = ref(false)
 
-const { userInfo, userCommercialType, orgInfoList } = storeToRefs(baseStoreI)
+const { userInfo, userCommercialType, orgInfo, orgInfoList } = storeToRefs(baseStoreI)
+const { spaceQuota } = storeToRefs(spaceStoreI)
+
+const spaceQuotaConsumedScale = computed(() => {
+  const { consumed, total } = spaceQuota.value
+  if (!consumed || !total) {
+    return '0px'
+  }
+
+  const scaleNum = 100 - Number((consumed / total).toFixed(2)) * 100
+  return scaleNum > 0 ? `${scaleNum}%` : '0px'
+})
 
 const viewSpaceList = computed(() =>
   (orgInfoList.value || []).filter((item) => item?.org?.id !== selectedSpace.value?.org?.id)

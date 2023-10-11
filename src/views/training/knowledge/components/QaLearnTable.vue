@@ -125,9 +125,8 @@ import { convertSize, openPreviewUrl } from '@/utils/help'
 import { ElMessageBox, ElNotification as Notification } from 'element-plus'
 import { computed, reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { selectableDeclarations } from '../config'
 import ReplaceFile from './ReplaceFile.vue'
-const { t } = useI18n()
+import { selectableDeclarations } from './config'
 const props = defineProps<{
   loading: boolean
   domainId: string | number
@@ -147,6 +146,7 @@ const emit = defineEmits([
   'update:multipleSelection'
 ])
 
+const { t } = useI18n()
 const { isMobile } = useBasicLayout()
 
 const internalLoading = computed({

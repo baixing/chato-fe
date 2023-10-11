@@ -1,26 +1,28 @@
 <template>
   <aside class="w-auto shrink-0 box-border h-full">
     <div class="flex h-full overflow-hidden">
-      <div class="flex flex-col items-center bg-[#272F48] w-[88px]">
-        <div class="mx-[10px] mt-[10px] p-[14px] pb-5" style="border-bottom: 1px solid #363f5b">
-          <img
-            src="@/assets/img/logo.png"
-            class="w-10 cursor-pointer"
-            @click="() => router.push({ name: RoutesMap.home.index })"
-          />
-        </div>
-        <ul class="flex-1 px-2 py-3 w-full">
+      <div class="flex flex-col items-center bg-[#1C2235] w-48 lg:w-40">
+        <img
+          src="@/assets/img/logo-header-white.png"
+          class="w-[120px] cursor-pointer mx-auto my-8"
+          @click="() => router.push({ name: RoutesMap.home.index })"
+        />
+        <ul class="flex-1 w-full space-y-4">
           <li
             v-for="item in sideMenuList"
             :key="item.routeName"
             :class="[
-              'text-[#9DA3AF] flex flex-col items-center justify-center w-[72px] h-[72px] gap-1 text-sm font-medium leading-[18px] cursor-pointer rounded-lg transition-colors mb-[6px] hover:bg-[#454D69] hover:text-white',
-              item.routeName === activeSideMenu && 'text-white bg-[#454D69]'
+              'text-[#9DA3AF] cursor-pointer transition-colors relative hover:text-white',
+              item.routeName === activeSideMenu && 'text-white font-medium side-menu-active'
             ]"
             @click="onSideBarClick(item.routeName)"
           >
-            <svg-icon :name="item.icon" svg-class="w-7 h-7"></svg-icon>
-            {{ item.title }}
+            <span
+              class="flex items-center w-[168px] lg:w-36 h-11 gap-2 rounded-lg leading-[44px] text-sm px-5 mx-auto truncate"
+            >
+              <svg-icon :name="item.icon" svg-class="w-7 h-7" />
+              {{ item.title }}
+            </span>
           </li>
         </ul>
         <SidebarBottom />
@@ -55,16 +57,16 @@ import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import ChatSidebar from './ChatSidebar.vue'
 import SidebarBottom from './SidebarBottom.vue'
-import TranningSidebar from './TranningSidebar.vue'
+
 const { t } = useI18n()
+
 const allMenuList = [
-  { title: t('训练'), icon: 'robot-filled', routeName: RoutesMap.manager.center },
-  { title: t('对话'), icon: 'chat-filled', routeName: RoutesMap.chat.c },
-  { title: t('广场'), icon: 'cube-filled', routeName: RoutesMap.resource }
+  { title: t('训练中心'), icon: 'robot-filled', routeName: RoutesMap.manager.center },
+  { title: t('我的对话'), icon: 'chat-filled', routeName: RoutesMap.chat.c },
+  { title: t('资源广场'), icon: 'cube-filled', routeName: RoutesMap.resource }
 ]
 
 const secondarySidebar = {
-  [RoutesMap.manager.center]: TranningSidebar,
   [RoutesMap.chat.c]: ChatSidebar
 }
 
@@ -96,20 +98,9 @@ const activeSideMenu = computed(() => {
   }
 })
 
-const secondarySidebarVisible = computed(() => {
-  if (activeSideMenu.value && activeSideMenu.value in secondarySidebar) {
-    if (
-      activeSideMenu.value === RoutesMap.manager.center &&
-      !/^(tranning).*/.test(route.name as string)
-    ) {
-      return false
-    } else {
-      return true
-    }
-  } else {
-    return false
-  }
-})
+const secondarySidebarVisible = computed(
+  () => activeSideMenu.value && activeSideMenu.value in secondarySidebar
+)
 
 const { drawerVisible } = useSidebar()
 
@@ -123,3 +114,21 @@ const onSideBarClick = (routeName: string) => {
   })
 }
 </script>
+
+<style lang="scss" scoped>
+.side-menu-active {
+  span {
+    background-color: #242a40;
+  }
+  &::before {
+    position: absolute;
+    content: '';
+    width: 4px;
+    background: linear-gradient(240deg, #ed78ff -49%, #4417ff 124%);
+    border-radius: 0 8px 8px 0;
+    left: 0;
+    top: 0;
+    bottom: 0;
+  }
+}
+</style>

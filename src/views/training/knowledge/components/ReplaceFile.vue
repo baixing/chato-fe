@@ -27,7 +27,6 @@ import { ElLoading, ElNotification } from 'element-plus'
 import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-const { t } = useI18n()
 
 const props = defineProps<{
   domainId: string | number
@@ -36,6 +35,8 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits(['removeFile'])
+
+const { t } = useI18n()
 
 const acceptFileTypes = computed(() => {
   const limitType = props.type === 'file' ? UPLOAD_FILE_TYPES : UPLOAD_TEMPLATE_FILE_TYPES

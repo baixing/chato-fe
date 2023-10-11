@@ -4,6 +4,27 @@ import type {
   EDomainStatus,
   EDomainType
 } from '@/enum/domain'
+import type { IOrg } from './user'
+
+export interface IDomainCustomerLimit {
+  rate_limit_switch: number
+  rate_limit: {
+    time_seconds: number
+    num: number
+    response: string
+  }
+  quota_limit_switch: number
+  quota_limit: {
+    total: number
+    response: string
+  }
+  token_limit_switch: number
+  token_limit: {
+    token: string
+    error_response: string
+    correctness_response: string
+  }
+}
 
 export interface IDomainInfo {
   id: number
@@ -11,7 +32,7 @@ export interface IDomainInfo {
   modified: string
   name: string
   slug: string
-  org: number
+  org: IOrg
   file_count: number
   system_prompt: string
   welcome: string
@@ -27,7 +48,7 @@ export interface IDomainInfo {
   reply_tone: string
   reply_length: number
   temperature: number
-  customer_limit: string
+  customer_limit: Partial<IDomainCustomerLimit>
   shortcuts: string
   desc: string
   desc_show: number
@@ -42,6 +63,7 @@ export interface IDomainInfo {
   brand_logo: string
   ad_content: string
   ad_frequency: number
+  ad_show: number
   category: string
   token: string
   llm: EDomainLLMType | null
@@ -50,6 +72,10 @@ export interface IDomainInfo {
   keyword_block_reply: string
   keyword_block_show: boolean
   conversation_mode: EDomainConversationMode // 机器人对话类型
+  brand_show: number
+  qa_modifiable: number
+  question_ref_source_show: number
+  name_and_avatar_show: number
 }
 
 export interface IDomainShortcut {

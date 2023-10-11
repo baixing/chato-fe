@@ -32,7 +32,7 @@ const props = defineProps<{
   systemPrompt: string
   type: EDomainAIGenerateType
   role: string
-  roleRequirement: string
+  roleRequirement?: string
   disabled?: boolean
   disabledTip?: string
 }>()

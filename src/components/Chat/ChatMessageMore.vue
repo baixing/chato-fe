@@ -40,7 +40,8 @@
 import { deleteSession, evaluate, translate } from '@/api/chat'
 import { SymChatDomainDetail } from '@/constant/chat'
 import { EMessageActionType, EMessageDisplayType, EMessageEvalution } from '@/enum/message'
-import type { IMessageDetail, IMessageItem } from '@/interface/message'
+import type { IDomainInfo } from '@/interface/domain'
+import type { IMessageItem } from '@/interface/message'
 import { copyPaste, downloadImg, generatePreviewImgUrl } from '@/utils/help'
 import { removewRegReplaceA } from '@/utils/reg'
 import {
@@ -89,7 +90,7 @@ const ChatMessageMoreAllAction = [
   { title: '语音', icon: '', type: EMessageActionType.audio }
 ]
 
-const domainDetail = inject<Ref<IMessageDetail>>(SymChatDomainDetail)
+const domainDetail = inject<Ref<IDomainInfo>>(SymChatDomainDetail)
 
 const messageMoreRef = ref(null)
 const internalMessage = computed(() => props.message)

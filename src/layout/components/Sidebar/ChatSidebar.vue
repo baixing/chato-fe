@@ -11,7 +11,7 @@
         ]"
         @click="onLinkToChat(item.slug)"
       >
-        <img :src="item.avatar" alt="" class="w-7 h-7 rounded-full object-cover" />
+        <img :src="item.avatar || DefaultAvatar" alt="" class="w-7 h-7 rounded-full object-cover" />
         <span class="inline-block truncate">{{ item.name }}</span>
       </li>
     </ul>
@@ -19,6 +19,7 @@
 </template>
 
 <script setup lang="ts">
+import DefaultAvatar from '@/assets/img/avatar.png'
 import { useChatStore } from '@/stores/chat'
 import { storeToRefs } from 'pinia'
 import { useRoute, useRouter } from 'vue-router'

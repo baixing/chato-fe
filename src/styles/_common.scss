@@ -24,25 +24,32 @@ body {
 }
 
 ::-webkit-scrollbar {
-  width: 5px;
+  // width: 5px;
   height: 6px;
+  display: none;
 }
 
 ::-webkit-scrollbar-track {
-  width: 6px;
   background: transparent;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
+  border-radius: 8px;
 }
 
 ::-webkit-scrollbar-thumb {
   background-color: #f2f3f5;
   background-clip: padding-box;
   min-height: 28px;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
+  border-radius: 12px;
+}
+
+textarea {
+  &::-webkit-scrollbar {
+    display: block;
+    width: 12px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border: 4px solid transparent;
+  }
 }
 
 ::-webkit-scrollbar-thumb:hover {

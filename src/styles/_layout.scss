@@ -6,7 +6,7 @@
   padding-bottom: env(safe-area-inset-bottom); /* 兼容 iOS >= 11.2 */
 }
 
-$centerContentWidth: 80%;
+$centerContentWidth: 100%;
 
 .page-body-container {
   height: 100%;
@@ -15,8 +15,9 @@ $centerContentWidth: 80%;
 
 .page-center-container {
   width: $centerContentWidth;
-  max-width: 1440px;
-  margin: 0 auto;
+  // max-width: 1440px;
+  // margin: 0 auto;
+  padding: 0 64px;
 }
 
 .page-content-container {
