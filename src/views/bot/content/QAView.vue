@@ -1,5 +1,5 @@
 <template>
-  <div class="qa-container" v-loading="initing">
+  <div class="qa-container" v-loading="loading">
     <div
       v-if="
         !pagination.page_count &&
@@ -49,7 +49,7 @@
         v-model:selectStatus="QaSelectStatus"
         v-model:loading="loading"
         :batchRemove="batchRemove"
-        :domain-id="domainId"
+        :domainId="domainId"
         :domain-slug="domainInfo.slug"
         :activeNames="activeNames"
         :doc-list="(tableData as IDocumentList[])"
@@ -90,7 +90,6 @@ import {
 } from '@/enum/knowledge'
 import type { IPage } from '@/interface/common'
 import type { GetFilesByDomainIdType, IDocumentList, IQAForm } from '@/interface/knowledge'
-import { RoutesMap } from '@/router'
 import { useBase } from '@/stores/base'
 import { useDomainStore } from '@/stores/domain'
 import { $notnull } from '@/utils/help'
@@ -98,7 +97,7 @@ import * as url from '@/utils/url'
 import { ElLoading, ElMessageBox, ElNotification } from 'element-plus'
 import { debounce } from 'lodash'
 import { storeToRefs } from 'pinia'
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, onUnmounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import QaLearnTable from './components/QaLearnTable.vue'
@@ -110,17 +109,16 @@ const route = useRoute()
 const base = useBase()
 const domainStoreI = useDomainStore()
 const { domainInfo } = storeToRefs(domainStoreI)
-const domainId = (domainInfo.value.id || route.params.botId).toString()
+const domainId = computed(() => domainInfo.value.id || (route.params.botId as string))
 const qtyLimit = base.userInfo.role === USER_ROLES.SUPERMAN ? 1000 : 20 // 同时上传的文件数量限制
 const sizeLimit = 30 // 单个文件的体积限制（MB）
 const apiUpload = computed(() =>
-  url.join(currentEnvConfig.uploadBaseURL, `/chato/api/domains/${domainId}/files/upload/qa`)
+  url.join(currentEnvConfig.uploadBaseURL, `/chato/api/domains/${domainId.value}/files/upload/qa`)
 )
 const multipleSelection = ref<IDocumentList[]>([])
 const batchRemove = ref<boolean>(false)
 const QaSelectStatus = ref(LearningStatesPerformanceType.all)
 const searchInput = ref<string>('')
-const initing = ref(true)
 const loading = ref(true)
 const tableData = ref<IDocumentList[]>([])
 const pagination = ref<IPage>({
@@ -174,7 +172,7 @@ const onAfterRemove = async (fileId: number, message: string) => {
   })
 }
 
-const initQAList = async (callStatus = false) => {
+const initQAList = async () => {
   loading.value = true
   try {
     const params: GetFilesByDomainIdType = {
@@ -187,23 +185,13 @@ const initQAList = async (callStatus = false) => {
     }
     const {
       data: { data, meta }
-    } = await getFilesByDomainId(domainId, params)
+    } = await getFilesByDomainId(domainId.value, params)
     tableData.value = data
     pagination.value.page_count = meta.pagination.page_count
-    callStatus ? (specailTipVisible.value = data.length) : ''
+    specailTipVisible.value = data.length
   } catch (err) {
   } finally {
     loading.value = false
-  }
-}
-
-const init = async () => {
-  try {
-    initing.value = true
-    await initQAList()
-  } catch (err) {
-  } finally {
-    initing.value = false
   }
 }
 
@@ -228,7 +216,7 @@ const deteleOrRetryFile = async (type: DeleteRetryFileMateStatusType, ids: numbe
     status: type,
     ids: ids
   }
-  const res = await deleteRetryFileMate(domainId, data)
+  const res = await deleteRetryFileMate(domainId.value, data)
   loading.close()
   return {
     code: res.data.code,
@@ -267,12 +255,7 @@ const delayedAPICall = debounce(() => {
   initQAList()
 }, 100)
 
-const watchPagination = watch(
-  () => pagination.value.page,
-  () => initQAList()
-)
-
-const watchTableData = watch(
+watch(
   tableData,
   () => {
     if (!tableData.value.length) {
@@ -294,23 +277,21 @@ const watchTableData = watch(
   { deep: true }
 )
 
-const wacthQaSelectStatus = watch(QaSelectStatus, () => {
-  init()
-})
-
-const watchSearchInput = watch(searchInput, () => {
+watch(searchInput, () => {
   delayedAPICall()
 })
 
-onMounted(() => {
-  init()
-})
+watch(
+  [() => pagination.value.page, domainId, QaSelectStatus],
+  ([page, v1, v2]) => {
+    if (page || v1 || v2) {
+      initQAList()
+    }
+  },
+  { immediate: true }
+)
 
 onUnmounted(() => {
-  watchTableData()
-  watchPagination()
-  wacthQaSelectStatus()
-  watchSearchInput()
   clearInterval(timer)
 })
 </script>

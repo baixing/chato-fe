@@ -170,7 +170,7 @@ const base = useBase()
 
 interface Props {
   apiUpload: string
-  domainId: string
+  domainId: string | number
   dialogVisible: boolean
   defaultForm: IDocumentForm
   specailTipVisible?: number

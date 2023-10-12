@@ -1,5 +1,5 @@
 <template>
-  <div class="file-list" v-loading="internalLoading">
+  <div class="file-list">
     <el-table
       :data="internalDocList"
       style="width: 100%"
@@ -130,7 +130,7 @@ import ReplaceFile from './ReplaceFile.vue'
 const { t } = useI18n()
 const props = defineProps<{
   loading: boolean
-  domainId: string
+  domainId: string | number
   domainSlug: string
   docList: IDocumentList[]
   pagination: IPage
