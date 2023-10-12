@@ -3,7 +3,6 @@
     v-model="visible"
     :title="$t('查看聊天')"
     :before-close="handleClose"
-    class="drawer-chat-container"
     :size="isMobile ? '100%' : '40%'"
   >
     <el-tabs v-model="activeNames">
@@ -98,18 +97,6 @@ watch(
 </script>
 
 <style lang="scss">
-.drawer-chat-container {
-  .el-drawer__header {
-    @apply mb-5 text-[#303133] font-medium;
-  }
-  .el-drawer__body {
-    @apply pt-0;
-  }
-  .el-collapse {
-    @apply border-t-0;
-  }
-}
-
 .group-detail {
   p {
     @apply flex items-center justify-start mb-3 text-sm text-[#303133];

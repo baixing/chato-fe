@@ -3,7 +3,6 @@
     v-model="visible"
     :title="$t(`我的站点`)"
     :before-close="() => (visible = false)"
-    class="create-drawer-container"
     :size="isMobile ? '100%' : '40%'"
   >
     <el-collapse v-model="activeNames" accordion>
@@ -206,20 +205,3 @@ watch([() => props.value, () => props.slug], ([newValue1, newValue2], [, oldValu
   }
 })
 </script>
-
-<style lang="scss">
-.create-drawer-container {
-  .el-drawer__header {
-    @apply mb-5 text-[#303133] font-medium;
-  }
-  .el-drawer__body {
-    @apply pt-0;
-  }
-  .el-collapse {
-    @apply border-t-0;
-  }
-  .el-form-item__label {
-    @apply text-[#303133] text-sm;
-  }
-}
-</style>

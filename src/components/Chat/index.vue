@@ -187,7 +187,6 @@ import { ElMessage, ElNotification as Notification } from 'element-plus'
 import 'highlight.js/styles/default.css'
 import { random, remove } from 'lodash'
 import { storeToRefs } from 'pinia'
-import qs from 'query-string'
 import {
   computed,
   inject,
@@ -205,8 +204,8 @@ import Watermark from 'watermark-plus'
 import xss from 'xss'
 import ChatFooter from './ChatFooter.vue'
 import ChatMessageMore from './ChatMessageMore.vue'
-import { useIsMobile } from '@/composables/useBasicLayout'
 import { currentEnvConfig } from '@/config'
+import { useSource } from '@/composables/useSource'
 
 interface Props {
   internalProps?: boolean
@@ -230,8 +229,7 @@ const debugDomain = inject<IDomainInfo>(DebugDomainSymbol, null)
 const { t } = useI18n()
 const sseStore = useSSEStore()
 const { sseMsgResult } = storeToRefs(sseStore)
-
-const isMobile = useIsMobile()
+const { source } = useSource()
 const route = useRoute()
 const base = useBase()
 const { userInfo } = storeToRefs(base)
@@ -250,8 +248,7 @@ const botSlug = computed(() => {
     : (route.params.botSlug as string)
 })
 const isInternal = props.internalProps || false // 是否处于 Chato 内部环境
-const query_p = (qs.parseUrl(window.location.href).query.p as string) || ''
-const source = (qs.parseUrl(window.location.href).query.source as string) || isMobile ? 'h5' : 'pc'
+const query_p = (route.query.p as string) || ''
 const detail = ref<IDomainInfo>({} as IDomainInfo) // 机器人详情
 const detailShortcutsArr = computed(() => {
   if (detail.value?.shortcuts) {
@@ -662,7 +659,7 @@ async function sendMsgRequest(message) {
   const params = {
     ...message,
     type: isMidJourneyDomain.value ? 'mj_image' : 'chat',
-    source,
+    source: source.value,
     domain_slug: detail.value.slug,
     token: chatToken.value,
     visitor_type: isInternal ? (props.isreadRouteParam ? 'chat' : 'owner') : 'vistor',

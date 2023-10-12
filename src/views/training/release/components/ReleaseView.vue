@@ -2,8 +2,8 @@
 import useSpaceRights from '@/composables/useSpaceRights'
 import { currentEnvConfig } from '@/config'
 import { PaidCommercialTypes } from '@/constant/space'
-import { EAccountSettingStatus } from '@/enum/release'
 import { ESpaceCommercialType, ESpaceRightsType } from '@/enum/space'
+import { EAccountSettingStatus, EAppletcStatus } from '@/enum/release'
 import type { ICreateAccountRes } from '@/interface/release'
 import { useBase } from '@/stores/base'
 import { useDomainStore } from '@/stores/domain'
@@ -32,6 +32,8 @@ import {
   type Ref
 } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRoute } from 'vue-router'
+import { useSessionStorage } from '@vueuse/core'
 import ReleaseBox from './ReleaseBox.vue'
 
 const SerachApi = defineAsyncComponent(() => import('./apiCall/SerachApi.vue'))
@@ -49,7 +51,10 @@ const WeixinService = defineAsyncComponent(() => import('./weixinService/WeixinS
 const CreateDing = defineAsyncComponent(() => import('./dingDing/CreateDing.vue'))
 const CreateAccount = defineAsyncComponent(() => import('./weixinChat/CreateAccount.vue'))
 const DrawerAccount = defineAsyncComponent(() => import('./weixinChat/DrawerAccount.vue'))
+const CreateApplet = defineAsyncComponent(() => import('./applet/CreateApplet.vue'))
+const DrawerApplet = defineAsyncComponent(() => import('./applet/DrawerApplet.vue'))
 
+const route = useRoute()
 const { t } = useI18n()
 const base = useBase()
 const spaceStoreI = useSpaceStore()
@@ -70,9 +75,12 @@ const chatScript = `${currentEnvConfig.scriptURL}/assets/iframe.min.js`
 const wssApiDocs =
   'https://apifox.com/apidoc/shared-74401769-7cc9-4d75-a57e-892dc6aa5960/api-95610185'
 const weixinServiceDocs = 'https://baixingwang.feishu.cn/docx/CXyTdSKF6oPCiLxAQTacrHvUnfe'
+const appletConfigDocs = 'https://baixingwang.feishu.cn/docx/C2shd2MHfo7aPfxkUl8cJVJMnGf'
 
 const accountQrCode = ref<ICreateAccountRes>()
 const accountCreateStatus = ref<EAccountSettingStatus>(EAccountSettingStatus.creating)
+const defaultAppletcStatus = ref<EAppletcStatus>()
+const releaseChannel = useSessionStorage('releaseChannel', '')
 
 const features = reactive({
   showDrawerChatVisible: false, // 查看群聊
@@ -88,7 +96,9 @@ const features = reactive({
   dingDingVisible: false, // 钉钉
   showCopyApiVisible: false, // API 调用
   createAccountVisible: false, // 微信聊天-创建账号
-  drawerAccountVisible: false // 微信聊天-查看聊天
+  drawerAccountVisible: false, // 微信聊天-查看聊天
+  createAppletVisible: false, // 小程序-扫码授权
+  drawerAppletVisible: false // 小程序-查看授权结果
 })
 
 const {
@@ -105,7 +115,9 @@ const {
   dingDingVisible,
   showCopyApiVisible,
   createAccountVisible,
-  drawerAccountVisible
+  drawerAccountVisible,
+  createAppletVisible,
+  drawerAppletVisible
 } = toRefs(features)
 
 const { checkRightsTypeNeedUpgrade, isAllowedCommercialType } = useSpaceRights()
@@ -325,14 +337,39 @@ const releaseList = [
   },
   {
     icon: 'dingding',
-    title: '钉钉',
-    desc: '在群/单聊中提供机器人服务，仅限内部员工使用',
+    title: t('钉钉'),
+    desc: t('在群/单聊中提供机器人服务，仅限内部员工使用'),
     setList: [
       {
         icon: Tools,
-        label: '配置钉钉',
+        label: t('配置钉钉'),
         scriptId: 'Chato-dingding-set',
         click: () => commonVisible(dingDingVisible)
+      }
+    ]
+  },
+  {
+    icon: 'applet',
+    title: t('微信小程序'),
+    desc: t('支持企业授权绑定小程序，提供机器人服务'),
+    setList: [
+      {
+        icon: FullScreen,
+        label: t('配置小程序'),
+        scriptId: 'Chato-applet-set',
+        click: () => commonVisible(createAppletVisible)
+      },
+      {
+        icon: View,
+        label: t('查看小程序'),
+        scriptId: 'Chato-applet-view',
+        click: () => commonVisible(drawerAppletVisible)
+      },
+      {
+        icon: Document,
+        label: t('配置文档'),
+        scriptId: 'Chato-applet-document',
+        click: () => handlePreview(appletConfigDocs)
       }
     ]
   }
@@ -342,6 +379,18 @@ const handleCopyButtonClick = (e: MouseEvent) => {
   e.stopPropagation()
   copyPaste((e.target as HTMLElement).querySelector('.text').innerHTML)
 }
+
+watch(
+  () => route.query,
+  (v) => {
+    if (v.releaseChannel && v.releaseChannel !== releaseChannel.value) {
+      releaseChannel.value = v.releaseChannel as string
+      defaultAppletcStatus.value = EAppletcStatus.empowerSuccess
+      createAppletVisible.value = true
+    }
+  },
+  { immediate: true }
+)
 
 watch(createAccountVisible, (v) => {
   !v && (accountCreateStatus.value = EAccountSettingStatus.creating)
@@ -374,7 +423,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div>
+  <div class="release-drawer-container">
     <template v-if="!maskVisible">
       <div class="mx-auto my-0">
         <div class="overflow-hidden flex flex-wrap justify-between">
@@ -477,6 +526,17 @@ onMounted(() => {
       :orgId="userInfo.org.id"
       @handleRestartAccount="handleRestartAccount"
     />
+    <CreateApplet
+      v-model:value="createAppletVisible"
+      :defaultAppletcStatus="defaultAppletcStatus"
+      :domainId="domainInfo.id"
+      @handleView="drawerAppletVisible = true"
+    />
+    <DrawerApplet
+      v-model:value="drawerAppletVisible"
+      :domainId="domainInfo.id"
+      @handleRetry="createAppletVisible = true"
+    />
   </div>
 </template>
 
@@ -484,6 +544,23 @@ onMounted(() => {
 .icon-set-container {
   &:hover {
     @apply text-[#7c5cfc];
+  }
+}
+</style>
+
+<style lang="scss">
+.release-drawer-container {
+  .el-drawer__header {
+    @apply mb-5 text-[#303133] font-medium;
+  }
+  .el-drawer__body {
+    @apply pt-0;
+  }
+  .el-collapse {
+    @apply border-t-0;
+  }
+  .el-form-item__label {
+    @apply text-sm text-[#303133];
   }
 }
 </style>

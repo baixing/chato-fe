@@ -71,3 +71,14 @@ export const RActivedGroupTokenConfig = {
   [EActivateGroupType.joinGroupChat]: '激活码',
   [EActivateGroupType.singleGroupChat]: 'Token'
 }
+
+export const REmpowerAppletIllustrate = [
+  '将机器人绑定到企业的自有小程序，页面为机器人对话界面，小程序仍隶属于企业。'
+]
+
+export const REmpowerAppletUseInstruction = [
+  '1.请确保绑定的小程序为全新或已闲置，<strong>授权后其类目和页面都将被覆盖</strong>。',
+  '2.<strong>个人类型</strong>的小程序存在较大不稳定性，可能因为包含外链导致无法过审或使用。',
+  "3.审核不通过或下架的情况无法完全规避，具体请参考 <a class='theme-color' target='_blank' href='https://developers.weixin.qq.com/miniprogram/product'>「微信小程序运营规范」</a>。",
+  "4.目前没有可用的小程序？可查看<a class='theme-color' target='_blank' href='https://baixingwang.feishu.cn/docx/C2shd2MHfo7aPfxkUl8cJVJMnGf'>「配置微信小程序教程」</a>"
+]

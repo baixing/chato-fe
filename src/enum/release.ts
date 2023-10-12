@@ -79,3 +79,20 @@ export enum ESiteStatus {
   update = 'update',
   delete = 'delete'
 }
+
+export enum EAppletcStatus {
+  empower = 'empower',
+  empowerSuccess = 'empowerSuccess'
+}
+
+export enum EReleaseType {
+  applet = 'applet',
+  webPage = 'webPage',
+  implantJs = 'implantJs'
+}
+
+export enum EAppletExamineStatus {
+  examining = '审核中',
+  examineFailed = '审核失败',
+  release = '发布成功'
+}

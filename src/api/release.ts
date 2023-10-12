@@ -17,7 +17,9 @@ import type {
   ICreateAccountEmpowerRes,
   ICreateGroupRes,
   IUpdateGroupDetail,
-  ICreateAccountCode
+  ICreateAccountCode,
+  IAppletAuthParams,
+  IAppletAuthRes
 } from '@/interface/release'
 import request from '@/utils/request'
 
@@ -258,5 +260,22 @@ export function deleteGroupChatAPI(roomId: string) {
   return request({
     method: 'delete',
     url: `/chato/weixin_group/remove/group/${roomId}`
+  })
+}
+
+// 微信小程序授权链接
+export function postMiniAppAuthUrlAPI(data: IAppletAuthParams) {
+  return request<string>({
+    method: 'post',
+    url: `/chato/api/v1/publish_channels/wechat/mini_prog/get_auth_link`,
+    data
+  })
+}
+
+// 查询微信小程序授权状态
+export function postMiniAppAuthStatusAPI(data: { domain_id: number }) {
+  return request<IAppletAuthRes>({
+    url: `/chato/api/v1/publish_channels/wechat/mini_prog/get_by_domain`,
+    data
   })
 }

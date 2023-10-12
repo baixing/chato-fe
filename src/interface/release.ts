@@ -5,6 +5,7 @@ import type {
   ESiteShowLocationType,
   EQrCodeHookType
 } from '@/enum/release'
+import type { IDomainInfo } from './domain'
 import type { UploadUserFile } from 'element-plus'
 
 export interface IApplicationFormData {
@@ -278,4 +279,24 @@ export interface IUpdateGroupDetail {
   name: string
   response_type: string
   new_user_msg: string
+}
+
+export interface IAppletAuthParams {
+  redirect_uri: string
+  domain_id: string | number
+}
+
+export interface IAppletAuthRes {
+  name: string
+  qr_code: string
+  domain: IDomainInfo
+  status: string
+  version: string
+  app_id: string
+  component_app_id: string
+  error_msg: string
+  response: string
+  id: string
+  created: string
+  modified: string
 }

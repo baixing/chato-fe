@@ -4,7 +4,6 @@
     v-model="visible"
     :title="$t(`查看账号`)"
     :before-close="handleClose"
-    class="serach-account-container"
     :size="isMobile ? '100%' : '40%'"
     v-loading="loading"
   >
@@ -177,23 +176,6 @@ watch(
   }
 )
 </script>
-
-<style lang="scss">
-.serach-account-container {
-  .el-drawer__header {
-    @apply mb-5 text-[#303133] font-medium;
-  }
-  .el-drawer__body {
-    @apply pt-0;
-  }
-  .el-collapse {
-    @apply border-t-0;
-  }
-  .el-form-item__label {
-    @apply text-sm text-[#303133];
-  }
-}
-</style>
 
 <style scoped lang="scss">
 .account-detail {
