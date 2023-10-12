@@ -1,5 +1,5 @@
 <template>
-  <div v-loading="initing">
+  <div v-loading="loading">
     <div
       v-if="
         !pagination.page_count &&
@@ -21,8 +21,9 @@
         plain
         @click="() => (dialogVisible = true)"
         class="bg-white"
-        >{{ $t('录入文档') }}</el-button
       >
+        {{ $t('录入文档') }}
+      </el-button>
     </div>
     <template v-else>
       <div class="flex justify-end items-center flex-wrap gap-4">
@@ -40,8 +41,9 @@
             link
             class="ml-[16px] text-[#303133]"
           >
-            <el-icon class="mr-[4px]"><Delete /></el-icon>{{ $t(' 删除') }}</el-button
-          >
+            <el-icon class="mr-[4px]"><Delete /></el-icon>
+            {{ $t(' 删除') }}
+          </el-button>
         </div>
         <SearchInput v-model:value="searchInput" />
       </div>
@@ -50,7 +52,7 @@
         v-model:selectStatus="DocSelectStatus"
         v-model:loading="loading"
         v-model:multipleSelection="multipleSelection"
-        :domain-id="domainId"
+        :domainId="domainId"
         :doc-list="(tableData as IDocumentList[])"
         v-model:pagination="pagination"
         @remove-doc="onRemoveDoc"
@@ -59,7 +61,7 @@
     </template>
     <EnterDoc
       :specailTipVisible="specailTipVisible"
-      :domain-id="domainId"
+      :domainId="domainId"
       :defaultForm="currentEdit"
       :sizeLimit="sizeLimit"
       :qtyLimit="qtyLimit"
@@ -87,14 +89,13 @@ import {
 } from '@/enum/knowledge'
 import type { IPage } from '@/interface/common'
 import type { GetFilesByDomainIdType, IDocumentForm, IDocumentList } from '@/interface/knowledge'
-import { RoutesMap } from '@/router'
 import { useBase } from '@/stores/base'
 import { useDomainStore } from '@/stores/domain'
 import * as url from '@/utils/url'
 import { ElLoading, ElMessageBox, ElNotification } from 'element-plus'
 import { debounce } from 'lodash'
 import { storeToRefs } from 'pinia'
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, onUnmounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import DocLearnTable from './components/DocLearnTable.vue'
@@ -106,18 +107,20 @@ const base = useBase()
 const route = useRoute()
 const domainStoreI = useDomainStore()
 const { domainInfo } = storeToRefs(domainStoreI)
-const domainId = (domainInfo.value.id || route.params.botId).toString()
+const domainId = computed(() => domainInfo.value.id || (route.params.botId as string))
 const qtyLimit = base.userInfo.role === USER_ROLES.SUPERMAN ? 1000 : 20 // 同时上传的文件数量限制
 const sizeLimit = 30 // 单个文件的体积限制（MB）
 const apiUpload = computed(() =>
-  url.join(currentEnvConfig.uploadBaseURL, `/chato/api/domains/${domainId}/files/upload/document`)
+  url.join(
+    currentEnvConfig.uploadBaseURL,
+    `/chato/api/domains/${domainId.value}/files/upload/document`
+  )
 )
 const serachStatus = ref(false)
 const searchInput = ref<string>('')
 const multipleSelection = ref<IDocumentList[]>([])
 const DocSelectStatus = ref(LearningStatesPerformanceType.all)
 const batchRemove = ref<boolean>(false)
-const initing = ref(true)
 const loading = ref(true)
 const tableData = ref<IDocumentList[]>([])
 const pagination = ref<IPage>({
@@ -159,7 +162,7 @@ const onRemoveDoc = async (fileId: number, message: string) => {
   })
 }
 
-const initDocList = async (callStatus = false) => {
+const initDocList = async () => {
   loading.value = true
   try {
     const params: GetFilesByDomainIdType = {
@@ -172,24 +175,14 @@ const initDocList = async (callStatus = false) => {
     }
     const {
       data: { data, meta }
-    } = await getFilesByDomainId(domainId, params)
+    } = await getFilesByDomainId(domainId.value, params)
     tableData.value = data
     pagination.value.page_count = meta.pagination.page_count
-    callStatus ? (specailTipVisible.value = tableData.value.length) : ''
+    specailTipVisible.value = tableData.value.length
   } catch (err) {
   } finally {
     loading.value = false
     serachStatus.value = false
-  }
-}
-
-const init = async () => {
-  try {
-    initing.value = true
-    await initDocList(true)
-  } catch (err) {
-  } finally {
-    initing.value = false
   }
 }
 
@@ -214,7 +207,7 @@ const deteleOrRetryFile = async (type: DeleteRetryFileMateStatusType, ids: numbe
     status: type,
     ids: ids
   }
-  const res = await deleteRetryFileMate(domainId, data)
+  const res = await deleteRetryFileMate(domainId.value, data)
   loading.close()
 
   return {
@@ -248,16 +241,11 @@ const delayedAPICall = debounce(() => {
   initDocList()
 }, 100)
 
-const watchPagination = watch(
-  () => pagination.value.page,
-  () => initDocList()
-)
-
-const watchSearchInput = watch(searchInput, () => {
+watch(searchInput, () => {
   delayedAPICall()
 })
 
-const watchTable = watch(
+watch(
   tableData,
   () => {
     if (!tableData.value.length) {
@@ -279,19 +267,17 @@ const watchTable = watch(
   { deep: true }
 )
 
-const wacthQaSelectStatus = watch(DocSelectStatus, () => {
-  init()
-})
-
-onMounted(() => {
-  init()
-})
+watch(
+  [() => pagination.value.page, domainId, DocSelectStatus],
+  ([page, v1, v2]) => {
+    if (page || v1 || v2) {
+      initDocList()
+    }
+  },
+  { immediate: true }
+)
 
 onUnmounted(() => {
-  watchTable()
-  watchPagination()
-  wacthQaSelectStatus()
-  watchSearchInput()
   clearInterval(timer)
 })
 </script>

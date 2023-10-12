@@ -7,7 +7,7 @@ import request from '@/utils/request'
 
 const PAGE_SIZE = 10
 
-export function getFilesByDomainId(domainId: string, params: GetFilesByDomainIdType) {
+export function getFilesByDomainId(domainId: string | number, params: GetFilesByDomainIdType) {
   return request<IDocumentList[]>({
     url: `/chato/api/domains/${domainId}/files`,
     params: {
@@ -26,7 +26,7 @@ export function deleteFile(fileId) {
 }
 
 //批量删除文件
-export function deleteRetryFileMate(domainId: string, data: RetryFileMateType) {
+export function deleteRetryFileMate(domainId: string | number, data: RetryFileMateType) {
   return request({
     method: 'post',
     url: `/chato/api/document_management/${domainId}/batch_update`,
