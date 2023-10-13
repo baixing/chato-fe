@@ -1149,7 +1149,7 @@
   "单聊": "One-on-One Chat",
   "扫一扫左侧二维码，加入群聊": "Scan the QR code on the left to join the group chat",
   "使用说明": "Instructions",
-  "您所在城市暂未开通该业务，如需开通请联系": "This service is not available in your city at the moment. Please contact us to request access.",
+  "操作频繁，请3分钟后尝试！": "Frequent operation, please try again in 3 minutes!",
   "绑定失败": "Binding Failed",
   "下一请使用企业微信扫描下方二维码登录步": "Please use Enterprise WeChat to scan the QR code below for login",
   "使用须知": "Terms of Use",
@@ -1221,5 +1221,6 @@
   "全页面": "Full page",
   "主动弹出": "Initiate popup",
   "不主动弹出": "Do not initiate popup",
-  "确认并查看": "Confirm and view"
+  "确认并查看": "Confirm and view",
+  "可抓取的网页仅为内容固定不变的静态网页，例如新闻文章、产品介绍等": "The web page can be captured is only the static web page that does not change the content, such as news articles, product introduction, etc."
 }

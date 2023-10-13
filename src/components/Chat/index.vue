@@ -205,6 +205,8 @@ import Watermark from 'watermark-plus'
 import xss from 'xss'
 import ChatFooter from './ChatFooter.vue'
 import ChatMessageMore from './ChatMessageMore.vue'
+import { useIsMobile } from '@/composables/useBasicLayout'
+import { currentEnvConfig } from '@/config'
 
 interface Props {
   internalProps?: boolean
@@ -229,6 +231,7 @@ const { t } = useI18n()
 const sseStore = useSSEStore()
 const { sseMsgResult } = storeToRefs(sseStore)
 
+const isMobile = useIsMobile()
 const route = useRoute()
 const base = useBase()
 const { userInfo } = storeToRefs(base)
@@ -248,7 +251,7 @@ const botSlug = computed(() => {
 })
 const isInternal = props.internalProps || false // 是否处于 Chato 内部环境
 const query_p = (qs.parseUrl(window.location.href).query.p as string) || ''
-const source = (qs.parseUrl(window.location.href).query.source as string) || ''
+const source = (qs.parseUrl(window.location.href).query.source as string) || isMobile ? 'h5' : 'pc'
 const detail = ref<IDomainInfo>({} as IDomainInfo) // 机器人详情
 const detailShortcutsArr = computed(() => {
   if (detail.value?.shortcuts) {
@@ -389,6 +392,7 @@ function getBotInfo() {
   getDomainDetailPublic(botSlug.value)
     .then((res) => {
       detail.value = res.data?.data || {}
+      document.title = detail.value.name
       if (props.chatByAudio) {
         detail.value.conversation_mode = EDomainConversationMode.audio
       }
@@ -937,7 +941,12 @@ const onFooterBrandLink = () => {
   if (isCustomerBrand.value) {
     return
   }
-  router.push('/')
+
+  if (window.self !== window.top) {
+    window.top.location.href = currentEnvConfig.wwwBaseURL
+  } else {
+    router.push('/')
+  }
 }
 
 const onDeleteSuccess = (questionId: number, messageDisplayType: EMessageDisplayType) => {

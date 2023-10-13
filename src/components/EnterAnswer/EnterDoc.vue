@@ -88,6 +88,8 @@
         <el-tab-pane :label="$t('网页抓取')" name="input-url">
           <p class="description">
             {{ $t('请避免非法抓取他人网站的侵权行为，保证链接可公开访问，且网站内容可复制') }}
+            <br />
+            {{ $t('可抓取的网页仅为内容固定不变的静态网页，例如新闻文章、产品介绍等') }}
           </p>
           <el-form
             ref="spliderUrl"
