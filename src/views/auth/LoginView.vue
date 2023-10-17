@@ -1,453 +1,197 @@
 <template>
   <div class="w-full h-full overflow-hidden bg-white flex justify-center items-center">
     <div>
-      <header>
-        <img src="@/assets/img/logo-header.png" alt="" class="logo" />
-      </header>
-      <div class="intro">
-        <p>{{ $t('基于 AI 技术轻松创建对话机器人') }}</p>
-      </div>
-
-      <div class="form">
-        <el-form
-          ref="refForm"
-          :rules="ruleForm"
-          :model="modelForm"
-          label-width="0"
-          label-position="top"
-        >
-          <el-form-item :label="$t(`手机号码`)" prop="mobile">
-            <el-input
-              class="input-mobile"
-              v-model.number="modelForm.mobile"
-              type="text"
-              size="large"
-              :placeholder="$t(`手机号`)"
-              autocomplete="off"
-              ref="refInputMobile"
+      <LoginHeader />
+      <div
+        class="p-3 md:p-0 mt-14 m-auto border border-solid border-[#E4E7ED] md:border-none rounded-lg"
+      >
+        <BindingMobile
+          v-if="isbindingMobile && !isMobile"
+          :userId="userId"
+          @loginEnterSuccess="loginEnterSuccess"
+        />
+        <template v-else>
+          <div v-if="!isMobile" class="flex justify-end items-center">
+            <div
+              class="login-tip relative w-[110px] text-[#596780] text-center py-2 bg-[#F2F3F5] rounded-md mr-[9px]"
+            >
+              {{ $t(LoginWayConfig[loginWay]) }}
+            </div>
+            <svg-icon
+              class="!w-[66.25px] !h-[66px] cursor-pointer"
+              :name="loginWay"
+              @click="handleChangeLoginWay"
             />
-          </el-form-item>
-          <el-form-item
-            class="form-item-code"
-            :label="$t(`验证码`)"
-            prop="code"
-            style="margin-bottom: 15px"
-          >
-            <el-input
-              class="input-sms-code"
-              v-model.trim="modelForm.code"
-              type="text"
-              size="large"
-              :placeholder="$t(`验证码`)"
-              autocomplete="off"
-              maxlength="4"
-              ref="refInputCode"
-              @input="onCodeInputRBI"
-            />
-
-            <el-button
-              class="btn-send"
-              size="large"
-              @click="sendSmsCode"
-              :disabled="isBtnSendDisabled"
-              ref="refBtnSend"
-              data-script="Chato-verification"
-            >
-              {{ codetText }}
-            </el-button>
-          </el-form-item>
-          <el-form-item v-if="!shareChannel" :label="$t(`来源（选填）`)" prop="channelType">
-            <el-select
-              v-model="modelForm.channelType"
-              class="w-full"
-              size="large"
-              :placeholder="$t(`来源`)"
-              autocomplete="off"
-            >
-              <el-option
-                v-for="item in ChannelOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
-            </el-select>
-
-            <el-form-item prop="channel" class="w-full">
-              <el-input
-                v-if="isinputChannel"
-                class="mt-3"
-                v-model.trim="modelForm.channel"
-                type="text"
-                size="large"
-                :placeholder="$t(`其他来源的详细描述或邀请码`)"
-                autocomplete="off"
-                maxlength="30"
-              />
-            </el-form-item>
-          </el-form-item>
-          <div
-            style="
-              font-size: 12px;
-              color: #707070;
-              display: flex;
-              align-items: center;
-              margin-bottom: 15px;
-            "
-          >
-            <el-checkbox
-              v-model="isBtnSubmitEnabled"
-              label=""
-              size="small"
-              style="margin-right: 4px"
-            />
-            {{ $t('同意') }}
-            <a
-              style="color: #7c5cfc; margin-left: 5px; margin-right: 5px"
-              @click.prevent="() => openPreviewUrl(kPrivacyLinkUrl)"
-            >
-              {{ $t('隐私政策') }}
-            </a>
-            {{ $t('和') }}
-            <a
-              style="color: #7c5cfc; margin-left: 5px"
-              @click.prevent="() => openPreviewUrl(kUserAgreementLinkUrl)"
-            >
-              {{ $t('服务条款') }}
-            </a>
-            {{ $t('，未注册的手机号将自动创建账号') }}
           </div>
-          <el-form-item>
-            <el-button
-              data-script="Chato-loginOrReg"
-              class="btn-login"
-              type="primary"
-              size="large"
-              @click="submitForm(refForm)"
-              :disabled="!isBtnSubmitEnabled"
-            >
-              {{ $t('登录/注册') }}
-            </el-button>
-          </el-form-item>
-        </el-form>
+          <div class="px-8 md:px-0 pb-3 w-[360px] md:w-full">
+            <component
+              :is="loginComponent[loginWay]"
+              :timeout="timeout"
+              :url="url"
+              @loginEnterSuccess="loginEnterSuccess"
+              @handleRefresh="handleRefreshQR"
+              :loading="loading"
+            />
+          </div>
+        </template>
       </div>
     </div>
   </div>
 </template>
+
 <script lang="ts" setup>
-import * as apiAuth from '@/api/auth'
-import { checkChannel } from '@/api/auth'
-import { addSpaceMember } from '@/api/space'
-import useBaiduPromotion from '@/composables/useBaiduPromotion'
-import useChannel from '@/composables/useChannel'
-import useGlobalProperties from '@/composables/useGlobalProperties'
-import useInvite from '@/composables/useInvite'
-import useRSA from '@/composables/useRSA'
-import { kPrivacyLinkUrl, kUserAgreementLinkUrl } from '@/constant/terms'
 import { useAuthStore } from '@/stores/auth'
-import { useBase } from '@/stores/base'
-import { openPreviewUrl } from '@/utils/help'
-import { validateCode, validateMobile } from '@/utils/validate'
-import { useStorage } from '@vueuse/core'
-import {
-  ElLoading,
-  ElNotification as Notification,
-  dayjs,
-  type FormInstance,
-  type FormRules
-} from 'element-plus'
 import { storeToRefs } from 'pinia'
-import { computed, reactive, ref } from 'vue'
-import { useI18n } from 'vue-i18n'
+import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-const { t } = useI18n()
+import LoginHeader from './components/LoginHeader.vue'
+import LoginMobile from './components/LoginMobile.vue'
+import LoginWeixin from './components/LoginWeixin.vue'
+import BindingMobile from './components/BindingMobile.vue'
+import { ELoginWay, ELoginEmpowerStatus } from '@/enum/auth'
+import { LoginWayConfig } from '@/constant/auth'
+import { useIsMobile } from '@/composables/useBasicLayout'
+import { getLoginQRCodeAPI, getLoginQREmpowerStatusAPI } from '@/api/auth'
+import type { ILoginQRCodeResult, ILoginQRCodeEmpowerResult } from '@/interface/auth'
+import { $notnull } from '@/utils/help'
+import useInvite from '@/composables/useInvite'
+import { addSpaceMember } from '@/api/space'
+import { useStorage } from '@vueuse/core'
+import { useBase } from '@/stores/base'
+import useGlobalProperties from '@/composables/useGlobalProperties'
+import useChannel from '@/composables/useChannel'
 
-const ChannelOptions = [
-  { label: t('朋友推荐'), value: t('朋友推荐') },
-  { label: t('抖音'), value: t('抖音') },
-  { label: t('小红书'), value: t('小红书') },
-  { label: t('微信视频号'), value: t('微信视频号') },
-  { label: t('微信公众号'), value: t('微信公众号') },
-  { label: t('微信群'), value: t('微信群') },
-  { label: t('搜索引擎'), value: t('搜索引擎') },
-  { label: t('邀请码'), value: t('邀请码') },
-  { label: t('其他'), value: t('其他') }
-]
-
-const inputChannel = [t('邀请码'), t('其他')]
-
-const router = useRouter()
-const route = useRoute()
-const redir = route.query.redirect || '/'
 const stateToken = useStorage('auth_token', '')
 const { shareChannel, setShareChannel } = useChannel()
-const { baiduPromotionId, baiduPromotionKeyword } = useBaiduPromotion()
 const { invite_ticket } = useInvite()
-const isBtnSendDisabled = ref(false)
-const isBtnSubmitEnabled = ref(true)
-const codetText = ref(t('获取验证码'))
-const modelForm = reactive({
-  mobile: '',
-  code: '',
-  channelType: '',
-  channel: ''
-})
-const refForm = ref<FormInstance>(null)
-const refInputCode = ref(null)
-const refInputMobile = ref(null)
-const refBtnSend = ref(null)
-const ruleForm = reactive<FormRules>({
-  mobile: [
-    { required: true, message: t('请输入手机号'), trigger: 'blur' },
-    { validator: validatorMobile, trigger: 'blur' }
-  ],
-
-  code: [
-    { required: true, message: t('请输入验证码'), trigger: 'blur' },
-    { validator: validatorCode, trigger: 'blur' }
-  ],
-
-  channel: [{ required: false, validator: validateChannelType, trigger: 'blur' }]
-})
-const isinputChannel = computed(() => inputChannel.includes(modelForm.channelType))
-
-function validateChannelType(rule: any, value: any, callback: any) {
-  if (modelForm.channelType === t('邀请码') && value !== '') {
-    checkChannel({ code: value })
-      .then((res) => {
-        const { data } = res.data
-        !data && Notification.error(t('邀请码无效'))
-        callback()
-      })
-      .catch(() => {})
-  } else {
-    callback()
-  }
-}
-
+const isMobile = useIsMobile()
+const { $sensors } = useGlobalProperties()
+const router = useRouter()
+const route = useRoute()
 const baseStoreI = useBase()
+const redir = route.query.redirect || '/'
 const authStoreI = useAuthStore()
 const { authToken } = storeToRefs(authStoreI)
+const loginWay = ref<ELoginWay>(ELoginWay.loginScanCode)
+const isbindingMobile = ref<boolean>(false)
+const loginQRCodeRes = ref<ILoginQRCodeResult>(null)
+const loginQRCodeEmpowerStatusRes = ref<ILoginQRCodeEmpowerResult>(null)
+const timer = ref(null)
+const timeout = ref(false)
+const loading = ref(false)
 
-// 一进此页就检查
+const userId = computed(() => {
+  return $notnull(loginQRCodeEmpowerStatusRes.value)
+    ? loginQRCodeEmpowerStatusRes.value.external_user_id
+    : ''
+})
+const url = computed(() => {
+  return $notnull(loginQRCodeRes.value) ? loginQRCodeRes.value.url : ''
+})
 const isLoggedIn = computed(() => !!authToken.value)
 if (isLoggedIn.value) {
   router.replace(redir as string)
 }
 
-function validatorMobile(rule, value, callback) {
-  if (!validateMobile(value)) {
-    callback(new Error(t('请输入正确的手机号')))
-  } else {
-    callback()
-  }
+const loginComponent = {
+  [ELoginWay.loginScanCode]: LoginMobile,
+  [ELoginWay.loginMobile]: LoginWeixin
 }
 
-function validatorCode(rule, value, callback) {
-  if (!validateCode(value)) {
-    callback(new Error(t('请输入正确的验证码')))
-  } else {
-    callback()
-  }
+const handleChangeLoginWay = () => {
+  loginWay.value =
+    loginWay.value === ELoginWay.loginScanCode ? ELoginWay.loginMobile : ELoginWay.loginScanCode
 }
 
-let smsCodeTrackerTag = false
-
-const { $sensors } = useGlobalProperties()
-// 验证码发送业务打点
-const onCodeSendRBI = () => {
-  $sensors?.track('sms_code_send_time', {
-    name: t('短信验证码发送时间'),
-    type: 'sms_code_send_time',
-    data: {
-      mobile: modelForm.mobile,
-      time: dayjs().format('YYYY-MM-DD HH:mm:ss')
-    }
-  })
-}
-
-const { encryption } = useRSA()
-
-// 验证码输入业务打点
-const onCodeInputRBI = async () => {
-  if (smsCodeTrackerTag || codetText.value === t('获取验证码')) {
-    return
-  }
-
-  $sensors?.track('sms_code_input_time', {
-    name: t('短信验证码输入时间'),
-    type: 'sms_code_input_time',
-    data: {
-      mobile: modelForm.mobile,
-      time: dayjs().format('YYYY-MM-DD HH:mm:ss')
-    }
-  })
-
-  smsCodeTrackerTag = true
-}
-
-async function sendSmsCode() {
-  if (!validateMobile(modelForm.mobile)) {
-    // TODO 实现完整的表单校验
-    Notification.error(t('您填写的手机号有误，请检查。'))
-    refBtnSend.value.ref.blur()
-    return
-  }
-  isBtnSendDisabled.value = true
-  const encryptMobile = encryption(modelForm.mobile)
-  refInputCode.value.focus()
-  apiAuth
-    .sendSmsCode(encryptMobile)
-    .then(() => {
-      Notification.success(t('短信验证码已发出，请查收。'))
-      onCodeSendRBI()
-      let count = 60
-      let timer = setInterval(() => {
-        count--
-        codetText.value = count + 's'
-        if (count < 0) {
-          codetText.value = t('获取验证码')
-          smsCodeTrackerTag = false
-          clearInterval(timer)
-          isBtnSendDisabled.value = false
-        }
-      }, 1000)
-    })
-    .catch((err) => {
-      if (err.response.status === 403) {
-        Notification.error(t('该手机号未获邀请，无法登录。'))
-        refInputMobile.value.focus()
-      } else {
-        Notification.error(t('短信验证码发送失败，请稍后重试。'))
-      }
-      isBtnSendDisabled.value = false
-      refInputCode.value.blur()
-    })
-}
-
-// 空间
-const enterSpaceValidate = async (invite_ticket: string) => {
+// ---- 微信扫码-----
+const getLoginQRCode = async () => {
   try {
-    const res = await addSpaceMember({ invite_ticket })
-    const addSpaceRes = res.data
-    stateToken.value = addSpaceRes.data.token
-  } catch (e) {}
+    loading.value = true
+    const res = await getLoginQRCodeAPI()
+    loginQRCodeRes.value = res.data.data
+  } catch (error) {
+  } finally {
+    loading.value = false
+    timeout.value = false
+  }
 }
 
-async function submitForm(refForm) {
-  if (!refForm) return
-  await refForm.validate((valid) => {
-    if (valid) {
-      const channelVal =
-        shareChannel.value || (isinputChannel.value ? modelForm.channel : modelForm.channelType)
-      const postData = {
-        mobile: encryption(modelForm.mobile),
-        verification_code: modelForm.code,
-        bd_vid: baiduPromotionId.value,
-        bd_keyword: baiduPromotionKeyword.value,
-        channel:
-          shareChannel.value || (isinputChannel.value ? modelForm.channel : modelForm.channelType)
-      }
-      const loading = ElLoading.service({
-        lock: true,
-        text: t('登录中...'),
-        background: 'rgba(0, 0, 0, 0.7)'
-      })
-      apiAuth
-        .login(postData)
-        .then(async (res) => {
-          const userToken = res.data.data
-          stateToken.value = userToken.default_auth_token
-          authToken.value = userToken.default_auth_token
-          setShareChannel(channelVal)
-          if (postData.channel === 'invite' && invite_ticket.value) {
-            await enterSpaceValidate(invite_ticket.value as string)
-          }
-          const userInfo = await baseStoreI.getUserInfo()
-          userInfo?.id && $sensors?.login(userInfo?.id.toString())
-          router.replace(`/manager/center`)
-        })
-        .catch((err) => {
-          if (err.response.status === 403) {
-            Notification.error(t('该手机号未获邀请，无法登录。'))
-            refInputMobile.value.focus()
-          } else {
-            Notification.error(t('登录失败，请核对您填写的信息。'))
-          }
-        })
-        .finally(() => {
-          loading.close()
-        })
-    } else {
-      Notification.error(t('抱歉，您填写的信息有误'))
-      refBtnSend.value.ref.blur()
-    }
-  })
+const serachQREmpowerStatus = async (session: string) => {
+  const res = await getLoginQREmpowerStatusAPI({ session })
+  const serachRes = res.data.data
+  loginQRCodeEmpowerStatusRes.value = serachRes
+  if (serachRes.status !== ELoginEmpowerStatus.waiting) {
+    clearInterval(timer.value)
+  }
+  switch (serachRes.status) {
+    case ELoginEmpowerStatus.timeout: // 过期了
+      timeout.value = true
+      break
+    case ELoginEmpowerStatus.success: // 登录成功
+      loginEnterSuccess(serachRes.token, shareChannel.value)
+      break
+    case ELoginEmpowerStatus.need_bind_mobile: // 绑定手机号
+      isbindingMobile.value = true
+      break
+  }
 }
+
+const handleRefreshQR = async () => {
+  await getLoginQRCode()
+  pollingQREmpowerStatus()
+}
+
+const pollingQREmpowerStatus = () => {
+  timer.value = setInterval(() => {
+    serachQREmpowerStatus(loginQRCodeRes.value.session)
+  }, 1000)
+}
+// ----------
+
+// ----- 登录 ----
+const enterSpaceValidate = async (invite_ticket: string) => {
+  const res = await addSpaceMember({ invite_ticket })
+  const addSpaceRes = res.data
+  stateToken.value = addSpaceRes.data.token
+}
+
+const loginEnterSuccess = async (token: string, channel: string, close?: () => void) => {
+  authStoreI.setToken(token)
+  if (channel === 'invite' && invite_ticket.value) {
+    await enterSpaceValidate(invite_ticket.value as string)
+  }
+  const userInfo = await baseStoreI.getUserInfo()
+  userInfo?.id && $sensors?.login(userInfo?.id.toString())
+  router.replace('/manager/center')
+  setShareChannel(channel)
+  close && close()
+}
+// ----------
+
+watch(loginWay, (v) => {
+  v === ELoginWay.loginMobile && !$notnull(loginQRCodeRes.value) && handleRefreshQR()
+  if (v === ELoginWay.loginMobile && $notnull(loginQRCodeRes.value)) {
+    pollingQREmpowerStatus()
+  } else {
+    clearInterval(timer.value)
+  }
+})
 </script>
+
 <style lang="scss" scoped>
-header {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-
-  .logo {
-    margin-left: 10px;
-    margin-right: 10px;
-    width: 194px;
-    height: 40px;
-  }
-
-  h1 {
-    margin-left: 10px;
-    margin-right: 10px;
-    font-size: 84px;
-  }
-}
-
-.intro {
-  margin-top: 16px;
-  line-height: 1.5;
-  text-align: center;
-  font-size: 18px;
-  color: #3d3d3d;
-}
-
-.user-tip {
-  margin-top: 10px;
-  text-align: center;
-  font-size: $fs-s;
-  color: #aaa;
-}
-
-.form {
-  margin: auto;
-  margin-top: 80px;
-  width: 360px;
-
-  input {
-    text-align: center;
-  }
-
-  :deep(.el-form-item) {
-    margin-bottom: 28px;
-  }
-
-  .form-item-code :deep(.el-form-item__content) {
-    justify-content: space-between;
-  }
-
-  .input-sms-code {
-    width: 220px;
-  }
-
-  .btn-send {
-    width: 120px;
-  }
-
-  .btn-login {
-    margin-top: 10px;
-    width: 100%;
+.login-tip {
+  &::after {
+    display: inline-block;
+    content: '';
+    position: absolute;
+    right: -18px;
+    top: 50%;
+    border-left: 9px solid #f2f3f5;
+    border-top: 9px solid transparent;
+    border-bottom: 9px solid transparent;
+    border-right: 9px solid transparent;
+    transform: translateY(-50%);
+    opacity: 1;
   }
 }
 </style>

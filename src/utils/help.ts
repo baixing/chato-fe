@@ -46,7 +46,7 @@ export const openPreviewUrl = (url: string) => {
     return
   }
 
-  window.open('https://file.chato-ai.com/onlinePreview?url=' + encodeURIComponent(btoa(url)))
+  window.open(url)
 }
 
 export function getMarkDownUrl(text: string) {

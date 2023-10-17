@@ -1,6 +1,12 @@
 import request from '@/utils/request'
+import type {
+  ILoginParams,
+  ILoginQRCodeSerachParams,
+  ILoginQRCodeEmpowerResult,
+  ILoginQRCodeResult
+} from '@/interface/auth'
 
-export function sendSmsCode(mobile, channel?: string) {
+export function postSendSmsCodeAPI(mobile: string, channel?: string) {
   return request({
     method: 'post',
     url: `/chato/api/auth/sendVerificationCode`,
@@ -8,7 +14,7 @@ export function sendSmsCode(mobile, channel?: string) {
   })
 }
 
-export function login(data) {
+export function postLoginAPI(data: ILoginParams) {
   return request({
     method: 'post',
     url: `/chato/api/v1/user/auth/login`,
@@ -16,9 +22,30 @@ export function login(data) {
   })
 }
 
-export function checkChannel(params: { code: string }) {
+export function getCheckChannelAPI(params: { code: string }) {
   return request({
     url: `/chato/api/v1/inviter_channels/check_code`,
     params: params
+  })
+}
+
+export function getLoginQRCodeAPI() {
+  return request<ILoginQRCodeResult>({
+    url: '/chato/api/v1/login/get_wx_public_qr_code'
+  })
+}
+
+export function getLoginQREmpowerStatusAPI(params: ILoginQRCodeSerachParams) {
+  return request<ILoginQRCodeEmpowerResult>({
+    url: '/chato/api/v1/login/get_wx_public_login_status',
+    params
+  })
+}
+
+export function postBindingMobileAPI(data: ILoginParams) {
+  return request({
+    method: 'post',
+    url: '/chato/api/v1/login/bind_mobile',
+    data
   })
 }

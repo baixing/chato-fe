@@ -10,6 +10,7 @@
     :close-on-click-modal="closeOnClickMask"
     :close-on-press-escape="closeOnPressEscape"
     :class="['chato-modal', !title && !slotHeader && 'chato-modal-header-none']"
+    style="--el-color-info: #303133"
   >
     <template v-if="slotHeader" #header="headerAttr">
       <slot name="header" v-bind="headerAttr"></slot>
