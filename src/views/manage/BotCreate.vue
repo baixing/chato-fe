@@ -122,7 +122,7 @@
         </div>
 
         <div class="create-input-label">
-          <SLTitle>{{ t('角色简介') }}</SLTitle>
+          <SLTitle tips="基于机器人当前名字和角色设定生成">{{ t('角色简介') }}</SLTitle>
           <AIGenerateBtn
             v-model:generateStr="formState.desc"
             :role="formState.name"
@@ -146,7 +146,7 @@
         />
 
         <div class="create-input-label">
-          <SLTitle>{{ t('欢迎语') }}</SLTitle>
+          <SLTitle tips="基于机器人当前名字和角色设定生成">{{ t('欢迎语') }}</SLTitle>
           <AIGenerateBtn
             v-model:generateStr="formState.welcome"
             :role="formState.name"

@@ -1,26 +1,26 @@
 <template>
-  <el-form :model="currentDomain" label-width="auto" label-position="top" class="chato-form">
-    <el-form-item>
-      <template #label>
-        <SLTitle>{{ t('机器人名字和头像') }}</SLTitle>
-      </template>
+  <div class="chato-form">
+    <div class="chato-form-item">
+      <SLTitle class="chato-form-label">{{ t('机器人名字和头像') }}</SLTitle>
       <div class="interface-desc">
         <span>{{ t('可展示或隐藏顶部的名字和头像') }}</span>
         <SwitchWithStateMsg v-model:value="currentDomain.name_and_avatar_show" />
       </div>
-    </el-form-item>
-    <el-form-item :label="t('角色简介')">
+    </div>
+    <div class="chato-form-item">
+      <div class="chato-form-label">{{ t('角色简介') }}</div>
       <div class="interface-desc">
         <span>{{ t('可展示或隐藏角色简介内容') }}</span>
         <SwitchWithStateMsg v-model:value="currentDomain.desc_show" />
       </div>
-    </el-form-item>
-    <el-form-item>
-      <template #label>
-        <SLTitle tips="关闭时仅在后台训练中可查看来源文档，打开后所有人在与机器人对话时都可查看">
-          {{ t('文档来源') }}
-        </SLTitle>
-      </template>
+    </div>
+    <div class="chato-form-item">
+      <SLTitle
+        tips="关闭时仅在后台训练中可查看来源文档，打开后所有人在与机器人对话时都可查看"
+        class="chato-form-label"
+      >
+        {{ t('文档来源') }}
+      </SLTitle>
       <div class="interface-desc">
         <div class="flex items-center gap-3">
           <span>{{ t('当回答引用了文档后，可查看回答对应的文档来源') }}</span>
@@ -40,15 +40,14 @@
           closeMsg="关闭"
         />
       </div>
-    </el-form-item>
-    <el-form-item>
-      <template #label>
-        <SLTitle
-          tips="关闭时仅在后台训练中可修正，打开后在分享链接页面，所有人在与机器人对话时都可修正"
-        >
-          {{ t('回答修正') }}
-        </SLTitle>
-      </template>
+    </div>
+    <div class="chato-form-item">
+      <SLTitle
+        tips="关闭时仅在后台训练中可修正，打开后在分享链接页面，所有人在与机器人对话时都可修正"
+        class="chato-form-label"
+      >
+        {{ t('回答修正') }}
+      </SLTitle>
       <div class="interface-desc">
         <div class="flex items-center gap-3">
           <span>{{ $t('当你的用户对话时，提供可修正的功能') }}</span>
@@ -92,44 +91,40 @@
           </span>
         </p>
       </div>
-    </el-form-item>
-    <div class="relative">
-      <el-form-item>
-        <template #label>
-          <div class="flex items-center justify-between">
-            <SLTitle>{{ t('品牌 & logo') }}</SLTitle>
-            <SwitchWithStateMsg v-model:value="currentDomain.brand_show" />
-          </div>
-        </template>
-        <div class="flex items-center justify-between gap-4 w-full">
-          <ImgUpload
-            :value="currentDomain.brand_logo"
-            v-bind="uploadConfig"
-            @onChange="onImgChange"
-          />
-          <HansInputLimit
-            v-model:value="currentDomain.brand_name"
-            type="text"
-            :limit="currentDomainHansLimit.brandName"
-            class="w-full"
-          />
-        </div>
-      </el-form-item>
+    </div>
+    <div class="chato-form-item relative">
+      <div class="chato-form-label flex items-center justify-between">
+        <SLTitle>{{ t('品牌 & logo') }}</SLTitle>
+        <SwitchWithStateMsg v-model:value="currentDomain.brand_show" />
+      </div>
+      <div class="flex items-center justify-between gap-4 w-full">
+        <ImgUpload
+          :value="currentDomain.brand_logo"
+          v-bind="uploadConfig"
+          @onChange="onImgChange"
+        />
+        <HansInputLimit
+          v-model:value="currentDomain.brand_name"
+          type="text"
+          :limit="currentDomainHansLimit.brandName"
+          class="w-full"
+        />
+      </div>
       <SpaceRightsMask :visible="maskVisible" :rightsType="ESpaceRightsType.brand" />
     </div>
-    <el-form-item :label="t('菜单栏')">
-      <div class="w-full">
-        <ChatShortcuts
-          v-model:shortcuts="currentDomain.shortcuts"
-          :domain-id="currentDomain.id.toString()"
-        />
-        <p class="text-xs text-[#9DA3AF] mt-4 leading-4">
-          {{ t('用户点击菜单后，将回复对应内容。此类消息不消耗电力值。') }}
-        </p>
-      </div>
-    </el-form-item>
-    <el-form-item :label="t('气泡设置')">
-      <div class="flex gap-16 w-full lg:flex-col lg:gap-4">
+    <div class="chato-form-item">
+      <div class="chato-form-label">{{ t('菜单栏') }}</div>
+      <ChatShortcuts
+        v-model:shortcuts="currentDomain.shortcuts"
+        :domain-id="currentDomain.id.toString()"
+      />
+      <p class="text-xs text-[#9DA3AF] mt-4 leading-4">
+        {{ t('用户点击菜单后，将回复对应内容。此类消息不消耗电力值。') }}
+      </p>
+    </div>
+    <div class="chato-form-item">
+      <div class="chato-form-label">{{ t('气泡设置') }}</div>
+      <div class="flex gap-16 lg:flex-col lg:gap-4">
         <div class="flex items-center gap-4">
           <span class="interface-desc">{{ $t('对话气泡') }}</span>
           <el-color-picker v-model="currentDomain.message_style" />
@@ -139,8 +134,9 @@
           <el-color-picker v-model="currentDomain.suspend_style" />
         </div>
       </div>
-    </el-form-item>
-  </el-form>
+    </div>
+  </div>
+
   <Modal v-model:visible="exampleState.visible" title="查看示例" :footer="false">
     <img :src="exampleState.img" class="w-full" alt="" />
   </Modal>

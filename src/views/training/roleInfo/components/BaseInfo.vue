@@ -1,37 +1,33 @@
 <template>
-  <el-form :model="currentDomain" label-width="auto" label-position="top" class="chato-form">
-    <el-form-item>
-      <div class="flex gap-4 items-center w-full">
-        <ImgUpload :value="currentDomain.avatar" v-bind="uploadConfig" @onChange="onImgChange" />
-        <HansInputLimit
-          v-model:value="currentDomain.name"
-          type="text"
-          :limit="currentDomainHansLimit.name"
-          :disabled="
-            AIGenerateInputDisabled.system_prompt &&
-            AIGenerateInputDisabled.desc &&
-            AIGenerateInputDisabled.welcome
-          "
-          class="flex-1"
+  <div class="chato-form">
+    <div class="chato-form-item flex gap-4 items-center w-full">
+      <ImgUpload :value="currentDomain.avatar" v-bind="uploadConfig" @onChange="onImgChange" />
+      <HansInputLimit
+        v-model:value="currentDomain.name"
+        type="text"
+        :limit="currentDomainHansLimit.name"
+        :disabled="
+          AIGenerateInputDisabled.system_prompt &&
+          AIGenerateInputDisabled.desc &&
+          AIGenerateInputDisabled.welcome
+        "
+        class="flex-1"
+      />
+    </div>
+    <div class="chato-form-item">
+      <div class="chato-form-label flex items-center justify-between">
+        <SLTitle>{{ $t('角色设定') }}</SLTitle>
+        <AIGenerateBtn
+          v-model:generateStr="currentDomain.system_prompt"
+          :role="currentDomain.name"
+          :system-prompt="currentDomain.system_prompt"
+          :type="EDomainAIGenerateType.role"
+          :disabled="!currentDomain.name || AIGenerateInputDisabled.system_prompt"
+          disabled-tip="请填写名字后生成"
+          @start="AIGenerateInputDisabled.system_prompt = true"
+          @end="AIGenerateInputDisabled.system_prompt = false"
         />
       </div>
-    </el-form-item>
-    <el-form-item>
-      <template #label>
-        <div class="flex items-center justify-between">
-          <SLTitle>{{ $t('角色设定') }}</SLTitle>
-          <AIGenerateBtn
-            v-model:generateStr="currentDomain.system_prompt"
-            :role="currentDomain.name"
-            :system-prompt="currentDomain.system_prompt"
-            :type="EDomainAIGenerateType.role"
-            :disabled="!currentDomain.name || AIGenerateInputDisabled.system_prompt"
-            disabled-tip="请填写名字后生成"
-            @start="AIGenerateInputDisabled.system_prompt = true"
-            @end="AIGenerateInputDisabled.system_prompt = false"
-          />
-        </div>
-      </template>
       <HansInputLimit
         v-model:value="currentDomain.system_prompt"
         type="textarea"
@@ -41,11 +37,9 @@
         :disabled="AIGenerateInputDisabled.system_prompt"
         class="w-full"
       />
-    </el-form-item>
-    <el-form-item>
-      <template #label>
-        <SLTitle>{{ $t('知识') }}</SLTitle>
-      </template>
+    </div>
+    <div class="chato-form-item">
+      <SLTitle class="chato-form-label">{{ $t('知识') }}</SLTitle>
       <div class="w-full">
         <div class="flex gap-4 mb-3">
           <el-button plain @click="DOCModalVisible = true">
@@ -75,25 +69,23 @@
           </p>
         </div>
       </div>
-    </el-form-item>
-    <el-form-item>
-      <template #label>
-        <div class="flex items-center justify-between">
-          <SLTitle>{{ $t('角色简介') }}</SLTitle>
-          <AIGenerateBtn
-            v-model:generateStr="currentDomain.desc"
-            :role="currentDomain.name"
-            :system-prompt="currentDomain.system_prompt"
-            :type="EDomainAIGenerateType.intro"
-            :disabled="
-              !currentDomain.system_prompt || !currentDomain.name || AIGenerateInputDisabled.desc
-            "
-            disabled-tip="请填写名字和角色设定后生成"
-            @start="AIGenerateInputDisabled.desc = true"
-            @end="AIGenerateInputDisabled.desc = false"
-          />
-        </div>
-      </template>
+    </div>
+    <div class="chato-form-item">
+      <div class="chato-form-label flex items-center justify-between">
+        <SLTitle tips="基于机器人当前名字和角色设定生成">{{ $t('角色简介') }}</SLTitle>
+        <AIGenerateBtn
+          v-model:generateStr="currentDomain.desc"
+          :role="currentDomain.name"
+          :system-prompt="currentDomain.system_prompt"
+          :type="EDomainAIGenerateType.intro"
+          :disabled="
+            !currentDomain.system_prompt || !currentDomain.name || AIGenerateInputDisabled.desc
+          "
+          disabled-tip="请填写名字和角色设定后生成"
+          @start="AIGenerateInputDisabled.desc = true"
+          @end="AIGenerateInputDisabled.desc = false"
+        />
+      </div>
       <HansInputLimit
         v-model:value="currentDomain.desc"
         type="textarea"
@@ -103,25 +95,23 @@
         :disabled="AIGenerateInputDisabled.desc"
         class="w-full"
       />
-    </el-form-item>
-    <el-form-item>
-      <template #label>
-        <div class="flex items-center justify-between">
-          <SLTitle>{{ t('欢迎语') }}</SLTitle>
-          <AIGenerateBtn
-            v-model:generateStr="currentDomain.welcome"
-            :role="currentDomain.name"
-            :system-prompt="currentDomain.system_prompt"
-            :type="EDomainAIGenerateType.welcome"
-            :disabled="
-              !currentDomain.system_prompt || !currentDomain.name || AIGenerateInputDisabled.welcome
-            "
-            disabled-tip="请填写名字和角色设定后生成"
-            @start="AIGenerateInputDisabled.welcome = true"
-            @end="AIGenerateInputDisabled.welcome = false"
-          />
-        </div>
-      </template>
+    </div>
+    <div class="chato-form-item">
+      <div class="chato-form-label flex items-center justify-between">
+        <SLTitle tips="基于机器人当前名字和角色设定生成">{{ t('欢迎语') }}</SLTitle>
+        <AIGenerateBtn
+          v-model:generateStr="currentDomain.welcome"
+          :role="currentDomain.name"
+          :system-prompt="currentDomain.system_prompt"
+          :type="EDomainAIGenerateType.welcome"
+          :disabled="
+            !currentDomain.system_prompt || !currentDomain.name || AIGenerateInputDisabled.welcome
+          "
+          disabled-tip="请填写名字和角色设定后生成"
+          @start="AIGenerateInputDisabled.welcome = true"
+          @end="AIGenerateInputDisabled.welcome = false"
+        />
+      </div>
       <HansInputLimit
         v-model:value="currentDomain.welcome"
         type="textarea"
@@ -138,8 +128,8 @@
           )
         }}
       </p>
-    </el-form-item>
-  </el-form>
+    </div>
+  </div>
 
   <EnterQa
     :active-names="EDocumentTabType.inputText"
@@ -188,7 +178,7 @@ import { openPreviewUrl } from '@/utils/help'
 import * as url from '@/utils/url'
 import { Close } from '@element-plus/icons-vue'
 import { ElMessageBox, ElNotification } from 'element-plus'
-import { computed, inject, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
+import { computed, inject, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const currentDomain = inject<Partial<IDomainInfo>>(DomainEditSymbol)
@@ -300,10 +290,6 @@ const onPreviewFile = (file: IDocumentList) => {
     openPreviewUrl(file.raw_file_url)
   }
 }
-
-onMounted(() => {
-  initFilesList()
-})
 
 onBeforeUnmount(() => {
   clearInterval(refreshFilesIntervaler)

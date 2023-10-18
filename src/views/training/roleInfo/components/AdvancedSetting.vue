@@ -1,23 +1,21 @@
 <template>
-  <el-form :model="currentDomain" label-width="auto" label-position="top" class="chato-form">
-    <el-form-item>
-      <template #label>
-        <SLTitle>
-          <template #tips>
-            <dl>
-              <dt>{{ $t('首选模型：') }}</dt>
-              <dt>{{ $t('- 默认模型集成多个 LLM ，适配您业务场景提供最佳回复方式和内容') }}</dt>
-              <dt>{{ $t('- ChatGLM 可用字符数最多，在训练和问答中可最大化利用字符数') }}</dt>
-              <dt>{{ $t('- 文心一言作为国内最知名的模型，拥有较为全面的智能知识体系') }}</dt>
-              <dt>{{ $t('文档段落索引量：') }}</dt>
-              <dt>{{ $t('- 当选择 1-4 段时，系统将读取知识中的信息，根据读取的优先级索引') }}</dt>
-              <dt>{{ $t('- 段落选择越短则可用字符数越多，反之则越少') }}</dt>
-              <dt>{{ $t('- 当选择 0 段时，系统将不再读取知识中的任何信息') }}</dt>
-            </dl>
-          </template>
-          {{ $t('首选模型和文档段落索引量') }}
-        </SLTitle>
-      </template>
+  <div class="chato-form">
+    <div class="chato-form-item">
+      <SLTitle class="chato-form-label">
+        <template #tips>
+          <dl>
+            <dt>{{ $t('首选模型：') }}</dt>
+            <dt>{{ $t('- 默认模型集成多个 LLM ，适配您业务场景提供最佳回复方式和内容') }}</dt>
+            <dt>{{ $t('- ChatGLM 可用字符数最多，在训练和问答中可最大化利用字符数') }}</dt>
+            <dt>{{ $t('- 文心一言作为国内最知名的模型，拥有较为全面的智能知识体系') }}</dt>
+            <dt>{{ $t('文档段落索引量：') }}</dt>
+            <dt>{{ $t('- 当选择 1-4 段时，系统将读取知识中的信息，根据读取的优先级索引') }}</dt>
+            <dt>{{ $t('- 段落选择越短则可用字符数越多，反之则越少') }}</dt>
+            <dt>{{ $t('- 当选择 0 段时，系统将不再读取知识中的任何信息') }}</dt>
+          </dl>
+        </template>
+        {{ $t('首选模型和文档段落索引量') }}
+      </SLTitle>
       <div class="flex flex-col gap-4">
         <div class="flex gap-6">
           <el-select v-model="currentDomain.llm">
@@ -72,9 +70,10 @@
           {{ $t('个字符') }}
         </p>
       </div>
-    </el-form-item>
+    </div>
     <div class="flex gap-10 lg:flex-col lg:gap-0">
-      <el-form-item :label="$t(`回复长度`)">
+      <div class="chato-form-item">
+        <div class="chato-form-label">{{ $t(`回复长度`) }}</div>
         <el-select
           v-model="currentDomain.reply_length"
           class="w-24"
@@ -88,8 +87,9 @@
             :value="item.value"
           />
         </el-select>
-      </el-form-item>
-      <el-form-item :label="$t(`回复语种`)">
+      </div>
+      <div class="chato-form-item">
+        <div class="chato-form-label">{{ $t(`回复语种`) }}</div>
         <el-select v-model="currentDomain.lang" class="w-24" :placeholder="$t(`未指定`)" clearable>
           <el-option
             v-for="(item, index) in DomainReplyLanguage"
@@ -98,8 +98,9 @@
             :value="item.value"
           />
         </el-select>
-      </el-form-item>
-      <el-form-item :label="$t(`回复语气`)" class="flex-1 max-w-[160px]">
+      </div>
+      <div class="chato-form-item">
+        <div class="chato-form-label">{{ $t(`回复语气`) }}</div>
         <el-select
           v-model="internalReplyTone"
           multiple
@@ -109,7 +110,7 @@
           default-first-option
           :placeholder="$t(`未指定`)"
           :reserve-keyword="false"
-          class="w-full"
+          class="flex-1 max-w-[160px]"
         >
           <el-option
             v-for="(item, index) in DomainReplyToneOfVoice"
@@ -118,16 +119,15 @@
             :value="item"
           />
         </el-select>
-      </el-form-item>
+      </div>
     </div>
-    <el-form-item>
-      <template #label>
-        <SLTitle
-          :tips="$t(`值为 0 时同一个问题的回复相对固定，值越大回复内容越随机多样具有创造性`)"
-        >
-          {{ $t('回复多样性') }}
-        </SLTitle>
-      </template>
+    <div class="chato-form-item">
+      <SLTitle
+        tips="值为 0 时同一个问题的回复相对固定，值越大回复内容越随机多样具有创造性"
+        class="chato-form-label"
+      >
+        {{ $t('回复多样性') }}
+      </SLTitle>
       <el-slider
         v-model="currentDomain.temperature"
         :step="2.5"
@@ -137,28 +137,22 @@
         :format-tooltip="(v) => diverstyToolTip[v]"
         class="w-full"
       />
-    </el-form-item>
-    <el-form-item>
-      <template #label>
-        <div class="flex justify-between items-center">
-          <SLTitle
-            :tips="
-              $t(
-                `最多可添加 100 个词，每个词最长不超过 20 个字符，如不填写指定回复内容将默认不回复消息`
-              )
-            "
-          >
-            {{ $t('关键词回复') }}
-          </SLTitle>
-          <SwitchWithStateMsg
-            v-model:value="currentDomain.keyword_block_show"
-            size="small"
-            openMsg="开启"
-            closeMsg="关闭"
-            msg-position="left"
-          />
-        </div>
-      </template>
+    </div>
+    <div class="chato-form-item">
+      <div class="chato-form-label flex justify-between items-center">
+        <SLTitle
+          tips="最多可添加 100 个词，每个词最长不超过 20 个字符，如不填写指定回复内容将默认不回复消息"
+        >
+          {{ $t('关键词回复') }}
+        </SLTitle>
+        <SwitchWithStateMsg
+          v-model:value="currentDomain.keyword_block_show"
+          size="small"
+          openMsg="开启"
+          closeMsg="关闭"
+          msg-position="left"
+        />
+      </div>
       <div v-show="currentDomain.keyword_block_show" class="w-full">
         <div class="flex items-center flex-wrap gap-3">
           <HansInputLimit
@@ -207,8 +201,8 @@
           />
         </div>
       </div>
-    </el-form-item>
-  </el-form>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">

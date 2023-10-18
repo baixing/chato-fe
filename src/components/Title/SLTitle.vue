@@ -3,7 +3,7 @@
     <slot></slot>
     <el-tooltip v-if="tips || slotTips" placement="right">
       <template #content>
-        <p class="lg:max-w-[214px]">{{ tips }}</p>
+        <p class="lg:max-w-[214px]" v-if="!slotTips">{{ $t(tips) }}</p>
         <slot name="tips"></slot>
       </template>
       <svg-icon

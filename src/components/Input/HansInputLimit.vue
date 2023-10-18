@@ -109,7 +109,8 @@ throttledWatch(
       return
     }
 
-    inputRef.value.textarea.scrollTop = inputRef.value.textarea.scrollHeight
+    internalDisabled.value &&
+      (inputRef.value.textarea.scrollTop = inputRef.value.textarea.scrollHeight)
   },
   { throttle: 300 }
 )

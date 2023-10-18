@@ -482,6 +482,7 @@
   "简介": "Introduction",
   "对话元素": "Conversation Elements",
   "欢迎语": "Greeting",
+  "基于机器人当前名字和角色设定生成": "Generated based on the robot's current name and role settings.",
   "打开聊天窗口后会主动发送，添加双井号可添加提问示例，例如：#帮我写一则关于xxx的文案#，此类消息不消耗电力值。": "Upon opening the chat window, a proactive message will be sent. Add double hash symbols to include question examples, e.g., #Help me write a copy about xxx#. Such messages do not consume energy points.",
   "菜单栏": "Menu Bar",
   "用户点击菜单后，将回复对应内容。此类消息不消耗电力值。": "Upon user's click on the menu, the corresponding content will be replied. Such messages do not consume energy points.",

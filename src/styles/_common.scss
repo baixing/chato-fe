@@ -195,3 +195,19 @@ body {
 .welcome-a {
   font-size: 14px;
 }
+
+.chato-form {
+  .chato-form-item {
+    margin-bottom: 32px;
+  }
+
+  .chato-form-label {
+    padding: 0;
+    margin-bottom: 16px;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 16px;
+    letter-spacing: 0.13px;
+    color: #303133;
+  }
+}
