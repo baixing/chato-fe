@@ -33,6 +33,7 @@
     "element-plus": "2.3.4",
     "github-markdown-css": "^5.2.0",
     "highlight.js": "^11.8.0",
+    "jsencrypt": "^3.3.2",
     "lodash": "^4.17.21",
     "markdown-it": "^13.0.1",
     "markdown-it-anchor": "^8.6.7",

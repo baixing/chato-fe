@@ -25,8 +25,7 @@
               :placeholder="$t(`手机号`)"
               autocomplete="off"
               ref="refInputMobile"
-            >
-            </el-input>
+            />
           </el-form-item>
           <el-form-item
             class="form-item-code"
@@ -44,8 +43,7 @@
               maxlength="4"
               ref="refInputCode"
               @input="onCodeInputRBI"
-            >
-            </el-input>
+            />
 
             <el-button
               class="btn-send"
@@ -101,17 +99,22 @@
               label=""
               size="small"
               style="margin-right: 4px"
-            />{{ $t('同意')
-            }}<a
+            />
+            {{ $t('同意') }}
+            <a
               style="color: #7c5cfc; margin-left: 5px; margin-right: 5px"
               @click.prevent="() => openPreviewUrl(kPrivacyLinkUrl)"
-              >{{ $t('隐私政策') }}</a
-            >{{ $t('和')
-            }}<a
+            >
+              {{ $t('隐私政策') }}
+            </a>
+            {{ $t('和') }}
+            <a
               style="color: #7c5cfc; margin-left: 5px"
               @click.prevent="() => openPreviewUrl(kUserAgreementLinkUrl)"
-              >{{ $t('服务条款') }}</a
-            >{{ $t('，未注册的手机号将自动创建账号') }}
+            >
+              {{ $t('服务条款') }}
+            </a>
+            {{ $t('，未注册的手机号将自动创建账号') }}
           </div>
           <el-form-item>
             <el-button
@@ -121,8 +124,9 @@
               size="large"
               @click="submitForm(refForm)"
               :disabled="!isBtnSubmitEnabled"
-              >{{ $t('登录/注册') }}</el-button
             >
+              {{ $t('登录/注册') }}
+            </el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -137,6 +141,7 @@ import useBaiduPromotion from '@/composables/useBaiduPromotion'
 import useChannel from '@/composables/useChannel'
 import useGlobalProperties from '@/composables/useGlobalProperties'
 import useInvite from '@/composables/useInvite'
+import useRSA from '@/composables/useRSA'
 import { kPrivacyLinkUrl, kUserAgreementLinkUrl } from '@/constant/terms'
 import { useAuthStore } from '@/stores/auth'
 import { useBase } from '@/stores/base'
@@ -260,8 +265,10 @@ const onCodeSendRBI = () => {
   })
 }
 
+const { encryption } = useRSA()
+
 // 验证码输入业务打点
-const onCodeInputRBI = () => {
+const onCodeInputRBI = async () => {
   if (smsCodeTrackerTag || codetText.value === t('获取验证码')) {
     return
   }
@@ -286,10 +293,10 @@ async function sendSmsCode() {
     return
   }
   isBtnSendDisabled.value = true
-  const mobile = modelForm.mobile
+  const encryptMobile = encryption(modelForm.mobile)
   refInputCode.value.focus()
   apiAuth
-    .sendSmsCode(mobile)
+    .sendSmsCode(encryptMobile)
     .then(() => {
       Notification.success(t('短信验证码已发出，请查收。'))
       onCodeSendRBI()
@@ -333,7 +340,7 @@ async function submitForm(refForm) {
       const channelVal =
         shareChannel.value || (isinputChannel.value ? modelForm.channel : modelForm.channelType)
       const postData = {
-        mobile: modelForm.mobile,
+        mobile: encryption(modelForm.mobile),
         verification_code: modelForm.code,
         bd_vid: baiduPromotionId.value,
         bd_keyword: baiduPromotionKeyword.value,
