@@ -404,7 +404,7 @@ function getBotInfo() {
           ? JSON.parse(res.data.data.shortcuts)
           : []
       inputLength.value = detail.value.question_max_length
-      !sseStore.isExistInPeddingDomains(botSlug.value) && props.type && sayWelcome()
+      !sseStore.isExistInPeddingDomains(botSlug.value) && sayWelcome()
       shareWeixinInit(detail.value)
       // 健硕需求p参数
       $notnull(query_p) ? submit(query_p) : ''
@@ -1109,7 +1109,7 @@ watch(
           class: 'welcome-a',
           id: 'Chato_chat_label_click'
         })
-      } else {
+      } else if (props.type) {
         sayWelcome()
       }
     } else {
