@@ -1,6 +1,11 @@
 <template>
   <div class="h-full min-h-[300px]">
-    <el-collapse v-model="activeNames" :accordion="true" v-if="groupList.length > 0">
+    <el-collapse
+      v-if="groupList.length > 0"
+      v-model="activeNames"
+      :accordion="true"
+      @change="handleChange"
+    >
       <el-collapse-item v-for="item in groupList" :key="item.token" :name="item.id">
         <template #title>
           <p class="leading-5 break-all">
@@ -63,6 +68,53 @@
               {{ $t('复制') }}
             </el-button>
           </p>
+          <el-collapse
+            style="--el-collapse-border-color: transparent"
+            class="w-full !border-0 text-sm group-collpase-container"
+          >
+            <el-collapse-item :title="$t(`群高级设置`)" name="1" class="border-0 text-sm">
+              <el-form
+                ref="ruleFormEditCreateGroupRef"
+                size="large"
+                label-position="top"
+                :rules="rulesEditCreateGroup"
+                :model="editCreateGroupForm"
+              >
+                <el-form-item :label="$t(`回复方式`)" prop="robot_response_type">
+                  <el-select
+                    v-model="editCreateGroupForm.robot_response_type"
+                    class="w-full"
+                    :placeholder="$t(`请选择回复方式`)"
+                  >
+                    <el-option :label="$t(`仅{'@'}回复`)" value="1" />
+                    <el-option :label="$t(`{'@'}或者提及昵称回复`)" value="2" />
+                  </el-select>
+                </el-form-item>
+                <el-form-item :label="$t(`新人进群{'@'}Ta打招呼`)" prop="new_user_in_group_msg">
+                  <el-input
+                    type="textarea"
+                    :rows="5"
+                    v-model="editCreateGroupForm.new_user_msg"
+                    :placeholder="$t(`请输入新人进群{'@'}Ta打招呼欢迎语`)"
+                  />
+                </el-form-item>
+                <el-text class="!text-sm" type="info">
+                  {{ $t('如需修改机器人在群里的名字，请前往') }}
+                  <router-link :to="userRoute" class="theme-color">{{
+                    $t('「形象」')
+                  }}</router-link>
+                  {{ $t('进行编辑机器人昵称，首位进群人员为管理员') }}
+                </el-text>
+                <el-row class="w-full mt-3" justify="end">
+                  <el-col :span="4">
+                    <el-button type="primary" @click="handleEditGroup(item)">{{
+                      $t('确认修改')
+                    }}</el-button>
+                  </el-col>
+                </el-row>
+              </el-form>
+            </el-collapse-item>
+          </el-collapse>
           <p class="text-[#303133] font-medium mb-[16px]">{{ $t('用户须知') }}</p>
           <p class="text-xs text-[#596780] leading-4" v-for="item in RGroupChatListTip" :key="item">
             {{ $t(item) }}
@@ -113,17 +165,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, reactive } from 'vue'
 import { $notnull } from '@/utils/help'
 import TransferResult from './TransferResult.vue'
 import TransferPublic from './TransferPublic.vue'
 import type { IDomainInfo } from '@/interface/domain'
 import { useDomainStore } from '@/stores/domain'
 import { storeToRefs } from 'pinia'
-import { ElMessageBox, ElLoading } from 'element-plus'
+import {
+  ElMessageBox,
+  ElLoading,
+  ElNotification,
+  type FormInstance,
+  type FormRules
+} from 'element-plus'
 import { RoutesMap } from '@/router'
 import { useRouter } from 'vue-router'
-import { transferGroupAPI, getGroupImgAPI, deleteGroupChatAPI } from '@/api/release'
+import { transferGroupAPI, getGroupImgAPI, deleteGroupChatAPI, editGroupAPI } from '@/api/release'
 import { useI18n } from 'vue-i18n'
 import type { IGroupList } from '@/interface/release'
 import { EAccountStatus } from '@/enum/release'
@@ -134,6 +192,8 @@ const props = defineProps<{
   groupList: IGroupList[]
   baseURL: string
   userRoute: string
+  endpoint: string
+  robotNickname: string
 }>()
 const emit = defineEmits(['handleRefresh'])
 
@@ -148,6 +208,48 @@ const selectedDomain = ref<IDomainInfo>()
 const currentGroup = ref<IGroupList>()
 const qrLoading = ref(true)
 const url = ref('')
+const ruleFormEditCreateGroupRef = ref<FormInstance>()
+
+const rulesEditCreateGroup = reactive<FormRules>({
+  robot_response_type: [{ required: true, trigger: 'blur', message: t('请选择回复方式') }]
+})
+
+const editCreateGroupForm = reactive({
+  robot_response_type: '1',
+  new_user_msg: ''
+})
+
+const handleChange = (id: string) => {
+  const item = props.groupList.find((item) => item.id === Number(id))
+  if ($notnull(item)) {
+    editCreateGroupForm.new_user_msg = item.new_user_msg
+    editCreateGroupForm.robot_response_type = String(item.response_type)
+  }
+}
+
+const handleEditGroup = async (item: IGroupList) => {
+  const loading = ElLoading.service({
+    lock: true,
+    text: t('修改中...'),
+    background: 'rgba(0, 0, 0, 0.7)'
+  })
+  try {
+    const data = {
+      id: item.id,
+      robot_nickname: props.robotNickname,
+      endpoint: props.endpoint,
+      name: item.name,
+      response_type: editCreateGroupForm.robot_response_type,
+      new_user_msg: editCreateGroupForm.new_user_msg
+    }
+    await editGroupAPI(props.domainId, data)
+    ElNotification.success('修改成功')
+    emit('handleRefresh')
+  } catch (error) {
+  } finally {
+    loading.close()
+  }
+}
 
 const getChatAPI = (baseURL: string, slug: string) => {
   return `${baseURL}/chato/api-public/domains/${slug}/chat`
@@ -226,7 +328,7 @@ const handlePushTransfer = () => {
     domainInfo: selectedDomain.value
   })
   router.push({
-    name: RoutesMap.tranning.botUser,
+    name: RoutesMap.tranning.roleInfo,
     params: { botId: selectedDomain.value.id }
   })
   transferVisible.value = false

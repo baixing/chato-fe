@@ -16,9 +16,7 @@
         <label :for="$t(`生成地址`)">{{ $t('生成地址：') }}</label>
         <span class="ml-[10px] md:ml-0 md:my-1">{{ url }}</span>
       </div>
-      <el-button type="primary" link @click="$copyText(url)">{{
-        $t('复制')
-      }}</el-button>
+      <el-button type="primary" link @click="$copyText(url)">{{ $t('复制') }}</el-button>
     </div>
     <p class="mt-[12px] text-[#596780]">
       <el-button size="large" type="primary" link @click="emit('handleResetConfig')">{{

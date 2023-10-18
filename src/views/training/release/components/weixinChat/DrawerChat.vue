@@ -23,6 +23,8 @@
           :groupList="groupList"
           :domainId="domainId"
           :baseURL="baseURL"
+          :robotNickname="robotNickname"
+          :endpoint="endpoint"
           @handleRefresh="init"
         />
       </el-tab-pane>
@@ -43,6 +45,8 @@ const props = defineProps<{
   domainId: number
   baseURL: string
   userRoute: string
+  robotNickname: string
+  endpoint: string
 }>()
 
 const emit = defineEmits(['update:value'])

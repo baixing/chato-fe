@@ -11,9 +11,11 @@
       :loading="loading"
       :accountQrCode="accountQrCode"
       :createStatus="createStatus"
+      :isCode="isCode"
       @handleSubmit="handleSubmit"
       @handleCreateChat="handleCreateChat"
       @handleClose="visible = false"
+      @handleSubmitCode="handleSubmitCode"
     />
   </Modal>
 </template>
@@ -24,10 +26,15 @@ import CreateAccountForm from './components/CreateAccountForm.vue'
 import CreateAccountFailed from './components/CreateAccountFailed.vue'
 import CreateAccountSuccess from './components/CreateAccountSuccess.vue'
 import { EAccountCreateStatus, EQrCodeHookType, EAccountSettingStatus } from '@/enum/release'
-import { getAccountQrCode, getAccountBindingStatus } from '@/api/release'
+import {
+  getAccountQrCode,
+  getAccountBindingStatus,
+  createGroupVerificationCodeAPI
+} from '@/api/release'
 import type { ICreateAccountRes } from '@/interface/release'
-import { ElNotification as Notification } from 'element-plus'
+import { ElNotification as Notification, ElLoading } from 'element-plus'
 import { $notnull } from '@/utils/help'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{
   value: boolean
@@ -37,9 +44,11 @@ const props = defineProps<{
 }>()
 const emit = defineEmits(['update:value', 'UpdateCreateChatVisible'])
 
+const { t } = useI18n()
 const currentStatus = ref<EAccountCreateStatus>(EAccountCreateStatus.create)
 const accountQrCode = ref<ICreateAccountRes>()
 const loading = ref<boolean>(false)
+const isCode = ref<boolean>(false)
 const visible = computed({
   get: () => props.value,
   set: (val) => emit('update:value', val)
@@ -64,6 +73,7 @@ const serachEmpowerStatus = async (key: string) => {
   const { data } = await getAccountBindingStatus(props.orgId, params)
   if (data.data.is_online) {
     currentStatus.value = EAccountCreateStatus.success
+    isCode.value = false
     accountQrCode.value = null
   }
   return data
@@ -87,16 +97,49 @@ const pollingEmpowerStatus = () => {
   let timer = setInterval(async () => {
     if (!props.value) return clearInterval(timer)
     const res = await serachEmpowerStatus(accountQrCode.value.qrCodeKey)
+
     if (res.data.is_expired) {
       init()
       clearInterval(timer)
     }
+
+    if (res.data.is_used) {
+      return Notification.error(t('您的账号已经托管过，不能重复托管'))
+    }
+
+    if (res.data.login_status === 10) {
+      return (isCode.value = true)
+    }
+
     if (res.data.is_online) {
       currentStatus.value = EAccountCreateStatus.success
+      isCode.value = false
       accountQrCode.value = null
       clearInterval(timer)
     }
   }, 2000)
+}
+
+const handleSubmitCode = async (code: string) => {
+  const loading = ElLoading.service({
+    lock: true,
+    text: t('校验中...'),
+    background: 'rgba(0, 0, 0, 0.7)'
+  })
+  try {
+    const data = {
+      hook_id: accountQrCode.value.hookId,
+      hook_type: EQrCodeHookType.wxwork,
+      qr_code_key: accountQrCode.value.qrCodeKey,
+      client_id: accountQrCode.value.clientId,
+      code
+    }
+    await createGroupVerificationCodeAPI(data)
+    Notification.success('校验成功')
+  } catch (error) {
+  } finally {
+    loading.close()
+  }
 }
 
 const init = async () => {
@@ -107,7 +150,8 @@ const init = async () => {
     accountQrCode.value = res.data.data
     pollingEmpowerStatus()
   } catch (e) {
-    currentStatus.value = EAccountCreateStatus.failed
+    visible.value = false
+    // currentStatus.value = EAccountCreateStatus.failed
   } finally {
     loading.value = false
   }

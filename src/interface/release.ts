@@ -107,6 +107,8 @@ export interface IGroupList {
   people_cnt: number
   token: string
   corp_name: string
+  new_user_msg: string
+  response_type: number
 }
 
 export interface ISingelGroupList {
@@ -216,6 +218,14 @@ export interface IJoinGroupChatAPI {
   org_id: number
 }
 
+export interface ICreateAccountCode {
+  hook_type: string
+  hook_id: string
+  client_id: number
+  qr_code_key: string
+  code: string
+}
+
 export interface ICreateSingleChatAPI {
   robot_wx_user_id: string
   org_id: number
@@ -250,6 +260,8 @@ export interface ICreateAccountParams {
 export interface ICreateAccountEmpowerRes {
   is_online: boolean
   is_expired: boolean
+  is_used: boolean
+  login_status: number
 }
 
 export interface ISetSiteFormType {
@@ -257,4 +269,13 @@ export interface ISetSiteFormType {
   popup_frequency: number
   popup: ESitePopupType
   show_location: ESiteShowLocationType
+}
+
+export interface IUpdateGroupDetail {
+  id: number
+  robot_nickname: string
+  endpoint: string
+  name: string
+  response_type: string
+  new_user_msg: string
 }

@@ -15,15 +15,35 @@ import type {
   ICreateSingleChatAPI,
   ICreateAccountParams,
   ICreateAccountEmpowerRes,
-  ICreateGroupRes
+  ICreateGroupRes,
+  IUpdateGroupDetail,
+  ICreateAccountCode
 } from '@/interface/release'
 import request from '@/utils/request'
+
+// 创建账号-验证码校验
+export function createGroupVerificationCodeAPI(data: ICreateAccountCode) {
+  return request<ICreateGroupRes>({
+    method: 'post',
+    url: `/chato/weixin_group/login_verification_code`,
+    data
+  })
+}
 
 // 创建新群
 export function createGroupAPI(domainId: number, data: IJoinGroupChatAPI) {
   return request<ICreateGroupRes>({
     method: 'post',
     url: `/chato/weixin_group/${domainId}/create`,
+    data
+  })
+}
+
+// 编辑群聊
+export function editGroupAPI(domainId: number, data: IUpdateGroupDetail) {
+  return request({
+    method: 'post',
+    url: `/chato/weixin_group/${domainId}/update/v2`,
     data
   })
 }

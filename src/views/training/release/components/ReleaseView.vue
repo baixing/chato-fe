@@ -32,37 +32,23 @@ import {
   type Ref
 } from 'vue'
 import { useI18n } from 'vue-i18n'
-import ReleaseBox from './components/ReleaseBox.vue'
+import ReleaseBox from './ReleaseBox.vue'
 
-const SerachApi = defineAsyncComponent(() => import('./components/apiCall/SerachApi.vue'))
-const ApplicationForm = defineAsyncComponent(
-  () => import('./components/application/ApplicationForm.vue')
-)
-const BrandDomain = defineAsyncComponent(
-  () => import('./components/brandDomain/BrandDomainIndex.vue')
-)
-const CreateFeishu = defineAsyncComponent(
-  () => import('./components/feishuPublic/CreateFeishu.vue')
-)
-const DrawerSite = defineAsyncComponent(() => import('./components/implantJs/DrawerSite.vue'))
-const SetEffectSite = defineAsyncComponent(() => import('./components/implantJs/SetEffectSite.vue'))
-const OfficialAccont = defineAsyncComponent(
-  () => import('./components/officialAccount/OfficialAccont.vue')
-)
-const EmPower = defineAsyncComponent(() => import('./components/tiktok/EmPower.vue'))
-const Copylink = defineAsyncComponent(() => import('./components/webPage/Copylink.vue'))
-const CreateChat = defineAsyncComponent(() => import('./components/weixinChat/CreateChat.vue'))
-const DrawerChat = defineAsyncComponent(() => import('./components/weixinChat/DrawerChat.vue'))
-const WeixinService = defineAsyncComponent(
-  () => import('./components/weixinService/WeixinService.vue')
-)
-const CreateDing = defineAsyncComponent(() => import('./components/dingDing/CreateDing.vue'))
-const CreateAccount = defineAsyncComponent(
-  () => import('./components/weixinChat/CreateAccount.vue')
-)
-const DrawerAccount = defineAsyncComponent(
-  () => import('./components/weixinChat/DrawerAccount.vue')
-)
+const SerachApi = defineAsyncComponent(() => import('./apiCall/SerachApi.vue'))
+const ApplicationForm = defineAsyncComponent(() => import('./application/ApplicationForm.vue'))
+const BrandDomain = defineAsyncComponent(() => import('./brandDomain/BrandDomainIndex.vue'))
+const CreateFeishu = defineAsyncComponent(() => import('./feishuPublic/CreateFeishu.vue'))
+const DrawerSite = defineAsyncComponent(() => import('./implantJs/DrawerSite.vue'))
+const SetEffectSite = defineAsyncComponent(() => import('./implantJs/SetEffectSite.vue'))
+const OfficialAccont = defineAsyncComponent(() => import('./officialAccount/OfficialAccont.vue'))
+const EmPower = defineAsyncComponent(() => import('./tiktok/EmPower.vue'))
+const Copylink = defineAsyncComponent(() => import('./webPage/Copylink.vue'))
+const CreateChat = defineAsyncComponent(() => import('./weixinChat/CreateChat.vue'))
+const DrawerChat = defineAsyncComponent(() => import('./weixinChat/DrawerChat.vue'))
+const WeixinService = defineAsyncComponent(() => import('./weixinService/WeixinService.vue'))
+const CreateDing = defineAsyncComponent(() => import('./dingDing/CreateDing.vue'))
+const CreateAccount = defineAsyncComponent(() => import('./weixinChat/CreateAccount.vue'))
+const DrawerAccount = defineAsyncComponent(() => import('./weixinChat/DrawerAccount.vue'))
 
 const { t } = useI18n()
 const base = useBase()
@@ -458,6 +444,8 @@ onMounted(() => {
       :domainId="domainInfo.id"
       :baseURL="currentEnvConfig.baseURL"
       :userRoute="userRoute"
+      :robotNickname="domainInfo.name"
+      :endpoint="chatReleaseURL.chatAPI"
     />
     <CreateChat
       v-model:value="createGroupChatVisible"
