@@ -355,7 +355,7 @@ const releaseList = [
     setList: [
       {
         icon: FullScreen,
-        label: t('配置小程序'),
+        label: t('扫码授权'),
         scriptId: 'Chato-applet-set',
         click: () => commonVisible(createAppletVisible)
       },

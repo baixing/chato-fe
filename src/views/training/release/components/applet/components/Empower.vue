@@ -21,7 +21,7 @@
       v-html="$t(item)"
     />
     <el-row justify="end" class="mt-3">
-      <el-col :lg="4" :xl="4" :md="12" :xs="12" :sm="12">
+      <el-col :lg="6" :xl="6" :md="12" :xs="12" :sm="12">
         <el-button size="large" type="primary" @click="emit('handleEmpower')">
           {{ $t('同意并授权') }}
         </el-button>
