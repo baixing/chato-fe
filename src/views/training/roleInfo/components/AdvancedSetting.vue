@@ -20,20 +20,17 @@
         <div class="flex gap-6">
           <el-select v-model="currentDomain.llm">
             <el-option
-              v-for="item in DomainLLMTypeOptions"
-              :key="item.value"
-              :label="$t(item.label)"
-              :value="item.value"
-              :disabled="item.value === EDomainLLMType.azure4 && needUpgrate"
+              v-for="item in domainLLMTypeOptions"
+              :key="item.type"
+              :label="$t(item.name)"
+              :value="item.type"
+              :disabled="item.need_vip && needUpgrate"
               class="!h-fit"
             >
               <div class="flex flex-col my-1 gap-[2px]">
                 <p class="leading-5">
-                  {{ $t(item.label) }}
-                  <span
-                    v-if="item.value === EDomainLLMType.azure4 && needUpgrate"
-                    class="inline-flex items-center"
-                  >
+                  {{ $t(item.name) }}
+                  <span v-if="item.need_vip && needUpgrate" class="inline-flex items-center">
                     (<el-button
                       link
                       type="primary"
@@ -48,7 +45,7 @@
                 <p class="text-[#B5BED0] text-xs">
                   {{
                     $t('消耗 {power} 个电力值', {
-                      power: item.value === EDomainLLMType.azure4 ? 40 : 1
+                      power: item.consume_quota
                     })
                   }}
                 </p>
@@ -206,7 +203,7 @@
 </template>
 
 <script setup lang="ts">
-import { getSystemPromptLimit } from '@/api/domain'
+import { getSystemPromptLimit, domainLLMConfigAPI } from '@/api/domain'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
 import SwitchWithStateMsg from '@/components/SwitchWithStateMsg/index.vue'
 import SLTitle from '@/components/Title/SLTitle.vue'
@@ -214,19 +211,17 @@ import useSpaceRights from '@/composables/useSpaceRights'
 import {
   DomainEditSymbol,
   DomainHansLimitSymbol,
-  DomainLLMTypeOptions,
   DomainReplyLanguage,
   DomainReplyLength,
   DomainReplyParagraph,
   DomainReplyToneOfVoice
 } from '@/constant/domain'
-import { EDomainLLMType } from '@/enum/domain'
 import { ESpaceCommercialType, ESpaceRightsType } from '@/enum/space'
-import type { IDomainInfo } from '@/interface/domain'
+import type { IDomainInfo, IDomainLLMConfig } from '@/interface/domain'
 import { getStringWidth } from '@/utils/string'
 import { debouncedWatch } from '@vueuse/core'
 import { ElInput, ElNotification } from 'element-plus'
-import { computed, inject, nextTick, ref } from 'vue'
+import { onMounted, computed, inject, nextTick, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const currentDomain = inject<Partial<IDomainInfo>>(DomainEditSymbol)
@@ -248,6 +243,7 @@ const needUpgrate = computed(() => isNotAllowedCommercialType([ESpaceCommercialT
 const keywordInput = ref('')
 const keywordInputVisible = ref(false)
 const keywordHansInputRef = ref<InstanceType<typeof ElInput>>()
+const domainLLMTypeOptions = ref<IDomainLLMConfig[]>([])
 
 const internalReplyTone = computed({
   get: () => (currentDomain.reply_tone ? currentDomain.reply_tone.split(',') : null),
@@ -283,6 +279,11 @@ const onKeywordInputConfirm = () => {
   keywordInput.value = ''
 }
 
+const initLLMConfigOption = async () => {
+  const res = await domainLLMConfigAPI()
+  domainLLMTypeOptions.value = res.data.data
+}
+
 const initSystemPromptLimit = async () => {
   const {
     data: { data }
@@ -297,4 +298,8 @@ debouncedWatch(
   },
   { immediate: true, debounce: 300 }
 )
+
+onMounted(() => {
+  initLLMConfigOption()
+})
 </script>

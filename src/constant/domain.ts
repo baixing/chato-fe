@@ -1,4 +1,4 @@
-import { EDomainConversationMode, EDomainLLMType } from '@/enum/domain'
+import { EDomainConversationMode } from '@/enum/domain'
 
 export const DomainCategoryOptions = [
   {
@@ -35,23 +35,7 @@ export const DomainCategoryOptions = [
   }
 ]
 
-export const DomainLLMTypeMapper = {
-  [EDomainLLMType.azure]: 'Default Model (推荐)',
-  [EDomainLLMType.wenxin]: '文心一言',
-  [EDomainLLMType.minimax]: 'MiniMax',
-  [EDomainLLMType.chatglm2]: 'ChatGLM',
-  [EDomainLLMType.azure4]: 'Advanced Model'
-}
-
 export const MidJourneyDomainSlug = import.meta.env.VITE_APP_MIDJOURNEY_DOMAIN_SLUG
-
-export const DomainLLMTypeOptions = [
-  { label: DomainLLMTypeMapper[EDomainLLMType.azure], value: EDomainLLMType.azure },
-  { label: DomainLLMTypeMapper[EDomainLLMType.wenxin], value: EDomainLLMType.wenxin },
-  { label: DomainLLMTypeMapper[EDomainLLMType.minimax], value: EDomainLLMType.minimax },
-  { label: DomainLLMTypeMapper[EDomainLLMType.chatglm2], value: EDomainLLMType.chatglm2 },
-  { label: DomainLLMTypeMapper[EDomainLLMType.azure4], value: EDomainLLMType.azure4 }
-]
 
 export const DomainReplyToneOfVoice = [
   '亲切友好',

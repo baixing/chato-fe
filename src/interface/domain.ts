@@ -1,9 +1,4 @@
-import type {
-  EDomainConversationMode,
-  EDomainLLMType,
-  EDomainStatus,
-  EDomainType
-} from '@/enum/domain'
+import type { EDomainConversationMode, EDomainStatus, EDomainType } from '@/enum/domain'
 import type { IOrg } from './user'
 
 export interface IDomainCustomerLimit {
@@ -66,7 +61,7 @@ export interface IDomainInfo {
   ad_show: number
   category: string
   token: string
-  llm: EDomainLLMType | null
+  llm: string | null
   top_k: number
   keyword_block: string[]
   keyword_block_reply: string
@@ -111,4 +106,11 @@ export interface IDomainDetail {
   }
   domain: IDomainInfo
   shortcuts: IDomainShortcut[]
+}
+
+export interface IDomainLLMConfig {
+  name: string
+  type: string
+  consume_quota: number
+  need_vip: boolean
 }

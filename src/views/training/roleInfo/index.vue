@@ -62,7 +62,6 @@
 import { updateDomain } from '@/api/domain'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import { DebugDomainSymbol, DomainEditSymbol, DomainHansLimitSymbol } from '@/constant/domain'
-import { EDomainLLMType } from '@/enum/domain'
 import type { IDomainInfo } from '@/interface/domain'
 import { RoutesMap } from '@/router'
 import { useDomainStore } from '@/stores/domain'
@@ -169,7 +168,7 @@ watch(
   domainInfo,
   (v) => {
     const currentDomainInfo = { ...toRaw(v) }
-    currentDomainInfo.llm = currentDomainInfo.llm || EDomainLLMType.azure
+    currentDomainInfo.llm = currentDomainInfo.llm || 'auto'
     currentDomainInfo.lang = currentDomainInfo.lang === 'auto' ? null : currentDomainInfo.lang
     currentDomainInfo.reply_length = currentDomainInfo.reply_length || null
     originalDomain = cloneDeep(currentDomainInfo)

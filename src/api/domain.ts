@@ -1,4 +1,4 @@
-import type { IDomainInfo } from '@/interface/domain'
+import type { IDomainInfo, IDomainLLMConfig } from '@/interface/domain'
 import request from '@/utils/request'
 
 export function getDomainsByOrgId(orgId) {
@@ -84,5 +84,11 @@ export const createDraftDomain = () => {
   return request<IDomainInfo>({
     method: 'post',
     url: `chato/api/v1/domains/create_draft`
+  })
+}
+
+export const domainLLMConfigAPI = () => {
+  return request<IDomainLLMConfig[]>({
+    url: `/chato/api/v1/config/llm`
   })
 }
