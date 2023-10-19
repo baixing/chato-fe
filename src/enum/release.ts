@@ -31,7 +31,8 @@ export const enum EChannelType {
 export enum EReleaseSettingExampleType {
   doc = 'doc',
   correct = 'correct',
-  ad = 'ad'
+  ad = 'ad',
+  chat = 'chat'
 }
 
 export enum EQrCodeHookType {

@@ -20,7 +20,7 @@ export default function useRecognizer({
 
   const { t } = useI18n()
   let nbest: number
-  let timer
+  let reopenTimer
 
   const initRecognizer = () => {
     const sokcet = new WebSocket(currentEnvConfig.asrSocketURL)
@@ -51,8 +51,8 @@ export default function useRecognizer({
         }
         asrStr.value = ''
       }
-      if (checkNeedReopen?.()) {
-        setTimeout(() => startRecording(''), 100)
+      if (checkNeedReopen?.() && !reopenTimer) {
+        reopenTimer = setTimeout(() => startRecording(''), 100)
       }
     }
 
@@ -93,7 +93,6 @@ export default function useRecognizer({
 
   const startRecording = (str: string = '') => {
     try {
-      timer && clearTimeout(timer)
       isStart.value = true
       backFill.value = true
       asrStr.value = str
@@ -113,10 +112,6 @@ export default function useRecognizer({
           ElNotification.error(refusedMsg)
         }
       }, 100)
-
-      // timer = setTimeout(() => {
-      //   stopRecording()
-      // }, DefaultCloseTime * 1000)
     } catch (err) {
       stopRecording()
       ElNotification.error(t('录音识别失败'))
@@ -129,7 +124,7 @@ export default function useRecognizer({
     }
     srInstantiation.value && srInstantiation.value.recordClose(latestSend)
     !latestSend && (backFill.value = latestSend)
-    timer && clearTimeout(timer)
+    reopenTimer && clearTimeout(reopenTimer)
     isStart.value = false
     const lastAsrStr = toRaw(asrStr.value)
     if (lastAsrStr.endsWith('，')) {
@@ -144,6 +139,7 @@ export default function useRecognizer({
 
   onBeforeUnmount(() => {
     ws.value = null
+    stopRecording()
   })
 
   return {

@@ -146,9 +146,12 @@ import DefaultAvatar from '@/assets/img/avatar.png'
 import AudioPlayer from '@/components/AudioPlayer/index.vue'
 import ChatEnter from '@/components/Chat/ChatEnter.vue'
 import MessageItem from '@/components/Chat/ChatMessageItem.vue'
+import CustomerFormDialog from '@/components/Customer/CustomerFormDialog.vue'
 import useAudioPlayer from '@/composables/useAudioPlayer'
 import useSSEAudio from '@/composables/useSSEAudio'
+import { useSource } from '@/composables/useSource'
 import useSpaceRights from '@/composables/useSpaceRights'
+import { currentEnvConfig } from '@/config'
 import {
   ChatMessageFinalStatus,
   ChatMessageMoreAction,
@@ -183,7 +186,7 @@ import { getStringWidth } from '@/utils/string'
 import { isURL } from '@/utils/url'
 import shareWeixin from '@/utils/weixinShare'
 import { useDebounceFn, useStorage } from '@vueuse/core'
-import { ElMessage, ElNotification as Notification } from 'element-plus'
+import { ElMessage, ElMessageBox, ElNotification as Notification } from 'element-plus'
 import 'highlight.js/styles/default.css'
 import { random, remove } from 'lodash'
 import { storeToRefs } from 'pinia'
@@ -204,8 +207,6 @@ import Watermark from 'watermark-plus'
 import xss from 'xss'
 import ChatFooter from './ChatFooter.vue'
 import ChatMessageMore from './ChatMessageMore.vue'
-import { currentEnvConfig } from '@/config'
-import { useSource } from '@/composables/useSource'
 
 interface Props {
   internalProps?: boolean
@@ -390,6 +391,21 @@ function getBotInfo() {
     .then((res) => {
       detail.value = res.data?.data || {}
       document.title = detail.value.name
+      if (
+        [RoutesMap.chat.c, RoutesMap.chat.release].includes(route.name as string) &&
+        EDomainConversationMode.audio === detail.value.conversation_mode
+      ) {
+        ElMessageBox.confirm(
+          t('当前机器人开启了语音对话模式，为了保证您的对话体验，稍后会请求授权您的麦克风权限。'),
+          t('温馨提示'),
+          {
+            confirmButtonText: t('知道了'),
+            showCancelButton: false,
+            type: 'warning',
+            customClass: '!max-w-[470px]'
+          }
+        )
+      }
       if (props.chatByAudio) {
         detail.value.conversation_mode = EDomainConversationMode.audio
       }

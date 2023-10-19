@@ -1,4 +1,4 @@
-import { EDomainLLMType } from '@/enum/domain'
+import { EDomainConversationMode, EDomainLLMType } from '@/enum/domain'
 
 export const DomainCategoryOptions = [
   {
@@ -79,6 +79,11 @@ export const DomainReplyParagraph = [
   { label: '二段', value: 2 },
   { label: '三段', value: 3 },
   { label: '四段', value: 4 }
+]
+
+export const DomainConversationModeOptions = [
+  { label: '文字', value: EDomainConversationMode.text },
+  { label: '语音', value: EDomainConversationMode.audio }
 ]
 
 export const DebugDomainSymbol = Symbol('temporary-debug-domain')

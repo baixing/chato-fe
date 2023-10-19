@@ -55,7 +55,7 @@
             size="small"
             type="primary"
             link
-            @click="onShowExample(EReleaseSettingExampleType.doc)"
+            @click="onShowExample(EReleaseSettingExampleType.correct)"
           >
             {{ t('查看示例') }}
           </el-button>
@@ -90,6 +90,39 @@
             {{ $t('后该链接的修正功能将失效') }}
           </span>
         </p>
+      </div>
+    </div>
+    <div class="chato-form-item">
+      <SLTitle
+        tips="与机器人对话时，可选择双方默认用文字或语音对话，对话模式切换电力值不变。"
+        class="chato-form-label"
+      >
+        {{ t('对话设置') }}
+      </SLTitle>
+      <div class="interface-desc">
+        <div class="flex items-center gap-3">
+          <span>{{ t('当你的用户对话时，每组对话的沟通形式的模式选择') }}</span>
+          <el-button
+            size="small"
+            type="primary"
+            link
+            @click="onShowExample(EReleaseSettingExampleType.chat)"
+          >
+            {{ t('查看示例') }}
+          </el-button>
+        </div>
+      </div>
+      <div class="flex gap-4 items-center text-[#303133] text-sm mt-[10px]">
+        <span>{{ t('对话模式：') }}</span>
+        <el-radio-group v-model="currentDomain.conversation_mode">
+          <el-radio
+            v-for="item in DomainConversationModeOptions"
+            :key="item.value"
+            :label="item.value"
+          >
+            {{ t(item.label) }}
+          </el-radio>
+        </el-radio-group>
       </div>
     </div>
     <div class="chato-form-item relative">
@@ -138,7 +171,9 @@
   </div>
 
   <Modal v-model:visible="exampleState.visible" title="查看示例" :footer="false">
-    <img :src="exampleState.img" class="w-full" alt="" />
+    <div class="max-h-[65vh] overflow-y-auto">
+      <img :src="exampleState.img" class="w-full" alt="" />
+    </div>
   </Modal>
 </template>
 
@@ -153,7 +188,11 @@ import SwitchWithStateMsg from '@/components/SwitchWithStateMsg/index.vue'
 import SLTitle from '@/components/Title/SLTitle.vue'
 import useImagePath from '@/composables/useImagePath'
 import { currentEnvConfig } from '@/config'
-import { DomainEditSymbol, DomainHansLimitSymbol } from '@/constant/domain'
+import {
+  DomainConversationModeOptions,
+  DomainEditSymbol,
+  DomainHansLimitSymbol
+} from '@/constant/domain'
 import { EReleaseSettingExampleType } from '@/enum/release'
 import { ESpaceRightsType } from '@/enum/space'
 import type { IDomainInfo } from '@/interface/domain'
@@ -172,7 +211,7 @@ const currentDomainHansLimit = inject<Record<string, number>>(DomainHansLimitSym
 const { t } = useI18n()
 const { ImagePath: CorrectAnswerImg } = useImagePath('correct-answer', 'example')
 const { ImagePath: DocSourceImg } = useImagePath('doc-source', 'example')
-const { ImagePath: AdImg } = useImagePath('ad', 'example', 'webp')
+const { ImagePath: ChatModeImg } = useImagePath('chat-mode', 'example')
 
 const exampleState = reactive({
   visible: false,
@@ -188,8 +227,8 @@ const onShowExample = (type: EReleaseSettingExampleType) => {
     case EReleaseSettingExampleType.correct:
       exampleState.img = CorrectAnswerImg.value
       break
-    case EReleaseSettingExampleType.ad:
-      exampleState.img = AdImg.value
+    case EReleaseSettingExampleType.chat:
+      exampleState.img = ChatModeImg.value
       break
   }
 }

@@ -31,6 +31,11 @@
   }
 }
 
+.el-radio {
+  --el-radio-text-color: #9da3af !important;
+  --el-radio-font-weight: normal !important;
+}
+
 .chato-tab {
   .el-tabs__item {
     color: #596780;

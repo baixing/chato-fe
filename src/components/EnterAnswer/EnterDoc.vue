@@ -423,12 +423,11 @@ function showFirstUp() {
   if (!props.specailTipVisible) {
     ElMessageBox.confirm(
       t(
-        '训练素材的学习时长各异，正常情况下 5-10 分钟后生效。 如果上传文件过多或过大，可能超出预期时长，请耐心等待。 切换或关闭该页面不影响 AI 学习素材，可稍后再来查看进度。'
+        '训练素材的学习时长各异，正常情况下 5-10 分钟后生效。 如果上传文件过多或过大，可能超出预期时长，请耐心等待。切换或关闭该页面不影响 AI 学习素材，可稍后再来查看进度。'
       ),
       t('温馨提示'),
       {
         confirmButtonText: t('我已知晓'),
-        dangerouslyUseHTMLString: true,
         showCancelButton: false,
         type: 'warning',
         customClass: '!max-w-[470px]'

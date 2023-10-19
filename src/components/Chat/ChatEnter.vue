@@ -41,7 +41,7 @@
         <el-tooltip :disabled="isMobile" :content="t(`发送`)" placement="top" :hide-after="0">
           <span
             :disabled="internalEnterDisabled"
-            @click="onSend"
+            @click="() => onSend()"
             data-script="Chato-send-question"
             class="send-btn transition-colors"
           >
@@ -113,9 +113,11 @@ import { SymChatDomainDetail } from '@/constant/chat'
 import { PaidCommercialTypes } from '@/constant/space'
 import { EDomainConversationMode } from '@/enum/domain'
 import type { IDomainInfo } from '@/interface/domain'
+import { RoutesMap } from '@/router'
 import { debounce } from 'lodash'
 import { computed, inject, nextTick, onBeforeUnmount, ref, watch, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRoute } from 'vue-router'
 
 const props = defineProps<{
   value: string
@@ -127,6 +129,7 @@ const props = defineProps<{
 const emit = defineEmits(['update:value', 'inputClick', 'clear', 'submit'])
 
 const { t } = useI18n()
+const route = useRoute()
 const { isMobile } = useBasicLayout()
 
 const domainDetail = inject<Ref<IDomainInfo>>(SymChatDomainDetail)
@@ -139,7 +142,7 @@ const internalValue = computed({
   set: (v) => emit('update:value', v)
 })
 const internalEnterDisabled = computed({
-  get: () => props.disabled,
+  get: () => props.disabled || audioPlaying.value,
   set: (v) => v
 })
 const internalHiddenClear = computed(() => props.hiddenClear)
@@ -148,6 +151,8 @@ const internalLastQuestionId = computed(() => props.lastQuestionId)
 const inputPlaceholder = computed(() =>
   isMobile.value ? '请输入问题' : '输入问题，换行可通过shift+回车'
 )
+
+const inDebug = computed(() => RoutesMap.tranning.roleInfo === route.name)
 
 const footerBrandShow = computed(() => {
   if (PaidCommercialTypes.includes(domainDetail.value.org?.type)) {
@@ -171,7 +176,7 @@ const onAudioSend = debounce(() => {
 }, audioSendTime)
 
 const onAudioChat = (str) => {
-  if (!isAudioChatModeDomain.value || !str) {
+  if (!isAudioChatModeDomain.value || inDebug.value || !str) {
     return
   }
   chatRecordingEnterVisible.value = true
@@ -190,15 +195,17 @@ const onRecorderUpdateStr = (str) => {
 const { audioPlaying } = useAudioPlayer()
 
 const onRecorderNeedReopen = (): boolean => {
+  let res = false
   if (
+    !inDebug.value &&
     isAudioChatModeDomain.value &&
     !isRecording.value &&
     !internalEnterDisabled.value &&
     !audioPlaying.value
   ) {
-    return true
+    res = true
   }
-  return false
+  return res
 }
 
 const { startRecording, stopRecording, resetAsr, isRecording } = useRecognizer({
@@ -210,7 +217,6 @@ const { startRecording, stopRecording, resetAsr, isRecording } = useRecognizer({
 const onRecording = () => {
   internalValue.value = ''
   chatRecordingEnterVisible.value = true
-  internalEnterDisabled.value = !isRecording.value
   isRecording.value ? stopRecording() : startRecording()
 }
 
@@ -241,32 +247,29 @@ const onCloseRecorder = () => {
 
 const onSendRecorder = () => {
   onCloseRecorder()
-  onSend()
+  onSend(internalValue.value)
 }
 
 // 消息发送
-const onSend = () => {
-  emit('submit')
+const onSend = (val?: string) => {
+  emit('submit', val)
 }
 
 // 语音对话，进来就开启录音
-watch([isAudioChatModeDomain, internalEnterDisabled, audioPlaying], () => {
-  if (!isAudioChatModeDomain.value) {
+watch([isAudioChatModeDomain, isRecording, internalEnterDisabled, audioPlaying], () => {
+  if (!isAudioChatModeDomain.value || inDebug.value) {
     return
   }
 
-  if (isRecording.value && internalEnterDisabled.value) {
-    stopRecording()
-    return
-  }
-
-  if (audioPlaying.value && isRecording.value) {
-    stopRecording()
-    return
-  }
-
-  if (!isRecording.value && !internalEnterDisabled.value && !audioPlaying.value) {
-    startRecording(internalValue.value)
+  if (isRecording.value) {
+    if (internalEnterDisabled.value || audioPlaying.value) {
+      stopRecording()
+      return
+    }
+  } else {
+    if (!audioPlaying.value && !internalEnterDisabled.value) {
+      startRecording(internalValue.value)
+    }
   }
 })
 
