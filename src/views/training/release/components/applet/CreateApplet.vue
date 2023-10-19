@@ -64,6 +64,10 @@ watch(
   },
   { immediate: true }
 )
+
+watch(visible, (v) => {
+  !v && (currentEmpowerStatus.value = EAppletcStatus.empower)
+})
 </script>
 
 <style scoped></style>
