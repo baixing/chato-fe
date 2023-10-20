@@ -15,7 +15,7 @@
             :label="$t(item.title)"
             class="h-full overflow-y-auto information-padding"
           >
-            <component :is="item.component" />
+            <component :is="item.component" :domainLLMTypeOptions="domainLLMTypeOptions" />
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -59,10 +59,10 @@
 </template>
 
 <script setup lang="ts">
-import { updateDomain } from '@/api/domain'
+import { updateDomain, domainLLMConfigAPI } from '@/api/domain'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import { DebugDomainSymbol, DomainEditSymbol, DomainHansLimitSymbol } from '@/constant/domain'
-import type { IDomainInfo } from '@/interface/domain'
+import type { IDomainInfo, IDomainLLMConfig } from '@/interface/domain'
 import { RoutesMap } from '@/router'
 import { useDomainStore } from '@/stores/domain'
 import { getStringWidth } from '@/utils/string'
@@ -97,6 +97,7 @@ const currentDomainHansLimit = reactive({
   keywordReply: 200
 })
 const chatMobileModalVisible = ref(false)
+const domainLLMTypeOptions = ref<IDomainLLMConfig[]>([])
 
 const activeTab = computed(() => (route.params?.type as string) || 'base')
 // 是否修改过
@@ -164,11 +165,20 @@ const onCancel = () => {
   currentDomain = Object.assign(currentDomain, originalDomain)
 }
 
+const initLLMConfigOption = async () => {
+  const res = await domainLLMConfigAPI()
+  const domainLLMList = res.data.data
+  domainLLMTypeOptions.value = domainLLMList
+  if (!currentDomain.llm && domainLLMList.length > 0) {
+    currentDomain.llm = domainLLMList[0].type
+  }
+}
+
 watch(
   domainInfo,
   (v) => {
     const currentDomainInfo = { ...toRaw(v) }
-    currentDomainInfo.llm = currentDomainInfo.llm || 'auto'
+    currentDomainInfo.llm = currentDomainInfo.llm || null
     currentDomainInfo.lang = currentDomainInfo.lang === 'auto' ? null : currentDomainInfo.lang
     currentDomainInfo.reply_length = currentDomainInfo.reply_length || null
     originalDomain = cloneDeep(currentDomainInfo)
@@ -199,6 +209,7 @@ provide(DomainEditSymbol, currentDomain)
 provide(DomainHansLimitSymbol, currentDomainHansLimit)
 
 onMounted(() => {
+  initLLMConfigOption()
   window.onbeforeunload = () => {
     if (isModified.value) {
       return true

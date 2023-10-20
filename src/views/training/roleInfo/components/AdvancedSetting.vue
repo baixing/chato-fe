@@ -221,11 +221,15 @@ import type { IDomainInfo, IDomainLLMConfig } from '@/interface/domain'
 import { getStringWidth } from '@/utils/string'
 import { debouncedWatch } from '@vueuse/core'
 import { ElInput, ElNotification } from 'element-plus'
-import { onMounted, computed, inject, nextTick, ref } from 'vue'
+import { computed, inject, nextTick, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const currentDomain = inject<Partial<IDomainInfo>>(DomainEditSymbol)
 const currentDomainHansLimit = inject<Record<string, number>>(DomainHansLimitSymbol)
+
+defineProps<{
+  domainLLMTypeOptions: IDomainLLMConfig[]
+}>()
 
 const { t } = useI18n()
 
@@ -243,7 +247,6 @@ const needUpgrate = computed(() => isNotAllowedCommercialType([ESpaceCommercialT
 const keywordInput = ref('')
 const keywordInputVisible = ref(false)
 const keywordHansInputRef = ref<InstanceType<typeof ElInput>>()
-const domainLLMTypeOptions = ref<IDomainLLMConfig[]>([])
 
 const internalReplyTone = computed({
   get: () => (currentDomain.reply_tone ? currentDomain.reply_tone.split(',') : null),
@@ -279,11 +282,6 @@ const onKeywordInputConfirm = () => {
   keywordInput.value = ''
 }
 
-const initLLMConfigOption = async () => {
-  const res = await domainLLMConfigAPI()
-  domainLLMTypeOptions.value = res.data.data
-}
-
 const initSystemPromptLimit = async () => {
   const {
     data: { data }
@@ -298,8 +296,4 @@ debouncedWatch(
   },
   { immediate: true, debounce: 300 }
 )
-
-onMounted(() => {
-  initLLMConfigOption()
-})
 </script>

@@ -82,6 +82,7 @@ const visible = computed({
 })
 const loading = ref(false)
 const appletAuthRes = ref<IAppletAuthRes>(null)
+const timer = ref(null)
 
 const handleClose = () => {
   visible.value = false
@@ -113,6 +114,21 @@ const init = async () => {
     loading.value = false
   }
 }
+
+watch(appletAuthRes, (v) => {
+  if (!$notnull(v)) return
+
+  const { status } = appletAuthRes.value
+
+  if (status !== EAppletExamineStatus.release) {
+    if (!timer.value) {
+      timer.value = setInterval(init, 5000)
+    }
+  } else {
+    clearInterval(timer.value)
+    timer.value = null
+  }
+})
 
 watch(visible, (v) => {
   v && init()
