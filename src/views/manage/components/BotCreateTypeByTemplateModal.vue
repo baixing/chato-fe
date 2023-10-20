@@ -25,7 +25,7 @@
         v-for="item in templateWithDomains[activeTemplateType]"
         :key="item.id"
         :md="12"
-        :lg="6"
+        :lg="8"
       >
         <div
           @click="formTemplateId = item.id"

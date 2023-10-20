@@ -84,7 +84,9 @@
           </SLTitle>
         </template>
         <div class="w-full">
-          <div class="flex justify-between items-center gap-5 mb-5">
+          <div
+            class="flex justify-between items-center gap-5 mb-5 lg:flex-col lg:gap-3 lg:items-start"
+          >
             <div class="text-sm text-[#3D3D3D] font-normal leading-4 flex items-center gap-3">
               {{ $t('每个用户每隔') }}
               <el-input-number
@@ -94,16 +96,18 @@
                 class="!w-20 mx-2"
               />
               {{ $t('条，展示一次广告') }}
+            </div>
+            <div class="flex items-center gap-3 lg:justify-between lg:w-full">
               <el-button size="small" type="primary" link @click="() => (exampleVisible = true)">
                 {{ $t('查看示例') }}
               </el-button>
+              <SwitchWithStateMsg
+                v-model:value="currentDomain.ad_show"
+                close-msg="关闭"
+                open-msg="开启"
+                size="small"
+              />
             </div>
-            <SwitchWithStateMsg
-              v-model:value="currentDomain.ad_show"
-              close-msg="关闭"
-              open-msg="开启"
-              size="small"
-            />
           </div>
           <div v-show="currentDomain.ad_show">
             <HansInputLimit
