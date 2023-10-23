@@ -6,12 +6,12 @@
         class="p-3 md:p-0 mt-14 m-auto border border-solid border-[#E4E7ED] md:border-none rounded-lg"
       >
         <BindingMobile
-          v-if="isbindingMobile && !isMobile"
+          v-if="isbindingMobile"
           :userId="userId"
           @loginEnterSuccess="loginEnterSuccess"
         />
         <template v-else>
-          <div v-if="!isMobile" class="flex justify-end items-center">
+          <div class="flex justify-end items-center">
             <div
               class="login-tip relative w-[110px] text-[#596780] text-center py-2 bg-[#F2F3F5] rounded-md mr-[9px]"
             >
@@ -72,7 +72,7 @@ const baseStoreI = useBase()
 const redir = route.query.redirect || '/'
 const authStoreI = useAuthStore()
 const { authToken } = storeToRefs(authStoreI)
-const loginWay = ref<ELoginWay>(ELoginWay.loginMobile)
+const loginWay = ref<ELoginWay>(isMobile ? ELoginWay.loginScanCode : ELoginWay.loginMobile)
 const isbindingMobile = ref<boolean>(false)
 const loginQRCodeRes = ref<ILoginQRCodeResult>(null)
 const loginQRCodeEmpowerStatusRes = ref<ILoginQRCodeEmpowerResult>(null)
