@@ -136,6 +136,23 @@
       />
     </div>
     <div class="chato-form-item">
+      <div class="chato-form-label">
+        {{ $t('对话上下文') }}
+      </div>
+      <div class="flex items-center justify-between">
+        <span class="text-[#596780] text-sm leading-5">
+          {{ $t('根据上下文的信息进行语义理解、识别指代对象并生成连贯的回答') }}
+        </span>
+        <SwitchWithStateMsg
+          v-model:value="currentDomain.is_session_effective"
+          size="small"
+          openMsg="开启"
+          closeMsg="关闭"
+          msg-position="left"
+        />
+      </div>
+    </div>
+    <div class="chato-form-item">
       <div class="chato-form-label flex justify-between items-center">
         <SLTitle
           tips="最多可添加 100 个词，每个词最长不超过 20 个字符，如不填写指定回复内容将默认不回复消息"
@@ -203,7 +220,7 @@
 </template>
 
 <script setup lang="ts">
-import { getSystemPromptLimit, domainLLMConfigAPI } from '@/api/domain'
+import { getSystemPromptLimit } from '@/api/domain'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
 import SwitchWithStateMsg from '@/components/SwitchWithStateMsg/index.vue'
 import SLTitle from '@/components/Title/SLTitle.vue'

@@ -128,6 +128,8 @@
   "高级规则": "Advanced Rules",
   "值为 0 时同一个问题的回复相对固定，值越大回复内容越随机多样具有创造性": "With a value of 0, the reply to the same question is relatively fixed; the larger the value, the more random and varied the reply content is with creativity.",
   "回复多样性": "Reply Diversity",
+  "对话上下文": "Conversation Context",
+  "根据上下文的信息进行语义理解、识别指代对象并生成连贯的回答": "Understand semantics, identify referents and generate coherent answers based on contextual information.",
   "最准确": "Most Accurate",
   "天马行空": "Wild Imagination",
   "最多可添加 100 个词，每个词最长不超过 20 个字符，如不填写指定回复内容将默认不回复消息": "You can add up to 100 words, each no longer than 20 characters. If you don't fill in the specified reply content, it will default to not replying to the message.",

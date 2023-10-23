@@ -71,6 +71,7 @@ export interface IDomainInfo {
   qa_modifiable: number
   question_ref_source_show: number
   name_and_avatar_show: number
+  is_session_effective: number
 }
 
 export interface IDomainShortcut {

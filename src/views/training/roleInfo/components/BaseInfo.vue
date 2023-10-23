@@ -31,7 +31,7 @@
       <HansInputLimit
         v-model:value="currentDomain.system_prompt"
         type="textarea"
-        :rows="6"
+        :rows="10"
         size="large"
         :limit="currentDomainHansLimit.system_prompt"
         :disabled="AIGenerateInputDisabled.system_prompt"

@@ -82,7 +82,7 @@
         <HansInputLimit
           v-model:value="formState.system_prompt"
           type="textarea"
-          :rows="6"
+          :rows="10"
           size="large"
           :limit="HansLimit.system_prompt"
           :disabled="AIGenerateInputDisabled.system_prompt"
