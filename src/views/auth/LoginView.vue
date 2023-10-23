@@ -72,13 +72,13 @@ const baseStoreI = useBase()
 const redir = route.query.redirect || '/'
 const authStoreI = useAuthStore()
 const { authToken } = storeToRefs(authStoreI)
-const loginWay = ref<ELoginWay>(ELoginWay.loginScanCode)
+const loginWay = ref<ELoginWay>(ELoginWay.loginMobile)
 const isbindingMobile = ref<boolean>(false)
 const loginQRCodeRes = ref<ILoginQRCodeResult>(null)
 const loginQRCodeEmpowerStatusRes = ref<ILoginQRCodeEmpowerResult>(null)
 const timer = ref(null)
 const timeout = ref(false)
-const loading = ref(false)
+const loading = ref(true)
 
 const userId = computed(() => {
   return $notnull(loginQRCodeEmpowerStatusRes.value)
@@ -168,14 +168,21 @@ const loginEnterSuccess = async (token: string, channel: string, close?: () => v
 }
 // ----------
 
-watch(loginWay, (v) => {
-  v === ELoginWay.loginMobile && !$notnull(loginQRCodeRes.value) && handleRefreshQR()
-  if (v === ELoginWay.loginMobile && $notnull(loginQRCodeRes.value)) {
-    pollingQREmpowerStatus()
-  } else {
-    clearInterval(timer.value)
-  }
-})
+watch(
+  loginWay,
+  (v) => {
+    if (v === ELoginWay.loginMobile) {
+      if ($notnull(loginQRCodeRes.value)) {
+        pollingQREmpowerStatus()
+      } else {
+        handleRefreshQR()
+      }
+    } else {
+      clearInterval(timer.value)
+    }
+  },
+  { immediate: true }
+)
 </script>
 
 <style lang="scss" scoped>
