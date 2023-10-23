@@ -322,3 +322,9 @@ export interface IGetBroadcastParams {
   domain: number | string
   receiver_id: string
 }
+
+export interface IMobileLimitItem {
+  id: number
+  mobile: string
+  remark: string
+}

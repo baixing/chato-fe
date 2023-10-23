@@ -254,8 +254,7 @@ const route = useRoute()
 const base = useBase()
 const { userInfo } = storeToRefs(base)
 const authStoreI = useAuthStore()
-const { authToken } = storeToRefs(authStoreI)
-const $uid = useStorage('uid', '')
+const { authToken, uid } = storeToRefs(authStoreI)
 const emit = defineEmits(['showDrawer', 'correctAnswer'])
 const botSlug = computed(() => {
   if (debugDomain?.slug) {
@@ -310,7 +309,7 @@ const SSEInstance = new SSE()
 const watermarkFunc = () => {
   if (watermark.value) return
   watermark.value = new Watermark({
-    content: userInfo.value.id || $uid.value || 'chato',
+    content: userInfo.value.id || uid.value || 'chato',
     alpha: 0.01,
     onSuccess: () => {},
     onWatermarkNull: () => console.error('watermark error')
@@ -449,10 +448,7 @@ const getHistoryChat = async (scrollBottomTag = true) => {
   if (isInternal) {
     chatHistoryParams.sender = String(userInfo.value.id) || ''
   } else {
-    if (!$uid.value || $uid.value === 'undefined') {
-      $uid.value = 'uid' + randomString(32)
-    }
-    chatHistoryParams.sender_uid = $uid.value
+    chatHistoryParams.sender_uid = uid.value
   }
   chatHistoryParams.domain_slug = botSlug.value
   const chatToBotHistory = isInternal ? chatToBotHistoryB : chatToBotHistoryC
@@ -600,7 +596,7 @@ const isTerminated = ref(false)
 // 是否正在加载回答的消息内容
 const isLoadingAnswer = ref(false)
 
-const chatToken = computed(() => (isInternal ? authToken.value : $uid.value))
+const chatToken = computed(() => (isInternal ? authToken.value : uid.value))
 const needsSSEAudio = computed(
   () => EDomainConversationMode.audio === detail.value.conversation_mode
 )

@@ -2,6 +2,7 @@ import type { EDomainConversationMode, EDomainStatus, EDomainType } from '@/enum
 import type { IOrg } from './user'
 
 export interface IDomainCustomerLimit {
+  mobile_limit_switch: number
   rate_limit_switch: number
   rate_limit: {
     time_seconds: number
@@ -87,6 +88,7 @@ export interface IDomainShortcut {
 export interface IDomainDetail {
   customer_limit: {
     rate_limit_switch: boolean
+    mobile_limit_switch: boolean
     rate_limit: {
       time_seconds: number
       num: number

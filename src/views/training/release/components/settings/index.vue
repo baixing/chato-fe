@@ -26,12 +26,27 @@
               {{ $t('每隔') }}
               <el-input-number
                 :min="1"
-                :max="60"
                 v-model="currentDomain.customer_limit.rate_limit.time_seconds"
                 controls-position="right"
-                class="!w-20"
+                :class="
+                  String(currentDomain.customer_limit.rate_limit.time_seconds).length > 4
+                    ? 'w-[120px]'
+                    : '!w-20'
+                "
               />
-              {{ $t('秒，只能发送') }}
+              <el-select
+                v-model="currentFrequency"
+                class="ml-2 w-[74px]"
+                :placeholder="$t('请选择频率')"
+              >
+                <el-option
+                  v-for="item in frequencyUnitList"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+              ，{{ $t('只能发送') }}
               <el-input-number
                 :min="1"
                 :max="9999"
@@ -73,6 +88,35 @@
           </div>
         </div>
       </div>
+
+      <el-card
+        class="w-full mt-6"
+        style="--el-box-shadow-light: none; --el-card-border-radius: 8px; --el-card-padding: 18px"
+      >
+        <template #header>
+          <div class="flex justify-between items-center text-sm font-medium">
+            <span class="text-[#3D3D3D]">{{ $t('按手机号') }}</span>
+            <SwitchWithStateMsg
+              v-model:value="currentDomain.customer_limit.mobile_limit_switch"
+              size="small"
+              close-msg="关闭"
+              open-msg="开启"
+            />
+          </div>
+        </template>
+        <div class="flex items-center text-[#3D3D3D]">
+          <span class="mr-3">
+            {{
+              $t('已录入 {mobileNumber} 个手机号', {
+                mobileNumber: pageMobileConfig.mobileList.length
+              })
+            }}</span
+          >
+          <el-button link type="primary" @click="listManagementRef = true">
+            {{ $t('名单管理') }}
+          </el-button>
+        </div>
+      </el-card>
     </el-form-item>
     <div class="relative">
       <el-form-item>
@@ -129,10 +173,18 @@
       <img :src="AdImg" class="w-full object-contain mx-auto" alt="" />
     </div>
   </Modal>
+  <ListManagement
+    v-bind="pageMobileConfig"
+    v-model:page="pageMobileConfig.page"
+    v-model:value="listManagementRef"
+    :domainId="domainInfo.id"
+    @handleReloadList="initMobileList"
+  />
 </template>
 
 <script lang="ts" setup>
 import { updateDomain } from '@/api/domain'
+import { getMobileLimitAPI } from '@/api/release'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
 import Modal from '@/components/Modal/index.vue'
 import SpaceRightsMask from '@/components/Space/SpaceRightsMask.vue'
@@ -150,7 +202,8 @@ import { storeToRefs } from 'pinia'
 import { computed, onBeforeUnmount, onMounted, reactive, ref, toRaw, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { onBeforeRouteLeave, useRoute } from 'vue-router'
-import CollectFormConfig from './CollectFormConfig.vue'
+import CollectFormConfig from './components/CollectFormConfig.vue'
+import ListManagement from './components/ListManagement.vue'
 
 const { t } = useI18n()
 const { ImagePath: AdImg } = useImagePath('ad', 'example', 'webp')
@@ -163,12 +216,14 @@ const route = useRoute()
 
 const loading = ref()
 const collectFormConfigRef = ref()
+const listManagementRef = ref(false)
 const spaceStoreI = useSpaceStore()
 const domainStoreI = useDomainStore()
 const { domainInfo } = storeToRefs(domainStoreI)
 const { currentRights } = storeToRefs(spaceStoreI)
 
 const defaultCustomerLimit = {
+  mobile_limit_switch: 0,
   rate_limit_switch: 0,
   rate_limit: {
     time_seconds: 60,
@@ -185,10 +240,38 @@ let currentDomain = reactive<Partial<IDomainInfo>>({
   customer_limit: { ...defaultCustomerLimit }
 })
 
+const pageMobileConfig = reactive({
+  page: 1,
+  total: 0,
+  page_count: 10,
+  page_size: 10,
+  mobileList: []
+})
+
 const DefaultADFrequency = 30
 const DefaultADContent = t(
   'Chato ——基于AI技术 轻松创建对话机器人，赶快来 Chato 创建一个属于自己的机器人吧'
 )
+
+const currentFrequency = ref(1)
+const frequencyUnitList = [
+  {
+    value: 1,
+    label: t('秒')
+  },
+  {
+    value: 60,
+    label: t('分钟')
+  },
+  {
+    value: 3600,
+    label: t('小时')
+  },
+  {
+    value: 3600 * 60,
+    label: t('天')
+  }
+]
 
 const maskVisible = computed(() => !currentRights.value.ad)
 
@@ -229,16 +312,47 @@ const onSave = async () => {
       background: 'rgba(0, 0, 0, 0.7)'
     })
 
-    await updateDomain(currentDomain.id, currentDomain)
+    const customer_limit = {
+      ...currentDomain.customer_limit,
+      rate_limit: {
+        ...currentDomain.customer_limit.rate_limit,
+        time_seconds:
+          Number(currentFrequency.value) * currentDomain.customer_limit.rate_limit.time_seconds
+      }
+    }
+    const saveDomain = { ...toRaw(currentDomain) }
+    await updateDomain(currentDomain.id, {
+      ...saveDomain,
+      customer_limit
+    })
     collectFormConfigRef.value?.onUpdateAbleAdForm()
     await domainStoreI.initDomainList(route)
     syncOriginalFormState()
+    currentFrequency.value = 1
     ElNotification.success(t('保存成功'))
   } catch (e) {
   } finally {
     loading.value.close()
   }
 }
+
+const initMobileList = async () => {
+  const res = await getMobileLimitAPI(domainInfo.value.id, { page: 1, page_size: 10 })
+  const pagination = res.data.meta.pagination
+  pageMobileConfig.mobileList = res.data.data
+  pageMobileConfig.page = pagination.page
+  pageMobileConfig.total = pagination.total
+  pageMobileConfig.page_count = pagination.page_count
+  pageMobileConfig.page_size = pagination.page_size
+}
+
+watch(
+  () => pageMobileConfig.page,
+  () => {
+    initMobileList()
+  },
+  { immediate: true }
+)
 
 watch(
   domainInfo,

@@ -23,6 +23,7 @@
 
 <script setup lang="ts">
 // TODO: refactor chat
+import { postCheckLoginCAPI } from '@/api/auth'
 import DocSourceDrawer from '@/components/Chat/ChatDocSourceDrawer.vue'
 import Chat from '@/components/Chat/index.vue'
 import EnterQa from '@/components/EnterAnswer/EnterQa.vue'
@@ -30,15 +31,16 @@ import { currentEnvConfig } from '@/config'
 import { USER_ROLES } from '@/constant/common'
 import { ETerminal } from '@/enum/common'
 import { EDocumentTabType } from '@/enum/knowledge'
+import router, { RoutesMap } from '@/router'
 import { useBase } from '@/stores/base'
 import { getMarkDownUrl, replaceMarkdownUrl } from '@/utils/help'
 import { removewRegReplaceA } from '@/utils/reg'
 import * as url from '@/utils/url'
+import { useStorage } from '@vueuse/core'
 import { reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
 const currentQuestionId = ref<number>()
-const currentSlug = ref<string>()
 
 const drawerShow = ref(false)
 const showDrawer = (question_id, slug) => {
@@ -49,7 +51,9 @@ const showDrawer = (question_id, slug) => {
 
 const route = useRoute()
 const base = useBase()
+const $uid = useStorage('uid', '')
 const domainId = route.params.botId as string
+const currentSlug = ref<string>((route.params.botSlug as string) || '')
 const dialogVisibleQa = ref(false)
 const baseURL = currentEnvConfig.uploadBaseURL
 const apiUploadPath = `/chato/api/domains/${domainId}/files/upload/qa`
@@ -70,4 +74,19 @@ const correctAnswer = (e) => {
   defaultForm.images = getMarkDownUrl(e.content)
   dialogVisibleQa.value = true
 }
+
+// 校验C端登录
+const checkLoginMobile = async () => {
+  const res = await postCheckLoginCAPI(currentSlug.value, $uid.value)
+  if (!res.data.data.login || !res.data.data.usable) {
+    router.push({
+      name: RoutesMap.auth.loginInvite,
+      query: {
+        slug: currentSlug.value
+      }
+    })
+  }
+}
+
+checkLoginMobile()
 </script>

@@ -15,10 +15,10 @@
 <script setup lang="ts">
 import ContentLayout from '@/layout/ContentLayout.vue'
 import { RoutesMap } from '@/router'
-import ReleaseView from './components/ReleaseView.vue'
+import ReleaseView from './components/releaseView/index.vue'
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import Settings from './components/Settings.vue'
+import Settings from './components/settings/index.vue'
 
 const route = useRoute()
 const router = useRouter()

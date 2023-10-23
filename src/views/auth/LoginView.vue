@@ -29,7 +29,7 @@
               :is="loginComponent[loginWay]"
               :timeout="timeout"
               :url="url"
-              @loginEnterSuccess="loginEnterSuccess"
+              @handleSubmitLogin="handleSubmitLogin"
               @handleRefresh="handleRefreshQR"
               :loading="loading"
             />
@@ -52,7 +52,7 @@ import BindingMobile from './components/BindingMobile.vue'
 import { ELoginWay, ELoginEmpowerStatus } from '@/enum/auth'
 import { LoginWayConfig } from '@/constant/auth'
 import { useIsMobile } from '@/composables/useBasicLayout'
-import { getLoginQRCodeAPI, getLoginQREmpowerStatusAPI } from '@/api/auth'
+import { getLoginQRCodeAPI, getLoginQREmpowerStatusAPI, postLoginAPI } from '@/api/auth'
 import type { ILoginQRCodeResult, ILoginQRCodeEmpowerResult } from '@/interface/auth'
 import { $notnull } from '@/utils/help'
 import useInvite from '@/composables/useInvite'
@@ -63,6 +63,7 @@ import useGlobalProperties from '@/composables/useGlobalProperties'
 import useChannel from '@/composables/useChannel'
 import { useI18n } from 'vue-i18n'
 import dayjs from 'dayjs'
+import { ElLoading, ElNotification as Notification } from 'element-plus'
 
 const { t } = useI18n()
 const stateToken = useStorage('auth_token', '')
@@ -191,6 +192,28 @@ const loginEnterSuccess = async (token: string, channel: string, close?: () => v
   router.replace(routeUrl.value)
   setShareChannel(channel)
   close && close()
+}
+
+const handleSubmitLogin = async (postData: any) => {
+  const loading = ElLoading.service({
+    lock: true,
+    text: t('登录中...'),
+    background: 'rgba(0, 0, 0, 0.7)'
+  })
+  try {
+    const res = await postLoginAPI(postData)
+    const userToken = res.data.data.default_auth_token
+    loginEnterSuccess(userToken, postData.channel, () => {
+      loading.close()
+    })
+  } catch (err) {
+    loading.close()
+    if (err.response.status === 403) {
+      Notification.error(t('该手机号未获邀请，无法登录。'))
+    } else {
+      Notification.error(t('登录失败，请核对您填写的信息。'))
+    }
+  }
 }
 // ----------
 

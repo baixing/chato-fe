@@ -368,7 +368,7 @@
   "限制将作用于外部用户，同一设备同一浏览器访问时识别为一名用户，成员在后台训练时的对话量不在限制范围内；超出后的回复不计入电力值。": "The limit applies to external users. When accessed by the same device and browser, it's recognized as one user. Member's conversations during backend training are not included in the limit; over-limit replies don't count towards electricity value.",
   "按使用频率": "By Usage Frequency",
   "每隔": "Every",
-  "秒，只能发送": "seconds send",
+  "只能发送": "send",
   "条": "messages",
   "超出默认将回复": "Exceeding the default will reply",
   "按使用量": "By Usage Quantity",
@@ -1304,5 +1304,10 @@
   "也可以上传素材资料，创建与众不同的专属助理机器人": "You can also upload material, create a unique assistant robot",
   "与Chato对话": "Talk to Chato",
   "Chato，好用的AI工具，让你快人一步！": "Chato, an AI tool that makes you go faster!",
-  "分享海报": "Share Poster"
+  "分享海报": "Share Poster",
+  "已录入 {mobileNumber} 个手机号": "{mobileNumber} phone numbers have been recorded",
+  "请选择频率": "Please select frequency",
+  "分钟": "Minutes",
+  "小时": "Hours",
+  "天": "Days"
 }

@@ -102,3 +102,8 @@ export enum ESettingBroadcastStatus {
   create = 'create',
   update = 'update'
 }
+
+export enum ESettingEnterMobile {
+  quickEnter = 'quickEnter',
+  uploadEnter = 'uploadEnter'
+}
