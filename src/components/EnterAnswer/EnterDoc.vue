@@ -105,15 +105,11 @@
                 :rows="10"
                 v-model="spliderUrlForm.urlData"
                 :placeholder="$t('输入要爬取的网页地址，使用英文,分隔')"
-              ></el-input>
+              />
             </el-form-item>
           </el-form>
         </el-tab-pane>
-        <el-tab-pane
-          :label="publicTabTile"
-          v-if="base.userInfo.role === USER_ROLES.SUPERMAN"
-          name="input-public"
-        >
+        <el-tab-pane :label="$t('公众号抓取')" name="input-public">
           <el-form
             ref="spliderPublic"
             size="large"
@@ -128,7 +124,7 @@
                 :rows="10"
                 v-model="spliderPubliceForm.publicData"
                 :placeholder="$t('请输入要爬取的公众号名称，用英文,分隔')"
-              ></el-input>
+              />
             </el-form-item>
           </el-form>
         </el-tab-pane>
@@ -153,11 +149,10 @@ import * as apiFile from '@/api/file'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import useGlobalProperties from '@/composables/useGlobalProperties'
-import { UPLOAD_FILE_TYPES, UPLOAD_FILE_VIDEO_AUDIO_TYPES, USER_ROLES } from '@/constant/common'
+import { UPLOAD_FILE_TYPES, UPLOAD_FILE_VIDEO_AUDIO_TYPES } from '@/constant/common'
 import { EDocumentTabType } from '@/enum/knowledge'
 import type { IDocumentForm } from '@/interface/knowledge'
 import { useAuthStore } from '@/stores/auth'
-import { useBase } from '@/stores/base'
 import { $notnull } from '@/utils/help'
 import { getStringWidth } from '@/utils/string'
 import dayjs from 'dayjs'
@@ -168,7 +163,6 @@ import { computed, onUnmounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
-const base = useBase()
 
 interface Props {
   apiUpload: string
@@ -263,10 +257,6 @@ const rules = reactive<FormRules>({
 })
 const $textExceedLimit = computed(() => {
   return getStringWidth(inputTextForm.content_html + inputTextForm.title || '') > limit.text_prompt
-})
-
-const publicTabTile = computed(() => {
-  return base.userInfo.role === USER_ROLES.SUPERMAN ? t('公众号抓取(仅超人可见)') : t('公众号抓取')
 })
 
 async function submitInputText() {
