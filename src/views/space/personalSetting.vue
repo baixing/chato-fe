@@ -1,18 +1,16 @@
 <template>
   <Topbar :title="$t(`个人设置`)" />
   <div class="page-center-container page-content-cotainer">
+    <SLTitle class="!text-base">{{ t('你的账户') }}</SLTitle>
     <el-form
       ref="settingFormRef"
       :model="settingForm"
       :rules="settingRule"
-      size="large"
-      align-items
-      label-width="60px"
+      label-width="auto"
+      label-position="left"
       :hide-required-asterisk="true"
+      class="chato-form setting-form"
     >
-      <el-form-item :label="$t(` 手机号`)">
-        {{ settingForm.mobile }}
-      </el-form-item>
       <el-form-item :label="$t(`头像`)">
         <div class="img-upload-container">
           <div
@@ -33,41 +31,54 @@
         <HansInputLimit
           v-model:value="settingForm.nickname"
           type="text"
-          size="large"
           :placeholder="$t(`请输入你的昵称`)"
           :limit="20"
           class="w-full max-w-[330px]"
         />
       </el-form-item>
-      <el-form-item label-width="12px" class="mt-[56px]">
-        <el-row class="w-full">
-          <el-col :xs="8" :sm="6" :md="4" :lg="4" :xl="4"
-            ><el-button type="primary" @click="handleSaveSetting(settingFormRef)">{{
-              $t('保存设置')
-            }}</el-button></el-col
-          >
-        </el-row>
+      <el-form-item :label="$t(`手机号`)">
+        {{ settingForm.mobile }}
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="handleSaveSetting(settingFormRef)">
+          {{ $t('保存设置') }}
+        </el-button>
       </el-form-item>
     </el-form>
+    <el-divider class="!my-10" style="--el-border-color: #e4e7ed" />
+    <div class="flex items-center gap-3">
+      <SLTitle class="!text-base">{{ t('注销账户') }}</SLTitle>
+      <el-button link style="--el-button-text-color: #596780" @click="onLogoutAccount">{{
+        t('去注销')
+      }}</el-button>
+    </div>
+    <p class="text-sm leading-[18px] tracking-[0.13px] text-[#9DA3AF] mt-4">
+      {{ t('注销之后，所有数据将被清空，请谨慎操作') }}
+    </p>
   </div>
 </template>
 <script lang="ts" setup>
+import { logoutAccount } from '@/api/auth'
 import { updateOrgUserInfo } from '@/api/space'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
+import SLTitle from '@/components/Title/SLTitle.vue'
 import Topbar from '@/components/Topbar/index.vue'
+import { useAuthStore } from '@/stores/auth'
 import { useBase } from '@/stores/base'
-import { getStringWidth } from '@/utils/string'
 import { confirmAndSubmit } from '@/utils/help'
+import { getStringWidth } from '@/utils/string'
 import type { FormInstance, FormRules } from 'element-plus'
-import { ElLoading, ElNotification as Notification } from 'element-plus'
-import { storeToRefs } from 'pinia'
-import { reactive, ref, watch, toRaw } from 'vue'
-import { onBeforeRouteLeave } from 'vue-router'
-import { useI18n } from 'vue-i18n'
+import { ElLoading, ElMessageBox, ElNotification as Notification } from 'element-plus'
 import { cloneDeep } from 'lodash-es'
+import { storeToRefs } from 'pinia'
+import { reactive, ref, toRaw, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { onBeforeRouteLeave, useRouter } from 'vue-router'
 
 const { t } = useI18n()
+const router = useRouter()
 const base = useBase()
+const authStoreI = useAuthStore()
 const { userInfo } = storeToRefs(base)
 const settingFormRef = ref<FormInstance>()
 let settingFormInit = {}
@@ -150,6 +161,25 @@ const handleSaveSetting = async (formEl: FormInstance | undefined) => {
   })
 }
 
+const onLogoutAccount = async () => {
+  try {
+    await ElMessageBox.confirm(
+      t(
+        '注销账户是不可恢复的操作，请谨慎操作。帐户成功注销后，你将无法登录、使用该帐户的资产、权益、记录等一切内容，无法继续使用且无法恢复。'
+      ),
+      t('注销账户：{account}', { account: settingForm.mobile }),
+      {
+        confirmButtonText: t('确认'),
+        cancelButtonText: t('取消'),
+        type: 'warning'
+      }
+    )
+    await logoutAccount()
+    authStoreI.logout()
+    router.push('/')
+  } catch (err) {}
+}
+
 onBeforeRouteLeave((to, from, next) => {
   confirmAndSubmit(settingFormInit, { ...toRaw(settingForm) }, next, () =>
     handleSaveSetting(settingFormRef.value)
@@ -194,6 +224,16 @@ watch(
   .show-img-upload {
     opacity: 1;
     height: 100%;
+  }
+}
+
+.setting-form {
+  margin-top: 24px;
+  :deep(.el-form-item__label) {
+    margin-bottom: 0px !important;
+    align-items: center;
+    height: 100%;
+    min-width: 62px;
   }
 }
 </style>

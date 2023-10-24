@@ -26,7 +26,7 @@
     <div class="mx-5 flex flex-col items-start gap-3 mb-4">
       <el-button link @click="onLinkTo(RoutesMap.namespace.personalSetting)" class="btn">
         <el-icon class="mr-2"><Edit /></el-icon>
-        {{ $t('修改资料') }}
+        {{ $t('个人设置') }}
       </el-button>
       <el-button link @click="onLinkTo(RoutesMap.auth.logout)" class="btn">
         <el-icon class="mr-2"><SwitchButton /></el-icon>

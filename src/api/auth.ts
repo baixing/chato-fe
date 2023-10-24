@@ -1,10 +1,10 @@
-import request from '@/utils/request'
 import type {
   ILoginParams,
-  ILoginQRCodeSerachParams,
   ILoginQRCodeEmpowerResult,
-  ILoginQRCodeResult
+  ILoginQRCodeResult,
+  ILoginQRCodeSerachParams
 } from '@/interface/auth'
+import request from '@/utils/request'
 
 export function postSendSmsCodeAPI(mobile: string, channel?: string) {
   return request({
@@ -47,5 +47,13 @@ export function postBindingMobileAPI(data: ILoginParams) {
     method: 'post',
     url: '/chato/api/v1/login/bind_mobile',
     data
+  })
+}
+
+// 注销账户
+export function logoutAccount() {
+  return request({
+    method: 'post',
+    url: `/chato/api/v1/user/logout`
   })
 }
