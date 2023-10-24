@@ -57,14 +57,12 @@
       />
     </template>
     <EnterDoc
-      :specailTipVisible="specailTipVisible"
       :domainId="domainId"
       :defaultForm="currentEdit"
       :sizeLimit="sizeLimit"
       :qtyLimit="qtyLimit"
       :apiUpload="apiUpload"
       :dialogVisible="dialogVisible"
-      @updateSpecailTipVisible="specailTipVisible = tableData.length"
       @setSuccess="onCloseDialog"
       @reloadList="initDocList"
       @closeDialogVisble="onCloseDialog"
@@ -128,7 +126,6 @@ const pagination = ref<IPage>({
   total: 0,
   page_count: 0
 })
-const specailTipVisible = ref(0)
 
 const currentEdit = ref<IDocumentForm>({})
 const dialogVisible = ref(false)
@@ -177,7 +174,6 @@ const initDocList = async () => {
     } = await getFilesByDomainId(domainId.value, params)
     tableData.value = data
     pagination.value.page_count = meta.pagination.page_count
-    specailTipVisible.value = tableData.value.length
   } catch (err) {
   } finally {
     loading.value = false

@@ -68,7 +68,6 @@
     :qtyLimit="qtyLimit"
     :apiUpload="apiUpload"
     :dialogVisible="dialogVisibleQa"
-    @updateSpecailTipVisible="specailTipVisible = tableData.length"
     @reloadList="initQAList"
     @closeDialogVisble="onCloseDialog"
   />
@@ -133,7 +132,6 @@ const activeNames = ref<EDocumentTabType.uploadDoc | EDocumentTabType.inputText>
   EDocumentTabType.inputText
 )
 const dialogVisibleQa = ref(false)
-const specailTipVisible = ref(0)
 
 const onEditPreviewQA = (value: any, type: EDocumentOperateType) => {
   if (type === EDocumentOperateType.retry) {
@@ -189,7 +187,6 @@ const initQAList = async () => {
     } = await getFilesByDomainId(domainId.value, params)
     tableData.value = data
     pagination.value.page_count = meta.pagination.page_count
-    specailTipVisible.value = data.length
   } catch (err) {
   } finally {
     loading.value = false

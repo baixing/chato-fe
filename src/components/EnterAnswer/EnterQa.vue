@@ -124,7 +124,7 @@ import { $notnull } from '@/utils/help'
 import { getStringWidth } from '@/utils/string'
 import * as url from '@/utils/url'
 import type { FormInstance, FormRules, UploadFile, UploadFiles, UploadRawFile } from 'element-plus'
-import { ElLoading, ElMessage, ElMessageBox, ElNotification as Notification } from 'element-plus'
+import { ElLoading, ElMessage, ElNotification as Notification } from 'element-plus'
 import { storeToRefs } from 'pinia'
 import { computed, onUnmounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -138,7 +138,6 @@ interface Props {
   qtyLimit?: number
   activeNames: EDocumentTabType.uploadDoc | EDocumentTabType.inputText
   defaultForm?: IQAForm
-  specailTipVisible?: number
   hiddenBatch?: boolean
   domainSlug?: string
 }
@@ -248,7 +247,6 @@ async function submitInputText(formEl: FormInstance) {
           inputTextForm.images = []
           emit('setSuccess')
           emit('closeDialogVisble')
-          showFirstUp()
         })
         .catch(() => {})
         .finally(() => {
@@ -313,26 +311,6 @@ function onExceed() {
       qtyLimit: props.qtyLimit
     })
   )
-}
-
-function showFirstUp() {
-  if (props.specailTipVisible) {
-    ElMessageBox.confirm(
-      t(
-        '训练素材的学习时长各异，正常情况下 5-10 分钟后生效。 <br> 如果上传文件过多或过大，可能超出预期时长，请耐心等待。<br> 切换或关闭该页面不影响 AI 学习素材，可稍后再来查看进度。'
-      ),
-      t('温馨提示'),
-      {
-        dangerouslyUseHTMLString: true,
-        confirmButtonText: t('我已知晓'),
-        type: 'warning',
-        showCancelButton: false,
-        customClass: '!max-w-[470px]'
-      }
-    )
-      .then(() => {})
-      .catch(() => {})
-  }
 }
 
 function resetInputTextForm() {
