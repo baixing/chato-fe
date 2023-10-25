@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex items-center py-2 px-3 rounded border-2 border-solid border-[#E4E7ED]"
+    class="flex items-center py-2 px-3 rounded border border-solid text-sm border-[#E4E7ED]"
     :class="style"
   >
     <div>
@@ -8,17 +8,19 @@
     </div>
     <svg-icon
       @click.stop="setValue(value)"
-      name="stop"
-      svg-class="w-4 h-4 text-[#303133] text-base ml-2 cursor-pointer"
+      :name="iconName ?? 'stop'"
+      :svg-class="`w-4 h-4 text-base ml-2 cursor-pointer ${iconStyle}`"
     />
   </div>
 </template>
 
 <script lang="ts" setup>
-const props = defineProps<{
+defineProps<{
   label: String
   value: String
   style?: String
+  iconStyle?: String
+  iconName?: String
   setValue?: (value: String) => void
 }>()
 </script>
