@@ -29,16 +29,16 @@
     </section>
     <div class="text-center flex gap-8 items-center justify-center lg:gap-4">
       <el-button
-        class="w-[228px] !h-[60px] !text-lg font-medium tracking-[0.08em] !rounded-lg mt-7 !ml-0 hover:!scale-105 lg:!text-sm lg:w-[153px] lg:!h-[45px] lg:mt-5 !border-none btn-grad shadow-lg"
+        class="w-[228px] !h-[60px] !text-lg font-medium tracking-[0.08em] !rounded-lg mt-7 !ml-0 hover:!scale-105 lg:!text-sm lg:w-[153px] lg:!h-[45px] lg:mt-5 btn-grad shadow-lg"
         type="primary"
         id="Chato_top_create_click"
         @click="onEnter()"
       >
-        {{ $t('20S快速创建机器人') }}
+        {{ $t('快速创建机器人') }}
       </el-button>
       <el-button
         id="Chato_top_video_click"
-        class="w-[228px] !h-[60px] !text-lg font-medium tracking-[0.08em] !rounded-lg mt-7 !ml-0 hover:!scale-105 lg:!text-sm lg:w-[153px] lg:!h-[45px] lg:mt-5 !border-none !bg-[white] !text-[#303133] shadow-lg"
+        class="w-[228px] !h-[60px] !text-lg font-medium tracking-[0.08em] !rounded-lg mt-7 !ml-0 hover:!scale-105 lg:!text-sm lg:w-[153px] lg:!h-[45px] !border-[#7C5CFC] lg:mt-5 !bg-[#F2F2F5] !text-[#7C5CFC] shadow-lg"
         @click="onEnter('Chato_top_video_click')"
       >
         <template #icon>
@@ -672,7 +672,7 @@ onBeforeUnmount(() => {
   justify-content: space-evenly;
 }
 .btn-grad {
-  background: linear-gradient(99deg, #4e4f50 0%, #5a5c60 0%, #303133 99%);
+  background: linear-gradient(117deg, #0547ff -84%, #d683ff 125%);
 }
 
 .quick-start-bg {

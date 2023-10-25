@@ -20,6 +20,9 @@
               <svg-icon class="!w-[26px] !h-[25px]" :name="item.icon" />
             </div>
             <span class="mt-[12px] break-all text-center">{{ $t(item.name) }}</span>
+            <span class="text-[12px] h-8 text-[#7C5CFC] leading-4 px-1">
+              {{ item.tips ? $t(item.tips) : '' }}
+            </span>
           </div>
         </div>
       </el-form-item>
@@ -57,7 +60,8 @@ const identityList = [
     name: '企业用户',
     icon: 'enterprise-users',
     label: '公司名称',
-    placeholder: '请输入公司名称'
+    placeholder: '请输入公司名称',
+    tips: '可免费创建数字分身'
   },
   {
     id: 'person',
