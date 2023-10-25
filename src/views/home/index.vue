@@ -67,7 +67,7 @@
           id="Chato_login_click"
           @click="onEnter()"
         >
-          {{ authToken ? $t('进入') : $t('免费体验') }}
+          {{ authToken ? $t('进入') : $t('免费使用') }}
         </el-button>
       </div>
     </el-header>
@@ -165,7 +165,7 @@
       </div>
       <div id="Chato_right_login_click" data-sensors-click @click="onEnter()" class="fixed-btn">
         <svg-icon class="text-xl mb-[4px]" name="free-experience" />
-        <span v-if="!isMobile" class="scale-90">{{ $t('免费体验') }}</span>
+        <span v-if="!isMobile" class="scale-90">{{ $t('免费使用') }}</span>
       </div>
       <div
         class="fixed-btn"
