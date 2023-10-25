@@ -1,10 +1,10 @@
+import request from '@/utils/request'
 import type {
   ILoginParams,
+  ILoginQRCodeSerachParams,
   ILoginQRCodeEmpowerResult,
-  ILoginQRCodeResult,
-  ILoginQRCodeSerachParams
+  ILoginQRCodeResult
 } from '@/interface/auth'
-import request from '@/utils/request'
 
 export function postSendSmsCodeAPI(mobile: string, channel?: string) {
   return request({
