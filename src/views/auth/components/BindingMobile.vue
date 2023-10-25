@@ -40,7 +40,7 @@ const handleSubmitBinding = async (data: ILoginParams) => {
   try {
     const postData = {
       ...data,
-      external_user_id: props.userId
+      external_user_id: Number(props.userId)
     }
     const res = await postBindingMobileAPI(postData)
     const userToken = res.data.data.default_auth_token

@@ -85,7 +85,8 @@ const timeout = ref(false)
 const loading = ref(true)
 
 const userId = computed(() => {
-  return $notnull(loginQRCodeEmpowerStatusRes.value)
+  return $notnull(loginQRCodeEmpowerStatusRes.value) &&
+    !!loginQRCodeEmpowerStatusRes.value.external_user_id
     ? loginQRCodeEmpowerStatusRes.value.external_user_id
     : externalUserId.value
 })
@@ -189,7 +190,7 @@ const loginEnterSuccess = async (token: string, channel: string, close?: () => v
 watch(
   loginWay,
   (v) => {
-    if (v === ELoginWay.loginMobile) {
+    if (v === ELoginWay.loginMobile && !userId.value) {
       if ($notnull(loginQRCodeRes.value)) {
         pollingQREmpowerStatus()
       } else {
