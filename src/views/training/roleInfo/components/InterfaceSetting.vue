@@ -138,7 +138,14 @@
         />
         <div
           class="flex items-center py-2 px-3 rounded border-2 border-solid border-[#7C5CFC] text-[#7C5CFC] cursor-pointer"
-          @click="timbreDialogVisible = true"
+          @click="
+            () => (
+              (timbreDialogVisible = true),
+              (indexDialogTimbre = timbreList.findIndex(
+                (item) => item.value == currentDomain.conversation_mode_meta
+              ))
+            )
+          "
         >
           {{ t('选择声音') }}
         </div>
@@ -215,8 +222,8 @@
     </div>
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="timbreDialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="setTimbre"> 确定 </el-button>
+        <el-button @click="timbreDialogVisible = false"> {{ t('取消') }}</el-button>
+        <el-button type="primary" @click="setTimbre"> {{ t('确定') }}</el-button>
       </span>
     </template>
   </el-dialog>
@@ -293,7 +300,7 @@ const timbreList = ref<TimbreOptions[]>()
 const timbreDialogVisible = ref<boolean>(false)
 const testAudio = ref<HTMLAudioElement>()
 const testAudioUrl = ref<string>()
-const indexDialogTimbre = ref<number>(0)
+const indexDialogTimbre = ref<number>()
 // ----- 回答修正 -----
 const correctState = reactive({
   loading: false,
