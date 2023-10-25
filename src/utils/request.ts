@@ -6,7 +6,12 @@ import i18n from '@/locales'
 import router from '@/router'
 import { useAuthStore } from '@/stores/auth'
 import { useLocalStorage } from '@vueuse/core'
-import axios, { AxiosError, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios'
+import axios, {
+  AxiosError,
+  type AxiosRequestConfig,
+  type AxiosResponse,
+  type InternalAxiosRequestConfig
+} from 'axios'
 import { handleRequestError } from './help'
 let tokenAbnormal = false
 
@@ -101,7 +106,7 @@ service.interceptors.response.use(
 /**
  * 核心函数，可通过它处理一切请求数据，并做横向扩展
  */
-function request<T = any>(options) {
+function request<T = any>(options: AxiosRequestConfig<any>) {
   const method = options.method || 'get'
   // get 请求做参数的兼容
   if (method.toLowerCase() === 'get') {

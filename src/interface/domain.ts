@@ -72,6 +72,7 @@ export interface IDomainInfo {
   question_ref_source_show: number
   name_and_avatar_show: number
   is_session_effective: number
+  conversation_mode_meta?: string
 }
 
 export interface IDomainShortcut {

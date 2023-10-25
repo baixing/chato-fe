@@ -114,7 +114,7 @@
       </div>
       <div class="flex gap-4 items-center text-[#303133] text-sm mt-[10px]">
         <span>{{ t('对话模式：') }}</span>
-        <el-radio-group v-model="currentDomain.conversation_mode">
+        <el-radio-group v-model="currentDomain.conversation_mode" @change="changeConversation">
           <el-radio
             v-for="item in DomainConversationModeOptions"
             :key="item.value"
@@ -123,6 +123,25 @@
             {{ t(item.label) }}
           </el-radio>
         </el-radio-group>
+      </div>
+      <div
+        class="flex gap-4 items-center text-[#303133] text-sm mt-[10px]"
+        v-if="currentDomain.conversation_mode == 'audio'"
+      >
+        <span>{{ t('音色选择：') }}</span>
+        <TimbreItem
+          :value="currentDomain.conversation_mode_meta"
+          :label="
+            timbreList?.find((item) => item.value == currentDomain.conversation_mode_meta)?.label
+          "
+          :setValue="getTestTimbreUrl"
+        />
+        <div
+          class="flex items-center py-2 px-3 rounded border-2 border-solid border-[#7C5CFC] text-[#7C5CFC] cursor-pointer"
+          @click="timbreDialogVisible = true"
+        >
+          {{ t('选择声音') }}
+        </div>
       </div>
     </div>
     <div class="chato-form-item relative">
@@ -175,16 +194,48 @@
       <img :src="exampleState.img" class="w-full" alt="" />
     </div>
   </Modal>
+  <div>
+    <audio ref="testAudio" :src="testAudioUrl" controls style="display: none"></audio>
+  </div>
+  <el-dialog v-model="timbreDialogVisible" title="选择音色" width="30%">
+    <div class="grid gap-y-4 gap-x-4 grid-cols-2">
+      <TimbreItem
+        v-for="(item, index) in timbreList"
+        :style="
+          index == indexDialogTimbre
+            ? '!border-[#7C5CFC] justify-between cursor-pointer'
+            : 'justify-between cursor-pointer'
+        "
+        :key="item.value"
+        :value="item.value"
+        :label="item.label"
+        :setValue="getTestTimbreUrl"
+        @click="indexDialogTimbre = index"
+      />
+    </div>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="timbreDialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="setTimbre"> 确定 </el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
-import { checkDomainCorrectTicketIsExpired, generateDomainCorrectTicket } from '@/api/domain'
+import {
+  checkDomainCorrectTicketIsExpired,
+  generateDomainCorrectTicket,
+  getTimbreList as getTimbreListApi,
+  getTestTimbreUrl as getTestTimbreUrlApi
+} from '@/api/domain'
 import type { ImgUplaodProps } from '@/components/ImgUpload/data'
 import ImgUpload from '@/components/ImgUpload/index.vue'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
 import Modal from '@/components/Modal/index.vue'
 import SpaceRightsMask from '@/components/Space/SpaceRightsMask.vue'
 import SwitchWithStateMsg from '@/components/SwitchWithStateMsg/index.vue'
+import TimbreItem from '@/components/BotSetting/TimbreItem.vue'
 import SLTitle from '@/components/Title/SLTitle.vue'
 import useImagePath from '@/composables/useImagePath'
 import { currentEnvConfig } from '@/config'
@@ -199,11 +250,12 @@ import type { IDomainInfo } from '@/interface/domain'
 import { useSpaceStore } from '@/stores/space'
 import { copyPaste } from '@/utils/help'
 import * as url from '@/utils/url'
-import { ElMessageBox, ElNotification } from 'element-plus'
+import { ElMessage, ElMessageBox, ElNotification } from 'element-plus'
 import { storeToRefs } from 'pinia'
-import { computed, inject, onMounted, reactive } from 'vue'
+import { computed, inject, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ChatShortcuts from './ChatShortcuts.vue'
+import type { TimbreOptions } from '@/interface/tts'
 
 const currentDomain = inject<Partial<IDomainInfo>>(DomainEditSymbol)
 const currentDomainHansLimit = inject<Record<string, number>>(DomainHansLimitSymbol)
@@ -236,7 +288,12 @@ const onShowExample = (type: EReleaseSettingExampleType) => {
 const spaceStoreI = useSpaceStore()
 const { currentRights } = storeToRefs(spaceStoreI)
 const maskVisible = computed(() => !currentRights.value.brand)
-
+//----- 音色部分 ----
+const timbreList = ref<TimbreOptions[]>()
+const timbreDialogVisible = ref<boolean>(false)
+const testAudio = ref<HTMLAudioElement>()
+const testAudioUrl = ref<string>()
+const indexDialogTimbre = ref<number>(0)
 // ----- 回答修正 -----
 const correctState = reactive({
   loading: false,
@@ -246,6 +303,18 @@ const correctState = reactive({
   expired: false
 })
 
+const setTimbre = () => {
+  currentDomain.conversation_mode_meta = timbreList.value[indexDialogTimbre.value].value
+  timbreDialogVisible.value = false
+}
+
+const getTestTimbreUrl = async (value: string) => {
+  const res = await getTestTimbreUrlApi(value)
+  if (res.data.code != 200) return ElMessage.error(res.data.message)
+  testAudioUrl.value = res.data.data.contentList[0].url
+  testAudio.value.addEventListener('canplaythrough', () => testAudio.value.play())
+}
+
 const checkCorrectTicketExpired = async () => {
   const {
     data: { data }
@@ -254,6 +323,20 @@ const checkCorrectTicketExpired = async () => {
     slug: currentDomain.slug
   })
   return data
+}
+
+const changeConversation = (value) => {
+  if (value == 'audio' && !currentDomain.conversation_mode_meta)
+    currentDomain.conversation_mode_meta = timbreList.value[0].value
+}
+
+const getTimbreList = async () => {
+  const res = await getTimbreListApi()
+  if (res.data.code != 200) return ElMessage.error(res.data.message)
+  timbreList.value = res.data.data.timbres.map<TimbreOptions>((item, index) => ({
+    label: res.data.data.descriptions[index],
+    value: item
+  }))
 }
 
 const initCorrect = async (needCheck = true) => {
@@ -316,6 +399,7 @@ onMounted(() => {
   if (currentDomain.qa_modifiable) {
     initCorrect()
   }
+  getTimbreList()
 })
 
 // ----- 图片上传 -----
