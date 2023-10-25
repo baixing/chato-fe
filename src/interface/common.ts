@@ -1,6 +1,6 @@
 import type { Component } from 'vue'
 export interface IResponse<T> {
-  [x: string]: any
+  [x: string]: any //这里的原因是什么
   code?: number
   message?: string
   data: T

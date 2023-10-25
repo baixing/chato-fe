@@ -383,6 +383,8 @@
   "与机器人对话时，可选择双方默认用文字或语音对话，对话模式切换电力值不变。": "When talking to the robot, you can choose to use text or voice to talk by default. The power value will not change when switching the dialogue mode.",
   "当你的用户对话时，每组对话的沟通形式的模式选择": "When your users have conversations, mode selection of the communication format for each group of conversations",
   "对话模式：": "Conversation mode:",
+  "音色选项：": "Tone options:",
+  "选择声音" : "select sound",
   "关闭时仅在后台训练中可修正，打开后在分享链接页面，所有人在与机器人对话时都可修正": "When closed, corrections can only be made during backend training. When opened, on the shared link page, everyone can make corrections while conversing with the robot.",
   "当你的用户对话时，提供可修正的功能": "Provide a correction feature when your users converse.",
   "重新生成": "Regenerate",
