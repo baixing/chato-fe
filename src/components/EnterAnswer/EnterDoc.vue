@@ -110,6 +110,9 @@
           </el-form>
         </el-tab-pane>
         <el-tab-pane :label="$t('公众号抓取')" name="input-public">
+          <p class="description">
+            {{ $t('避免未经授权抓取他人公众号原创文章的侵权行为') }}
+          </p>
           <el-form
             ref="spliderPublic"
             size="large"
