@@ -110,6 +110,9 @@
           </el-form>
         </el-tab-pane>
         <el-tab-pane :label="$t('公众号抓取')" name="input-public">
+          <p class="description">
+            {{ $t('避免未经授权抓取他人公众号原创文章的侵权行为') }}
+          </p>
           <el-form
             ref="spliderPublic"
             size="large"
@@ -157,7 +160,7 @@ import { $notnull } from '@/utils/help'
 import { getStringWidth } from '@/utils/string'
 import dayjs from 'dayjs'
 import type { FormInstance, FormRules, UploadFile, UploadFiles, UploadRawFile } from 'element-plus'
-import { ElLoading, ElMessage, ElMessageBox, ElNotification as Notification } from 'element-plus'
+import { ElLoading, ElMessage, ElNotification as Notification } from 'element-plus'
 import { storeToRefs } from 'pinia'
 import { computed, onUnmounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -169,7 +172,6 @@ interface Props {
   domainId: string | number
   dialogVisible: boolean
   defaultForm: IDocumentForm
-  specailTipVisible?: number
   sizeLimit?: number
   qtyLimit?: number
   mediaLimit?: number
@@ -182,13 +184,7 @@ const props = withDefaults(defineProps<Props>(), {
   qtyLimit: 20,
   mediaLimit: 25
 })
-const emit = defineEmits([
-  'closeDialogVisble',
-  'setSuccess',
-  'updateListEvent',
-  'reloadList',
-  'updateSpecailTipVisible'
-])
+const emit = defineEmits(['closeDialogVisble', 'setSuccess', 'updateListEvent', 'reloadList'])
 const acceptFileTypes = UPLOAD_FILE_TYPES.join(',')
 const { isMobile } = useBasicLayout()
 const visible = ref<boolean>(false)
@@ -291,20 +287,22 @@ async function submitInputText() {
       }
       apiFile[requestFunc](props.domainId, requestParams)
         .then((res) => {
-          if (res.data.code === 200) {
-            Notification.success(t('保存成功'))
-            spliderUrlForm.urlData = ''
-            spliderPubliceForm.publicData = ''
-            emit('setSuccess')
+          const { data } = res.data
+          if (requestFunc === 'uploadPublic') {
+            Notification.success(
+              t(`爬取新文章${data.result.length}条；重复文章${data.repeated.length}条；`)
+            )
           } else {
-            Notification.error(res.data.msg)
+            Notification.success(t('保存成功'))
           }
+          spliderUrlForm.urlData = ''
+          spliderPubliceForm.publicData = ''
+          emit('setSuccess')
         })
         .catch((err) => {})
         .finally(() => {
           loading.close()
           emit('closeDialogVisble')
-          showFirstUp()
         })
     } else {
       console.log('error submit!', fields)
@@ -363,7 +361,6 @@ function handleChange(uploadFile: UploadFile, uploadFiles: UploadFiles) {
     emit('reloadList')
   }
   if (allSuccess) {
-    showFirstUp()
     emit('setSuccess')
   }
 }
@@ -407,26 +404,6 @@ function onExceed() {
   Notification.warning(
     t('您选择的文件数量过多，每次最多可上传 {qtyLimit} 个文件。', { qtyLimit: props.qtyLimit })
   )
-}
-
-function showFirstUp() {
-  if (!props.specailTipVisible) {
-    ElMessageBox.confirm(
-      t(
-        '训练素材的学习时长各异，正常情况下 5-10 分钟后生效。 如果上传文件过多或过大，可能超出预期时长，请耐心等待。切换或关闭该页面不影响 AI 学习素材，可稍后再来查看进度。'
-      ),
-      t('温馨提示'),
-      {
-        confirmButtonText: t('我已知晓'),
-        showCancelButton: false,
-        type: 'warning',
-        customClass: '!max-w-[470px]'
-      }
-    )
-      .then(() => {})
-      .catch(() => {})
-      .finally(() => emit('updateSpecailTipVisible'))
-  }
 }
 
 function resetInputTextForm() {

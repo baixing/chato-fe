@@ -6,7 +6,7 @@
         class="p-3 md:p-0 mt-14 m-auto border border-solid border-[#E4E7ED] md:border-none rounded-lg"
       >
         <BindingMobile
-          v-if="isbindingMobile"
+          v-if="isbindingMobile || externalUserId"
           :userId="userId"
           @loginEnterSuccess="loginEnterSuccess"
         />
@@ -60,8 +60,12 @@ import { useStorage } from '@vueuse/core'
 import { useBase } from '@/stores/base'
 import useGlobalProperties from '@/composables/useGlobalProperties'
 import useChannel from '@/composables/useChannel'
+import { useI18n } from 'vue-i18n'
+import dayjs from 'dayjs'
 
+const { t } = useI18n()
 const stateToken = useStorage('auth_token', '')
+const externalUserId = useStorage('userId', '')
 const { shareChannel, setShareChannel } = useChannel()
 const { invite_ticket } = useInvite()
 const isMobile = useIsMobile()
@@ -81,9 +85,10 @@ const timeout = ref(false)
 const loading = ref(true)
 
 const userId = computed(() => {
-  return $notnull(loginQRCodeEmpowerStatusRes.value)
+  return $notnull(loginQRCodeEmpowerStatusRes.value) &&
+    !!loginQRCodeEmpowerStatusRes.value.external_user_id
     ? loginQRCodeEmpowerStatusRes.value.external_user_id
-    : ''
+    : externalUserId.value
 })
 const url = computed(() => {
   return $notnull(loginQRCodeRes.value) ? loginQRCodeRes.value.url : ''
@@ -102,6 +107,19 @@ const handleChangeLoginWay = () => {
   loginWay.value =
     loginWay.value === ELoginWay.loginScanCode ? ELoginWay.loginMobile : ELoginWay.loginScanCode
 }
+
+// ---- 业务打点-----
+const scanCodeSuccessRBI = (id: string) => {
+  $sensors?.track('sms_scan_code_login_success', {
+    name: t('扫码登录成功'),
+    type: 'sms_scan_code_login_success',
+    data: {
+      id,
+      time: dayjs().format('YYYY-MM-DD HH:mm:ss')
+    }
+  })
+}
+// ----------------
 
 // ---- 微信扫码-----
 const getLoginQRCode = async () => {
@@ -128,6 +146,7 @@ const serachQREmpowerStatus = async (session: string) => {
       timeout.value = true
       break
     case ELoginEmpowerStatus.success: // 登录成功
+      scanCodeSuccessRBI(serachRes.external_user_id)
       loginEnterSuccess(serachRes.token, shareChannel.value)
       break
     case ELoginEmpowerStatus.need_bind_mobile: // 绑定手机号
@@ -171,7 +190,7 @@ const loginEnterSuccess = async (token: string, channel: string, close?: () => v
 watch(
   loginWay,
   (v) => {
-    if (v === ELoginWay.loginMobile) {
+    if (v === ELoginWay.loginMobile && !userId.value) {
       if ($notnull(loginQRCodeRes.value)) {
         pollingQREmpowerStatus()
       } else {

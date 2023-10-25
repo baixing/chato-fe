@@ -1274,5 +1274,6 @@
   "收不到短信验证码": "No SMS verification code",
   "微信扫一扫": "WeChat scan",
   "新用户扫码后，关注公众号自动创建账号": "After the new user scans the code, follow the official account to automatically create an account",
-  "使用微信扫码登录": "Login using WeChat QR code scanning"
+  "使用微信扫码登录": "Login using WeChat QR code scanning",
+  "避免未经授权抓取他人公众号原创文章的侵权行为": "Avoid unauthorized grabbing of other official account original articles of infringement"
 }

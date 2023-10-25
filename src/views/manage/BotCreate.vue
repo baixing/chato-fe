@@ -205,7 +205,6 @@
     @close-dialog-visble="onCloseEnterModal"
   />
   <EnterDoc
-    :specailTipVisible="1"
     :domain-id="(formState.id as unknown as string)"
     :defaultForm="DOCFormState"
     :sizeLimit="30"

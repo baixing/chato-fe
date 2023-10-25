@@ -8,7 +8,7 @@ export interface ILoginParams {
   bd_keyword: string
   nickname?: string
   eid?: string
-  external_user_id?: string
+  external_user_id?: number
 }
 
 export interface ILoginQRCodeResult {
