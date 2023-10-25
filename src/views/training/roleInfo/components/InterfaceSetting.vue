@@ -130,14 +130,16 @@
       >
         <span>{{ t('音色选择：') }}</span>
         <TimbreItem
+          :iconStyle="'!text-[#9DA3AF]'"
           :value="currentDomain.conversation_mode_meta"
+          :iconName="playAudio == currentDomain.conversation_mode_meta ? 'audio-pause' : undefined"
           :label="
             timbreList?.find((item) => item.value == currentDomain.conversation_mode_meta)?.label
           "
           :setValue="getTestTimbreUrl"
         />
         <div
-          class="flex items-center py-2 px-3 rounded border-2 border-solid border-[#7C5CFC] text-[#7C5CFC] cursor-pointer"
+          class="flex items-center py-2 px-3 rounded border border-solid border-[#7C5CFC] text-[#7C5CFC] cursor-pointer"
           @click="
             () => (
               (timbreDialogVisible = true),
@@ -204,15 +206,16 @@
   <div>
     <audio ref="testAudio" :src="testAudioUrl" controls style="display: none"></audio>
   </div>
-  <el-dialog v-model="timbreDialogVisible" title="选择音色" width="30%">
+  <Modal v-model:visible="timbreDialogVisible" title="选择音色" @submit="setTimbre">
     <div class="grid gap-y-4 gap-x-4 grid-cols-2">
       <TimbreItem
         v-for="(item, index) in timbreList"
         :style="
           index == indexDialogTimbre
-            ? '!border-[#7C5CFC] justify-between cursor-pointer'
-            : 'justify-between cursor-pointer'
+            ? '!border-[#7C5CFC] justify-between cursor-pointer !text-[#7C5CFC]'
+            : 'justify-between cursor-pointer !text-[#9DA3AF]'
         "
+        :iconName="playAudio == item.value ? 'audio-pause' : undefined"
         :key="item.value"
         :value="item.value"
         :label="item.label"
@@ -220,13 +223,7 @@
         @click="indexDialogTimbre = index"
       />
     </div>
-    <template #footer>
-      <span class="dialog-footer">
-        <el-button @click="timbreDialogVisible = false"> {{ t('取消') }}</el-button>
-        <el-button type="primary" @click="setTimbre"> {{ t('确定') }}</el-button>
-      </span>
-    </template>
-  </el-dialog>
+  </Modal>
 </template>
 
 <script setup lang="ts">
@@ -301,6 +298,7 @@ const timbreDialogVisible = ref<boolean>(false)
 const testAudio = ref<HTMLAudioElement>()
 const testAudioUrl = ref<string>()
 const indexDialogTimbre = ref<number>()
+const playAudio = ref<string>()
 // ----- 回答修正 -----
 const correctState = reactive({
   loading: false,
@@ -316,10 +314,18 @@ const setTimbre = () => {
 }
 
 const getTestTimbreUrl = async (value: string) => {
+  if (playAudio.value != undefined) {
+    testAudio.value.pause()
+    playAudio.value = undefined
+    testAudioUrl.value = undefined
+    return
+  }
+  playAudio.value = value
   const res = await getTestTimbreUrlApi(value)
   if (res.data.code != 200) return ElMessage.error(res.data.message)
   testAudioUrl.value = res.data.data.contentList[0].url
   testAudio.value.addEventListener('canplaythrough', () => testAudio.value.play())
+  testAudio.value.addEventListener('ended', () => (playAudio.value = undefined))
 }
 
 const checkCorrectTicketExpired = async () => {
