@@ -126,28 +126,21 @@
       </div>
       <div
         class="flex gap-4 items-center text-[#303133] text-sm mt-[10px]"
-        v-if="currentDomain.conversation_mode == 'audio'"
+        v-if="currentDomain.conversation_mode === 'audio'"
       >
         <span>{{ t('音色选择：') }}</span>
         <TimbreItem
           :iconStyle="'!text-[#9DA3AF]'"
           :value="currentDomain.conversation_mode_meta"
-          :iconName="playAudio == currentDomain.conversation_mode_meta ? 'audio-pause' : undefined"
+          :iconName="playAudio === currentDomain.conversation_mode_meta ? 'audio-pause' : undefined"
           :label="
-            timbreList?.find((item) => item.value == currentDomain.conversation_mode_meta)?.label
+            timbreList?.find((item) => item.value === currentDomain.conversation_mode_meta)?.label
           "
           :setValue="getTestTimbreUrl"
         />
         <div
           class="flex items-center py-2 px-3 rounded border border-solid border-[#7C5CFC] text-[#7C5CFC] cursor-pointer"
-          @click="
-            () => (
-              (timbreDialogVisible = true),
-              (indexDialogTimbre = timbreList.findIndex(
-                (item) => item.value == currentDomain.conversation_mode_meta
-              ))
-            )
-          "
+          @click="clickSelectTimbre"
         >
           {{ t('选择声音') }}
         </div>
@@ -210,12 +203,12 @@
     <div class="grid gap-y-4 gap-x-4 grid-cols-2">
       <TimbreItem
         v-for="(item, index) in timbreList"
-        :style="
-          index == indexDialogTimbre
+        :className="
+          index === indexDialogTimbre
             ? '!border-[#7C5CFC] justify-between cursor-pointer !text-[#7C5CFC]'
             : 'justify-between cursor-pointer !text-[#9DA3AF]'
         "
-        :iconName="playAudio == item.value ? 'audio-pause' : undefined"
+        :iconName="playAudio === item.value ? 'audio-pause' : undefined"
         :key="item.value"
         :value="item.value"
         :label="item.label"
@@ -254,12 +247,12 @@ import type { IDomainInfo } from '@/interface/domain'
 import { useSpaceStore } from '@/stores/space'
 import { copyPaste } from '@/utils/help'
 import * as url from '@/utils/url'
-import { ElMessage, ElMessageBox, ElNotification } from 'element-plus'
+import { ElMessageBox, ElNotification } from 'element-plus'
 import { storeToRefs } from 'pinia'
 import { computed, inject, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ChatShortcuts from './ChatShortcuts.vue'
-import type { TimbreOptions } from '@/interface/tts'
+import type { ITimbreOptions } from '@/interface/tts'
 
 const currentDomain = inject<Partial<IDomainInfo>>(DomainEditSymbol)
 const currentDomainHansLimit = inject<Record<string, number>>(DomainHansLimitSymbol)
@@ -293,7 +286,7 @@ const spaceStoreI = useSpaceStore()
 const { currentRights } = storeToRefs(spaceStoreI)
 const maskVisible = computed(() => !currentRights.value.brand)
 //----- 音色部分 ----
-const timbreList = ref<TimbreOptions[]>()
+const timbreList = ref<ITimbreOptions[]>()
 const timbreDialogVisible = ref<boolean>(false)
 const testAudio = ref<HTMLAudioElement>()
 const testAudioUrl = ref<string>()
@@ -313,19 +306,27 @@ const setTimbre = () => {
   timbreDialogVisible.value = false
 }
 
+const clickSelectTimbre = () => {
+  timbreDialogVisible.value = true
+  indexDialogTimbre.value = timbreList.value.findIndex(
+    (item) => item.value === currentDomain.conversation_mode_meta
+  )
+}
+
 const getTestTimbreUrl = async (value: string) => {
-  if (playAudio.value != undefined) {
-    testAudio.value.pause()
-    playAudio.value = undefined
-    testAudioUrl.value = undefined
-    return
-  }
-  playAudio.value = value
-  const res = await getTestTimbreUrlApi(value)
-  if (res.data.code != 200) return ElMessage.error(res.data.message)
-  testAudioUrl.value = res.data.data.contentList[0].url
-  testAudio.value.addEventListener('canplaythrough', () => testAudio.value.play())
-  testAudio.value.addEventListener('ended', () => (playAudio.value = undefined))
+  try {
+    if (playAudio.value != undefined) {
+      testAudio.value.pause()
+      playAudio.value = undefined
+      testAudioUrl.value = undefined
+      return
+    }
+    playAudio.value = value
+    const res = await getTestTimbreUrlApi(value)
+    testAudioUrl.value = res.data.data.contentList[0].url
+    testAudio.value.addEventListener('canplaythrough', () => testAudio.value.play())
+    testAudio.value.addEventListener('ended', () => (playAudio.value = undefined))
+  } catch (error) {}
 }
 
 const checkCorrectTicketExpired = async () => {
@@ -339,17 +340,18 @@ const checkCorrectTicketExpired = async () => {
 }
 
 const changeConversation = (value) => {
-  if (value == 'audio' && !currentDomain.conversation_mode_meta)
-    currentDomain.conversation_mode_meta = timbreList.value[0].value
+  if (value === 'audio' && !currentDomain.conversation_mode_meta && timbreList.value.length > 0)
+    currentDomain.conversation_mode_meta = timbreList.value[0]?.value
 }
 
 const getTimbreList = async () => {
-  const res = await getTimbreListApi()
-  if (res.data.code != 200) return ElMessage.error(res.data.message)
-  timbreList.value = res.data.data.timbres.map<TimbreOptions>((item, index) => ({
-    label: res.data.data.descriptions[index],
-    value: item
-  }))
+  try {
+    const res = await getTimbreListApi()
+    timbreList.value = res.data.data.timbres.map<ITimbreOptions>((item, index) => ({
+      label: res.data.data.descriptions[index],
+      value: item
+    }))
+  } catch (error) {}
 }
 
 const initCorrect = async (needCheck = true) => {

@@ -17,17 +17,17 @@ export interface ITTSList {
   contentList: ITTSItem[]
 }
 
-export interface TTSListApi {
+export interface ITTSListApi {
   timbres: string[]
   descriptions: string[]
 }
 
-export interface TimbreOptions {
+export interface ITimbreOptions {
   label: string
   value: string
 }
 
-export interface TimbreAuditionApi {
+export interface ITimbreAuditionApi {
   exists: boolean
   provider: string
   text: string
