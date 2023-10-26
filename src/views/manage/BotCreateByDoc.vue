@@ -90,7 +90,7 @@
     <div
       class="fixed bottom-0 left-0 right-0 border-t border-l-0 border-r-0 border-b-0 border-solid border-[#E4E7ED] px-16 lg:px-4 py-3 flex justify-end"
     >
-      <el-button type="primary" :disabled="!canSave" :loading="saving" @click="onSave">
+      <el-button type="primary" :loading="saving" @click="onSave">
         {{ $t('去创建') }}
       </el-button>
     </div>
@@ -254,14 +254,14 @@ const onExceed = () => {
 }
 
 const saving = ref(false)
-const canSave = computed(() =>
-  Boolean(
-    formState.webUrl ||
-      formState.wxPublic ||
-      formState.textContent ||
-      uploadFileList.value.length > 0
-  )
-)
+// const canSave = computed(() =>
+//   Boolean(
+//     formState.webUrl ||
+//       formState.wxPublic ||
+//       formState.textContent ||
+//       uploadFileList.value.length > 0
+//   )
+// )
 
 const onSave = async () => {
   try {
