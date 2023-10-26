@@ -683,9 +683,7 @@ onBeforeRouteLeave(async (to, from, next) => {
   }
 })
 
-onMounted(async () => {
-  console.log(route, '---sss')
-
+const init = async () => {
   if (route.params.botId) {
     await initDomainDetail()
   } else {
@@ -695,6 +693,10 @@ onMounted(async () => {
   if (route.params.opt === 'needAI') {
     initByAIGenerate()
   }
+}
+
+onMounted(() => {
+  init()
 
   window.onbeforeunload = () => {
     if (isModified.value) {

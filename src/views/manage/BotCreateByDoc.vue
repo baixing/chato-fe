@@ -296,18 +296,18 @@ const onSave = async () => {
     }
 
     // 输入文本或异常结果状态的兜底机器人名字
-    !finalCreateDomainName && (finalCreateDomainName = 'AI智能助手')
+    !finalCreateDomainName && (finalCreateDomainName = t('AI智能助手'))
     const domainParams: Partial<IDomainInfo> = {
       id: formState.id,
       name: finalCreateDomainName
     }
     await updateDomain(formState.id, domainParams)
-    router.push({
-      name: RoutesMap.manager.createByOpt,
+    await router.push({
+      name: RoutesMap.manager.create,
       params: { botId: formState.id, opt: 'needAI' }
     })
   } catch (e) {
-    ElNotification.error('解析异常')
+    ElNotification.error(t('解析异常'))
   } finally {
     saving.value = false
   }

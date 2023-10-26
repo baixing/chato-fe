@@ -1,5 +1,6 @@
 import { getMyOrgs } from '@/api/org'
 import type { IDomainInfo } from '@/interface/domain'
+import { RoutesMap } from '@/router'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { useRouter, type RouteLocationNormalizedLoaded } from 'vue-router'
@@ -28,7 +29,7 @@ export const useDomainStore = defineStore('domain', () => {
         domain = org?.domains?.[0]
       }
 
-      if (org?.domains.length && !domain) {
+      if (org?.domains.length && !domain && route.name !== RoutesMap.manager.create) {
         router.replace('/error/404')
         return
       }

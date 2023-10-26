@@ -41,7 +41,6 @@ export const RoutesMap = {
     managerName: 'manager',
     center: 'managerCenter',
     create: 'managerCreate',
-    createByOpt: 'managerCreateByOpt',
     createByDoc: 'managerCreateByDoc'
   },
   namespace: {
@@ -249,12 +248,7 @@ const managerRoutes = [
       },
       {
         name: RoutesMap.manager.create,
-        path: 'create/:botId?',
-        component: () => import('@/views/manage/BotCreate.vue')
-      },
-      {
-        name: RoutesMap.manager.createByOpt,
-        path: 'create/:botId/:opt',
+        path: 'create/:botId?/:opt?',
         component: () => import('@/views/manage/BotCreate.vue')
       },
       {
