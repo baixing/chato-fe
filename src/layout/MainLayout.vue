@@ -63,20 +63,22 @@ const { checkRightsTypeNeedUpgrade } = useSpaceRights()
 const { $sensors } = useGlobalProperties()
 
 const init = async () => {
-  loading.value = true
+  try {
+    loading.value = true
 
-  await base.getAuthToken()
-  const res = await base.getUserInfo()
-  $sensors?.login(res.id.toString())
+    await base.getAuthToken()
+    const res = await base.getUserInfo()
+    $sensors?.login(res.id.toString())
 
-  await Promise.all([
-    domainStoreI.initDomainList(route),
-    chatStoreI.initChatList(),
-    spaceStoreI.initSpaceRights()
-  ])
+    await Promise.all([
+      domainStoreI.initDomainList(route),
+      chatStoreI.initChatList(),
+      spaceStoreI.initSpaceRights()
+    ])
 
-  spaceStoreI.initSpaceQuota()
-  loading.value = false
+    spaceStoreI.initSpaceQuota()
+    loading.value = false
+  } catch (e) {}
 }
 
 init()

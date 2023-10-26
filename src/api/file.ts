@@ -63,7 +63,7 @@ export function uploadImage(params) {
 
 // 网页爬取
 export function uploadURL(domain_id, params) {
-  return request({
+  return request<{ title: string; url: string }[]>({
     method: 'post',
     url: `/chato/api/document_management/${domain_id}/spider/url/save`,
     data: params
@@ -75,6 +75,15 @@ export function uploadPublic(domain_id, params) {
   return request({
     method: 'post',
     url: `/chato/api/document_management/${domain_id}/spider/wx-public/save`,
+    data: params
+  })
+}
+
+// 公众号异步爬取，秒返回
+export function uploadPublicAsync(domain_id, params) {
+  return request({
+    method: 'post',
+    url: `/chato/api/document_management/${domain_id}/spider/wx-public/async`,
     data: params
   })
 }

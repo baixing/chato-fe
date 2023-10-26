@@ -60,6 +60,31 @@
   }
 }
 
+.chato-tab-primary {
+  .el-tabs__item {
+    color: #596780;
+    font-weight: 400;
+
+    &.is-active {
+      color: #7c5cfc;
+      font-weight: 500;
+    }
+
+    &:hover {
+      color: #7c5cfc;
+    }
+  }
+
+  .el-tabs__nav-wrap::after {
+    background-color: #e4e7ed;
+    height: 1px;
+  }
+
+  .el-tabs__active-bar {
+    background-color: #7c5cfc;
+  }
+}
+
 .el-dialog__footer {
   .el-button + .el-button {
     margin-left: 12px !important;

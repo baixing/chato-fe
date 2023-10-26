@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-[#F2F3F5] flex gap-4 h-full w-full overflow-hidden">
+  <div v-loading="initing" class="bg-[#F2F3F5] flex gap-4 h-full w-full overflow-hidden">
     <div class="bg-white flex-1 flex flex-col h-full overflow-hidden relative">
       <Topbar :center="false" extra-in-mobile class="bot-create-center-padding">
         <el-breadcrumb separator=">">
@@ -259,6 +259,7 @@ import { RoutesMap } from '@/router'
 import { useBase } from '@/stores/base'
 import { getFileStatusName } from '@/utils/formatter'
 import { openPreviewUrl } from '@/utils/help'
+import SSE from '@/utils/sse'
 import { getStringWidth } from '@/utils/string'
 import * as url from '@/utils/url'
 import { Close } from '@element-plus/icons-vue'
@@ -606,6 +607,56 @@ const onSave = async (type?: 'draft') => {
   }
 }
 
+const SSEInstance = new SSE()
+
+const onSSE = (type: EDomainAIGenerateType) => {
+  return SSEInstance.request(
+    '/prompt/generated',
+    {
+      role: formState.name,
+      role_requirement: '',
+      system_prompt: formState.system_prompt,
+      generate_type: type
+    },
+    (str) => {
+      switch (type) {
+        case EDomainAIGenerateType.intro:
+          formState.desc += str
+          break
+        case EDomainAIGenerateType.role:
+          formState.system_prompt += str
+          break
+        case EDomainAIGenerateType.welcome:
+          formState.welcome += str
+          break
+      }
+    }
+  )
+}
+
+const initByAIGenerate = async () => {
+  try {
+    AIGenerateInputDisabled = Object.assign(AIGenerateInputDisabled, {
+      desc: true,
+      system_prompt: true,
+      welcome: true
+    })
+
+    await onSSE(EDomainAIGenerateType.role)
+    const allPromises = [EDomainAIGenerateType.intro, EDomainAIGenerateType.welcome].map((item) =>
+      onSSE(item)
+    )
+    await Promise.all(allPromises)
+  } catch (e) {
+  } finally {
+    AIGenerateInputDisabled = Object.assign(AIGenerateInputDisabled, {
+      desc: false,
+      system_prompt: false,
+      welcome: false
+    })
+  }
+}
+
 provide(DebugDomainSymbol, formState)
 
 watch(
@@ -632,11 +683,17 @@ onBeforeRouteLeave(async (to, from, next) => {
   }
 })
 
-onMounted(() => {
+onMounted(async () => {
+  console.log(route, '---sss')
+
   if (route.params.botId) {
-    initDomainDetail()
+    await initDomainDetail()
   } else {
     onNewDraft()
+  }
+
+  if (route.params.opt === 'needAI') {
+    initByAIGenerate()
   }
 
   window.onbeforeunload = () => {

@@ -24,7 +24,7 @@ onMounted(() => {
 
   // 绕过用户进来无点击事件，浏览器限制播放的问题
   setTimeout(() => {
-    audioPlayerRef.value.click()
+    audioPlayerRef.value?.click()
   }, 100)
 })
 
