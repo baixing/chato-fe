@@ -6,6 +6,7 @@ export const enum ETerminal {
 
 // 命中风控字段
 export enum EFengkongField {
+  content = '广播语',
   nickname = '昵称中',
   avatar = '头像中',
   system_prompt = '角色描述中',

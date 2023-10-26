@@ -119,6 +119,37 @@
           <p class="text-xs text-[#596780] leading-4" v-for="item in RGroupChatListTip" :key="item">
             {{ $t(item) }}
           </p>
+          <!-- 定时广播 -->
+          <p class="text-[#303133] font-medium">{{ $t('定时广播') }}</p>
+          <div
+            v-for="(item, index) in radioList"
+            :key="item.send_schedule_id"
+            class="flex items-center justify-between bg-[#E4E7ED] mt-4 mb-5 py-2 px-3 rounded"
+          >
+            <span class="text-sm">{{ $t('定时广播') }} {{ index + 1 }}</span>
+            <div class="gap-10">
+              <el-button
+                link
+                type="primary"
+                class="mr-5"
+                @click="handleSettingRadio(item, ESettingBroadcastStatus.update)"
+              >
+                {{ $t('设置') }}
+              </el-button>
+              <el-button link type="primary" @click="handleSettingRemove(item)">
+                {{ $t('删除') }}
+              </el-button>
+            </div>
+          </div>
+          <el-button
+            v-if="radioList.length < 5"
+            class="mb-5"
+            link
+            type="primary"
+            @click="handleSettingRadio(undefined, ESettingBroadcastStatus.create)"
+          >
+            <el-icon :size="18" class="mr-2"><Plus /></el-icon> {{ $t('添加定时广播') }}
+          </el-button>
         </div>
         <el-row justify="start" :gutter="20" class="w-full">
           <el-col :span="6">
@@ -161,6 +192,11 @@
         </el-col>
       </el-row>
     </Modal>
+    <SettingRadio
+      v-model:value="settingDadioVisible"
+      :defaultItem="currentSettingRadio"
+      @handleSubmit="handleSubmit"
+    />
   </div>
 </template>
 
@@ -181,11 +217,21 @@ import {
 } from 'element-plus'
 import { RoutesMap } from '@/router'
 import { useRouter } from 'vue-router'
-import { transferGroupAPI, getGroupImgAPI, deleteGroupChatAPI, editGroupAPI } from '@/api/release'
+import {
+  transferGroupAPI,
+  getGroupImgAPI,
+  deleteGroupChatAPI,
+  editGroupAPI,
+  getTimeBroadcastAPI,
+  postTimeBroadcastAPI,
+  deleteTimeBroadcastAPI,
+  patchTimeBroadcastAPI
+} from '@/api/release'
 import { useI18n } from 'vue-i18n'
-import type { IGroupList } from '@/interface/release'
-import { EAccountStatus } from '@/enum/release'
+import type { IGroupList, ISettingBroadcastType } from '@/interface/release'
+import { EAccountStatus, ESettingBroadcastStatus } from '@/enum/release'
 import { RGroupChatListTip } from '@/constant/release'
+import SettingRadio from './SettingRadio.vue'
 
 const props = defineProps<{
   domainId: number
@@ -209,6 +255,11 @@ const currentGroup = ref<IGroupList>()
 const qrLoading = ref(true)
 const url = ref('')
 const ruleFormEditCreateGroupRef = ref<FormInstance>()
+const settingDadioVisible = ref(false)
+const radioList = ref<ISettingBroadcastType[]>([])
+const currentSettingRadio = ref<ISettingBroadcastType>()
+const curRoomId = ref('')
+const settingRadioStatus = ref<ESettingBroadcastStatus>(ESettingBroadcastStatus.create)
 
 const rulesEditCreateGroup = reactive<FormRules>({
   robot_response_type: [{ required: true, trigger: 'blur', message: t('请选择回复方式') }]
@@ -342,6 +393,64 @@ const getGroupQrCode = async (id: string) => {
   qrLoading.value = false
 }
 
+// ------ 定时广播 -----
+const initTimeBroadcast = async (id: string) => {
+  const { data } = await getTimeBroadcastAPI({ domain: props.domainId, receiver_id: id })
+  radioList.value = data.data
+}
+
+const handleSettingRadio = (
+  item?: ISettingBroadcastType | undefined,
+  status?: ESettingBroadcastStatus
+) => {
+  settingDadioVisible.value = true
+  currentSettingRadio.value = status === ESettingBroadcastStatus.update ? item : null
+  settingRadioStatus.value = status
+}
+
+const handleSubmit = async (item: ISettingBroadcastType) => {
+  const loading = ElLoading.service({
+    lock: true,
+    text: t('设置中...'),
+    background: 'rgba(0, 0, 0, 0.7)'
+  })
+  try {
+    const postFunc =
+      settingRadioStatus.value === ESettingBroadcastStatus.create
+        ? postTimeBroadcastAPI
+        : patchTimeBroadcastAPI
+    await postFunc({
+      ...item,
+      domain: props.domainId,
+      receiver_id: curRoomId.value
+    })
+    settingDadioVisible.value = false
+    initTimeBroadcast(curRoomId.value)
+    settingRadioStatus.value = ESettingBroadcastStatus.create
+    ElNotification.success('设置成功')
+  } catch (error) {
+  } finally {
+    loading.close()
+  }
+}
+
+const handleSettingRemove = async (item: ISettingBroadcastType) => {
+  const loading = ElLoading.service({
+    lock: true,
+    text: t('删除中...'),
+    background: 'rgba(0, 0, 0, 0.7)'
+  })
+  try {
+    await deleteTimeBroadcastAPI({ send_schedule_id: item.send_schedule_id })
+    initTimeBroadcast(curRoomId.value)
+    ElNotification.success('删除成功')
+  } catch (error) {
+  } finally {
+    loading.close()
+  }
+}
+// ------------------
+
 watch(transferVisible, (v) => {
   v && (transferStatus.value = false)
 })
@@ -352,8 +461,11 @@ watch(activeNames, (v: number) => {
       (item) => v === item.id && item.is_system_robot && item.status === EAccountStatus.online
     )
     if (result.length) {
+      const roomId = result[0].room_id
       url.value = result[0].group_qr_code_data
-      getGroupQrCode(result[0].room_id)
+      curRoomId.value = roomId
+      getGroupQrCode(roomId)
+      initTimeBroadcast(roomId)
     }
   }
 })

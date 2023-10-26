@@ -193,3 +193,4 @@ window.onload = () => {
   }
   chatoIframe()
 }
+export {}

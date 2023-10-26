@@ -1287,5 +1287,13 @@
   "公开": "public",
   "私密": "private",
   "访问权限": "access permission",
-  "剩余电力值": "Remaining power"
+  "剩余电力值": "Remaining power",
+  "设置定时广播": "Set Scheduled Broadcast",
+  "时间段": "Time Period",
+  "请选择时间段": "Please Select a Time Period",
+  "请输入广播语": "Enter Broadcast Message",
+  "重复": "Repeat",
+  "定时广播": "Scheduled Broadcast",
+  "添加定时广播": "Add Scheduled Broadcast",
+  "确认修改": "Confirm Modification"
 }

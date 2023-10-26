@@ -19,7 +19,9 @@ import type {
   IUpdateGroupDetail,
   ICreateAccountCode,
   IAppletAuthParams,
-  IAppletAuthRes
+  IAppletAuthRes,
+  IGetBroadcastParams,
+  ISettingBroadcastType
 } from '@/interface/release'
 import request from '@/utils/request'
 
@@ -279,3 +281,36 @@ export function postMiniAppAuthStatusAPI(data: { domain_id: number }) {
     data
   })
 }
+
+// ----- 定时广播 -----
+export function getTimeBroadcastAPI(data: IGetBroadcastParams) {
+  return request<ISettingBroadcastType[]>({
+    url: `/chato/api/v1/send_schedule/task`,
+    data
+  })
+}
+
+export function postTimeBroadcastAPI(data: ISettingBroadcastType) {
+  return request({
+    method: 'post',
+    url: `/chato/api/v1/send_schedule/task`,
+    data
+  })
+}
+
+export function patchTimeBroadcastAPI(data: ISettingBroadcastType) {
+  return request({
+    method: 'patch',
+    url: `/chato/api/v1/send_schedule/task`,
+    data
+  })
+}
+
+export function deleteTimeBroadcastAPI(data: { send_schedule_id: number }) {
+  return request({
+    method: 'delete',
+    url: `/chato/api/v1/send_schedule/task`,
+    data
+  })
+}
+// -----------------

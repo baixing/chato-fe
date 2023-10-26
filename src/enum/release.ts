@@ -97,3 +97,8 @@ export enum EAppletExamineStatus {
   examineFailed = '审核失败',
   release = '发布成功'
 }
+
+export enum ESettingBroadcastStatus {
+  create = 'create',
+  update = 'update'
+}

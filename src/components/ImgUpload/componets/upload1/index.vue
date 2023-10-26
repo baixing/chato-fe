@@ -157,6 +157,7 @@ const handleChange = (uploadFile: UploadFile, uploadFiles: UploadFiles) => {
     if (
       uploadFile.status === 'success' &&
       unique &&
+      $notnull((uploadFile.response as any).data) &&
       checkUrlUnique(oldFileList, (uploadFile.response as any).data.url!)
     ) {
       uploadFile.status === 'success' && emit('handleChangeFileList', oldFileList, oldFileList)
@@ -166,7 +167,10 @@ const handleChange = (uploadFile: UploadFile, uploadFiles: UploadFiles) => {
       if (allSuccess) {
         const normalFileList = []
         uploadFiles.forEach((item) => {
-          if ($notnull((item?.response as UploadResDataType)?.data || item)) {
+          if (
+            $notnull((item?.response as UploadResDataType)?.data) ||
+            !item.url.includes('blob:')
+          ) {
             const normalItem = {
               ...item,
               thumbUrl: getUrl(item),

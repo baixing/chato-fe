@@ -300,3 +300,25 @@ export interface IAppletAuthRes {
   created: string
   modified: string
 }
+
+export interface ISettingBroadcastAttachmentItem {
+  url: string
+  type: number
+}
+
+export interface ISettingBroadcastType {
+  send_schedule_id: number
+  domain: number | string
+  receiver_id: string
+  status: number
+  channel: string
+  trigger_time: string
+  send_pattern: number
+  content: string
+  attachment: ISettingBroadcastAttachmentItem[]
+}
+
+export interface IGetBroadcastParams {
+  domain: number | string
+  receiver_id: string
+}
