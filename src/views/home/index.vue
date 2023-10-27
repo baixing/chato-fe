@@ -80,6 +80,7 @@
       <router-view @enter="onEnter" />
 
       <div
+        v-if="showFooterVisible"
         :class="[
           'home-center-padding',
           'flex',
@@ -157,6 +158,7 @@
     </div>
 
     <div
+      v-if="showFooterContactVisible"
       class="home-contact-btn py-5 px-[7px] md:py-4 md:px-[10px] text-base absolute right-7 md:right-1 flex flex-col gap-[14px]"
     >
       <div class="fixed-btn" id="Chato_right_service_click" data-sensors-click @click="onContactUs">
@@ -202,10 +204,11 @@ import { checkbutton } from '@/locales'
 import { RoutesMap } from '@/router'
 import { useAuthStore } from '@/stores/auth'
 import { useBase } from '@/stores/base'
+import { useChatStore } from '@/stores/chat'
 import { useLocales } from '@/stores/locales'
-import { openPreviewUrl } from '@/utils/help'
+import { openPreviewUrl, randomString } from '@/utils/help'
 import { ArrowDown } from '@element-plus/icons-vue'
-import { useDebounceFn } from '@vueuse/core'
+import { useDebounceFn, useStorage } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import type { Ref } from 'vue'
 import { computed, defineAsyncComponent, onMounted, ref } from 'vue'
@@ -222,15 +225,18 @@ const UpgradeRightsModal = defineAsyncComponent(
 )
 const JoinDemoModal = defineAsyncComponent(() => import('./components/Join/JoinDemoModal.vue'))
 
+const $uid = useStorage('uid', '')
 const { setLocale } = useLocales()
 const { locale } = storeToRefs(useLocales())
 const route = useRoute()
 const { t } = useI18n()
 const router = useRouter()
+const baseStoreI = useBase()
+const chatStoreI = useChatStore()
 const authStoreI = useAuthStore()
 const { authToken } = storeToRefs(authStoreI)
-const baseStoreI = useBase()
 const { userInfo } = storeToRefs(baseStoreI)
+const { chatList } = storeToRefs(chatStoreI)
 
 const homeContainer = ref<HTMLElement>(null)
 const headerShowBg = ref(false)
@@ -308,7 +314,9 @@ const menuRouteList = [
   { title: t('客户案例'), key: RoutesMap.home.case },
   { title: t('联系我们'), key: 'menu_schedule' },
   { title: t('渠道合作'), key: 'menu_join' },
-  { title: t('用户社区'), key: 'menu_community' }
+  { title: t('用户社区'), key: 'menu_community' },
+  { title: t('资源广场'), key: RoutesMap.home.homeResource },
+  { title: t('我的对话'), key: RoutesMap.home.homeChat }
 ]
 
 const footerQrCode = [
@@ -316,6 +324,22 @@ const footerQrCode = [
   { label: '关注纳什智能', desc: '先人一步运用AI', img: nashCrcode },
   { label: '渠道负责人', desc: '李经理', img: homeInvestJoin }
 ]
+
+const showFooterName = [RoutesMap.home.index, RoutesMap.home.case]
+
+const showFooterVisible = computed(() => {
+  return showFooterName.includes(activeMenuRouteName.value)
+})
+
+const showFooterContactName = [
+  RoutesMap.home.index,
+  RoutesMap.home.case,
+  RoutesMap.home.homeResource
+]
+
+const showFooterContactVisible = computed(() => {
+  return showFooterContactName.includes(activeMenuRouteName.value)
+})
 
 const onLinkRoute = (key: string) => {
   switch (key) {
@@ -329,13 +353,27 @@ const onLinkRoute = (key: string) => {
       window.open(userCommunityLink)
       break
     default:
-      router.push({ name: key })
+      router.push({
+        name: key,
+        params: {
+          ...route.params,
+          botSlug: chatList.value.length > 0 ? chatList.value[0].slug : ''
+        }
+      })
+  }
+}
+
+const initUid = () => {
+  if (!$uid.value || $uid.value === 'undefined') {
+    $uid.value = 'uid' + randomString(32)
   }
 }
 
 const { $sensors } = useGlobalProperties()
 
 const init = async () => {
+  await chatStoreI.initChatList()
+
   if (!authToken.value) {
     return
   }
@@ -353,6 +391,7 @@ onMounted(() => {
   })
   wow.init()
 
+  initUid()
   init()
 })
 </script>

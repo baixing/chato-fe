@@ -1,102 +1,121 @@
 <template>
-  <Topbar :title="$t(`全部应用`)" />
-  <ContentLayout v-loading="initing" element-loading-background="transparent">
-    <div
-      v-for="(item, index) in resourceList"
-      :key="item.type"
-      :class="[index === resourceList.length - 1 ? 'mb-0' : 'mb-8 lg:mb-4']"
+  <div class="overflow-y-auto h-full">
+    <SquareHeader />
+    <ContentLayout
+      class="!overflow-hidden !h-auto"
+      v-loading="initing"
+      element-loading-background="transparent"
     >
-      <p
-        class="text-lg font-medium tracking-[0.13px] text-[#3D3D3D] mb-6 flex items-center gap-[10px] lg:mb-4"
+      <div
+        v-for="(item, index) in resourceList"
+        :key="item.type"
+        :class="[index === resourceList.length - 1 ? 'mb-0' : 'mb-8 lg:mb-4']"
       >
-        <span>{{ item.type }}</span>
-        <img v-if="item.icon" :src="item.icon" alt="logo" class="w-[18px] h-[18px] object-cover" />
-      </p>
-      <div class="flex items-center flex-wrap gap-4">
-        <div
-          class="box-border rounded-lg bg-white p-4 flex gap-[10px] items-center cursor-pointer hover:shadow-lg relative lg:flex-col resource-card"
-          v-for="c in item.data"
-          :key="c.id"
-          @click="onAddSessionChat(c)"
+        <p
+          class="text-lg font-medium tracking-[0.13px] text-[#3D3D3D] mb-6 flex items-center gap-[10px] lg:mb-4"
         >
+          <span>{{ item.type }}</span>
           <img
-            :src="c.avatar || DefaultAvatar"
+            v-if="item.icon"
+            :src="item.icon"
             alt="logo"
-            class="w-12 h-12 object-cover overflow-hidden shrink-0 rounded-full"
+            class="w-[18px] h-[18px] object-cover"
           />
-          <div class="tracking-[0.13px] overflow-hidden lg:text-center">
-            <div class="text-[#596780] text-sm font-medium mb-2 truncate pr-6 lg:pr-0">
-              {{ c.name }}
+        </p>
+        <div class="flex items-center flex-wrap gap-4">
+          <div
+            class="box-border rounded-lg bg-white p-4 flex gap-[10px] items-center cursor-pointer hover:shadow-lg relative lg:flex-col resource-card"
+            v-for="c in item.data"
+            :key="c.id"
+            @click="onAddSessionChat(c)"
+          >
+            <img
+              :src="c.avatar || DefaultAvatar"
+              alt="logo"
+              class="w-12 h-12 object-cover overflow-hidden shrink-0 rounded-full"
+            />
+            <div class="tracking-[0.13px] overflow-hidden lg:text-center">
+              <div class="text-[#596780] text-sm font-medium mb-2 truncate pr-6 lg:pr-0">
+                {{ c.name }}
+              </div>
+              <p class="text-[#9DA3AF] text-xs line-clamp-2 h-8" style="word-break: break-all">
+                {{ c.desc }}
+              </p>
             </div>
-            <p class="text-[#9DA3AF] text-xs line-clamp-2 h-8" style="word-break: break-all">
-              {{ c.desc }}
-            </p>
+            <el-icon class="enter-icon text-[#596780]"><SortUp /></el-icon>
           </div>
-          <el-icon class="enter-icon text-[#596780]"><SortUp /></el-icon>
         </div>
       </div>
-    </div>
-  </ContentLayout>
+    </ContentLayout>
+  </div>
 </template>
 <script lang="ts" setup>
-import { addChatSession } from '@/api/chatList'
-import { getResource } from '@/api/resource'
+import { addChatSessionB, addChatSessionC } from '@/api/chatList'
+import { getResourceB, getResourceC } from '@/api/resource'
 import DefaultAvatar from '@/assets/img/avatar.png'
-import Topbar from '@/components/Topbar/index.vue'
-import { EAllRole } from '@/enum/user'
 import ContentLayout from '@/layout/ContentLayout.vue'
-import { useBase } from '@/stores/base'
 import { useChatStore } from '@/stores/chat'
-import { ElLoading, ElNotification } from 'element-plus'
+import { ElLoading } from 'element-plus'
 import { storeToRefs } from 'pinia'
-import { ref, watch } from 'vue'
+import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
+import { useStorage } from '@vueuse/core'
+import SquareHeader from './components/SquareHeader.vue'
+
+const props = withDefaults(
+  defineProps<{
+    prefix: string
+    existMenuMore: boolean
+  }>(),
+  {
+    prefix: '/c',
+    existMenuMore: true
+  }
+)
 
 const { t } = useI18n()
 const router = useRouter()
-const baseStoreI = useBase()
+const $uid = useStorage('uid', '')
 const resourceList = ref([])
+const authStoreI = useAuthStore()
 const chatStoreI = useChatStore()
-const { userInfo, orgInfo } = storeToRefs(baseStoreI)
+const { authToken } = storeToRefs(authStoreI)
 const { chatList } = storeToRefs(chatStoreI)
+const isLoggedIn = computed(() => !!authToken.value)
 
 async function onAddSessionChat(item) {
   if (chatList.value.filter((i) => i.slug === item.slug).length)
-    return router.replace(`/c/bot/${item.slug}`)
+    return router.replace(`${props.prefix}/bot/${item.slug}`)
   const loading = ElLoading.service({
     lock: true,
     text: t('正在进入...'),
     background: 'rgba(0, 0, 0, 0.7)'
   })
-  const res = await addChatSession([item.id])
-  if (res.data.code === 200) {
+  try {
+    if (!isLoggedIn.value) {
+      await addChatSessionC($uid.value, [item.id])
+    } else {
+      await addChatSessionB([item.id])
+    }
     await chatStoreI.initChatList()
     chatStoreI.switchChatingInfo(item.slug)
+
+    return router.replace(`${props.prefix}/bot/${item.slug}`)
+  } catch (error) {
+  } finally {
     loading.close()
-    return router.replace(`/c/bot/${item.slug}`)
   }
-  return ElNotification.error(res.data.data)
 }
 
 const initing = ref(false)
 
-watch([userInfo, initing], () => {
-  // 创建机器人提示逻辑：当前用户是空间所有者或管理员，且空间下无机器人
-  if (
-    initing.value ||
-    !userInfo.value ||
-    EAllRole.member === userInfo.value.role ||
-    userInfo.value.org.id !== orgInfo.value.id
-  ) {
-    return
-  }
-})
-
 const init = async () => {
   try {
     initing.value = true
-    const res = await getResource()
+    let getResourceFunc = isLoggedIn.value ? getResourceB : getResourceC
+    const res = await getResourceFunc()
     resourceList.value = res.data.data
   } catch (err) {
   } finally {

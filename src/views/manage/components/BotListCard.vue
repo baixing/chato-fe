@@ -126,7 +126,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { addChatSession } from '@/api/chatList'
+import { addChatSessionB } from '@/api/chatList'
 import DefaultAvatar from '@/assets/img/avatar.png'
 import IconBtn from '@/components/IconBtn/index.vue'
 import { EDomainStatus } from '@/enum/domain'
@@ -180,7 +180,7 @@ const onLinkTo = async (routeName: string, routeParams?: Record<string, string>)
   })
 
   if (routeName === RoutesMap.chat.c) {
-    await addChatSession([internalBot.value.id])
+    await addChatSessionB([internalBot.value.id])
     await chatStoreI.initChatList()
     chatStoreI.switchChatingInfo(internalBot.value.slug)
   }

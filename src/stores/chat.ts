@@ -1,13 +1,21 @@
-import { getChatSessionList } from '@/api/chatList'
-import { defineStore } from 'pinia'
+import { getChatSessionListB, getChatSessionListC } from '@/api/chatList'
+import { defineStore, storeToRefs } from 'pinia'
 import { ref } from 'vue'
+import { useAuthStore } from './auth'
+import { useStorage } from '@vueuse/core'
 
 export const useChatStore = defineStore('chat', () => {
+  const $uid = useStorage('uid', '')
+  const authStore = useAuthStore()
+  const { authToken } = storeToRefs(authStore)
   const chatList = ref<any>([])
   const chatingInfo = ref<any>({})
 
   const initChatList = async () => {
-    const res = await getChatSessionList()
+    const getChatSessionListFunc = authToken.value
+      ? getChatSessionListB
+      : (uid: string) => getChatSessionListC(uid)
+    const res = await getChatSessionListFunc($uid.value)
     chatList.value = res.data.data
     chatingInfo.value = chatList.value[0] || {}
   }

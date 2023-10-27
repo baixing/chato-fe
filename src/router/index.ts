@@ -13,7 +13,9 @@ export const RoutesMap = {
     homeName: 'home',
     index: 'homeIndex',
     nash: 'homeNash',
-    case: 'homeCase'
+    case: 'homeCase',
+    homeResource: 'homeResource',
+    homeChat: 'homeChat'
   },
   auth: {
     authName: 'auth',
@@ -26,7 +28,8 @@ export const RoutesMap = {
   chat: {
     chatName: 'chat',
     release: 'chatRelease',
-    c: 'chatC'
+    c: 'chatC',
+    homeC: 'chatHomeC'
   },
   resource: 'resource',
   tranning: {
@@ -70,6 +73,21 @@ const coreRoutes = [
         name: RoutesMap.home.case,
         path: 'case',
         component: () => import('@/views/home/case.vue')
+      },
+      {
+        name: RoutesMap.home.homeResource,
+        path: 'square',
+        component: () => import('@/views/home/homeResource.vue')
+      },
+      {
+        path: 'bot',
+        children: [
+          {
+            name: RoutesMap.home.homeChat,
+            path: ':botSlug',
+            component: () => import('@/views/home/homeChat.vue')
+          }
+        ]
       }
     ]
   },

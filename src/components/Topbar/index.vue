@@ -9,7 +9,7 @@
   >
     <div :class="[center && 'page-center-container', 'flex gap-2 items-center']">
       <span
-        v-show="isMobile"
+        v-show="isMobile && existMenuMore"
         @click="drawerVisible = true"
         class="inline-block w-fit cursor-pointer rounded-full"
       >
@@ -32,9 +32,11 @@ withDefaults(
     center?: boolean
     title?: string
     extraInMobile?: boolean
+    existMenuMore?: boolean
   }>(),
   {
-    center: true
+    center: true,
+    existMenuMore: true
   }
 )
 

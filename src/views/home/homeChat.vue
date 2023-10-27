@@ -1,0 +1,37 @@
+<template>
+  <div class="overflow-hidden w-full h-[calc(100%-74px)] mt-[74px] flex bg-white">
+    <ChatSidebar v-show="!isMobile" prefix="" style="border-right: 1px solid rgb(228, 231, 237)" />
+    <div class="relative w-full" v-loading="loading">
+      <span
+        v-show="isMobile"
+        @click="drawerVisible = true"
+        class="inline-block w-fit cursor-pointer rounded-full absolute z-[999]"
+      >
+        <svg-icon name="menu-more" svg-class="w-10 h-10 text-[#303133] mt-1" />
+      </span>
+      <homeChatItem />
+    </div>
+    <el-drawer
+      v-model="drawerVisible"
+      direction="ltr"
+      :with-header="false"
+      :show-close="false"
+      :append-to-body="true"
+      size="200"
+      @handleClose="drawerVisible = false"
+    >
+      <ChatSidebar prefix="" />
+    </el-drawer>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { useBasicLayout } from '@/composables/useBasicLayout'
+import ChatSidebar from '@/layout/components/Sidebar/ChatSidebar.vue'
+import homeChatItem from './components/homeChatItem.vue'
+import { ref } from 'vue'
+
+const { isMobile } = useBasicLayout()
+const loading = ref(false)
+const drawerVisible = ref<boolean>(false)
+</script>

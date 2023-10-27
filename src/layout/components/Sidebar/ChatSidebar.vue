@@ -24,13 +24,22 @@ import { useChatStore } from '@/stores/chat'
 import { storeToRefs } from 'pinia'
 import { useRoute, useRouter } from 'vue-router'
 
+const props = withDefaults(
+  defineProps<{
+    prefix: string
+  }>(),
+  {
+    prefix: '/c'
+  }
+)
+
 const route = useRoute()
 const router = useRouter()
 const chatStoreI = useChatStore()
 const { chatList } = storeToRefs(chatStoreI)
 
 const onLinkToChat = (slug: string) => {
-  router.replace(`/c/bot/${slug}`)
+  router.replace(`${props.prefix}/bot/${slug}`)
   chatStoreI.switchChatingInfo(slug)
 }
 </script>

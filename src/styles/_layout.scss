@@ -14,6 +14,7 @@ $centerContentWidth: 100%;
 }
 
 .page-center-container {
+  box-sizing: border-box;
   width: $centerContentWidth;
   // max-width: 1440px;
   // margin: 0 auto;

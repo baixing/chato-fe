@@ -234,6 +234,7 @@ interface Props {
   chatClassName?: string
   chatByAudio?: boolean
   type?: 'create'
+  authLogin?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -542,6 +543,11 @@ const onPlayAudio = async (text: string, playerId: string) => {
 }
 
 const beforeSubmit = async () => {
+  // 未登录状态资源广场对话数限制
+  if (props.authLogin && !isInternal && history.value.length >= 6) {
+    router.replace({ name: RoutesMap.auth.login })
+    return false
+  }
   // C 端对话额度限制，B 端对话额度限制走流式
   if (!isInternal && quotaUpperLimit.value) {
     ElMessage.warning(t('电力值不足，更多电力值请咨询产品顾问'))

@@ -1,10 +1,11 @@
 <template>
   <Chat
     :isreadRouteParam="true"
-    :internalProps="true"
+    :internalProps="isInternal"
     @correctAnswer="correctAnswer"
     @showDrawer="onOpenSource"
     :bSlug="botSlug"
+    :authLogin="authLogin"
   />
   <!-- 文档来源 -->
   <DocSourceDrawer
@@ -37,6 +38,17 @@ import { replaceMarkdownUrl } from '@/utils/help'
 import { removewRegReplaceA } from '@/utils/reg'
 import { storeToRefs } from 'pinia'
 import { computed, reactive, ref } from 'vue'
+
+withDefaults(
+  defineProps<{
+    authLogin?: boolean
+    isInternal?: boolean
+  }>(),
+  {
+    authLogin: false,
+    isInternal: true
+  }
+)
 
 const domainStoreI = useDomainStore()
 const { domainInfo } = storeToRefs(domainStoreI)
