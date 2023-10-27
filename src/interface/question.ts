@@ -1,3 +1,5 @@
+import type { IChatCommonParams } from './chat'
+
 export interface IQuestionFilter {
   domainId: string | number
   source: string
@@ -8,4 +10,12 @@ export interface IQuestionFilter {
   end_time?: string
   mid_question_id?: string | number
   keyword?: string
+}
+
+export interface IRecommendQuestion {
+  question: string
+}
+
+export interface IRecommendQuestionParams extends IChatCommonParams {
+  question: string
 }

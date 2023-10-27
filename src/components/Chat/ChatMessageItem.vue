@@ -85,7 +85,7 @@ provide(SymChatMessageAudioTTSParams, audioTTSParams)
 
 <template>
   <div
-    :class="['flex flex-col items-start mb-6', isQuestionMessage && '!flex-row justify-end']"
+    :class="['flex flex-col items-start', isQuestionMessage && '!flex-row justify-end']"
     :data-id="message.id"
     :data-script="isLast ? 'Chato-lastest-message' : ''"
   >
@@ -192,12 +192,12 @@ provide(SymChatMessageAudioTTSParams, audioTTSParams)
           !isLoadingAnswer &&
           message.status !== EWsMessageStatus.pending
         "
-        class="relative flex justify-start items-center ml-2 mt-2 text-[#303133] text-sm cursor-pointer"
+        class="relative flex justify-start items-center ml-2 text-[#303133] text-sm cursor-pointer"
       >
         <!-- 段落来源 -->
         <div
           v-if="(isInternal || detail.question_ref_source_show) && message.ref_source_len"
-          class="flex items-center gap-1 mr-5 h-5"
+          class="flex items-center gap-1 mr-5 h-5 mt-2"
           @click.stop="() => emit('clickSource', message.questionId)"
         >
           <svg-icon name="folder-open" svg-class="w-5 h-5 text-[#303133]" />
@@ -211,7 +211,7 @@ provide(SymChatMessageAudioTTSParams, audioTTSParams)
             message.evaluation === EMessageEvalution.like ||
             message.evaluation === EMessageEvalution.dislike
           "
-          class="flex items-center gap-2 mr-2"
+          class="flex items-center gap-2 mr-2 mt-2"
         >
           <el-icon
             :size="18"
@@ -233,7 +233,7 @@ provide(SymChatMessageAudioTTSParams, audioTTSParams)
             {{ $t('修正') }}
           </div>
         </div>
-        <div v-else-if="isLast" class="flex items-center gap-2">
+        <div v-else-if="isLast" class="flex items-center gap-2 mt-2">
           <svg-icon
             name="good-default"
             svg-class="w-4 h-4 text-[#303133] cursor-pointer transition-colors hover:!text-[var(--hoverColor)]"

@@ -1,5 +1,10 @@
 <template>
-  <span :class="['gap-3 inline-flex items-center', msgPosition === 'right' && 'flex-row-reverse']">
+  <span
+    :class="[
+      'gap-3 inline-flex items-center shrink-0',
+      msgPosition === 'right' && 'flex-row-reverse'
+    ]"
+  >
     <span
       :class="['text-[#AAAAAA] text-xs shrink-0 font-normal', internalVal && '!text-[#7C5CFC]']"
     >

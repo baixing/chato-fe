@@ -152,6 +152,29 @@
         />
       </div>
     </div>
+    <div class="chato-form-item relative">
+      <div class="chato-form-label">
+        {{ $t('问题推荐') }}
+      </div>
+      <div class="flex items-center justify-between">
+        <span class="space-x-3">
+          <span class="text-[#596780] text-sm leading-5">
+            {{ $t('机器人回答问题后，会展示推荐的问题，用户可点击后快速提问') }}
+          </span>
+          <el-button size="small" type="primary" link @click="() => (exampleVisible = true)">
+            {{ $t('查看示例') }}
+          </el-button>
+        </span>
+        <SwitchWithStateMsg
+          v-model:value="currentDomain.is_session_effective"
+          size="small"
+          openMsg="开启"
+          closeMsg="关闭"
+          msg-position="left"
+        />
+      </div>
+      <SpaceRightsMask :visible="maskVisible" :rightsType="ESpaceRightsType.brand" />
+    </div>
     <div class="chato-form-item">
       <div class="chato-form-label flex justify-between items-center">
         <SLTitle
@@ -217,13 +240,19 @@
       </div>
     </div>
   </div>
+  <Modal v-model:visible="exampleVisible" title="查看示例" :footer="false">
+    <img :src="AdImg" class="w-3/5" alt="" />
+  </Modal>
 </template>
 
 <script setup lang="ts">
 import { getSystemPromptLimit } from '@/api/domain'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
+import Modal from '@/components/Modal/index.vue'
+import SpaceRightsMask from '@/components/Space/SpaceRightsMask.vue'
 import SwitchWithStateMsg from '@/components/SwitchWithStateMsg/index.vue'
 import SLTitle from '@/components/Title/SLTitle.vue'
+import useImagePath from '@/composables/useImagePath'
 import useSpaceRights from '@/composables/useSpaceRights'
 import {
   DomainEditSymbol,
@@ -235,9 +264,11 @@ import {
 } from '@/constant/domain'
 import { ESpaceCommercialType, ESpaceRightsType } from '@/enum/space'
 import type { IDomainInfo, IDomainLLMConfig } from '@/interface/domain'
+import { useSpaceStore } from '@/stores/space'
 import { getStringWidth } from '@/utils/string'
 import { debouncedWatch } from '@vueuse/core'
 import { ElInput, ElNotification } from 'element-plus'
+import { storeToRefs } from 'pinia'
 import { computed, inject, nextTick, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -249,6 +280,7 @@ defineProps<{
 }>()
 
 const { t } = useI18n()
+const { ImagePath: AdImg } = useImagePath('ad', 'example', 'webp')
 
 const diverstyToolTip = {
   0: t('最准确'),
@@ -264,6 +296,12 @@ const needUpgrate = computed(() => isNotAllowedCommercialType([ESpaceCommercialT
 const keywordInput = ref('')
 const keywordInputVisible = ref(false)
 const keywordHansInputRef = ref<InstanceType<typeof ElInput>>()
+
+const exampleVisible = ref(false)
+
+const spaceStoreI = useSpaceStore()
+const { currentRights } = storeToRefs(spaceStoreI)
+const maskVisible = computed(() => currentRights.value.type === ESpaceCommercialType.free)
 
 const internalReplyTone = computed({
   get: () => (currentDomain.reply_tone ? currentDomain.reply_tone.split(',') : null),

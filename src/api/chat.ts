@@ -1,41 +1,21 @@
 import { ETerminal } from '@/enum/common'
 import type { ChatHistoryParams, ChatToBotRes, IChatCitationSource } from '@/interface/chat'
+import type { IRecommendQuestion, IRecommendQuestionParams } from '@/interface/question'
 import type { ITTSList, ITTSParams } from '@/interface/tts'
 import request from '@/utils/request'
 
 export function getMessages(orgId) {
-  // return Promise.reject({ response: { status: 403 } })
-  // return Promise.resolve({ data: dataQuestions })
-
   return request({
     url: `/chato/api/orgs/${orgId}/questions`
   })
 }
 
 export function chatToBot(botId, question) {
-  // return Promise.reject({ response: { status: 403 } })
-  // return Promise.resolve({ data: dataQuestion })
-
   return request({
     method: 'post',
     url: `/chato/api/domains/${botId}/chat`,
     data: {
       p: question
-    }
-  })
-}
-export function chatToBotPublic(botSlug, question, uid) {
-  // return Promise.reject({ response: { status: 403 } })
-  // return Promise.resolve({ data: dataQuestion })
-
-  uid = uid || undefined
-  return request({
-    enforceAnonymity: true, // 此接口强制使用匿名方式调用，哪怕当前用户有 authToken 也不用
-    method: 'post',
-    url: `/chato/api-public/domains/${botSlug}/chat`,
-    data: {
-      p: question,
-      uid
     }
   })
 }
@@ -121,6 +101,15 @@ export const getTTS = (data: ITTSParams) => {
   return request<ITTSList>({
     method: 'post',
     url: '/api/tts/stream',
+    data
+  })
+}
+
+// 问题推荐
+export const getChatRecommendQuestions = (data: IRecommendQuestionParams) => {
+  return request<{ recommends: IRecommendQuestion[] }>({
+    method: 'post',
+    url: 'api/recommend/question',
     data
   })
 }

@@ -78,3 +78,9 @@ export interface IChatCitationSource {
   file_type: EChatCitationSourceFileType
   url?: string
 }
+
+export interface IChatCommonParams {
+  domain_slug: string
+  token: string
+  visitor_type: 'owner' | 'vistor' | 'chat'
+}

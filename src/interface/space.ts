@@ -9,6 +9,7 @@ export interface ISpaceRights {
   ad: boolean // 是否可配置对话广告
   brand: boolean // 是否可配置品牌广告
   dns: boolean // 是否可配置品牌域名
+  type: ESpaceCommercialType // 空间权益
 }
 
 export interface ISpaceQuota {

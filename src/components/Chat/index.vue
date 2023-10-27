@@ -22,48 +22,59 @@
       </div>
       <div
         v-else
-        class="chat-history chat-center"
+        class="chat-history chat-center space-y-6"
         @scroll="onChatHistoryScroll"
         ref="refChatHistory"
       >
-        <div class="MessageItem" ref="MessageItemContainer">
-          <!-- 机器人简介 -->
-          <div v-if="detail.desc_show" class="quick-message-container mb-5">
-            <div class="quick-span-desc">
-              <img :src="detail.avatar || DefaultAvatar" />
-              <div class="desc-right">
-                <div class="desc-right-title">{{ detail.name || '...' }}</div>
-                <span>{{ detail.desc }}</span>
-              </div>
+        <!-- 机器人简介 -->
+        <div v-if="detail.desc_show" class="quick-message-container mb-5">
+          <div class="quick-span-desc">
+            <img :src="detail.avatar || DefaultAvatar" />
+            <div class="desc-right">
+              <div class="desc-right-title">{{ detail.name || '...' }}</div>
+              <span>{{ detail.desc }}</span>
             </div>
           </div>
-          <div v-for="(item, index) in history" :key="item.id" class="messageItem-container">
-            <template v-if="item.displayType !== 'remove'">
-              <MessageItem
-                :isLast="index === history.length - 1 && !isLoadingAnswer"
-                :message="item"
-                :detail="detail"
-                :isInternal="isInternal && isChatingPractice"
-                :is-loading-answer="isLoadingAnswer"
-                :correct-visible="isInternal || (detail.qa_modifiable && !correctTicketExpired)"
-                @evaluate="onEvaluate"
-                @send-message="submit"
-                @show-more-action="onShowMoreAction"
-                @receive-question-answer="(mItem) => emit('correctAnswer', mItem)"
-                @click-source="(questionId) => emit('showDrawer', questionId, botSlug)"
-              />
-            </template>
-            <template v-else-if="item.displayType === 'remove'">
-              <el-divider>
-                <span class="divider-tip">{{ $t('已清除与历史消息的关联，开始全新的会话') }}</span>
-              </el-divider>
-            </template>
-          </div>
-          <div v-if="quotaUpperLimit" class="divider-desc-seesion">
-            {{ $t('电力值不足，更多电力值请咨询产品顾问') }}
+        </div>
+        <template v-for="(item, index) in history" :key="item.id">
+          <MessageItem
+            v-if="item.displayType !== 'remove'"
+            :isLast="index === history.length - 1 && !isLoadingAnswer"
+            :message="item"
+            :detail="detail"
+            :isInternal="isInternal && isChatingPractice"
+            :is-loading-answer="isLoadingAnswer"
+            :correct-visible="isInternal || (detail.qa_modifiable && !correctTicketExpired)"
+            @evaluate="onEvaluate"
+            @send-message="submit"
+            @show-more-action="onShowMoreAction"
+            @receive-question-answer="(mItem) => emit('correctAnswer', mItem)"
+            @click-source="(questionId) => emit('showDrawer', questionId, botSlug)"
+          />
+          <el-divider v-else-if="item.displayType === 'remove'">
+            <span class="divider-tip">{{ $t('已清除与历史消息的关联，开始全新的会话') }}</span>
+          </el-divider>
+        </template>
+        <div
+          v-show="!isLoadingAnswer && recommendQuestions.length"
+          v-loading="recommendQuestionsLoading"
+          class="!mt-2 space-y-2"
+        >
+          <div
+            v-for="(item, index) in recommendQuestions"
+            :key="`rq_${index}`"
+            @click="onClickRecommend(item.question)"
+            class="cursor-pointer px-4 py-1 text-[#2F3447] rounded-3xl text-sm leading-6 tracking-[0.13px] border border-solid border-[#E4E7ED] flex items-center justify-between gap-2 transition-opacity hover:opacity-80"
+          >
+            <span>{{ item.question }}</span>
+            <el-icon :size="16"><Right /></el-icon>
           </div>
         </div>
+        <div v-if="quotaUpperLimit" class="divider-desc-seesion">
+          {{ $t('电力值不足，更多电力值请咨询产品顾问') }}
+        </div>
       </div>
+
       <div
         v-show="isLoadingAnswer"
         data-sensors-click
@@ -136,7 +147,13 @@
 </template>
 
 <script lang="ts" setup>
-import { chatToBotHistoryB, chatToBotHistoryC, clearSession, evaluate } from '@/api/chat'
+import {
+  chatToBotHistoryB,
+  chatToBotHistoryC,
+  clearSession,
+  evaluate,
+  getChatRecommendQuestions
+} from '@/api/chat'
 import {
   checkDomainCorrectTicketIsExpired,
   getDomainDetailPublic,
@@ -170,9 +187,10 @@ import {
   EWsMessageStatus
 } from '@/enum/message'
 import { ESpaceRightsType } from '@/enum/space'
-import type { ChatHistoryParams } from '@/interface/chat'
+import type { ChatHistoryParams, IChatCommonParams } from '@/interface/chat'
 import type { IDomainInfo } from '@/interface/domain'
 import type { IMessageItem } from '@/interface/message'
+import type { IRecommendQuestion } from '@/interface/question'
 import type { ITTSParams } from '@/interface/tts'
 import router, { RoutesMap } from '@/router'
 import { useAuthStore } from '@/stores/auth'
@@ -261,7 +279,6 @@ const detailShortcutsArr = computed(() => {
   }
 })
 const refChatHistory = ref<HTMLDivElement>(null) // 聊天记录容器的 DOM 引用
-const MessageItemContainer = ref(null)
 const inputText = ref('')
 const $isLoading = ref<boolean>(true) // 是否处于全屏加载状态
 const history = ref<IMessageItem[]>([])
@@ -409,9 +426,6 @@ function getBotInfo() {
       if (props.chatByAudio) {
         detail.value.conversation_mode = EDomainConversationMode.audio
       }
-      // TODO: 旧的深浅气泡对应的字体逻辑，by 新优化需求研发重写
-      // const cur_list = ChatBubbleColorList.filter((item) => item.bg === detail.value.message_style)
-      // detail.value.message_style_color = cur_list.length > 0 ? cur_list[0].cl : ''
       detail.value.shortcuts =
         $notnull(res.data.data) && res.data.data.shortcuts
           ? JSON.parse(res.data.data.shortcuts)
@@ -568,6 +582,7 @@ const submit = async (str = '') => {
     id: `${_id}-q`,
     content: xssFilterText
   })
+  initRecommendQuestions(xssFilterText)
   commonRequestSocket(xssFilterText, msg_id, _id)
   sseStore.updatePeddingDomains(botSlug.value)
   // 语音播放重置
@@ -583,6 +598,13 @@ const chatToken = computed(() => (isInternal ? authToken.value : $uid.value))
 const needsSSEAudio = computed(
   () => EDomainConversationMode.audio === detail.value.conversation_mode
 )
+const chatCommonParams = computed<IChatCommonParams>(() => {
+  return {
+    domain_slug: detail.value.slug,
+    token: chatToken.value,
+    visitor_type: isInternal ? (props.isreadRouteParam ? 'chat' : 'owner') : 'vistor'
+  }
+})
 
 // 触发终止和重试
 const onTerminateRetry = async () => {
@@ -598,9 +620,7 @@ const onTerminateRetry = async () => {
       type: 'close',
       text: removewRegReplaceA(lastAnswer.content),
       cutoff_continue_qid: lastAnswer.questionId,
-      domain_slug: detail.value.slug,
-      token: chatToken.value,
-      visitor_type: isInternal ? (props.isreadRouteParam ? 'chat' : 'owner') : 'vistor',
+      ...chatCommonParams.value,
       fake_domain: debugDomain || undefined
     }
 
@@ -665,7 +685,7 @@ function doRequest(message) {
   // 发送请求重置状态：加载回答为是，终止为否
   isLoadingAnswer.value = true
   isTerminated.value = false
-
+  scrollChatHistory()
   sendMsgRequest(message)
 }
 
@@ -676,9 +696,7 @@ async function sendMsgRequest(message) {
     ...message,
     type: isMidJourneyDomain.value ? 'mj_image' : 'chat',
     source: source.value,
-    domain_slug: detail.value.slug,
-    token: chatToken.value,
-    visitor_type: isInternal ? (props.isreadRouteParam ? 'chat' : 'owner') : 'vistor',
+    ...chatCommonParams.value,
     navit_msg_id: isMidJourneyDomain.value ? random(1000000, 9999999) : undefined,
     fake_domain: debugDomain || undefined
   }
@@ -1032,6 +1050,28 @@ const onElClick = (event) => {
   }
 }
 
+const recommendQuestionsLoading = ref(false)
+const recommendQuestions = ref<IRecommendQuestion[]>([])
+
+const initRecommendQuestions = async (question: string) => {
+  try {
+    recommendQuestions.value = []
+    recommendQuestionsLoading.value = true
+    const {
+      data: { data }
+    } = await getChatRecommendQuestions({ ...chatCommonParams.value, question })
+    recommendQuestions.value = data.recommends
+  } catch (e) {
+  } finally {
+    recommendQuestionsLoading.value = false
+  }
+}
+
+const onClickRecommend = (ques: string) => {
+  submit(ques)
+  recommendQuestions.value = []
+}
+
 watch(refChatHistory, (v) => {
   v && v.addEventListener('click', chatHisListener)
 })
@@ -1142,10 +1182,9 @@ defineExpose({
 </script>
 <style lang="scss" scoped>
 .chat-history {
-  @apply px-1 pt-4 pb-5;
+  @apply px-1 py-4;
   flex: auto 1 1;
   box-sizing: border-box;
-  display: flex;
   max-width: 100vw;
   overflow-x: hidden;
   overflow-y: auto;
@@ -1182,63 +1221,53 @@ defineExpose({
   }
 }
 
-.MessageItem {
-  width: 100%;
+.quick-message-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 
-  .quick-message-container {
+  .quick-span-desc {
+    @apply p-4 rounded-lg;
     display: flex;
-    flex-direction: column;
+    justify-content: flex-start;
     align-items: flex-start;
+    width: 100%;
+    flex-shrink: 0;
+    line-height: 1.5;
+    color: #2f3447;
+    background-color: #f2f3f5;
+    cursor: pointer;
 
-    .quick-span-desc {
-      @apply p-4 mb-2 rounded-lg;
-      display: flex;
-      justify-content: flex-start;
-      align-items: flex-start;
-      width: 100%;
+    img {
+      @apply w-14 h-14;
+      border-radius: 100%;
       flex-shrink: 0;
-      line-height: 1.5;
-      color: #2f3447;
-      background-color: #f2f3f5;
-      cursor: pointer;
+      object-fit: cover;
+    }
 
-      img {
-        @apply w-14 h-14;
-        border-radius: 100%;
-        flex-shrink: 0;
-        object-fit: cover;
-      }
+    .desc-right {
+      @apply text-xs leading-5 ml-3;
+      color: #596780;
+      word-break: break-word;
 
-      .desc-right {
-        @apply text-xs leading-5 ml-3;
-        color: #596780;
-        word-break: break-word;
-
-        .desc-right-title {
-          @apply mb-2 text-base;
-          color: #3d3d3d;
-          font-weight: 500;
-        }
+      .desc-right-title {
+        @apply mb-2 text-base;
+        color: #3d3d3d;
+        font-weight: 500;
       }
     }
   }
+}
 
-  .messageItem-container {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-  }
+.divider-tip {
+  @apply text-xs;
+  color: #dcdfe6;
+}
 
-  .divider-tip {
-    @apply text-xs;
-    color: #dcdfe6;
-  }
-
-  .divider-desc-seesion {
-    @apply mb-3 rounded-lg text-xs;
-    text-align: center;
-    color: #9da3af;
-  }
+.divider-desc-seesion {
+  @apply mb-3 rounded-lg text-xs;
+  text-align: center;
+  color: #9da3af;
 }
 
 .empty {
