@@ -58,7 +58,7 @@
         <div
           v-show="!isLoadingAnswer && recommendQuestions.length"
           v-loading="recommendQuestionsLoading"
-          class="!mt-2 space-y-2"
+          class="!mt-4 space-y-2"
         >
           <div
             v-for="(item, index) in recommendQuestions"
@@ -83,10 +83,10 @@
         class="shrink-0 mb-4 mt-3 mx-auto flex items-center gap-2 text-[#303133] text-xs cursor-pointer px-4 py-3 rounded-md bg-[#F2F3F5] w-fit hover:opacity-80"
         @click="onTerminateRetry"
       >
-        <el-icon class="text-base"> <VideoPause /> </el-icon>{{ $t('终止') }}
+        <el-icon class="text-base"><VideoPause /></el-icon>{{ $t('终止') }}
       </div>
 
-      <div v-if="detail.shortcuts" class="chat-center quick-message-bottom relative">
+      <div v-if="detail.shortcuts?.length" class="chat-center quick-message-bottom relative">
         <span
           v-for="(item, index) in detailShortcutsArr"
           :key="index"
@@ -854,6 +854,7 @@ async function clearChatHistory() {
         displayType: EMessageDisplayType.remove
       })
 
+      recommendQuestions.value = []
       history.value = newHistory
     } else {
       Notification.error(data.msg)
