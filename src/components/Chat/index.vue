@@ -582,7 +582,7 @@ const submit = async (str = '') => {
     id: `${_id}-q`,
     content: xssFilterText
   })
-  initRecommendQuestions(xssFilterText)
+  detail.value.show_recommend_question && initRecommendQuestions(xssFilterText)
   commonRequestSocket(xssFilterText, msg_id, _id)
   sseStore.updatePeddingDomains(botSlug.value)
   // 语音播放重置
@@ -1156,6 +1156,10 @@ watch(
     }
 
     detail.value = { ...detail.value, ...v }
+    if (!v.show_recommend_question && recommendQuestions.value.length) {
+      recommendQuestions.value = []
+    }
+
     if (v.welcome) {
       const hisWelcomeItem = history.value.find((item) => item.isWelcome)
       if (hisWelcomeItem) {

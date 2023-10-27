@@ -153,9 +153,7 @@
       </div>
     </div>
     <div class="chato-form-item relative">
-      <div class="chato-form-label">
-        {{ $t('问题推荐') }}
-      </div>
+      <div class="chato-form-label">{{ $t('问题推荐') }}</div>
       <div class="flex items-center justify-between">
         <span class="space-x-3">
           <span class="text-[#596780] text-sm leading-5">
@@ -166,7 +164,7 @@
           </el-button>
         </span>
         <SwitchWithStateMsg
-          v-model:value="currentDomain.is_session_effective"
+          v-model:value="currentDomain.show_recommend_question"
           size="small"
           openMsg="开启"
           closeMsg="关闭"

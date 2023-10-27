@@ -72,6 +72,7 @@ export interface IDomainInfo {
   question_ref_source_show: number
   name_and_avatar_show: number
   is_session_effective: number
+  show_recommend_question: number // 问题推荐
   conversation_mode_meta?: string
 }
 
