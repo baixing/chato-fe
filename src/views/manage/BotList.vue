@@ -72,7 +72,13 @@
         </el-radio-group>
       </div>
       <div class="text-[#9DA3AF] text-xs my-2">
-        {{ t('仅对自己和空间创建者可见，其他人不能看见你的机器人') }}
+        {{
+          t(
+            opDomain.use_scope
+              ? '所有人都可以看到你创建的机器人，并可以对其进行操作'
+              : '仅对自己和空间创建者可见，其他人不能看见你的机器人'
+          )
+        }}
       </div>
     </div>
   </Modal>
@@ -116,12 +122,12 @@ const { checkRightsTypeNeedUpgrade } = useSpaceRights()
 const { isMobile } = useBasicLayout()
 const visibleOptions = [
   {
-    value: 0,
-    label: '不可见'
+    value: 1,
+    label: '公开'
   },
   {
-    value: 1,
-    label: '可见'
+    value: 0,
+    label: '私密'
   }
 ] as const
 
