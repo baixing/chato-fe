@@ -17,7 +17,7 @@
       </div>
       <div
         v-if="isAllowedDelete"
-        class="border hidden border-[#E4E7ED] p-2 group-hover/card:block border-solid rounded hover:!border-[#7C5CFC] text-[#9DA3AF] hover:text-[#7C5CFC]"
+        class="border hidden border-[#E4E7ED] lg:!hidden p-2 group-hover/card:block border-solid rounded hover:!border-[#7C5CFC] text-[#9DA3AF] hover:text-[#7C5CFC]"
         @click.stop="emit('visible', internalBot)"
       >
         <svg-icon :name="internalBot.use_scope ? 'visible' : 'private'" svg-class="w-4 h-4" />
