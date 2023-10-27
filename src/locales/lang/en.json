@@ -1279,5 +1279,7 @@
   "请确保网站内容可复制，请避免非法抓取他人网站的侵权行为": "Please ensure that the content of the website can be copied, and please avoid the infringement of illegally crawling other people's websites.",
   "AI智能助手": "AI intelligent assistant",
   "解析异常": "Parsing Exception",
-  "避免未经授权抓取他人公众号原创文章的侵权行为": "Avoid unauthorized grabbing of other official account original articles of infringement"
+  "避免未经授权抓取他人公众号原创文章的侵权行为": "Avoid unauthorized grabbing of other official account original articles of infringement",
+  "仅对自己和空间创建者可见，其他人不能看见你的机器人": "Visible only to yourself and the creator of the space, no one else can see your robot",
+  "访问权限": "access permission"
 }

@@ -96,15 +96,25 @@ export const domainLLMConfigAPI = () => {
 
 export const getTimbreList = () => {
   return request<ITTSListApi>({
-    url: `https://test.api.chato.cn/api/tts/timbre`
+    url: `/api/tts/timbre`
   })
 }
 
 export const getTestTimbreUrl = (timbre: String) => {
   return request<{ contentList: ITimbreAuditionApi[] }>({
-    url: `https://test.api.chato.cn/api/tts/audition`,
+    url: `/tts/audition`,
     data: {
       timbre
+    }
+  })
+}
+
+export const setBotUseScope = (domain_id: number, use_scope: 0 | 1) => {
+  return request<null>({
+    url: `/chato/api/domains/${domain_id}/use_scope`,
+    method: 'PATCH',
+    data: {
+      use_scope
     }
   })
 }

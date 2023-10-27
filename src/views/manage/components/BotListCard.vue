@@ -1,18 +1,27 @@
 <template>
   <div
-    class="relative bg-white rounded-lg p-6 space-y-5 transition cursor-pointer hover:shadow-lg hover:-translate-y-2 lg:p-4 lg:space-y-3 lg:hover:-translate-y-0"
+    class="group/card relative bg-white rounded-lg p-6 space-y-5 transition cursor-pointer hover:shadow-lg hover:-translate-y-2 lg:p-4 lg:space-y-3 lg:hover:-translate-y-0"
     @click="onCardClick"
   >
-    <div class="flex gap-3 items-center">
-      <el-image
-        lazy
-        fit="cover"
-        :src="internalBot.avatar || DefaultAvatar"
-        class="w-11 h-11 rounded-full overflow-hidden shrink-0 lg:w-9 lg:h-9"
-      />
-      <span class="inline-block truncate font-medium text-[#3D3D3D]">
-        {{ internalBot.name }}
-      </span>
+    <div class="flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <el-image
+          lazy
+          fit="cover"
+          :src="internalBot.avatar || DefaultAvatar"
+          class="w-11 h-11 rounded-full overflow-hidden shrink-0 lg:w-9 lg:h-9"
+        />
+        <span class="inline-block truncate font-medium text-[#3D3D3D]">
+          {{ internalBot.name }}
+        </span>
+      </div>
+      <div
+        v-if="isAllowedDelete"
+        class="border hidden border-[#E4E7ED] p-2 group-hover/card:block border-solid rounded hover:!border-[#7C5CFC] text-[#9DA3AF] hover:text-[#7C5CFC]"
+        @click.stop="emit('visible', internalBot)"
+      >
+        <svg-icon :name="internalBot.use_scope ? 'visible' : 'private'" svg-class="w-4 h-4" />
+      </div>
     </div>
 
     <p
@@ -144,7 +153,7 @@ const props = defineProps<{
   bot?: IDomainInfo
 }>()
 
-const emit = defineEmits(['delete', 'sync', 'cloneRobot'])
+const emit = defineEmits(['delete', 'sync', 'cloneRobot', 'visible'])
 
 // 特殊权益用户开放同步/隐藏资源广场机器人按钮
 const PrivilegeUser = '18116404787'

@@ -51,6 +51,7 @@ export interface IDomainInfo {
   deleted: string
   status: EDomainStatus
   visible: number // 是否在资源广场展示: 1 是 0 否
+  use_scope: 0 | 1 // 可以访问 0 管理员和创建者 1 所有人
   template: number // 是否为模板: 1 是 0 否
   question_max_length: number
   system_prompt_max_length: number
