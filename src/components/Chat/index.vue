@@ -1062,6 +1062,7 @@ const initRecommendQuestions = async (question: string) => {
       data: { data }
     } = await getChatRecommendQuestions({ ...chatCommonParams.value, question })
     recommendQuestions.value = data.recommends
+    scrollChatHistory()
   } catch (e) {
   } finally {
     recommendQuestionsLoading.value = false
@@ -1125,6 +1126,7 @@ onBeforeUnmount(() => {
 watch(
   botSlug,
   (v) => {
+    recommendQuestions.value = []
     if (v) {
       init()
     } else {
