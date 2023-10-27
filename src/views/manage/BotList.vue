@@ -64,13 +64,11 @@
     @submit="setBotVisibleById"
   >
     <div>
-      <div>
-        <el-radio-group v-model="opDomain.use_scope">
-          <el-radio v-for="item in visibleOptions" :key="item.value" :label="item.value">
-            {{ t(item.label) }}
-          </el-radio>
-        </el-radio-group>
-      </div>
+      <el-radio-group v-model="opDomain.use_scope">
+        <el-radio v-for="item in visibleOptions" :key="item.value" :label="item.value">
+          {{ t(item.label) }}
+        </el-radio>
+      </el-radio-group>
       <div class="text-[#9DA3AF] text-xs my-2">
         {{
           t(
@@ -130,8 +128,6 @@ const visibleOptions = [
     label: '私密'
   }
 ] as const
-
-// const setOpDomainUseScope = (value:typeof visibleOptions[number]['value']) => domainList.value =
 
 const setDialogVisible = (bot: IDomainInfo) => {
   accessPermissionDialogVisible.value = true
