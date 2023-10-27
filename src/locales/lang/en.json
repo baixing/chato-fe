@@ -1286,5 +1286,6 @@
   "所有人都可以看到你创建的机器人，并可以对其进行操作": "Everyone can see and operate the bot you create",
   "公开": "public",
   "私密": "private",
-  "访问权限": "access permission"
+  "访问权限": "access permission",
+  "剩余电力值": "Remaining power"
 }

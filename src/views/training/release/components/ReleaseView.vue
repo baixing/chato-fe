@@ -133,7 +133,11 @@ const createWeixinChat = async () => {
 const createWeixinAccount = async () => {
   const needUpgrade = isAllowedCommercialType(PaidCommercialTypes)
   if (!needUpgrade) {
-    return checkRightsTypeNeedUpgrade(ESpaceRightsType.weixinAccount)
+    return checkRightsTypeNeedUpgrade(ESpaceRightsType.default)
+  }
+  const limited = await checkRightsTypeNeedUpgrade(ESpaceRightsType.weixinAccount)
+  if (limited) {
+    return checkRightsTypeNeedUpgrade(ESpaceRightsType.default)
   }
   createAccountVisible.value = true
 }

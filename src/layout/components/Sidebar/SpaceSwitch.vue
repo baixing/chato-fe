@@ -27,10 +27,11 @@
           />
         </div>
         <div class="flex items-center justify-between text-xs leading-4 text-[#596780]">
-          <span>{{ $t('电力值') }}</span>
+          <span>{{ $t('剩余电力值') }}</span>
           <span>
-            <span class="text-[#7C5CFC]">{{ spaceQuota.consumed }}</span>
-            / {{ spaceQuota.total }}
+            <span class="text-[#7C5CFC]">
+              {{ spaceQuota.total - spaceQuota.consumed }}
+            </span>
           </span>
         </div>
       </div>

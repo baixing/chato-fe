@@ -101,9 +101,9 @@
             <el-button
               size="large"
               data-script="Chato-NotbindingMobile"
-              @click="emit('handleClose')"
+              @click="emit('handleRescanCode')"
             >
-              {{ $t('下次再说') }}
+              {{ $t('重新扫码') }}
             </el-button>
           </el-col>
           <el-col :span="12" :offset="2">
@@ -198,12 +198,12 @@ withDefaults(
     isbindingMobile: false
   }
 )
-const emit = defineEmits(['handleSubmit', 'handleClose'])
+const emit = defineEmits(['handleSubmit', 'handleRescanCode'])
 
 const { checkRightsTypeNeedUpgrade } = useSpaceRights()
 const { encryption } = useRSA()
 const { t } = useI18n()
-const { shareChannel, setShareChannel } = useChannel()
+const { shareChannel } = useChannel()
 const { baiduPromotionId, baiduPromotionKeyword } = useBaiduPromotion()
 const { $sensors } = useGlobalProperties()
 const isBtnSendDisabled = ref(false)

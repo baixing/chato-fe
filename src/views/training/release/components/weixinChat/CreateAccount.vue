@@ -98,9 +98,18 @@ const pollingEmpowerStatus = () => {
     if (!props.value) return clearInterval(timer)
     const res = await serachEmpowerStatus(accountQrCode.value.qrCodeKey)
 
-    if (res.data.is_expired) {
-      init()
+    if (res.data.is_online) {
+      currentStatus.value = EAccountCreateStatus.success
+      isCode.value = false
+      accountQrCode.value = null
       clearInterval(timer)
+      return
+    }
+
+    if (res.data.is_expired) {
+      clearInterval(timer)
+      init()
+      return
     }
 
     if (res.data.is_used) {
@@ -109,13 +118,6 @@ const pollingEmpowerStatus = () => {
 
     if (res.data.login_status === 10) {
       return (isCode.value = true)
-    }
-
-    if (res.data.is_online) {
-      currentStatus.value = EAccountCreateStatus.success
-      isCode.value = false
-      accountQrCode.value = null
-      clearInterval(timer)
     }
   }, 2000)
 }

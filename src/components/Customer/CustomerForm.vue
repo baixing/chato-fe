@@ -20,28 +20,6 @@
           />
         </el-form-item>
       </el-form>
-      <p class="text-[13px] text-[#B5BED0] flex items-center mb-5">
-        提交信息即表示默认同意&nbsp;
-        <el-link
-          :underline="false"
-          target="_blank"
-          type="info"
-          class="!text-[13px] !text-[#B5BED0] hover:opacity-80"
-          @click="openPreviewUrl(kPrivacyLinkUrl)"
-        >
-          服务协议
-        </el-link>
-        &nbsp;和&nbsp;
-        <el-link
-          :underline="false"
-          target="_blank"
-          type="info"
-          class="!text-[13px] !text-[#B5BED0] hover:opacity-80"
-          @click="openPreviewUrl(kUserAgreementLinkUrl)"
-        >
-          隐私政策
-        </el-link>
-      </p>
       <div class="flex gap-3 items-center justify-end">
         <el-button :disabled="internalDisabled" @click="onCancel">取消</el-button>
         <el-button
@@ -60,9 +38,7 @@
 
 <script setup lang="ts">
 import { getCustomerFormConfig, saveCustomerForm } from '@/api/customerForm'
-import { kPrivacyLinkUrl, kUserAgreementLinkUrl } from '@/constant/terms'
 import type { ICustomerFormConfig } from '@/interface/customerForm'
-import { openPreviewUrl } from '@/utils/help'
 import Ajv from 'ajv'
 import AjvErrors from 'ajv-errors'
 import { ElMessage, ElNotification } from 'element-plus'

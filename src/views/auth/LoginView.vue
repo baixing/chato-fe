@@ -6,9 +6,10 @@
         class="p-3 md:p-0 mt-14 m-auto border border-solid border-[#E4E7ED] md:border-none rounded-lg"
       >
         <BindingMobile
-          v-if="isbindingMobile || externalUserId"
+          v-if="isbindingMobile"
           :userId="userId"
           @loginEnterSuccess="loginEnterSuccess"
+          @handleRescanCode="handleRescanCode"
         />
         <template v-else>
           <div class="flex justify-end items-center">
@@ -65,7 +66,6 @@ import dayjs from 'dayjs'
 
 const { t } = useI18n()
 const stateToken = useStorage('auth_token', '')
-const externalUserId = useStorage('userId', '')
 const { shareChannel, setShareChannel } = useChannel()
 const { invite_ticket } = useInvite()
 const isMobile = useIsMobile()
@@ -88,7 +88,7 @@ const userId = computed(() => {
   return $notnull(loginQRCodeEmpowerStatusRes.value) &&
     !!loginQRCodeEmpowerStatusRes.value.external_user_id
     ? loginQRCodeEmpowerStatusRes.value.external_user_id
-    : externalUserId.value
+    : ''
 })
 const url = computed(() => {
   return $notnull(loginQRCodeRes.value) ? loginQRCodeRes.value.url : ''
@@ -165,6 +165,12 @@ const pollingQREmpowerStatus = () => {
     serachQREmpowerStatus(loginQRCodeRes.value.session)
   }, 1000)
 }
+
+const handleRescanCode = () => {
+  isbindingMobile.value = false
+  loginQRCodeEmpowerStatusRes.value = null
+  handleRefreshQR()
+}
 // ----------
 
 // ----- 登录 ----
@@ -190,7 +196,7 @@ const loginEnterSuccess = async (token: string, channel: string, close?: () => v
 watch(
   loginWay,
   (v) => {
-    if (v === ELoginWay.loginMobile && !userId.value) {
+    if (v === ELoginWay.loginMobile) {
       if ($notnull(loginQRCodeRes.value)) {
         pollingQREmpowerStatus()
       } else {

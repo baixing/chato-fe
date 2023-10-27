@@ -1,4 +1,4 @@
-import { getGroupListAPI } from '@/api/release'
+import { getGroupListAPI, serachAccountListAPI } from '@/api/release'
 import { checkSpaceRightsTypeCanShow } from '@/api/space'
 import { ESpaceCommercialType, ESpaceRightsType } from '@/enum/space'
 import { useBase } from '@/stores/base'
@@ -53,6 +53,11 @@ export default function useSpaceRights() {
         isUpperLimited = res.data.data.length >= currentRights.value.wx_group_num
         break
       }
+      case ESpaceRightsType.weixinAccount: {
+        const res = await serachAccountListAPI(userInfo.value?.org?.id)
+        isUpperLimited = res.data.data.length >= 1
+        break
+      }
       default: {
         isUpperLimited = false
       }
@@ -65,8 +70,7 @@ export default function useSpaceRights() {
     ESpaceRightsType.default,
     ESpaceRightsType.brand,
     ESpaceRightsType.quota,
-    ESpaceRightsType.paintQuota,
-    ESpaceRightsType.weixinAccount
+    ESpaceRightsType.paintQuota
   ]
 
   const checkRightsTypeNeedUpgrade = async (type: ESpaceRightsType) => {

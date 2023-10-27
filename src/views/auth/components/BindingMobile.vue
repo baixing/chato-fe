@@ -6,7 +6,7 @@
       <MobileForm
         :isbindingMobile="true"
         @handleSubmit="handleSubmitBinding"
-        @handleClose="handleClose"
+        @handleRescanCode="emit('handleRescanCode')"
       />
     </div>
   </div>
@@ -18,17 +18,13 @@ import type { ILoginParams } from '@/interface/auth'
 import { ElLoading } from 'element-plus'
 import { postBindingMobileAPI } from '@/api/auth'
 import { useI18n } from 'vue-i18n'
-import { useRouter } from 'vue-router'
-import { useStorage } from '@vueuse/core'
 
 const props = defineProps<{
   userId: string
 }>()
-const emit = defineEmits(['loginEnterSuccess'])
+const emit = defineEmits(['loginEnterSuccess', 'handleRescanCode'])
 
 const { t } = useI18n()
-const router = useRouter()
-const externalUserId = useStorage('userId', '')
 
 const handleSubmitBinding = async (data: ILoginParams) => {
   const loading = ElLoading.service({
@@ -45,16 +41,10 @@ const handleSubmitBinding = async (data: ILoginParams) => {
     const res = await postBindingMobileAPI(postData)
     const userToken = res.data.data.default_auth_token
     emit('loginEnterSuccess', userToken, postData.channel)
-    externalUserId.value = ''
   } catch (error) {
   } finally {
     loading.close()
   }
-}
-
-const handleClose = () => {
-  externalUserId.value = props.userId
-  router.replace('/')
 }
 </script>
 
