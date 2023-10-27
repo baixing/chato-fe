@@ -27,7 +27,7 @@
         @delete="onDelete"
         @cloneRobot="cloneRobot"
         @sync="onOpenSync"
-        @visible="setDialogVisible"
+        @visible="setBotUseScopeDialogVisible"
       />
     </div>
     <el-dialog
@@ -61,7 +61,7 @@
   <Modal
     v-model:visible="accessPermissionDialogVisible"
     title="访问权限"
-    @submit="setBotVisibleById"
+    @submit="onSetBotUseScope"
   >
     <div>
       <el-radio-group v-model="opDomain.use_scope">
@@ -82,7 +82,7 @@
   </Modal>
 </template>
 <script lang="ts" setup>
-import { cloneDomainRobot, setBotUseScope, updateDomainInResource } from '@/api/domain'
+import { cloneDomainRobot, updateBotUseScope, updateDomainInResource } from '@/api/domain'
 import { deletesDomain } from '@/api/user'
 import Topbar from '@/components/Topbar/index.vue'
 import { useBasicLayout } from '@/composables/useBasicLayout'
@@ -108,7 +108,7 @@ const chatStoreI = useChatStore()
 const domainStoreI = useDomainStore()
 const loading = ref()
 const initing = ref(false)
-const accessPermissionDialogVisible = ref<boolean>()
+const accessPermissionDialogVisible = ref(false)
 const dialogState = reactive({
   visible: false,
   title: '',
@@ -129,16 +129,17 @@ const visibleOptions = [
   }
 ] as const
 
-const setDialogVisible = (bot: IDomainInfo) => {
+const setBotUseScopeDialogVisible = (bot: IDomainInfo) => {
   accessPermissionDialogVisible.value = true
   opDomain.value = { ...bot }
 }
 
-const setBotVisibleById = async () => {
+const onSetBotUseScope = async () => {
   try {
-    await setBotUseScope(opDomain.value.id!, opDomain.value.use_scope)
-    domainList.value.find((item) => item.id === opDomain.value.id).use_scope =
-      opDomain.value.use_scope
+    await updateBotUseScope(opDomain.value.id!, opDomain.value.use_scope)
+    const findItem = domainList.value.find((item) => item.id === opDomain.value.id)
+    if (!findItem) return
+    findItem.use_scope = opDomain.value.use_scope
     accessPermissionDialogVisible.value = false
   } catch (error) {}
 }

@@ -109,8 +109,8 @@ export const getTestTimbreUrl = (timbre: String) => {
   })
 }
 
-export const setBotUseScope = (domain_id: number, use_scope: 0 | 1) => {
-  return request<null>({
+export const updateBotUseScope = (domain_id: number, use_scope: 0 | 1) => {
+  return request({
     url: `/chato/api/domains/${domain_id}/use_scope`,
     method: 'PATCH',
     data: {
