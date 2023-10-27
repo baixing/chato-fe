@@ -97,7 +97,7 @@ const onNew = async () => {
   if (needUpgrade) {
     return
   }
-  router.push({ name: RoutesMap.manager.createByDoc })
+  router.push({ name: RoutesMap.manager.create })
 }
 
 const onRefresh = async () => {
@@ -221,7 +221,7 @@ onMounted(() => {
 
 watch(domainList, (d) => {
   if (!d.length) {
-    router.push({ name: RoutesMap.manager.createByDoc })
+    router.push({ name: RoutesMap.manager.create })
   }
 })
 </script>
