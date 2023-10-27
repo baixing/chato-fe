@@ -128,7 +128,9 @@
     </el-form-item>
   </el-form>
   <Modal v-model:visible="exampleVisible" title="查看示例" :footer="false">
-    <img :src="AdImg" class="w-3/5" alt="" />
+    <div class="max-h-[65vh] overflow-y-auto">
+      <img :src="AdImg" class="w-full object-contain mx-auto" alt="" />
+    </div>
   </Modal>
 </template>
 

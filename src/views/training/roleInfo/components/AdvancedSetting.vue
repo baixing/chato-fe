@@ -241,7 +241,9 @@
     </div>
   </div>
   <Modal v-model:visible="exampleVisible" title="查看示例" :footer="false">
-    <img :src="AdImg" class="w-3/5" alt="" />
+    <div class="max-h-[65vh] overflow-y-auto">
+      <img :src="RecommendQuestionImg" class="w-full object-contain mx-auto" alt="" />
+    </div>
   </Modal>
 </template>
 
@@ -280,7 +282,7 @@ defineProps<{
 }>()
 
 const { t } = useI18n()
-const { ImagePath: AdImg } = useImagePath('ad', 'example', 'webp')
+const { ImagePath: RecommendQuestionImg } = useImagePath('recommend-question', 'example')
 
 const diverstyToolTip = {
   0: t('最准确'),

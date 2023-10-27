@@ -193,7 +193,7 @@
 
   <Modal v-model:visible="exampleState.visible" title="查看示例" :footer="false">
     <div class="max-h-[65vh] overflow-y-auto">
-      <img :src="exampleState.img" class="w-full" alt="" />
+      <img :src="exampleState.img" class="w-full object-contain mx-auto" alt="" />
     </div>
   </Modal>
   <div>
@@ -223,16 +223,16 @@
 import {
   checkDomainCorrectTicketIsExpired,
   generateDomainCorrectTicket,
-  getTimbreList as getTimbreListApi,
-  getTestTimbreUrl as getTestTimbreUrlApi
+  getTestTimbreUrl as getTestTimbreUrlApi,
+  getTimbreList as getTimbreListApi
 } from '@/api/domain'
+import TimbreItem from '@/components/BotSetting/TimbreItem.vue'
 import type { ImgUplaodProps } from '@/components/ImgUpload/data'
 import ImgUpload from '@/components/ImgUpload/index.vue'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
 import Modal from '@/components/Modal/index.vue'
 import SpaceRightsMask from '@/components/Space/SpaceRightsMask.vue'
 import SwitchWithStateMsg from '@/components/SwitchWithStateMsg/index.vue'
-import TimbreItem from '@/components/BotSetting/TimbreItem.vue'
 import SLTitle from '@/components/Title/SLTitle.vue'
 import useImagePath from '@/composables/useImagePath'
 import { currentEnvConfig } from '@/config'
@@ -244,6 +244,7 @@ import {
 import { EReleaseSettingExampleType } from '@/enum/release'
 import { ESpaceRightsType } from '@/enum/space'
 import type { IDomainInfo } from '@/interface/domain'
+import type { ITimbreOptions } from '@/interface/tts'
 import { useSpaceStore } from '@/stores/space'
 import { copyPaste } from '@/utils/help'
 import * as url from '@/utils/url'
@@ -252,7 +253,6 @@ import { storeToRefs } from 'pinia'
 import { computed, inject, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ChatShortcuts from './ChatShortcuts.vue'
-import type { ITimbreOptions } from '@/interface/tts'
 
 const currentDomain = inject<Partial<IDomainInfo>>(DomainEditSymbol)
 const currentDomainHansLimit = inject<Record<string, number>>(DomainHansLimitSymbol)
@@ -445,6 +445,6 @@ const onImgChange = (v) => {
 
 <style lang="scss" scoped>
 .interface-desc {
-  @apply text-sm leading-5 text-[#596780] flex items-center justify-between w-full;
+  @apply text-sm leading-5 text-[#596780] flex items-center justify-between w-full gap-3;
 }
 </style>
