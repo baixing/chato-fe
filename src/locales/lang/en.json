@@ -1281,5 +1281,8 @@
   "解析异常": "Parsing Exception",
   "避免未经授权抓取他人公众号原创文章的侵权行为": "Avoid unauthorized grabbing of other official account original articles of infringement",
   "仅对自己和空间创建者可见，其他人不能看见你的机器人": "Visible only to yourself and the creator of the space, no one else can see your robot",
+  "所有人都可以看到你创建的机器人，并可以对其进行操作": "Everyone can see and operate the bot you create",
+  "公开": "public",
+  "私密": "private",
   "访问权限": "access permission"
 }
