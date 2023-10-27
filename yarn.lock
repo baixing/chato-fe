@@ -8275,10 +8275,10 @@ vm2@^3.9.17:
     acorn "^8.7.0"
     acorn-walk "^8.2.0"
 
-vue-cropper@^0.6.2:
-  version "0.6.2"
-  resolved "https://registry.npmmirror.com/vue-cropper/-/vue-cropper-0.6.2.tgz"
-  integrity sha512-p4UGt8U7GnZPm311GmJtVUqDoSVdo1naBayLDkyOjMHuTLRlCtrZoh0pFUy3EQ79hAyT3JB5sx8m49IRfzSckw==
+vue-cropper@1.0.9:
+  version "1.0.9"
+  resolved "https://registry.npmmirror.com/vue-cropper/-/vue-cropper-1.0.9.tgz#de402c57cadc221e9a2063399ff35bb04220ef22"
+  integrity sha512-JhQwxmjqmQohzI7sAp5O/Rfdxuw5HOEYkKjnp/De7iCi6c8Mv6M3N9HpMt9xgWCFchX3/DfXBv2axCZOCg3G8Q==
 
 vue-demi@*, vue-demi@>=0.14.0, vue-demi@>=0.14.5:
   version "0.14.5"

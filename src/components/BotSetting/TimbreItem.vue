@@ -24,5 +24,3 @@ defineProps<{
   setValue?: (value: string) => void
 }>()
 </script>
-
-<style lang="scss"></style>
