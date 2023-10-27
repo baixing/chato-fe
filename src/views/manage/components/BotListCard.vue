@@ -117,6 +117,7 @@
   </div>
 </template>
 <script lang="ts" setup>
+import { addChatSession } from '@/api/chatList'
 import DefaultAvatar from '@/assets/img/avatar.png'
 import IconBtn from '@/components/IconBtn/index.vue'
 import { EDomainStatus } from '@/enum/domain'
@@ -164,13 +165,15 @@ const isAllowedDelete = computed(
     userInfo.value.id === internalBot.value.creator
 )
 
-const onLinkTo = (routeName: string, routeParams?: Record<string, string>) => {
+const onLinkTo = async (routeName: string, routeParams?: Record<string, string>) => {
   domainStoreI.$patch({
     domainInfo: internalBot.value
   })
 
   if (routeName === RoutesMap.chat.c) {
-    chatStoreI.addNewChatToList(internalBot.value)
+    await addChatSession([internalBot.value.id])
+    await chatStoreI.initChatList()
+    chatStoreI.switchChatingInfo(internalBot.value.slug)
   }
 
   router.push({

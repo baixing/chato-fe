@@ -17,7 +17,7 @@
           class="box-border rounded-lg bg-white p-4 flex gap-[10px] items-center cursor-pointer hover:shadow-lg relative lg:flex-col resource-card"
           v-for="c in item.data"
           :key="c.id"
-          @click="addSessionChat(c)"
+          @click="onAddSessionChat(c)"
         >
           <img
             :src="c.avatar || DefaultAvatar"
@@ -39,7 +39,7 @@
   </ContentLayout>
 </template>
 <script lang="ts" setup>
-import { addSession } from '@/api/chatList'
+import { addChatSession } from '@/api/chatList'
 import { getResource } from '@/api/resource'
 import DefaultAvatar from '@/assets/img/avatar.png'
 import Topbar from '@/components/Topbar/index.vue'
@@ -61,7 +61,7 @@ const chatStoreI = useChatStore()
 const { userInfo, orgInfo } = storeToRefs(baseStoreI)
 const { chatList } = storeToRefs(chatStoreI)
 
-async function addSessionChat(item) {
+async function onAddSessionChat(item) {
   if (chatList.value.filter((i) => i.slug === item.slug).length)
     return router.replace(`/c/bot/${item.slug}`)
   const loading = ElLoading.service({
@@ -69,7 +69,7 @@ async function addSessionChat(item) {
     text: t('正在进入...'),
     background: 'rgba(0, 0, 0, 0.7)'
   })
-  const res = await addSession([item.id])
+  const res = await addChatSession([item.id])
   if (res.data.code === 200) {
     await chatStoreI.initChatList()
     chatStoreI.switchChatingInfo(item.slug)
