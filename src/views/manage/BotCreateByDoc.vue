@@ -21,6 +21,12 @@
       />
     </div>
     <el-tabs v-model="activeTab" class="chato-tab-primary">
+      <el-tab-pane :label="$t('公众号抓取')" :name="EDocumentTabType.inputPublic">
+        <p class="desc">
+          {{ $t('请确保网站内容可复制，请避免非法抓取他人网站的侵权行为') }}
+        </p>
+        <el-input v-model="formState.wxPublic" :placeholder="$t('请输入要爬取的公众号名称')" />
+      </el-tab-pane>
       <el-tab-pane :label="$t('网页抓取')" :name="EDocumentTabType.inputUrl">
         <p class="desc">
           {{ $t('请避免非法抓取他人网站的侵权行为，保证链接可公开访问，且网站内容可复制') }}
@@ -29,12 +35,6 @@
           {{ $t('可抓取的网页仅为内容固定不变的静态网页，例如新闻文章、产品介绍等') }}
         </p>
         <el-input v-model="formState.webUrl" :placeholder="$t('输入要爬取的网页地址')" />
-      </el-tab-pane>
-      <el-tab-pane :label="$t('公众号抓取')" :name="EDocumentTabType.inputPublic">
-        <p class="desc">
-          {{ $t('请确保网站内容可复制，请避免非法抓取他人网站的侵权行为') }}
-        </p>
-        <el-input v-model="formState.wxPublic" :placeholder="$t('请输入要爬取的公众号名称')" />
       </el-tab-pane>
       <el-tab-pane :label="$t('上传文档')" :name="EDocumentTabType.uploadDoc">
         <div class="desc space-y-1">
@@ -129,7 +129,7 @@ const mediaLimit = 25
 const { t } = useI18n()
 const router = useRouter()
 
-const activeTab = ref<EDocumentTabType>(EDocumentTabType.inputUrl)
+const activeTab = ref<EDocumentTabType>(EDocumentTabType.inputPublic)
 const initing = ref(true)
 let formState = reactive<{
   id: number
