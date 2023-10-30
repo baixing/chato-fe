@@ -45,7 +45,7 @@
           <p>
             {{ $t('状态') }}： <span class="content">{{ item.status }}</span>
           </p>
-          <p
+          <!-- <p
             class="flex justify-start items-center"
             v-if="item.is_system_robot && item.status === EAccountStatus.online"
           >
@@ -57,7 +57,7 @@
               link
               @click="getGroupQrCode(item.room_id)"
             ></el-button>
-          </p>
+          </p> -->
           <p class="flex justify-start items-center" v-if="item.robot_qr_code_data">
             {{ $t('机器人二维码') }}：
             <img class="w-[120px] h-[120px]" :src="item.robot_qr_code_data" alt="" />

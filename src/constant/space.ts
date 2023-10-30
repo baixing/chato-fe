@@ -15,6 +15,7 @@ export const SpaceRightsLimitTips = {
 
 // 付费权益版本
 export const PaidCommercialTypes = [
+  ESpaceCommercialType.standard,
   ESpaceCommercialType.brand,
   ESpaceCommercialType.professional,
   ESpaceCommercialType.customVip1,

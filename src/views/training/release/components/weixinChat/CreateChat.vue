@@ -17,35 +17,35 @@
           @handleClose="visible = false"
         />
         <div v-else class="w-full">
-          <p class="text-[#2F3447] text-sm font-medium mb-[12px]">{{ $t('选择群方式') }}</p>
-          <el-radio-group v-model="activateGroup" class="mb-[12px]">
+          <p class="text-[#2F3447] text-sm font-medium mb-[12px]">{{ $t('加入已有群') }}</p>
+          <!-- <el-radio-group v-model="activateGroup" class="mb-[12px]">
             <el-radio :label="EActivateGroupType.joinGroupChat">{{ $t('加入已有群') }}</el-radio>
             <el-radio :label="EActivateGroupType.createGroupChat">{{ $t('创建新群') }}</el-radio>
-          </el-radio-group>
+          </el-radio-group> -->
           <!-- 加入已有群聊 -->
-          <template v-if="activateGroup === EActivateGroupType.joinGroupChat">
-            <UpgrateVersion
-              v-if="!isShowInvite"
-              class="!justify-start"
-              class-name="md:w-full md:h-auto w-[80%]"
-            />
-            <CreateGroupForm
-              v-else
-              :userRoute="userRoute"
-              :account-list="accountList"
-              @handleSubmit="handleCreateGroup"
-              @handleCreateAccount="handleCreateAccount"
-            />
-          </template>
-          <!-- 创建新群 -->
+          <!-- <template v-if="activateGroup === EActivateGroupType.joinGroupChat"> -->
+          <UpgrateVersion
+            v-if="!isShowInvite"
+            class="!justify-start"
+            class-name="md:w-full md:h-auto w-[80%]"
+          />
           <CreateGroupForm
+            v-else
+            :userRoute="userRoute"
+            :account-list="accountList"
+            @handleSubmit="handleCreateGroup"
+            @handleCreateAccount="handleCreateAccount"
+          />
+          <!-- </template> -->
+          <!-- 创建新群 -->
+          <!-- <CreateGroupForm
             v-else
             :userRoute="userRoute"
             :name-required="true"
             :account-list="accountList"
             @handleSubmit="handleCreateGroup"
             @handleCreateAccount="handleCreateAccount"
-          />
+          /> -->
         </div>
       </el-tab-pane>
       <el-tab-pane :label="$t(`创建单聊`)" :name="ECreateChatType.singleChat">
