@@ -1,6 +1,7 @@
 import usePageTitle from '@/composables/usePageTitle'
 import useRoleCheck from '@/composables/useRoleCheck'
 import useSidebar from '@/composables/useSidebar'
+import useCheckDomain from '@/composables/useCheckDomain'
 import { useAuthStore } from '@/stores/auth'
 import Sensors from '@/utils/sensors'
 import { locationComToCn } from '@/utils/url'
@@ -346,6 +347,7 @@ router.beforeEach((to) => {
   locationComToCn()
   useRoleCheck(to)
   usePageTitle(to.meta?.title)
+  useCheckDomain(to)
   const authStoreI = useAuthStore()
   if (to.meta.requiresAuth && !authStoreI.authToken) {
     let query
