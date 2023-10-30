@@ -18,6 +18,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import i18n from './locales'
 import router from './router'
+import { useBase } from './stores/base'
 
 const app = createApp(App)
 
@@ -31,7 +32,8 @@ app.component('svg-icon', SvgIcon)
 
 useSensors(app)
 app.config.globalProperties.$copyText = (text: string) => copyPaste(text)
-
+const base = useBase()
+await base.getABTestConfig()
 app.mount('#app')
 
 // 设置不同环境的 Favicon

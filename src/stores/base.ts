@@ -1,4 +1,6 @@
+import { getABTestConfig } from '@/api/abtest'
 import { getOrgUserList } from '@/api/user'
+import useLocationDvid from '@/composables/useLocationDvid'
 import { ESpaceCommercialType } from '@/enum/space'
 import type { IUserInfo } from '@/interface/user'
 import * as Sentry from '@sentry/vue'
@@ -12,6 +14,7 @@ interface State {
   orgInfo: any
   orgInfoList: Partial<IUserInfo[]>
   userCommercialType: ESpaceCommercialType
+  abTestConfig: any
 }
 
 interface UpdateUserInfoAttri {
@@ -32,7 +35,8 @@ export const useBase = defineStore('base', {
       collectConfig: {},
       orgInfo: {},
       orgInfoList: [],
-      userCommercialType: ESpaceCommercialType.free
+      userCommercialType: ESpaceCommercialType.free,
+      abTestConfig: {}
     }
   },
   actions: {
@@ -96,6 +100,15 @@ export const useBase = defineStore('base', {
     },
     updateOrgInfo(info) {
       this.orgInfo = info
+    },
+    async getABTestConfig() {
+      try {
+        const { dvid } = useLocationDvid()
+        const res = await getABTestConfig(dvid)
+        const config = res.data
+        this.abTestConfig.value = config
+        return Promise.resolve(config)
+      } catch (e) {}
     }
   }
 })

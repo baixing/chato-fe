@@ -32,9 +32,11 @@
         class="w-[228px] !h-[60px] !text-lg font-medium tracking-[0.08em] !rounded-lg mt-7 !ml-0 hover:!scale-105 lg:!text-sm lg:w-[153px] lg:!h-[45px] lg:mt-5 btn-grad shadow-lg"
         type="primary"
         id="Chato_top_create_click"
+        data-sensors-abtest-id="2"
+        :data-sensors-abtest-value="home_quick_create"
         @click="onEnter()"
       >
-        {{ $t('快速创建机器人') }}
+        {{ home_quick_create == 1 ? $t('免费创建数字分身') : $t('快速创建机器人') }}
       </el-button>
       <el-button
         id="Chato_top_video_click"
@@ -544,6 +546,7 @@ import { storeToRefs } from 'pinia'
 import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import IndustryCase from './components/IndustryCase.vue'
+import { useBase } from '@/stores/base'
 
 const { ImagePath: homeStepImg } = useImagePath('step', 'home')
 const { locale } = storeToRefs(useLocales())
@@ -662,6 +665,10 @@ onMounted(() => {
 onBeforeUnmount(() => {
   clearTimer()
 })
+
+const base = useBase()
+const { abTestConfig } = base.$state
+const home_quick_create = abTestConfig.value ? abTestConfig.value['2'] : 0
 </script>
 
 <style lang="scss" scoped>
