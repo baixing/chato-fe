@@ -4,26 +4,22 @@
   </svg>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue'
-const props = defineProps({
-  prefix: {
-    type: String,
-    default: 'icon'
-  },
-  name: {
-    type: String,
-    required: true
-  },
-  color: {
-    type: String
-    // default: '#333',
-  },
-  svgClass: {
-    type: any,
-    default: 'svg-icon'
+
+const props = withDefaults(
+  defineProps<{
+    prefix?: string
+    name: string
+    color?: string
+    svgClass?: string | string[]
+  }>(),
+  {
+    prefix: 'icon',
+    svgClass: 'svg-icon'
   }
-})
+)
+
 const symbolId = computed(() => `#${props.prefix}-${props.name}`)
 </script>
 
@@ -31,6 +27,5 @@ const symbolId = computed(() => `#${props.prefix}-${props.name}`)
 .svg-icon {
   width: 1em;
   height: 1em;
-  // color: inherit;
 }
 </style>

@@ -4,8 +4,7 @@ module.exports = {
   // 自定义规则
   rules: {
     // @see https://commitlint.js.org/#/reference-rules
-
-    // 提交类型枚举，git提交type必须是以下类型
+    // 提交类型枚举，git 提交 type 必须是以下类型
     'type-enum': [
       2,
       'always',
@@ -23,6 +22,6 @@ module.exports = {
         'chore' // 对构建过程或辅助工具和库的更改（不影响源文件、测试用例）
       ]
     ],
-    'subject-case': [0] // subject大小写不做校验
+    'subject-case': [0] // subject 大小写不做校验
   }
 }

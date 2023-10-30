@@ -59,8 +59,8 @@
     "xss": "^1.0.14"
   },
   "devDependencies": {
-    "@commitlint/cli": "^18.2.0",
-    "@commitlint/config-conventional": "^18.1.0",
+    "@commitlint/cli": "^16.2.4",
+    "@commitlint/config-conventional": "^16.2.4",
     "@rushstack/eslint-patch": "^1.1.4",
     "@types/node": "^20.4.1",
     "@types/postcss-import": "^14.0.0",
@@ -108,10 +108,5 @@
       "eslint --cache --fix",
       "prettier .prettierrc --write"
     ]
-  },
-  "config": {
-    "commitizen": {
-      "path": "node_modules/cz-conventional-changelog"
-    }
   }
 }
