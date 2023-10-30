@@ -93,6 +93,7 @@ const userId = computed(() => {
 const url = computed(() => {
   return $notnull(loginQRCodeRes.value) ? loginQRCodeRes.value.url : ''
 })
+const routeUrl = computed(() => (route.query.redirect as string) || '/manager/center')
 const isLoggedIn = computed(() => !!authToken.value)
 if (isLoggedIn.value) {
   router.replace(redir as string)
@@ -187,7 +188,7 @@ const loginEnterSuccess = async (token: string, channel: string, close?: () => v
   }
   const userInfo = await baseStoreI.getUserInfo()
   userInfo?.id && $sensors?.login(userInfo?.id.toString())
-  router.replace('/manager/center')
+  router.replace(routeUrl.value)
   setShareChannel(channel)
   close && close()
 }

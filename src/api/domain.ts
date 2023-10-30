@@ -118,3 +118,11 @@ export const updateBotUseScope = (domain_id: number, use_scope: 0 | 1) => {
     }
   })
 }
+
+// 校验domain_id 是否在当前空间 ICheckDomainIdResult
+export function checkDomainIdAPI(domainId: string) {
+  return request({
+    url: `/chato/api/v1/user/check_and_get_current_token`,
+    params: { domain_id: domainId }
+  })
+}
