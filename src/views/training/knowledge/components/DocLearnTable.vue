@@ -237,7 +237,6 @@ const handleSelectionChange = (val: IDocumentList[]) => {
 <style lang="scss" scoped>
 .file-list {
   margin: auto;
-  margin-top: 24px;
   width: 100%;
   overflow-x: scroll;
 

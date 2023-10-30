@@ -36,6 +36,10 @@
   --el-radio-font-weight: normal !important;
 }
 
+.el-button [class*='el-icon'] + span {
+  margin-left: 4px !important;
+}
+
 .chato-tab {
   .el-tabs__item {
     color: #596780;

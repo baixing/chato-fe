@@ -19,30 +19,25 @@
         {{ $t('录入问答') }}
       </el-button>
     </div>
-    <template v-else>
-      <div class="flex justify-between items-center flex-wrap gap-4">
-        <div class="flex gap-4 items-center flex-wrap">
-          <el-button @click="handleTriggerMate">{{ $t('批量操作') }}</el-button>
-          <SearchInput v-model:value="searchInput" />
-          <el-button
-            :disabled="!multipleSelection.length"
-            v-if="batchRemove"
-            @click="handleBatchRemove"
-            link
-            class="text-[#303133]"
-          >
-            <el-icon class="mr-[4px]"><Delete /></el-icon>
-            {{ $t(' 删除') }}
-          </el-button>
-        </div>
-        <div class="space-x-6 lg:space-x-0 lg:space-y-4">
-          <span class="text-xs text-[#9DA3AF] lg:block">
-            {{ $t('完成录入后，AI 通过 5-10 分钟消化知识，并最终优先根据问答知识回复') }}
-          </span>
-          <el-button type="primary" @click="() => (dialogVisibleQa = true)">
-            {{ $t('录入问答') }}
-          </el-button>
-        </div>
+    <div v-else class="pt-14 relative -mt-[67px] lg:mt-0 lg:pt-0">
+      <div
+        class="absolute top-0 right-0 flex justify-end items-center gap-4 lg:relative lg:top-auto lg:right-auto lg:justify-start lg:mb-6"
+      >
+        <el-button @click="handleTriggerMate">{{ $t('批量操作') }}</el-button>
+        <SearchInput v-model:value="searchInput" />
+        <el-button
+          :disabled="!multipleSelection.length"
+          v-if="batchRemove"
+          @click="handleBatchRemove"
+          link
+          class="text-[#303133]"
+        >
+          <el-icon class="mr-[4px]"><Delete /></el-icon>
+          {{ $t(' 删除') }}
+        </el-button>
+        <el-button type="primary" @click="() => (dialogVisibleQa = true)">
+          {{ $t('录入问答') }}
+        </el-button>
       </div>
       <QaLearnTable
         v-model:selectStatus="QaSelectStatus"
@@ -57,7 +52,7 @@
         @after-remove="onAfterRemove"
         @edit-preview-doc="onEditPreviewQA"
       />
-    </template>
+    </div>
   </div>
   <EnterQa
     @setSuccess="onCloseDialog"
@@ -292,11 +287,5 @@ onUnmounted(() => {
 <style lang="scss" scoped>
 :deep(.el-message-box) {
   --el-messagebox-width: 461px;
-}
-
-.qa-container {
-  :deep(.file-list) {
-    margin-top: 31px;
-  }
 }
 </style>
