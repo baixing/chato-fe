@@ -1,5 +1,5 @@
-import type sensors from 'sa-sdk-javascript'
 import SvgIcon from '@/components/SvgIcon/index.vue'
+import type sensors from 'sa-sdk-javascript'
 
 declare module 'vue' {
   export interface ComponentCustomProperties {
@@ -20,5 +20,8 @@ declare global {
       token: string
       id: number
     }
+  }
+  interface Array<T> {
+    findLastIndex(predicate: (value: T, index: number, obj: T[]) => unknown, thisArg?: any): number
   }
 }

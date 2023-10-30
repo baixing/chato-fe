@@ -20,7 +20,7 @@ const props = defineProps({
     // default: '#333',
   },
   svgClass: {
-    type: String,
+    type: any,
     default: 'svg-icon'
   }
 })
