@@ -16,12 +16,12 @@
 
 <script lang="ts" setup>
 defineProps<{
-  label: String
-  value: String
-  className?: String
-  iconStyle?: String
-  iconName?: String
-  setValue?: (value: String) => void
+  label: string
+  value: string
+  className?: string
+  iconStyle?: string
+  iconName?: string
+  setValue?: (value: string) => void
 }>()
 </script>
 

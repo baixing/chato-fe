@@ -26,7 +26,7 @@ const service = axios.create({
   timeout: 90_000 // 请求超时时间 (ms)
 })
 
-type AxiosRequestConfigType = InternalAxiosRequestConfig & { enforceAnonymity: boolean }
+type AxiosRequestConfigType<D = any> = InternalAxiosRequestConfig<D> & { enforceAnonymity: boolean }
 
 // 请求拦截器
 service.interceptors.request.use((config: AxiosRequestConfigType) => {
@@ -106,7 +106,7 @@ service.interceptors.response.use(
 /**
  * 核心函数，可通过它处理一切请求数据，并做横向扩展
  */
-function request<T = any>(options: AxiosRequestConfig<any>) {
+function request<T = any>(options) {
   const method = options.method || 'get'
   // get 请求做参数的兼容
   if (method.toLowerCase() === 'get') {

@@ -13,30 +13,11 @@ import { copyPaste } from '@/utils/help'
 import ElementPlus from 'element-plus'
 import 'github-markdown-css/github-markdown-light.css'
 import { createPinia } from 'pinia'
-import type sensors from 'sa-sdk-javascript'
 import 'virtual:svg-icons-register'
 import { createApp } from 'vue'
 import App from './App.vue'
 import i18n from './locales'
 import router from './router'
-declare module 'vue' {
-  export interface ComponentCustomProperties {
-    $sensors?: typeof sensors
-    $copyText: (e: string) => void
-  }
-}
-
-declare global {
-  interface Window {
-    showPreview(url: string): void
-    ChatoBotConfig: {
-      wwwBaseURL: string
-      baseURL: string
-      token: string
-      id: number
-    }
-  }
-}
 
 const app = createApp(App)
 
