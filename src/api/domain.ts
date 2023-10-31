@@ -102,7 +102,7 @@ export const getTimbreList = () => {
 
 export const getTestTimbreUrl = (timbre: String) => {
   return request<{ contentList: ITimbreAuditionApi[] }>({
-    url: `/tts/audition`,
+    url: `/api/tts/audition`,
     data: {
       timbre
     }
