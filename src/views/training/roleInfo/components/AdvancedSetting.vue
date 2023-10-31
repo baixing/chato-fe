@@ -145,10 +145,8 @@
         </span>
         <SwitchWithStateMsg
           v-model:value="currentDomain.is_session_effective"
-          size="small"
-          openMsg="开启"
-          closeMsg="关闭"
-          msg-position="left"
+          open-msg="开启"
+          close-msg="关闭"
         />
       </div>
     </div>
@@ -165,10 +163,8 @@
         </span>
         <SwitchWithStateMsg
           v-model:value="currentDomain.show_recommend_question"
-          size="small"
-          openMsg="开启"
-          closeMsg="关闭"
-          msg-position="left"
+          open-msg="开启"
+          close-msg="关闭"
         />
       </div>
       <SpaceRightsMask :visible="maskVisible" :rightsType="ESpaceRightsType.brand" />
@@ -182,10 +178,8 @@
         </SLTitle>
         <SwitchWithStateMsg
           v-model:value="currentDomain.keyword_block_show"
-          size="small"
-          openMsg="开启"
-          closeMsg="关闭"
-          msg-position="left"
+          open-msg="开启"
+          close-msg="关闭"
         />
       </div>
       <div v-show="currentDomain.keyword_block_show" class="w-full">

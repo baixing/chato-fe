@@ -1,6 +1,7 @@
 import type {
   GetFilesByDomainIdType,
   IDocumentList,
+  IKnowledgeShared,
   RetryFileMateType
 } from '@/interface/knowledge'
 import request from '@/utils/request'
@@ -85,5 +86,23 @@ export function uploadPublicAsync(domain_id, params) {
     method: 'post',
     url: `/chato/api/document_management/${domain_id}/spider/wx-public/async`,
     data: params
+  })
+}
+
+// 获取知识库关联列表
+export function getKnowledgeSharedList(data: any) {
+  return request<IKnowledgeShared[]>({
+    method: 'get',
+    url: `/chato/api/v1/graph/knowledge_shared`,
+    data
+  })
+}
+
+// 更新知识库关联状态
+export function updateKnowledgeSharedStatus(data: any) {
+  return request({
+    method: 'post',
+    url: `/api/knowledge/share`,
+    data
   })
 }

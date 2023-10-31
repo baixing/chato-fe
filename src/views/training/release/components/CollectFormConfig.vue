@@ -24,14 +24,7 @@
         <el-button link type="danger" size="small" @click="onDelete">{{ $t('删除') }}</el-button>
       </span>
     </div>
-    <SwitchWithStateMsg
-      :value="formAbled"
-      :close-msg="$t('关闭')"
-      :open-msg="$t('开启')"
-      msg-position="left"
-      size="small"
-      @change="onFormAbled"
-    />
+    <SwitchWithStateMsg :value="formAbled" close-msg="关闭" open-msg="开启" @change="onFormAbled" />
   </div>
   <Modal v-model:visible="dialogVisible" title="收集表单" @close="onCloseDialog">
     <el-form ref="formRef" label-position="top" :model="formState" class="chato-form">

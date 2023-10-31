@@ -15,7 +15,7 @@
       <p class="text-[#9DA3AF] text-xs mb-6">
         {{ $t('您还没有录入问答，快去录入吧！') }}
       </p>
-      <el-button type="primary" plain @click="() => (dialogVisibleQa = true)">
+      <el-button plain @click="() => (dialogVisibleQa = true)">
         {{ $t('录入问答') }}
       </el-button>
     </div>
@@ -273,7 +273,7 @@ debouncedWatch(searchInput, () => initQAList(), { debounce: 300 })
 watch(
   [() => pagination.value.page, domainId, QaSelectStatus],
   ([page, v1, v2]) => {
-    if (page || v1 || v2) {
+    if ((page || v1 || v2) && domainId.value) {
       initQAList()
     }
   },

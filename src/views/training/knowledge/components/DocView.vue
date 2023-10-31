@@ -256,7 +256,7 @@ watch(
 watch(
   [() => pagination.value.page, domainId, DocSelectStatus],
   ([page, v1, v2]) => {
-    if (page || v1 || v2) {
+    if ((page || v1 || v2) && domainId.value) {
       initDocList()
     }
   },

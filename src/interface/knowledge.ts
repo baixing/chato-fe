@@ -57,3 +57,15 @@ export interface RetryFileMateType {
   status: DeleteRetryFileMateStatusType
   ids: number[]
 }
+
+export interface IRelatedKnowledgeBase {
+  id: IDomainInfo['id']
+  name: IDomainInfo['name']
+  related: number
+}
+
+export interface IKnowledgeShared {
+  id: number
+  receiver_domain_id: number
+  sender_domain_id: number
+}

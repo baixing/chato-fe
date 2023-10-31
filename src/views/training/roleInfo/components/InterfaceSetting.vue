@@ -35,9 +35,8 @@
         </div>
         <SwitchWithStateMsg
           v-model:value="currentDomain.question_ref_source_show"
-          size="small"
-          openMsg="开启"
-          closeMsg="关闭"
+          open-msg="开启"
+          close-msg="关闭"
         />
       </div>
     </div>
@@ -62,9 +61,8 @@
         </div>
         <SwitchWithStateMsg
           :value="currentDomain.qa_modifiable"
-          size="small"
-          openMsg="开启"
-          closeMsg="关闭"
+          open-msg="开启"
+          close-msg="关闭"
           @change="onCorrectAnswerChange"
         />
       </div>

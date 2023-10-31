@@ -17,7 +17,6 @@
             <span class="text-[#3D3D3D]">{{ $t('按使用频率') }}</span>
             <SwitchWithStateMsg
               v-model:value="currentDomain.customer_limit.rate_limit_switch"
-              size="small"
               close-msg="关闭"
               open-msg="开启"
             />
@@ -53,7 +52,6 @@
             <span class="text-[#3D3D3D]">{{ $t('按使用量') }}</span>
             <SwitchWithStateMsg
               v-model:value="currentDomain.customer_limit.quota_limit_switch"
-              size="small"
               close-msg="关闭"
               open-msg="开启"
             />
@@ -105,7 +103,6 @@
                 v-model:value="currentDomain.ad_show"
                 close-msg="关闭"
                 open-msg="开启"
-                size="small"
               />
             </div>
           </div>
