@@ -313,4 +313,12 @@ export function deleteTimeBroadcastAPI(data: { send_schedule_id: number }) {
     data
   })
 }
+
+export function createPosterAPI(data: { domain_id: number }) {
+  return request({
+    method: 'post',
+    url: `/chato/api/get_poster`,
+    data
+  })
+}
 // -----------------

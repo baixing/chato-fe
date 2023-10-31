@@ -45,6 +45,7 @@ const SetEffectSite = defineAsyncComponent(() => import('./implantJs/SetEffectSi
 const OfficialAccont = defineAsyncComponent(() => import('./officialAccount/OfficialAccont.vue'))
 const EmPower = defineAsyncComponent(() => import('./tiktok/EmPower.vue'))
 const Copylink = defineAsyncComponent(() => import('./webPage/Copylink.vue'))
+const CreatePoster = defineAsyncComponent(() => import('./gzhPoster/SharePoster.vue'))
 const CreateChat = defineAsyncComponent(() => import('./weixinChat/CreateChat.vue'))
 const DrawerChat = defineAsyncComponent(() => import('./weixinChat/DrawerChat.vue'))
 const WeixinService = defineAsyncComponent(() => import('./weixinService/WeixinService.vue'))
@@ -64,6 +65,7 @@ const { currentRights } = storeToRefs(spaceStoreI)
 const { domainInfo } = storeToRefs(domainStoreI)
 const userRoute = `/t/bot/${domainInfo.value.id}/roleInfo`
 const botSlug = computed(() => domainInfo.value.slug)
+const botId = computed(() => domainInfo.value.id)
 const chatWebPageBaseURL = `${currentEnvConfig.baseURL}`
 const chatReleaseURL = computed(() => {
   return {
@@ -98,7 +100,8 @@ const features = reactive({
   createAccountVisible: false, // 微信聊天-创建账号
   drawerAccountVisible: false, // 微信聊天-查看聊天
   createAppletVisible: false, // 小程序-扫码授权
-  drawerAppletVisible: false // 小程序-查看授权结果
+  drawerAppletVisible: false, // 小程序-查看授权结果
+  createPoster: false // 海报
 })
 
 const {
@@ -117,7 +120,8 @@ const {
   createAccountVisible,
   drawerAccountVisible,
   createAppletVisible,
-  drawerAppletVisible
+  drawerAppletVisible,
+  createPoster
 } = toRefs(features)
 
 const { checkRightsTypeNeedUpgrade, isAllowedCommercialType } = useSpaceRights()
@@ -209,6 +213,19 @@ const releaseList = [
         label: t('域名部署'),
         scriptId: 'Chato-brand-domain',
         click: brandDomain
+      }
+    ]
+  },
+  {
+    icon: 'wechat-pyq',
+    title: t('朋友圈'),
+    desc: t('用户扫码后，可直接和您的机器人聊天'),
+    setList: [
+      {
+        icon: View,
+        label: t('生成海报'),
+        scriptId: 'Chato-preview-chat',
+        click: () => commonVisible(createPoster)
       }
     ]
   },
@@ -514,6 +531,7 @@ onMounted(() => {
     />
     <SerachApi v-model:value="showCopyApiVisible" :chatAPI="domainInfo.token" :slug="botSlug" />
     <Copylink v-model:value="showCopyLinkVisbile" :chatWebPage="chatReleaseURL.chatWebPage" />
+    <CreatePoster v-model:value="createPoster" :domainId="botId" />
     <CreateFeishu :slug="domainInfo.slug" v-model:value="feiShuVisible" />
     <WeixinService v-model:value="weixinService" :domainSlug="domainInfo.slug" />
     <EmPower v-model:value="tiktokService" :domainSlug="botSlug" />
