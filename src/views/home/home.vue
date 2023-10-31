@@ -666,9 +666,9 @@ onBeforeUnmount(() => {
   clearTimer()
 })
 
-const base = useBase()
-const { abTestConfig } = base.$state
-const home_quick_create = abTestConfig.value ? abTestConfig.value['2'] : 0
+const baseStoreI = useBase()
+const { abTestConfig } = storeToRefs(baseStoreI)
+const home_quick_create = abTestConfig.value ? abTestConfig.value[2] : 0
 </script>
 
 <style lang="scss" scoped>
