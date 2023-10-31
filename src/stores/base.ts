@@ -7,7 +7,6 @@ import * as Sentry from '@sentry/vue'
 import { useStorage } from '@vueuse/core'
 import { defineStore } from 'pinia'
 
-type ABTestObject = { [key: string]: string }
 interface State {
   authToken: any
   userInfo: Partial<IUserInfo> // 当前空间用户
@@ -15,7 +14,7 @@ interface State {
   orgInfo: any
   orgInfoList: Partial<IUserInfo[]>
   userCommercialType: ESpaceCommercialType
-  abTestConfig: ABTestObject
+  abTestConfig: Record<string, string>
 }
 
 interface UpdateUserInfoAttri {
