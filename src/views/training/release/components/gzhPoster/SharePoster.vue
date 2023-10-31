@@ -8,7 +8,7 @@
   >
     <div class="flex justify-center items-center">
       <el-image :src="base64Image" bordered="false" errorLevel="M" style="width: 300px" />
-      <a @click="downloadImage" class="description text-sm text-[#7C5CFC] mt-2.5 ml-4">
+      <a @click="downloadImage" class="description text-sm text-[#7C5CFC] ml-4">
         {{ $t('保存') }}
       </a>
     </div>
@@ -63,13 +63,3 @@ const downloadImage = () => {
 
 init()
 </script>
-<style lang="scss" scoped>
-header {
-  color: #303133;
-  font-size: 14px;
-  line-height: 24px;
-}
-.poster-container {
-  margin-left: -9px;
-}
-</style>
