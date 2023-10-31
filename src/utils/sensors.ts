@@ -2,6 +2,7 @@ import { useBasicLayout } from '@/composables/useBasicLayout'
 import useChannel from '@/composables/useChannel'
 import useLocationDvid from '@/composables/useLocationDvid'
 import { PageViewPathTracker } from '@/constant/tracker'
+import { useBase } from '@/stores/base'
 import sa from 'sa-sdk-javascript'
 import rgp from 'sa-sdk-javascript/dist/web/plugin/register-properties/index.es6'
 
@@ -70,7 +71,8 @@ export default class Sensors {
           }
         },
         custom_property: (target: HTMLElement) => {
-          const res = {}
+          const base = useBase()
+          const res = { abtest: base.abTestConfig }
           Array.from(target.attributes).map((item) => {
             const matchAttr = item.name
               .match(/^data-sensors-(?!click\b)(.+)/)?.[1]

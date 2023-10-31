@@ -1,4 +1,4 @@
-import { getABTestConfig } from '@/api/abtest'
+import { getTestConfig } from '@/api/abtest'
 import { getOrgUserList } from '@/api/user'
 import useLocationDvid from '@/composables/useLocationDvid'
 import { ESpaceCommercialType } from '@/enum/space'
@@ -7,6 +7,7 @@ import * as Sentry from '@sentry/vue'
 import { useStorage } from '@vueuse/core'
 import { defineStore } from 'pinia'
 
+type ABTestObject = { [key: string]: string }
 interface State {
   authToken: any
   userInfo: Partial<IUserInfo> // 当前空间用户
@@ -14,7 +15,7 @@ interface State {
   orgInfo: any
   orgInfoList: Partial<IUserInfo[]>
   userCommercialType: ESpaceCommercialType
-  abTestConfig: any
+  abTestConfig: ABTestObject
 }
 
 interface UpdateUserInfoAttri {
@@ -102,13 +103,11 @@ export const useBase = defineStore('base', {
       this.orgInfo = info
     },
     async getABTestConfig() {
-      try {
-        const { dvid } = useLocationDvid()
-        const res = await getABTestConfig(dvid)
-        const config = res.data
-        this.abTestConfig.value = config
-        return Promise.resolve(config)
-      } catch (e) {}
+      const { dvid } = useLocationDvid()
+      const res = await getTestConfig(dvid)
+      const config = res.data.data
+      this.abTestConfig = config
+      return Promise.resolve(config)
     }
   }
 })

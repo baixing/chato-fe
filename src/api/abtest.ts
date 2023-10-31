@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-export function getABTestConfig(uid: string) {
+export function getTestConfig(uid: string) {
   return request({
     method: 'post',
     url: `/chato/ab_test/get`,
