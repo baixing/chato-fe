@@ -3,7 +3,7 @@
     v-model="internalVisible"
     :show-close="showClose"
     :width="internalWidth"
-    :title="t(title || '')"
+    :title="title ? t(title) : ''"
     :fullscreen="fullscreen"
     :align-center="alignCenter"
     :append-to-body="appendToBody"

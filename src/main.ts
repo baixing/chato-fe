@@ -5,8 +5,6 @@ import 'wow.js/css/libs/animate.css'
 //
 
 import SvgIcon from '@/components/SvgIcon/index.vue'
-import useBaiduPromotion from '@/composables/useBaiduPromotion'
-import useFavicon from '@/composables/useFavicon'
 import useSensors from '@/composables/useSensors'
 import useSentry from '@/composables/useSentry'
 import { useBase } from '@/stores/base'
@@ -32,16 +30,10 @@ app.use(elementIcon)
 app.component('svg-icon', SvgIcon)
 
 useSensors(app)
+
 app.config.globalProperties.$copyText = (text: string) => copyPaste(text)
-try {
-  const base = useBase()
-  await base.getABTestConfig()
-} catch (error) {}
 app.mount('#app')
 
-// 设置不同环境的 Favicon
-useFavicon()
-useBaiduPromotion()
 useSentry(app, router)
 
 // 删除语音缓存，运行一段时候后删除

@@ -33,10 +33,17 @@
         type="primary"
         id="Chato_top_create_click"
         data-sensors-abtest-id="2"
-        :data-sensors-abtest-value="home_quick_create"
+        :data-sensors-abtest-value="currentABTestConfig"
         @click="onEnter()"
       >
-        {{ Number(home_quick_create) === 1 ? $t('免费创建数字分身') : $t('快速创建机器人') }}
+        <ABTestRender :case-num="2">
+          <template #viewA>
+            <span>{{ $t('快速创建机器人') }}</span>
+          </template>
+          <template #viewB>
+            <span>{{ $t('免费创建数字分身') }}</span>
+          </template>
+        </ABTestRender>
       </el-button>
       <el-button
         id="Chato_top_video_click"
@@ -538,19 +545,22 @@
 </template>
 
 <script setup lang="ts">
+import ABTestRender from '@/components/ABTestRender/index.vue'
+import useABTest from '@/composables/useABTest'
 import useImagePath from '@/composables/useImagePath'
 import { ELangKey } from '@/enum/locales'
+import { useBase } from '@/stores/base'
 import { useLocales } from '@/stores/locales'
 import { ChatDotRound, VideoPlay } from '@element-plus/icons-vue'
 import { storeToRefs } from 'pinia'
 import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import IndustryCase from './components/IndustryCase.vue'
-import { useBase } from '@/stores/base'
 
 const { ImagePath: homeStepImg } = useImagePath('step', 'home')
 const { locale } = storeToRefs(useLocales())
 const { t } = useI18n()
+const { currentABTestConfig } = useABTest(2)
 
 const dynamicClasses = computed(() => {
   if (locale.value === ELangKey.en) {

@@ -55,11 +55,13 @@
       </el-select>
       <div class="button-container">
         <el-button
-          type="text"
+          link
           class="!text-[#303133] !font-normal"
           @click="toggleButton(locale === ELangKey.en ? ELangKey.zh_cn : ELangKey.en)"
-          >{{ checkbutton[locale] }}<el-icon class="el-icon--right"><ArrowDown /></el-icon
-        ></el-button>
+        >
+          {{ checkbutton[locale] }}
+          <el-icon class="el-icon--right"><ArrowDown /></el-icon>
+        </el-button>
         <el-button
           :data-script="authToken ? 'Chato-enter' : 'Chato-login'"
           class="w-auto h-9 rounded-lg !text-sm hover:!scale-105"

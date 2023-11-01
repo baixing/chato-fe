@@ -213,7 +213,7 @@ const onUpdateAbleAdForm = async () => {
 const onFormAbled = async (value) => {
   try {
     const confirmAction = value ? '开启' : '关闭'
-    const showHide = value ? t('') : t('不')
+    const showHide = value ? '' : t('不')
     await ElMessageBox.confirm(
       t('{slot1}表单后，广告中将{slot2}会展示表单，是否确认{slot3}表单？', {
         slot1: confirmAction,
