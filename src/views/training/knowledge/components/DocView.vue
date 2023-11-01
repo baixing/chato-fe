@@ -45,6 +45,7 @@
         v-model:loading="loading"
         v-model:multipleSelection="multipleSelection"
         :domainId="domainId"
+        :learnCount="learnCount"
         :doc-list="(tableData as IDocumentList[])"
         v-model:pagination="pagination"
         @remove-doc="onRemoveDoc"
@@ -65,7 +66,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { deleteRetryFileMate, getFilesByDomainId } from '@/api/file'
+import { deleteRetryFileMate, getFilesByDomainId, getWXPublicLearnCount } from '@/api/file'
 import EnterDoc from '@/components/EnterAnswer/EnterDoc.vue'
 import SearchInput from '@/components/Input/SearchInput.vue'
 import useImagePath from '@/composables/useImagePath'
@@ -108,6 +109,13 @@ const apiUpload = computed(() =>
     `/chato/api/domains/${domainId.value}/files/upload/document`
   )
 )
+const learnCount = ref<{
+  success: number
+  total: number
+}>({
+  success: 0,
+  total: 0
+})
 const serachStatus = ref(false)
 const searchInput = ref<string>('')
 const multipleSelection = ref<IDocumentList[]>([])

@@ -69,3 +69,12 @@ export interface IKnowledgeShared {
   receiver_domain_id: number
   sender_domain_id: number
 }
+
+export interface IWXPublic {
+  fakeid: string
+  nickname: string
+  alias: string
+  round_head_img: string
+  service_type: number
+  signature: string
+}

@@ -120,16 +120,94 @@
             size="large"
             :disabled="inputTextForm.status === 'preview'"
             :rules="rulesPublic"
-            :model="spliderPubliceForm"
+            label-width="100px"
+            label-position="left"
+            :model="spliderPublicForm"
             class="input-text-form special-text-form"
           >
-            <el-form-item prop="publicData">
-              <el-input
+            <!-- <el-form-item prop="publicData"> -->
+            <!-- <el-input
                 type="textarea"
                 :rows="10"
                 v-model="spliderPubliceForm.publicData"
                 :placeholder="$t('请输入要爬取的公众号名称，用英文,分隔')"
               />
+            </el-form-item> -->
+            <el-form-item prop="title" class="text-black" :label="$t('搜索名称')">
+              <div class="relative w-full h-10">
+                <el-input
+                  type="text"
+                  v-model="spliderPublicForm.publicSearchName"
+                  :placeholder="$t('请输入公众号的名称')"
+                  maxlength="30"
+                >
+                  <template #suffix>
+                    <el-icon
+                      class="el-input__icon hover:cursor-pointer"
+                      @click="getWXPublicListByPublicName"
+                    >
+                      <search />
+                    </el-icon> </template
+                ></el-input>
+                <el-select
+                  class="w-full absolute -top-10 left-0 -z-10"
+                  v-model="spliderPublicForm.publicName"
+                  :automatic-dropdown="true"
+                  placeholder="请选择公众号"
+                  ref="spliderPublicFormName"
+                  @change="(value:string) => spliderPublicForm.publicSearchName = value"
+                >
+                  <el-option
+                    v-for="item in WXPublicList"
+                    :key="item.fakeid"
+                    :label="item.nickname"
+                    :value="item.nickname"
+                  />
+                </el-select>
+              </div>
+            </el-form-item>
+            <!-- <el-form-item prop="content_html" class="text-black" :label="$t('公众号')">
+              <el-select
+                class="w-full"
+                v-model="spliderPublicForm.publicName"
+                :automatic-dropdown="true"
+                placeholder="请选择公众号"
+                ref="spliderPublicFormName"
+              >
+                <el-option
+                  v-for="item in WXPublicList"
+                  :key="item.fakeid"
+                  :label="item.nickname"
+                  :value="item.nickname"
+                />
+              </el-select>
+            </el-form-item> -->
+            <el-form-item prop="content_html" class="text-black" :label="$t('回答来源')">
+              <el-select
+                class="w-full"
+                v-model="spliderPublicForm.content"
+                placeholder="请选择公众号"
+              >
+                <el-option
+                  v-for="item in publicContentList"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                  :disabled="item.isNeedVip && !needUpgrade"
+                  >{{ item.label }}
+                  <span v-if="item.isNeedVip && !needUpgrade" class="inline-flex items-center ml-1">
+                    (<el-button
+                      link
+                      type="primary"
+                      class="-mr-[2px]"
+                      @click="checkRightsTypeNeedUpgrade(ESpaceRightsType.default)"
+                    >
+                      {{ $t('升级') }}
+                    </el-button>
+                    {{ $t('后可使用') }})
+                  </span></el-option
+                >
+              </el-select>
             </el-form-item>
           </el-form>
         </el-tab-pane>
@@ -147,21 +225,47 @@
       </template>
     </el-dialog>
   </div>
+  <Modal
+    v-model:visible="publicDialogVisible"
+    title="确认抓取"
+    @submit="onSubmit"
+    :footerAttrs="{
+      submitText: '确认'
+    }"
+  >
+    <div>
+      {{ t('全部文章共') }}<span class="text-[#7C5CFC]">{{ spliderPublicForm.maxContent }}</span
+      >{{ t('篇，预计需要') }}
+      <span class="text-[#7C5CFC]">{{ Math.floor(spliderPublicForm.maxContent / 200) }}</span>
+      {{ t('小时，是否确认抓取？') }}
+    </div>
+  </Modal>
 </template>
 
 <script setup lang="ts">
 import * as apiFile from '@/api/file'
+import Modal from '@/components/Modal/index.vue'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import useGlobalProperties from '@/composables/useGlobalProperties'
+import useSpaceRights from '@/composables/useSpaceRights'
 import { UPLOAD_FILE_TYPES, UPLOAD_FILE_VIDEO_AUDIO_TYPES } from '@/constant/common'
+import { PaidCommercialTypes } from '@/constant/space'
+import { ESpaceRightsType } from '@/enum/space'
 import { EDocumentTabType } from '@/enum/knowledge'
-import type { IDocumentForm } from '@/interface/knowledge'
+import type { IDocumentForm, IWXPublic } from '@/interface/knowledge'
 import { useAuthStore } from '@/stores/auth'
 import { $notnull } from '@/utils/help'
 import { getStringWidth } from '@/utils/string'
 import dayjs from 'dayjs'
-import type { FormInstance, FormRules, UploadFile, UploadFiles, UploadRawFile } from 'element-plus'
+import type {
+  ElSelect,
+  FormInstance,
+  FormRules,
+  UploadFile,
+  UploadFiles,
+  UploadRawFile
+} from 'element-plus'
 import { ElLoading, ElMessage, ElNotification as Notification } from 'element-plus'
 import { storeToRefs } from 'pinia'
 import { computed, onUnmounted, reactive, ref, watch } from 'vue'
@@ -186,10 +290,14 @@ const props = withDefaults(defineProps<Props>(), {
   qtyLimit: 20,
   mediaLimit: 25
 })
+const { isAllowedCommercialType, checkRightsTypeNeedUpgrade } = useSpaceRights()
+const needUpgrade = isAllowedCommercialType(PaidCommercialTypes)
+const publicDialogVisible = ref(false)
 const emit = defineEmits(['closeDialogVisble', 'setSuccess', 'updateListEvent', 'reloadList'])
 const acceptFileTypes = UPLOAD_FILE_TYPES.join(',')
 const { isMobile } = useBasicLayout()
 const visible = ref<boolean>(false)
+const spliderPublicFormName = ref<typeof ElSelect>()
 const showSubmit = ref<boolean>(false)
 const uploadFileList = ref([])
 const activeName = ref<EDocumentTabType>(EDocumentTabType.uploadDoc)
@@ -198,7 +306,31 @@ const spliderUrl = ref()
 const spliderPublic = ref()
 const authStoreI = useAuthStore()
 const { authToken } = storeToRefs(authStoreI)
+const WXPublicList = ref<IWXPublic[]>([])
 const uploadingList = ref<uploadingListType[]>([])
+const publicContentList = [
+  {
+    label: '最近十条',
+    value: 10
+  },
+  {
+    label: '最近二十条',
+    value: 20
+  },
+  {
+    label: '最近五十条',
+    value: 50
+  },
+  {
+    label: '最近一百条',
+    value: 100
+  },
+  {
+    label: '全部',
+    value: -1,
+    isNeedVip: true
+  }
+]
 const headers = {
   Authorization: 'Bearer ' + authToken.value
 }
@@ -214,8 +346,11 @@ const spliderUrlForm = reactive({
   urlData: ''
 })
 // 公众号
-const spliderPubliceForm = reactive({
-  publicData: ''
+const spliderPublicForm = reactive({
+  publicSearchName: '',
+  publicName: '',
+  content: 10,
+  maxContent: 0
 })
 // 文本
 const inputTextForm = reactive({
@@ -257,14 +392,26 @@ const $textExceedLimit = computed(() => {
   return getStringWidth(inputTextForm.content_html + inputTextForm.title || '') > limit.text_prompt
 })
 
+const onSubmit = () => {
+  spliderPublicForm.content = spliderPublicForm.maxContent
+  publicDialogVisible.value = false
+  submitInputText()
+}
+
 async function submitInputText() {
+  if (activeName.value === EDocumentTabType.inputPublic && spliderPublicForm.content === -1) {
+    spliderPublicForm.maxContent = await getPublicContent()
+    publicDialogVisible.value = true
+    return
+  }
+
   const formEl = formEl_Ref[activeName.value].value
   if (!formEl) return
   if ($textExceedLimit.value)
     return ElMessage.warning(
       t('文本内容不能超过 {limitText} 字符！', { limitText: limit.text_prompt })
     )
-  await formEl.validate((valid, fields) => {
+  await formEl.validate(async (valid, fields) => {
     if (valid) {
       const loading = ElLoading.service({
         lock: true,
@@ -273,6 +420,7 @@ async function submitInputText() {
       })
       let requestFunc = ''
       let requestParams = null
+      let requestParamsPath = null
       switch (activeName.value) {
         case 'input-text':
           requestFunc = 'uploadText'
@@ -283,11 +431,17 @@ async function submitInputText() {
           requestParams = spliderUrlForm.urlData.split(',').map((item) => item.trim())
           break
         default:
-          requestFunc = 'uploadPublic'
-          requestParams = spliderPubliceForm.publicData.split(',').map((item) => item.trim())
+          requestFunc = 'uploadPublicAsync'
+          requestParams = [spliderPublicForm.publicName]
+          requestParamsPath = {
+            count:
+              spliderPublicForm.content === -1
+                ? await getPublicContent()
+                : spliderPublicForm.content
+          }
           break
       }
-      apiFile[requestFunc](props.domainId, requestParams)
+      apiFile[requestFunc](props.domainId, requestParams, requestParamsPath)
         .then((res) => {
           const { data } = res.data
           if (requestFunc === 'uploadPublic') {
@@ -298,7 +452,7 @@ async function submitInputText() {
             Notification.success(t('保存成功'))
           }
           spliderUrlForm.urlData = ''
-          spliderPubliceForm.publicData = ''
+          spliderPublicForm.publicName = ''
           emit('setSuccess')
         })
         .catch((err) => {})
@@ -311,6 +465,19 @@ async function submitInputText() {
     }
   })
 }
+
+const getPublicContent = async () => {
+  const res = await apiFile.getWXPublicCount({ name: spliderPublicForm.publicSearchName })
+  return Number(res.data.data)
+}
+
+const getWXPublicListByPublicName = async () => {
+  const res = await apiFile.getWXPublicList({ name: spliderPublicForm.publicSearchName })
+  spliderPublicForm.publicName = ''
+  WXPublicList.value = res.data.data
+  spliderPublicFormName.value.focus()
+}
+
 function beforeUpload(rawFile: UploadRawFile) {
   const fileType = rawFile.name.substring(rawFile.name.lastIndexOf('.')).toLowerCase()
   const size = rawFile.size / 1024 / 1024
@@ -489,6 +656,7 @@ onUnmounted(() => {
     margin-top: 30px !important;
   }
 }
+
 .description {
   @apply text-xs leading-5 mb-3;
 }

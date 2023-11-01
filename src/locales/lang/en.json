@@ -1315,5 +1315,14 @@
   "小时": "Hours",
   "天": "Days",
   "若无法长按识别，请保存后微信扫码关注": "If you can't scan it, please save it and scan the QR code to follow Chato",
-  "扫码关注「百姓AI」公众号": "Scan the QR code to follow Chato"
+  "扫码关注「百姓AI」公众号": "Scan the QR code to follow Chato",
+  "搜索名称": "Search name",
+  "公众号": "No public",
+  "回答来源": "Answer source",
+  "确认抓取": "Confirm crawl",
+  "全部文章共": "All articles total",
+  "篇，预计需要": "articles, expected to be needed",
+  "小时，是否确认抓取？": "Hours, do you want to confirm the crawl?",
+  "正在进行的任务：已抓取的公众号文章": "Published tasks: Crawled public account articles",
+  "条；等待中的文章": "articles; waiting articles"
 }

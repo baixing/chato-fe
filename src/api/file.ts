@@ -2,6 +2,7 @@ import type {
   GetFilesByDomainIdType,
   IDocumentList,
   IKnowledgeShared,
+  IWXPublic,
   RetryFileMateType
 } from '@/interface/knowledge'
 import request from '@/utils/request'
@@ -81,11 +82,12 @@ export function uploadPublic(domain_id, params) {
 }
 
 // 公众号异步爬取，秒返回
-export function uploadPublicAsync(domain_id, params) {
+export function uploadPublicAsync(domain_id, data, params) {
   return request({
     method: 'post',
     url: `/chato/api/document_management/${domain_id}/spider/wx-public/async`,
-    data: params
+    data: data,
+    params: params
   })
 }
 
@@ -104,5 +106,34 @@ export function updateKnowledgeSharedStatus(data: any) {
     method: 'post',
     url: `/api/knowledge/share`,
     data
+  })
+}
+
+//获取公众号list
+export function getWXPublicList(data: { name: string }) {
+  return request<IWXPublic[]>({
+    method: 'get',
+    url: `/chato/api/document_management/search_wx_public`,
+    data
+  })
+}
+
+//获取公众号 count数量
+export function getWXPublicCount(data: { name: string }) {
+  return request<string>({
+    method: 'get',
+    url: `/chato/api/document_management/get_wx_public_count`,
+    data
+  })
+}
+
+//获取公众号 count进度
+export function getWXPublicLearnCount(domain_id: number) {
+  return request<{
+    success: string
+    total: string
+  }>({
+    method: 'post',
+    url: `/chato/api/document_management/${domain_id}/get_wx_public_article_spider_process`
   })
 }

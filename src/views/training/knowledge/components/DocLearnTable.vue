@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { deleteFile } from '@/api/file'
+import { deleteFile, getWXPublicLearnCount } from '@/api/file'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import { UPLOAD_FILE_FORCED_CONVERSION_TO_TXT_TYPES } from '@/constant/common'
 import { EDocumentOperateType, LearningStatesPerformanceType } from '@/enum/knowledge'
@@ -15,13 +15,13 @@ import {
 } from '@/utils/formatter'
 import { convertSize, openPreviewUrl } from '@/utils/help'
 import { ElMessageBox, ElNotification as Notification } from 'element-plus'
-import { computed } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ReplaceFile from './ReplaceFile.vue'
 import { selectableDeclarations } from './config'
 
 const { t } = useI18n()
-
+let timerPublicLearn = null
 const props = defineProps<{
   loading: boolean
   domainId: string | number
@@ -29,6 +29,10 @@ const props = defineProps<{
   pagination: IPage
   selectStatus: string
   batchRemove: boolean
+  learnCount: {
+    success: number
+    total: number
+  }
 }>()
 
 const emit = defineEmits([
@@ -67,6 +71,13 @@ const internalSelectStatus = computed({
 
 const internalDomainId = computed(() => props.domainId)
 const internalDocList = computed(() => props.docList)
+const learnCount = computed(() => props.learnCount)
+
+onMounted(() => {
+  timerPublicLearn = setInterval(() => {
+    getPublicLearnCount()
+  }, 10000)
+})
 
 // 删除文档
 function onDeleteFile(fileId) {
@@ -85,6 +96,12 @@ function onDeleteFile(fileId) {
         message: t('已取消')
       })
     })
+}
+
+const getPublicLearnCount = async () => {
+  const res = await getWXPublicLearnCount(Number(props.domainId))
+  learnCount.value.success = Number(res.data.data.success)
+  learnCount.value.total = Number(res.data.data.total)
 }
 
 // 删除文档公共方法
@@ -144,6 +161,9 @@ const formatDisplayCharacter = (rowData: IDocumentList) => {
     return convertSize(rowData.raw_size)
   }
 }
+onUnmounted(() => {
+  clearInterval(timerPublicLearn)
+})
 </script>
 
 <template>
@@ -258,7 +278,14 @@ const formatDisplayCharacter = (rowData: IDocumentList) => {
         </template>
       </el-table-column>
     </el-table>
-    <div class="pagination" v-if="internalPagination.page_count > 1">
+    <div class="pagination !justify-between w-full" v-if="internalPagination.page_count > 1">
+      <div class="text-[#9DA3AF] text-sm" v-if="learnCount.total - learnCount.success > 0">
+        {{ t('正在进行的任务：已抓取的公众号文章') }}
+        <span class="text-[#7C5CFC]">{{ learnCount.success }}</span> {{ t('条；等待中的文章') }}
+        <span class="text-[#7C5CFC]">{{ learnCount.total - learnCount.success }}</span>
+        {{ t('条') }}
+      </div>
+      <div v-else></div>
       <el-pagination
         background
         layout="prev, pager, next"

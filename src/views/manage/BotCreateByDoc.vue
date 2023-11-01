@@ -294,7 +294,8 @@ const onSave = async () => {
       urlRes.length && (finalCreateDomainName = urlRes[0].title)
     }
     if (formState.wxPublic) {
-      uploadPublicAsync(formState.id, [formState.wxPublic])
+      // TODO:接口更新
+      // uploadPublicAsync(formState.id, [formState.wxPublic])
     }
 
     // 输入文本或异常结果状态的兜底机器人名字
