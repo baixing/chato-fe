@@ -62,8 +62,8 @@
 <script setup lang="ts">
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
 import Modal from '@/components/Modal/index.vue'
-import ImgUpload from '@/components/NewImgUpload/ImgUpload.vue'
 import type { TDefaultShortcutProps } from '@/interface/userInterface'
+import ImgUpload from '@/components/NewImgUpload/ImgUpload.vue'
 import { $notnull } from '@/utils/help'
 import { getStringWidth } from '@/utils/string'
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus'

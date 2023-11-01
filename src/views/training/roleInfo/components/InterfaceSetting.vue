@@ -152,9 +152,10 @@
       </div>
       <div class="flex items-center justify-between gap-4 w-full">
         <ImgUpload
-          :value="currentDomain.brand_logo"
-          v-bind="uploadConfig"
-          @onChange="onImgChange"
+          :setInitUrl="onImgChange"
+          :initImgUrl="''"
+          :fixed="true"
+          :imgUrl="currentDomain.brand_logo"
         />
         <HansInputLimit
           v-model:value="currentDomain.brand_name"
@@ -225,8 +226,7 @@ import {
   getTimbreList as getTimbreListApi,
   getTestTimbreUrl as getTestTimbreUrlApi
 } from '@/api/domain'
-import type { ImgUplaodProps } from '@/components/ImgUpload/data'
-import ImgUpload from '@/components/ImgUpload/index.vue'
+import ImgUpload from '@/components/NewImgUpload/ImgUpload.vue'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
 import Modal from '@/components/Modal/index.vue'
 import SpaceRightsMask from '@/components/Space/SpaceRightsMask.vue'
@@ -415,26 +415,6 @@ onMounted(() => {
   getTimbreList()
 })
 
-// ----- 图片上传 -----
-const apiUpload = url.join(currentEnvConfig.uploadBaseURL, '/chato/api/file/upload/file')
-const uploadConfig = {
-  uploadType: 1, // 1: 直接上传; 2: 打开图库上传
-  cropProps: {
-    aspectRatio: [1, 1], // 默认裁剪比例
-    autoAspectRatio: false // 是否允许修改裁剪比例
-  },
-  showUploadList: {
-    // 可操作按钮
-    showCropIcon: true,
-    showRemoveIcon: true
-  },
-  maxLength: 1, // 限制上传数量
-  apiUploadPath: apiUpload, // 上传路径
-  itemWidth: 48,
-  itemHeight: 48,
-  uploadFillet: true, // 是否圆角
-  uploadBtnText: '' // 上传文案
-} as ImgUplaodProps
 const onImgChange = (v) => {
   currentDomain.brand_logo = v?.url || ''
 }
