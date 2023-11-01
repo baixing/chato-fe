@@ -2,6 +2,8 @@ import { useBasicLayout } from '@/composables/useBasicLayout'
 import useChannel from '@/composables/useChannel'
 import useLocationDvid from '@/composables/useLocationDvid'
 import { PageViewPathTracker } from '@/constant/tracker'
+import { useBase } from '@/stores/base'
+import { storeToRefs } from 'pinia'
 import sa from 'sa-sdk-javascript'
 import rgp from 'sa-sdk-javascript/dist/web/plugin/register-properties/index.es6'
 
@@ -24,6 +26,13 @@ export default class Sensors {
     registerPlugin.hookRegister((eventInfo) => {
       const { event, properties } = eventInfo
       const customProperties = {}
+      const baseStoreI = useBase()
+      const { abTestConfig } = storeToRefs(baseStoreI)
+      Object.keys(abTestConfig.value).forEach((key) => {
+        if (abTestConfig.value[key]) {
+          customProperties['abtest_' + key] = abTestConfig.value[key]
+        }
+      })
       let matchRegStr
       if (event === '$pageview') {
         matchRegStr = this.pageViewPathKeys.find((item) =>
