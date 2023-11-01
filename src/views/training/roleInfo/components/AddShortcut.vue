@@ -43,6 +43,7 @@
           :imgUrl="inputTextForm.images"
           :setInitUrl="handleChange"
           :listType="'picture-card'"
+          :fixed="false"
           :initImgUrl="''"
         />
       </el-form-item>
@@ -59,7 +60,6 @@
 </template>
 
 <script setup lang="ts">
-import type { MediaItem } from '@/components/ImgUpload/data'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
 import Modal from '@/components/Modal/index.vue'
 import ImgUpload from '@/components/NewImgUpload/ImgUpload.vue'

@@ -50,9 +50,11 @@
             </el-form-item>
             <el-form-item prop="img" class="mt-[6px]">
               <ImgUpload
-                :value="inputTextForm.images"
-                v-bind="uploadConfig"
-                @onChange="handleChange"
+                :imgUrl="inputTextForm.images"
+                :setInitUrl="handleChange"
+                :listType="'picture-card'"
+                :fixed="false"
+                :initImgUrl="''"
               />
               <span class="text-[#999999] text-xs ml-1">{{ $t('（最多上传 9 张）') }}</span>
             </el-form-item>
@@ -111,10 +113,9 @@
 
 <script setup lang="ts">
 import * as apiFile from '@/api/file'
-import type { MediaItem } from '@/components/ImgUpload/data'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
+import ImgUpload from '@/components/NewImgUpload/ImgUpload.vue'
 import { useBasicLayout } from '@/composables/useBasicLayout'
-import { currentEnvConfig } from '@/config'
 import { UPLOAD_TEMPLATE_FILE_TYPES } from '@/constant/common'
 import { EDocumentTabType } from '@/enum/knowledge'
 import type { IQAForm } from '@/interface/konwledgeQa'
@@ -122,7 +123,6 @@ import { useAuthStore } from '@/stores/auth'
 import { useDomainStore } from '@/stores/domain'
 import { $notnull } from '@/utils/help'
 import { getStringWidth } from '@/utils/string'
-import * as url from '@/utils/url'
 import type { FormInstance, FormRules, UploadFile, UploadFiles, UploadRawFile } from 'element-plus'
 import { ElLoading, ElMessage, ElNotification as Notification } from 'element-plus'
 import { storeToRefs } from 'pinia'
@@ -146,13 +146,11 @@ const props = defineProps<Props>()
 const route = useRoute()
 const emit = defineEmits(['closeDialogVisble', 'setSuccess', 'reloadList'])
 const { isMobile } = useBasicLayout()
-const baseURL = currentEnvConfig.uploadBaseURL
 const domainStoreI = useDomainStore()
 const { domainInfo } = storeToRefs(domainStoreI)
 const currentDomainSlug = computed(
   () => props?.domainSlug || route.params?.botSlug || domainInfo.value?.slug
 )
-const apiUploadImg = url.join(baseURL, '/chato/api/file/upload/file')
 const acceptFileTypes = UPLOAD_TEMPLATE_FILE_TYPES.join(',')
 const visible = ref<boolean>(false)
 const showSubmit = ref<boolean>(false)
@@ -165,27 +163,6 @@ const authStoreI = useAuthStore()
 const { authToken } = storeToRefs(authStoreI)
 const headers = {
   Authorization: 'Bearer ' + authToken.value
-}
-
-const uploadConfig = {
-  uploadType: 1, // 1: 直接上传; 2: 打开图库上传
-  cropProps: {
-    aspectRatio: [1, 1], // 默认裁剪比例
-    autoAspectRatio: false, // 是否允许修改裁剪比例
-    notSelectCrop: true
-  },
-  showUploadList: {
-    // 可操作按钮
-    showCropIcon: true,
-    showPreviewIcon: true,
-    showRemoveIcon: true,
-    showDownloadIcon: true
-  },
-  maxLength: 9, // 限制上传数量
-  apiUploadPath: apiUploadImg, // 上传路径
-  itemWidth: 64,
-  itemHeight: 64,
-  uploadBtnText: t('上传图片') // 上传文案
 }
 
 const inputTextForm = reactive({
@@ -364,8 +341,8 @@ const watchActiveName = watch(
   { immediate: true }
 )
 
-const handleChange = (value: MediaItem[]) => {
-  inputTextForm.images = value.length > 0 ? value.map((item) => item.url) : []
+function handleChange(value: string[]) {
+  inputTextForm.images = value.length > 0 ? value : []
 }
 
 onUnmounted(() => {
