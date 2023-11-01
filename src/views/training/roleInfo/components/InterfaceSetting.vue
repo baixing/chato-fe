@@ -141,7 +141,7 @@
           class="flex items-center py-2 px-3 rounded border border-solid border-[#7C5CFC] text-[#7C5CFC] cursor-pointer"
           @click="clickSelectTimbre"
         >
-          {{ t('选择声音') }}
+          {{ t('选择音色') }}
         </div>
       </div>
     </div>
@@ -206,7 +206,7 @@
         :className="
           index === indexDialogTimbre
             ? '!border-[#7C5CFC] justify-between cursor-pointer !text-[#7C5CFC]'
-            : 'justify-between cursor-pointer !text-[#9DA3AF]'
+            : 'justify-between cursor-pointer !text-[#000]'
         "
         :iconName="playAudio === item.value ? 'audio-pause' : undefined"
         :key="item.value"
