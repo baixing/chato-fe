@@ -21,7 +21,6 @@ import ReplaceFile from './ReplaceFile.vue'
 import { selectableDeclarations } from './config'
 
 const { t } = useI18n()
-let timerPublicLearn = null
 const props = defineProps<{
   loading: boolean
   domainId: string | number
@@ -34,7 +33,7 @@ const props = defineProps<{
     total: number
   }
 }>()
-
+let timerPublicLearn = null
 const emit = defineEmits([
   'update:loading',
   'update:pagination',

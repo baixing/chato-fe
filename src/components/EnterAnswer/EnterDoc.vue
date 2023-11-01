@@ -166,22 +166,6 @@
                 </el-select>
               </div>
             </el-form-item>
-            <!-- <el-form-item prop="content_html" class="text-black" :label="$t('公众号')">
-              <el-select
-                class="w-full"
-                v-model="spliderPublicForm.publicName"
-                :automatic-dropdown="true"
-                placeholder="请选择公众号"
-                ref="spliderPublicFormName"
-              >
-                <el-option
-                  v-for="item in WXPublicList"
-                  :key="item.fakeid"
-                  :label="item.nickname"
-                  :value="item.nickname"
-                />
-              </el-select>
-            </el-form-item> -->
             <el-form-item prop="content_html" class="text-black" :label="$t('回答来源')">
               <el-select
                 class="w-full"
@@ -453,6 +437,8 @@ async function submitInputText() {
           }
           spliderUrlForm.urlData = ''
           spliderPublicForm.publicName = ''
+          spliderPublicForm.content = 0
+          spliderPublicForm.publicSearchName = ''
           emit('setSuccess')
         })
         .catch((err) => {})
