@@ -3,7 +3,7 @@
     width="35%"
     mobile-width="100%"
     v-model:visible="internalVisible"
-    title="`分享海报`"
+    title="分享海报"
     :footer="false"
   >
     <div class="flex justify-center items-center">
