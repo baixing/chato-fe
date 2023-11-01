@@ -1,10 +1,11 @@
 import { currentEnvConfig } from '@/config'
 import COS from 'cos-js-sdk-v5'
+import { ElNotification } from 'element-plus'
 import { v4 as uuidv4 } from 'uuid'
 
 interface ITencentCloudFile {
   bucket: string
-  credentials: Credentials
+  credentials: ICredentials
   expiration: string
   expiredTime: number
   region: string
@@ -12,7 +13,7 @@ interface ITencentCloudFile {
   startTime: number
 }
 
-interface Credentials {
+interface ICredentials {
   sessionToken: string
   tmpSecretId: string
   tmpSecretKey: string
@@ -23,7 +24,7 @@ const getUploadResult = (
   file: File,
   onProgress?: (progressData: COS.ProgressInfo) => void
 ): Promise<string> =>
-  new Promise((resolve) => {
+  new Promise((resolve, reject) => {
     cos.uploadFile(
       {
         Bucket: 'afu-1255830993',
@@ -33,7 +34,8 @@ const getUploadResult = (
         Body: file,
         onProgress
       },
-      function (_, data) {
+      function (err, data) {
+        if (err) return reject(err)
         resolve('https://' + data.Location)
       }
     )
@@ -59,7 +61,9 @@ export const cosServe = async (
         {
           headers
         }
-      ).then((steram) => steram.json())
+      )
+        .then((steram) => steram.json())
+        .catch((err) => ElNotification.error(err.toString))
       callback({
         TmpSecretId: res.credentials.tmpSecretId,
         TmpSecretKey: res.credentials.tmpSecretKey,

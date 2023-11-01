@@ -54,7 +54,7 @@
         />
       </el-form-item>
       <el-form-item>
-        <ImgUpload :value="radioForm.attachment" v-bind="uploadConfig" @onChange="handleChange" />
+        <ImgUpload :setInitUrl="handleChange" :fixed="true" :imgUrl="radioForm.attachment" />
       </el-form-item>
       <el-form-item class="justify-end">
         <el-row class="w-full" justify="end">
@@ -74,8 +74,6 @@ import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 import { ref, computed, watch, reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { currentEnvConfig } from '@/config'
-import * as url from '@/utils/url'
-import type { MediaItem } from '@/components/ImgUpload/data'
 import type { ISettingBroadcastType } from '@/interface/release'
 import { $notnull } from '@/utils/help'
 import { getStringWidth } from '@/utils/string'
@@ -100,29 +98,6 @@ const repeatOptions = [
 ]
 const contentMaxLength = 2048
 const contentExceedLimit = computed(() => getStringWidth(radioForm.content) > contentMaxLength)
-const baseURL = currentEnvConfig.uploadBaseURL
-const apiUploadImg = url.join(baseURL, '/chato/api/file/upload/file')
-
-const uploadConfig = {
-  uploadType: 1, // 1: 直接上传; 2: 打开图库上传
-  cropProps: {
-    aspectRatio: [1, 1], // 默认裁剪比例
-    autoAspectRatio: false, // 是否允许修改裁剪比例
-    notSelectCrop: true
-  },
-  showUploadList: {
-    // 可操作按钮
-    showCropIcon: true,
-    showPreviewIcon: true,
-    showRemoveIcon: true,
-    showDownloadIcon: true
-  },
-  maxLength: 9, // 限制上传数量
-  apiUploadPath: apiUploadImg, // 上传路径
-  itemWidth: 64,
-  itemHeight: 64,
-  uploadBtnText: t('上传图片') // 上传文案
-}
 
 const radioForm = reactive({
   status: true,
@@ -148,8 +123,8 @@ const handleReset = () => {
   radioForm.attachment = []
 }
 
-const handleChange = (value: MediaItem[]) => {
-  radioForm.attachment = value.length > 0 ? value.map((item) => item.url) : []
+const handleChange = (value: string[]) => {
+  radioForm.attachment = value.length > 0 ? value : []
 }
 
 const onSubmit = async (formEl: FormInstance | undefined) => {

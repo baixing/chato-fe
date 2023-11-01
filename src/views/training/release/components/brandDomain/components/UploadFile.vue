@@ -20,7 +20,7 @@
   </el-upload>
 </template>
 <script lang="ts" setup>
-import type { UploadResType } from '@/components/ImgUpload/data'
+import type { UploadResType } from '@/interface/utilsType'
 import { useAuthStore } from '@/stores/auth'
 import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus'
 import { ElMessageBox, genFileId } from 'element-plus'

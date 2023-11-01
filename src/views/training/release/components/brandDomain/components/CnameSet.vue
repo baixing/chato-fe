@@ -78,7 +78,6 @@
 </template>
 <script lang="ts" setup>
 import { saveBrandDomain } from '@/api/release'
-import type { UploadResType } from '@/components/ImgUpload/data'
 import { currentEnvConfig } from '@/config'
 import { EBrandCreateEditStatusType } from '@/enum/domain'
 import type { IBrandDomainType, IBrandDomainTypeKeyFile } from '@/interface/release'
@@ -89,6 +88,7 @@ import { ElLoading, ElNotification as Notification } from 'element-plus'
 import { computed, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import UploadFile from './UploadFile.vue'
+import type { UploadResType } from '@/interface/utilsType'
 
 const { t } = useI18n()
 type cnameSetModelType = IBrandDomainType & {

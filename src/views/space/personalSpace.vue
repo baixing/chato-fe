@@ -9,7 +9,7 @@
           <div
             :class="[!userInfo.org.avatar && !isRemove ? 'hidden-img-upload' : 'show-img-upload']"
           >
-            <ImgUpload :setInitUrl="handleChange" :fixed="true" :initImgUrl="''" :imgUrl="avatar" />
+            <ImgUpload :setInitUrl="handleChange" :fixed="true" :imgUrl="avatar" />
           </div>
         </div>
         <span class="mx-4 text-sm" v-if="!isEdit">{{ name }}</span>
@@ -123,7 +123,7 @@ import { removeSpaceMember, updateOrgSpaceInfo, updateSpaceMemberRole } from '@/
 import UserAvatar from '@/components/Avatar/UserAvatar.vue'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
 import useSpace from '@/composables/useSpace'
-import ImgUpload from '@/components/NewImgUpload/ImgUpload.vue'
+import ImgUpload from '@/components/ImgUpload/ImgUpload.vue'
 import useSpaceRights from '@/composables/useSpaceRights'
 import type { ESettingSpaceRole } from '@/enum/space'
 import { ESpaceRightsType } from '@/enum/space'

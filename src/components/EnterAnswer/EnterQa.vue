@@ -51,10 +51,10 @@
             <el-form-item prop="img" class="mt-[6px]">
               <ImgUpload
                 :imgUrl="inputTextForm.images"
-                :setInitUrl="handleChange"
-                :listType="'picture-card'"
+                :setInitUrl="onHandleChange"
+                listType="picture-card"
                 :fixed="false"
-                :initImgUrl="''"
+                :isInitialImg="true"
               />
               <span class="text-[#999999] text-xs ml-1">{{ $t('（最多上传 9 张）') }}</span>
             </el-form-item>
@@ -114,7 +114,7 @@
 <script setup lang="ts">
 import * as apiFile from '@/api/file'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
-import ImgUpload from '@/components/NewImgUpload/ImgUpload.vue'
+import ImgUpload from '@/components/ImgUpload/ImgUpload.vue'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import { UPLOAD_TEMPLATE_FILE_TYPES } from '@/constant/common'
 import { EDocumentTabType } from '@/enum/knowledge'
@@ -341,7 +341,7 @@ const watchActiveName = watch(
   { immediate: true }
 )
 
-function handleChange(value: string[]) {
+function onHandleChange(value: string[]) {
   inputTextForm.images = value.length > 0 ? value : []
 }
 

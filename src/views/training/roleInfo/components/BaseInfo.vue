@@ -1,7 +1,12 @@
 <template>
   <div class="chato-form">
     <div class="chato-form-item flex gap-4 items-center w-full">
-      <ImgUpload :setInitUrl="setInitUrl" :fixed="true" :imgUrl="currentDomain.avatar" />
+      <ImgUpload
+        :setInitUrl="setInitUrl"
+        :fixed="true"
+        :imgUrl="currentDomain.avatar"
+        :is-initial-img="true"
+      />
       <HansInputLimit
         v-model:value="currentDomain.name"
         type="text"
@@ -158,7 +163,7 @@ import { deleteFile, getFilesByDomainId } from '@/api/file'
 import AIGenerateBtn from '@/components/AIGenerateBtn/index.vue'
 import EnterDoc from '@/components/EnterAnswer/EnterDoc.vue'
 import EnterQa from '@/components/EnterAnswer/EnterQa.vue'
-import ImgUpload from '@/components/NewImgUpload/ImgUpload.vue'
+import ImgUpload from '@/components/ImgUpload/ImgUpload.vue'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
 import SLTitle from '@/components/Title/SLTitle.vue'
 import { currentEnvConfig } from '@/config'
@@ -172,7 +177,6 @@ import type { IDocumentForm, IDocumentList, IQAForm } from '@/interface/knowledg
 import { useBase } from '@/stores/base'
 import { getFileStatusName } from '@/utils/formatter'
 import { openPreviewUrl } from '@/utils/help'
-import * as url from '@/utils/url'
 import { Close } from '@element-plus/icons-vue'
 import { ElMessageBox, ElNotification } from 'element-plus'
 import { computed, inject, onBeforeUnmount, reactive, ref, watch } from 'vue'
@@ -293,31 +297,4 @@ const onPreviewFile = (file: IDocumentList) => {
 onBeforeUnmount(() => {
   clearInterval(refreshFilesIntervaler)
 })
-// --------------
-
-// ---- 上传头像 ----
-// const apiUpload = url.join(currentEnvConfig.uploadBaseURL, '/chato/api/file/upload/file')
-// const uploadConfig = {
-//   uploadType: 1, // 1: 直接上传; 2: 打开图库上传
-//   cropProps: {
-//     aspectRatio: [1, 1], // 默认裁剪比例
-//     autoAspectRatio: true // 是否允许修改裁剪比例
-//   },
-//   showUploadList: {
-//     // 可操作按钮
-//     showCropIcon: true,
-//     showRemoveIcon: true
-//   },
-//   maxLength: 1, // 限制上传数量
-//   apiUploadPath: apiUpload, // 上传路径
-//   itemWidth: 48,
-//   itemHeight: 48,
-//   uploadFillet: true, // 是否圆角
-//   uploadBtnText: '', // 上传文案
-//   uploadBg: DefaultAvatar
-// } as ImgUplaodProps
-// const onImgChange = (value: any) => {
-//   currentDomain.avatar = value?.url || ''
-// }
-// --------------
 </script>

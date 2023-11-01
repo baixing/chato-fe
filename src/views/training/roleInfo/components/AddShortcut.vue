@@ -42,9 +42,9 @@
         <ImgUpload
           :imgUrl="inputTextForm.images"
           :setInitUrl="handleChange"
-          :listType="'picture-card'"
+          listType="picture-card"
           :fixed="false"
-          :initImgUrl="''"
+          :disabled="inputTextForm.status === 'preview'"
         />
       </el-form-item>
     </el-form>
@@ -63,7 +63,7 @@
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
 import Modal from '@/components/Modal/index.vue'
 import type { TDefaultShortcutProps } from '@/interface/userInterface'
-import ImgUpload from '@/components/NewImgUpload/ImgUpload.vue'
+import ImgUpload from '@/components/ImgUpload/ImgUpload.vue'
 import { $notnull } from '@/utils/help'
 import { getStringWidth } from '@/utils/string'
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
@@ -90,26 +90,7 @@ const title = computed<string>(() => {
 
 const visible = ref(false)
 const ruleFormRef = ref<FormInstance>()
-const uploadConfig = {
-  uploadType: 1, // 1: 直接上传; 2: 打开图库上传
-  cropProps: {
-    aspectRatio: [1, 1], // 默认裁剪比例
-    autoAspectRatio: true, // 是否允许修改裁剪比例
-    notSelectCrop: true
-  },
-  showUploadList: {
-    // 可操作按钮
-    showCropIcon: true,
-    showPreviewIcon: true,
-    showRemoveIcon: true,
-    showDownloadIcon: true
-  },
-  maxLength: 9, // 限制上传数量
-  apiUploadPath: props.apiUpload, // 上传路径
-  itemWidth: 64,
-  itemHeight: 64,
-  uploadBtnText: '' // 上传文案
-}
+
 const limitTextPrompt = 3000
 const inputTextForm = reactive({
   title: null,
@@ -215,16 +196,6 @@ watch(
   :deep(.el-form-item__error) {
     bottom: 0 !important;
     top: inherit !important;
-  }
-}
-
-.upload-box {
-  .description {
-    margin-bottom: 16px;
-
-    a {
-      color: #7c5cfc;
-    }
   }
 }
 </style>

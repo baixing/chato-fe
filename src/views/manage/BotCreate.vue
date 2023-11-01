@@ -50,7 +50,7 @@
           </div>
         </div>
         <div class="flex gap-4 items-center mb-8">
-          <ImgUpload :value="formState.avatar" v-bind="uploadConfig" @onChange="onImgChange" />
+          <ImgUpload :setInitUrl="onImgChange" :fixed="true" :imgUrl="formState.avatar" />
           <HansInputLimit
             v-model:value="formState.name"
             type="text"
@@ -236,12 +236,10 @@
 <script setup lang="ts">
 import { createDraftDomain, getDomainDetail, updateDomain } from '@/api/domain'
 import { deleteFile, getFilesByDomainId } from '@/api/file'
-import DefaultAvatar from '@/assets/img/avatar.png'
 import AIGenerateBtn from '@/components/AIGenerateBtn/index.vue'
 import EnterDoc from '@/components/EnterAnswer/EnterDoc.vue'
 import EnterQa from '@/components/EnterAnswer/EnterQa.vue'
-import type { ImgUplaodProps } from '@/components/ImgUpload/data'
-import ImgUpload from '@/components/ImgUpload/index.vue'
+import ImgUpload from '@/components/ImgUpload/ImgUpload.vue'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
 import SLTitle from '@/components/Title/SLTitle.vue'
 import Topbar from '@/components/Topbar/index.vue'
@@ -261,7 +259,6 @@ import { getFileStatusName } from '@/utils/formatter'
 import { openPreviewUrl } from '@/utils/help'
 import SSE from '@/utils/sse'
 import { getStringWidth } from '@/utils/string'
-import * as url from '@/utils/url'
 import { Close } from '@element-plus/icons-vue'
 import { ElLoading, ElMessage, ElMessageBox, ElNotification } from 'element-plus'
 import { isEqual } from 'lodash-es'
@@ -380,29 +377,8 @@ const onAITypeModalDone = () => {
   AIGenerateInputDisabled = Object.assign(AIGenerateInputDisabled, defaultAIGenerateInputDisabled)
 }
 
-// ---- 上传头像 ----
-const apiUpload = url.join(currentEnvConfig.uploadBaseURL, '/chato/api/file/upload/file')
-const uploadConfig = {
-  uploadType: 1, // 1: 直接上传; 2: 打开图库上传
-  cropProps: {
-    aspectRatio: [1, 1], // 默认裁剪比例
-    autoAspectRatio: true // 是否允许修改裁剪比例
-  },
-  showUploadList: {
-    // 可操作按钮
-    showCropIcon: true,
-    showRemoveIcon: true
-  },
-  maxLength: 1, // 限制上传数量
-  apiUploadPath: apiUpload, // 上传路径
-  itemWidth: 48,
-  itemHeight: 48,
-  uploadFillet: true, // 是否圆角
-  uploadBtnText: '', // 上传文案
-  uploadBg: DefaultAvatar
-} as ImgUplaodProps
-const onImgChange = (value: any) => {
-  formState.avatar = value ? value.url : ''
+const onImgChange = (value: string) => {
+  formState.avatar = value || ''
 }
 // --------------
 

@@ -1,6 +1,3 @@
-/**
- * Request
- */
 export interface IUploadOptions {
   autoCrop: boolean
   autoCropHeight: number

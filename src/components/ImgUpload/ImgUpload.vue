@@ -10,13 +10,14 @@
       :auto-upload="!Boolean(listType)"
       :show-file-list="Boolean(listType)"
       :limit="9"
+      :disabled="disabled"
     >
       <template #trigger>
         <div class="group/img h-12" v-if="!listType">
           <div
             class="w-12 h-12 rounded-full border-dashed bg-cover cursor-default box-border hover:border-[#634aca]"
             :style="{
-              'background-image': `url(${imgUrl || initImgUrl})`
+              'background-image': `url(${imgUrl || (isInitialImg ? initialImgUrl : '')})`
             }"
             :class="[imgUrl ? 'border-none' : 'border border-[--el-border-color-darker]']"
           >
@@ -38,7 +39,7 @@
                 class="flex justify-center items-center cursor-pointer text-white"
                 title="裁剪图片"
                 v-if="imgUrl"
-                @click.stop="cropImg"
+                @click.stop="onCropImg"
               >
                 <el-icon>
                   <Scissor />
@@ -57,7 +58,9 @@
           </div>
         </div>
         <div v-else class="w-7 h-7">
-          <el-icon><Plus /></el-icon>
+          <el-icon>
+            <Plus />
+          </el-icon>
         </div>
       </template>
       <template #file="{ file }">
@@ -73,7 +76,7 @@
                 <Delete />
               </el-icon>
             </div>
-            <div class="w-4 h-4 cursor-pointer" @click="scissorImg(file)">
+            <div class="w-4 h-4 cursor-pointer" @click="onScissorImg(file)">
               <el-icon>
                 <Scissor />
               </el-icon>
@@ -84,7 +87,9 @@
               :href="file.url"
               target="_block"
             >
-              <el-icon><Download /></el-icon>
+              <el-icon>
+                <Download />
+              </el-icon>
             </a>
           </div>
           <img class="el-upload-list__item-thumbnail" :src="file.url" alt="" />
@@ -110,6 +115,7 @@
 <script setup lang="ts">
 import 'vue-cropper/dist/index.css'
 import { VueCropper } from 'vue-cropper'
+import DefaultAvatar from '@/assets/img/avatar.png'
 import Modal from '@/components/Modal/index.vue'
 import { ref } from 'vue'
 import { cosServe } from '@/utils/cos'
@@ -130,14 +136,17 @@ const props = withDefaults(
     {
       setInitUrl: (value: string | string[]) => void
       accept: string
-      initImgUrl: string
+      initialImgUrl: string
       imgUrl: string[] | string
       listType?: 'picture' | 'text' | 'picture-card'
+      isInitialImg: boolean
+      disabled: boolean
     } & Partial<IUploadOptions>
   >(),
   {
-    initImgUrl: 'https://afu-1255830993.cos.ap-shanghai.myqcloud.com/447479457016221696.png',
+    initialImgUrl: DefaultAvatar,
     size: 1,
+    disabled: false,
     full: false,
     outputType: 'png',
     canMove: true,
@@ -154,7 +163,8 @@ const props = withDefaults(
     mode: 'contain',
     maxImgSize: 3000,
     fixed: false,
-    fillCover: ''
+    fillCover: '',
+    isInitialImg: false
   }
 )
 const listType = computed(() => {
@@ -172,7 +182,8 @@ watch(fileList, async (value: UploadFiles, oldValue: UploadFiles) => {
   }
 })
 
-const scissorImg = (file: UploadFile) => {
+const onScissorImg = (file: UploadFile) => {
+  if (props.disabled) return
   imgUploadDialogVisible.value = true
   cropImgUrl.value = file.url
 }
@@ -187,14 +198,15 @@ const beforeUpload = async (rawFile: UploadRawFile) => {
   return false
 }
 const handlePictureCardPreview = (file: UploadFile) => {
-  dialogImageUrl.value = file.url!
+  dialogImageUrl.value = file.url
   zoomInDialogVisible.value = true
 }
 const handleRemove = (file: UploadFile) => {
-  fileList.value = fileList.value.filter((item) => item.uid != file.uid)
+  if (props.disabled) return
+  fileList.value = fileList.value.filter((item) => item.uid !== file.uid)
   props.setInitUrl(fileList.value.map((item) => item.url))
 }
-const cropImg = () => {
+const onCropImg = () => {
   if (isArray(imgUrl.value)) return
   imgUploadDialogVisible.value = true
   cropImgUrl.value = imgUrl.value
@@ -207,7 +219,7 @@ const setTimbre = () => {
     const res = await cosServe(data)
     imgUploadDialogVisible.value = false
     if (props.listType) {
-      const index = fileList.value.findIndex((item) => item.url == cropImgUrl.value)
+      const index = fileList.value.findIndex((item) => item.url === cropImgUrl.value)
       fileList.value[index].url = res
       props.setInitUrl(fileList.value.map((item) => item.url))
       return

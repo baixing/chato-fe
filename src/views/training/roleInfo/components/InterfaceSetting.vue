@@ -61,7 +61,6 @@
         </div>
         <SwitchWithStateMsg
           :value="currentDomain.qa_modifiable"
-          size="small"
           openMsg="开启"
           closeMsg="关闭"
           @change="onCorrectAnswerChange"
@@ -153,9 +152,9 @@
       <div class="flex items-center justify-between gap-4 w-full">
         <ImgUpload
           :setInitUrl="onImgChange"
-          :initImgUrl="''"
           :fixed="true"
           :imgUrl="currentDomain.brand_logo"
+          :is-initial-img="true"
         />
         <HansInputLimit
           v-model:value="currentDomain.brand_name"
@@ -206,7 +205,7 @@
         :className="
           index === indexDialogTimbre
             ? '!border-[#7C5CFC] justify-between cursor-pointer !text-[#7C5CFC]'
-            : 'justify-between cursor-pointer !text-[#000]'
+            : 'justify-between cursor-pointer !text-black'
         "
         :iconName="playAudio === item.value ? 'audio-pause' : undefined"
         :key="item.value"
@@ -226,7 +225,7 @@ import {
   getTimbreList as getTimbreListApi,
   getTestTimbreUrl as getTestTimbreUrlApi
 } from '@/api/domain'
-import ImgUpload from '@/components/NewImgUpload/ImgUpload.vue'
+import ImgUpload from '@/components/ImgUpload/ImgUpload.vue'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
 import Modal from '@/components/Modal/index.vue'
 import SpaceRightsMask from '@/components/Space/SpaceRightsMask.vue'

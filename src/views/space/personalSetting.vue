@@ -25,8 +25,8 @@
             :class="[!settingForm.avatar && !isRemove ? 'hidden-img-upload' : 'show-img-upload']"
           >
             <ImgUpload
+              @change="handleChange"
               :setInitUrl="handleChange"
-              :initImgUrl="''"
               :fixed="true"
               :imgUrl="settingForm.avatar"
             />
@@ -68,7 +68,7 @@ import { logoutAccount } from '@/api/auth'
 import { updateOrgUserInfo } from '@/api/space'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
 import SLTitle from '@/components/Title/SLTitle.vue'
-import ImgUpload from '@/components/NewImgUpload/ImgUpload.vue'
+import ImgUpload from '@/components/ImgUpload/ImgUpload.vue'
 import Topbar from '@/components/Topbar/index.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useBase } from '@/stores/base'
