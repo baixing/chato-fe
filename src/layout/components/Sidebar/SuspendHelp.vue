@@ -32,18 +32,23 @@ import useSpaceRights from '@/composables/useSpaceRights'
 import { ESpaceRightsType } from '@/enum/space'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useSpaceStore } from '@/stores/space'
+import { storeToRefs } from 'pinia'
 
 const { t } = useI18n()
+const spaceStore = useSpaceStore()
+const { followPublicVisible } = storeToRefs(spaceStore)
 const popoverVisible = ref(false)
 
 const helpList = [
-  { title: t('联系客服'), icon: 'wechat', link: '' },
+  { title: t('联系客服'), icon: 'wechat', link: 'contactUs' },
   { title: t('Chato社区'), icon: 'community', link: 'https://support.qq.com/products/600388/' },
   {
     title: t('用户手册'),
     icon: 'book-guide',
     link: 'https://baixingwang.feishu.cn/wiki/EZAPw0vwJiHBazkOCfLcMGYpnig'
-  }
+  },
+  { title: t('关注公众号'), icon: 'follow', link: 'followPublic' }
 ]
 
 const { checkRightsTypeNeedUpgrade } = useSpaceRights()
@@ -51,10 +56,16 @@ const { checkRightsTypeNeedUpgrade } = useSpaceRights()
 const onHelpClick = (link: string) => {
   popoverVisible.value = false
 
-  if (link) {
-    window.open(link)
-  } else {
-    checkRightsTypeNeedUpgrade(ESpaceRightsType.default)
+  switch (link) {
+    case 'contactUs':
+      checkRightsTypeNeedUpgrade(ESpaceRightsType.default)
+      break
+    case 'followPublic':
+      followPublicVisible.value = true
+      break
+    default:
+      window.open(link)
+      break
   }
 }
 </script>

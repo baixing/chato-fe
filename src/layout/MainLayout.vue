@@ -26,6 +26,7 @@
   </el-drawer>
   <UpgradeRightsModal />
   <FirstGuide />
+  <FollowPublic />
 </template>
 <script setup lang="ts">
 import UpgradeRightsModal from '@/components/Upgrade/UpgradeRightsModal.vue'

@@ -1309,5 +1309,7 @@
   "请选择频率": "Please select frequency",
   "分钟": "Minutes",
   "小时": "Hours",
-  "天": "Days"
+  "天": "Days",
+  "若无法长按识别，请保存后微信扫码关注": "If you can't scan it, please save it and scan the QR code to follow Chato",
+  "扫码关注「百姓AI」公众号": "Scan the QR code to follow Chato"
 }

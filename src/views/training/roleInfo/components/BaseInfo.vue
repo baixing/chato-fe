@@ -1,18 +1,21 @@
 <template>
   <div class="chato-form">
-    <div class="chato-form-item flex gap-4 items-center w-full">
+    <div class="chato-form-item flex gap-4 items-start w-full">
       <ImgUpload :value="currentDomain.avatar" v-bind="uploadConfig" @onChange="onImgChange" />
-      <HansInputLimit
-        v-model:value="currentDomain.name"
-        type="text"
-        :limit="currentDomainHansLimit.name"
-        :disabled="
-          AIGenerateInputDisabled.system_prompt &&
-          AIGenerateInputDisabled.desc &&
-          AIGenerateInputDisabled.welcome
-        "
-        class="flex-1"
-      />
+      <div class="w-full">
+        <HansInputLimit
+          v-model:value="currentDomain.name"
+          type="text"
+          :limit="currentDomainHansLimit.name"
+          :disabled="
+            AIGenerateInputDisabled.system_prompt &&
+            AIGenerateInputDisabled.desc &&
+            AIGenerateInputDisabled.welcome
+          "
+          class="flex-1"
+        />
+        <p class="text-[#9DA3AF] text-xs mt-1">ID: {{ currentDomain.slug }}</p>
+      </div>
     </div>
     <div class="chato-form-item">
       <div class="chato-form-label flex items-center justify-between">
