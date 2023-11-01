@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { deleteFile } from '@/api/file'
 import { useBasicLayout } from '@/composables/useBasicLayout'
+import { UPLOAD_FILE_FORCED_CONVERSION_TO_TXT_TYPES } from '@/constant/common'
 import { EDocumentOperateType, LearningStatesPerformanceType } from '@/enum/knowledge'
 import type { IPage } from '@/interface/common'
 import type { IDocumentList } from '@/interface/knowledge'
@@ -99,7 +100,7 @@ function editFile(file: IDocumentList, type) {
 }
 
 function previewFile(file: IDocumentList) {
-  if (FILE_TYPE_NAMES[file.type] === 'txt') {
+  if (FILE_TYPE_NAMES[file.type] === 'txt' && file.content_html) {
     emit('editPreviewDoc', file, EDocumentOperateType.preview)
   } else {
     openPreviewUrl(file.raw_file_url)
@@ -107,6 +108,41 @@ function previewFile(file: IDocumentList) {
 }
 const handleSelectionChange = (val: IDocumentList[]) => {
   emit('update:multipleSelection', val)
+}
+
+const formatDisplayFileName = (rowData: IDocumentList) => {
+  if (
+    UPLOAD_FILE_FORCED_CONVERSION_TO_TXT_TYPES.includes(`.${rowData.type}`) &&
+    !rowData.content_html
+  ) {
+    return rowData.title
+  } else {
+    return getFileName(rowData.title)
+  }
+}
+
+const formatDisplayFileType = (rowData: IDocumentList) => {
+  if (
+    UPLOAD_FILE_FORCED_CONVERSION_TO_TXT_TYPES.includes(`.${rowData.type}`) &&
+    !rowData.content_html
+  ) {
+    return rowData.type
+  } else {
+    return getFileTypeName(rowData.type)
+  }
+}
+
+const formatDisplayCharacter = (rowData: IDocumentList) => {
+  // 如果是txt文件或音视频或图片转成 txt 文件，且生成的 txt 文件有内容，则显示字符数，不然就显示文件大小值
+  if (
+    rowData.type === 'text' ||
+    (UPLOAD_FILE_FORCED_CONVERSION_TO_TXT_TYPES.includes(`.${rowData.type}`) &&
+      rowData.content_html)
+  ) {
+    return `${rowData.raw_size} ${t('字符')}`
+  } else {
+    return convertSize(rowData.raw_size)
+  }
 }
 </script>
 
@@ -127,19 +163,19 @@ const handleSelectionChange = (val: IDocumentList[]) => {
             class="cm-link cm-link-preview"
             href="#rpreview"
             @click.prevent="previewFile(scope.row)"
-            >{{ getFileName(scope.row.title) }}
+          >
+            {{ formatDisplayFileName(scope.row) }}
           </a>
         </template>
       </el-table-column>
       <el-table-column v-if="!isMobile" :label="$t('格式')" width="70">
         <template #default="scope">
-          {{ getFileTypeName(scope.row.type) }}
+          {{ formatDisplayFileType(scope.row) }}
         </template>
       </el-table-column>
       <el-table-column v-if="!isMobile" :label="$t('大小/字符数')" width="150">
         <template #default="scope">
-          <span v-if="scope.row.type === 'text'">{{ scope.row.raw_size }}{{ $t('字符') }}</span>
-          <span v-else>{{ convertSize(scope.row.raw_size) }}</span>
+          <span>{{ formatDisplayCharacter(scope.row) }}</span>
         </template>
       </el-table-column>
       <el-table-column width="150">

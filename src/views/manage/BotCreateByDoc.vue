@@ -36,18 +36,20 @@
         </p>
         <el-input v-model="formState.webUrl" :placeholder="$t('输入要爬取的网页地址')" />
       </el-tab-pane>
-      <el-tab-pane :label="$t('上传文档')" :name="EDocumentTabType.uploadDoc">
+      <el-tab-pane :label="$t('上传文件')" :name="EDocumentTabType.uploadDoc">
         <div class="desc space-y-1">
+          <p>{{ $t('支持文档识别、图片识别、音视频识别。') }}</p>
           <p>
             {{
               $t(
-                '格式支持 .pdf .docx .mobi .xlsx .txt .pptx .epub .md .csv，音视频格式支持.mp3 .mp4 .mpeg .mpga .m4a .wav .webm；文档格式{sizeLimit}MB以内，音视频格式{mediaLimit}MB以内；单次最多上传{qtyLimit}个',
-                { sizeLimit, mediaLimit, qtyLimit }
+                '文档支持 {sizeLimit}MB 以内，图片支持 {sizeLimit}MB 以内，音视频支持 {mediaLimit}MB 以内。',
+                { sizeLimit, mediaLimit }
               )
             }}
           </p>
-          <p>{{ $t('请确保文档内容可复制，文档中的表格和图片暂时无法学习。') }}</p>
-          <p>{{ $t('音视频上传后会自动解析成文字存储并学习，内容可修改。') }}</p>
+          <p>{{ $t('图片及音视频上传后会自动解析成文字存储并学习。') }}</p>
+          <p>{{ $t('文档内容中表格和图片可能存在无法学习的情况。') }}</p>
+          <p>{{ $t('单次最多上传 {qtyLimit} 个。', { qtyLimit }) }}</p>
         </div>
         <el-upload
           v-model:file-list="uploadFileList"
