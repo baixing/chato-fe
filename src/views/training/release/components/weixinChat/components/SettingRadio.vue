@@ -54,7 +54,7 @@
         />
       </el-form-item>
       <el-form-item>
-        <ImgUpload :setInitUrl="handleChange" :fixed="true" :imgUrl="radioForm.attachment" />
+        <ImgUpload :fixed="true" v-model:img-url="radioForm.attachment" />
       </el-form-item>
       <el-form-item class="justify-end">
         <el-row class="w-full" justify="end">
@@ -121,10 +121,6 @@ const handleReset = () => {
   radioForm.channel = 1
   radioForm.content = ''
   radioForm.attachment = []
-}
-
-const handleChange = (value: string[]) => {
-  radioForm.attachment = value.length > 0 ? value : []
 }
 
 const onSubmit = async (formEl: FormInstance | undefined) => {

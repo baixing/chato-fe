@@ -29,7 +29,7 @@
                 class="flex justify-center items-center cursor-pointer text-white"
                 title="删除图片"
                 v-if="imgUrl"
-                @click.stop="() => setInitUrl('')"
+                @click.stop="() => emit('update:imgUrl', '')"
               >
                 <el-icon>
                   <Delete />
@@ -130,11 +130,17 @@ const zoomInDialogVisible = ref(false)
 const cropImgUrl = ref<string>()
 const dialogImageUrl = ref<string>()
 const fileList = ref<UploadUserFile[]>([])
-const imgUrl = computed(() => props.imgUrl)
+const imgUrl = computed({
+  get: () => {
+    console.log(props.imgUrl)
+    return props.imgUrl
+  },
+  set: (v) => emit('update:imgUrl', v)
+})
+const emit = defineEmits(['update:imgUrl'])
 const props = withDefaults(
   defineProps<
     {
-      setInitUrl: (value: string | string[]) => void
       accept: string
       initialImgUrl: string
       imgUrl: string[] | string
@@ -178,7 +184,10 @@ watch(fileList, async (value: UploadFiles, oldValue: UploadFiles) => {
   if (value.length > oldValue.length) {
     const res = await cosServe(value.at(-1).raw)
     fileList.value.at(-1).url = res
-    props.setInitUrl(fileList.value.map((item) => item.url))
+    emit(
+      'update:imgUrl',
+      fileList.value.map((item) => item.url)
+    )
   }
 })
 
@@ -204,7 +213,10 @@ const handlePictureCardPreview = (file: UploadFile) => {
 const handleRemove = (file: UploadFile) => {
   if (props.disabled) return
   fileList.value = fileList.value.filter((item) => item.uid !== file.uid)
-  props.setInitUrl(fileList.value.map((item) => item.url))
+  emit(
+    'update:imgUrl',
+    fileList.value.map((item) => item.url)
+  )
 }
 const onCropImg = () => {
   if (isArray(imgUrl.value)) return
@@ -221,10 +233,13 @@ const setTimbre = () => {
     if (props.listType) {
       const index = fileList.value.findIndex((item) => item.url === cropImgUrl.value)
       fileList.value[index].url = res
-      props.setInitUrl(fileList.value.map((item) => item.url))
+      emit(
+        'update:imgUrl',
+        fileList.value.map((item) => item.url)
+      )
       return
     }
-    props.setInitUrl(res)
+    emit('update:imgUrl', res)
   })
 }
 </script>

@@ -151,9 +151,8 @@
       </div>
       <div class="flex items-center justify-between gap-4 w-full">
         <ImgUpload
-          :setInitUrl="onImgChange"
           :fixed="true"
-          :imgUrl="currentDomain.brand_logo"
+          v-model:img-url="currentDomain.brand_logo"
           :is-initial-img="true"
         />
         <HansInputLimit
@@ -414,9 +413,6 @@ onMounted(() => {
   getTimbreList()
 })
 
-const onImgChange = (v) => {
-  currentDomain.brand_logo = v || ''
-}
 // ------------------
 </script>
 

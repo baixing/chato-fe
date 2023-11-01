@@ -50,7 +50,7 @@
           </div>
         </div>
         <div class="flex gap-4 items-center mb-8">
-          <ImgUpload :setInitUrl="onImgChange" :fixed="true" :imgUrl="formState.avatar" />
+          <ImgUpload :fixed="true" v-model:img-url="formState.avatar" />
           <HansInputLimit
             v-model:value="formState.name"
             type="text"

@@ -50,8 +50,7 @@
             </el-form-item>
             <el-form-item prop="img" class="mt-[6px]">
               <ImgUpload
-                :imgUrl="inputTextForm.images"
-                :setInitUrl="onHandleChange"
+                v-model:imgUrl="inputTextForm.images"
                 listType="picture-card"
                 :fixed="false"
                 :isInitialImg="true"
@@ -340,10 +339,6 @@ const watchActiveName = watch(
   },
   { immediate: true }
 )
-
-function onHandleChange(value: string[]) {
-  inputTextForm.images = value.length > 0 ? value : []
-}
 
 onUnmounted(() => {
   watchProps()

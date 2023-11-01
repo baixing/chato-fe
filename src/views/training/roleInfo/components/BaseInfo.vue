@@ -1,12 +1,7 @@
 <template>
   <div class="chato-form">
     <div class="chato-form-item flex gap-4 items-center w-full">
-      <ImgUpload
-        :setInitUrl="setInitUrl"
-        :fixed="true"
-        :imgUrl="currentDomain.avatar"
-        :is-initial-img="true"
-      />
+      <ImgUpload :fixed="true" v-model:img-url="currentDomain.avatar" :is-initial-img="true" />
       <HansInputLimit
         v-model:value="currentDomain.name"
         type="text"
@@ -218,8 +213,6 @@ const QAModalVisible = ref(false)
 const DOCModalVisible = ref(false)
 const uploadFilesListLoading = ref(false)
 const uploadFilesList = ref<IDocumentList[]>([])
-
-const setInitUrl = (value: string) => (currentDomain.avatar = value || '')
 
 const initFilesList = async () => {
   try {

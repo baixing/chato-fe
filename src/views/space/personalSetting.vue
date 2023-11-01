@@ -24,12 +24,7 @@
             v-else
             :class="[!settingForm.avatar && !isRemove ? 'hidden-img-upload' : 'show-img-upload']"
           >
-            <ImgUpload
-              @change="handleChange"
-              :setInitUrl="handleChange"
-              :fixed="true"
-              :imgUrl="settingForm.avatar"
-            />
+            <ImgUpload @change="handleChange" :fixed="true" v-model:img-url="settingForm.avatar" />
           </div>
         </div>
       </el-form-item>
@@ -113,8 +108,6 @@ const isRemove = ref<boolean>(false)
 const handleReplace = () => {
   isRemove.value = true
 }
-
-const handleChange = (value: string) => (settingForm.avatar = value || '')
 
 const handleSaveSetting = async (formEl: FormInstance | undefined) => {
   if (!formEl) return

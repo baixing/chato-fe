@@ -40,8 +40,7 @@
       </p>
       <el-form-item prop="images" class="content_html_item">
         <ImgUpload
-          :imgUrl="inputTextForm.images"
-          :setInitUrl="handleChange"
+          v-model:img-url="inputTextForm.images"
           listType="picture-card"
           :fixed="false"
           :disabled="inputTextForm.status === 'preview'"
@@ -158,10 +157,6 @@ async function submitInputText(formEl) {
       console.log('error submit!', fields)
     }
   })
-}
-
-function handleChange(value: string[]) {
-  inputTextForm.images = value.length > 0 ? value : []
 }
 
 const handleCloseDialogVisble = () => {

@@ -9,7 +9,7 @@
           <div
             :class="[!userInfo.org.avatar && !isRemove ? 'hidden-img-upload' : 'show-img-upload']"
           >
-            <ImgUpload :setInitUrl="handleChange" :fixed="true" :imgUrl="avatar" />
+            <ImgUpload :fixed="true" v-model:img-url="avatar" />
           </div>
         </div>
         <span class="mx-4 text-sm" v-if="!isEdit">{{ name }}</span>
@@ -168,11 +168,6 @@ const roleList = [
 
 const handleEdit = () => {
   isEdit.value = true
-}
-
-const handleChange = (value: string) => {
-  avatar.value = value
-  handleUpdateOrgInfo()
 }
 
 const blurInput = () => {
