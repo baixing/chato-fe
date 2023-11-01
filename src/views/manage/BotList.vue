@@ -30,34 +30,29 @@
         @visible="setBotUseScopeDialogVisible"
       />
     </div>
-    <el-dialog
-      v-model="dialogState.visible"
-      :title="dialogState.title"
-      :width="isMobile ? '80%' : '40%'"
-    >
-      <el-row align="middle" class="mb-5">
-        <el-col :span="5">{{ t('机器人分类') }}</el-col>
-        <el-col :span="19">
-          <el-select v-model="opDomain.category" :placeholder="t(`请选择机器人分类`)">
-            <el-option
-              v-for="item in DomainCategoryOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-col>
-      </el-row>
-      <template #footer>
-        <div class="flex justify-end items-center gap-3">
-          <el-button @click="onClose">{{ t('取消') }}</el-button>
-          <el-button type="primary" @click="onSync" :loading="syncSubmiting">
-            {{ t('确认') }}
-          </el-button>
-        </div>
-      </template>
-    </el-dialog>
   </ContentLayout>
+  <Modal
+    v-model:visible="dialogState.visible"
+    :title="dialogState.title"
+    :footerAttrs="{
+      submitting: syncSubmiting
+    }"
+    @cancel="onClose"
+    @submit="onSync"
+  >
+    <el-row align="middle" class="mb-5">
+      <el-col :span="5">{{ t('机器人分类') }}</el-col>
+      <el-col :span="19">
+        <el-select
+          v-loading="domainCategoryLoading"
+          v-model="opDomain.category"
+          :placeholder="t(`请选择机器人分类`)"
+        >
+          <el-option v-for="item in domainCategoryList" :key="item" :label="item" :value="item" />
+        </el-select>
+      </el-col>
+    </el-row>
+  </Modal>
   <Modal
     v-model:visible="accessPermissionDialogVisible"
     title="访问权限"
@@ -82,12 +77,17 @@
   </Modal>
 </template>
 <script lang="ts" setup>
-import { cloneDomainRobot, updateBotUseScope, updateDomainInResource } from '@/api/domain'
+import {
+  cloneDomainRobot,
+  getDomainCategoryList,
+  updateBotUseScope,
+  updateDomainInResource
+} from '@/api/domain'
 import { deletesDomain } from '@/api/user'
+import Modal from '@/components/Modal/index.vue'
 import Topbar from '@/components/Topbar/index.vue'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import useSpaceRights from '@/composables/useSpaceRights'
-import { DomainCategoryOptions } from '@/constant/domain'
 import { ESpaceRightsType } from '@/enum/space'
 import type { IDomainInfo } from '@/interface/domain'
 import ContentLayout from '@/layout/ContentLayout.vue'
@@ -100,7 +100,6 @@ import { onMounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import BotListCard from './components/BotListCard.vue'
-import Modal from '@/components/Modal/index.vue'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -219,6 +218,7 @@ const onSync = async () => {
       category: opDomain.value.category
     })
     dialogState.visible = false
+    opDomain.value = {}
     ElNotification.success(t('操作成功'))
     await onRefresh()
   } catch (err) {
@@ -267,7 +267,23 @@ const cloneRobot = async (id: string, name: string) => {
     .catch(() => {})
 }
 
+const domainCategoryLoading = ref(false)
+const domainCategoryList = ref<string[]>([])
+const initDomainCategoryList = async () => {
+  try {
+    domainCategoryLoading.value = true
+    const {
+      data: { data }
+    } = await getDomainCategoryList()
+    domainCategoryList.value = data
+  } catch (e) {
+  } finally {
+    domainCategoryLoading.value = false
+  }
+}
+
 onMounted(() => {
+  initDomainCategoryList()
   onRefresh()
 })
 

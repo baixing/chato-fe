@@ -126,3 +126,10 @@ export function checkDomainIdAPI(domainId: string) {
     params: { domain_id: domainId }
   })
 }
+
+export function getDomainCategoryList() {
+  return request<string[]>({
+    method: 'get',
+    url: `/chato/api/v1/config/category`
+  })
+}
