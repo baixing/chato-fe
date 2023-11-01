@@ -2,7 +2,7 @@
 import '@/styles/main.scss'
 import 'prismjs/themes/prism.css'
 import 'wow.js/css/libs/animate.css'
-//
+
 import SvgIcon from '@/components/SvgIcon/index.vue'
 import useBaiduPromotion from '@/composables/useBaiduPromotion'
 import useFavicon from '@/composables/useFavicon'

@@ -40,10 +40,10 @@
       </p>
       <el-form-item prop="images" class="content_html_item">
         <ImgUpload
-          :value="inputTextForm.images"
-          @onChange="handleChange"
-          v-bind="uploadConfig"
-          :disabled="inputTextForm.status === 'preview'"
+          :imgUrl="inputTextForm.images"
+          :setInitUrl="handleChange"
+          :listType="'picture-card'"
+          :initImgUrl="''"
         />
       </el-form-item>
     </el-form>
@@ -62,6 +62,7 @@
 import type { MediaItem } from '@/components/ImgUpload/data'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
 import Modal from '@/components/Modal/index.vue'
+import ImgUpload from '@/components/NewImgUpload/ImgUpload.vue'
 import type { TDefaultShortcutProps } from '@/interface/userInterface'
 import { $notnull } from '@/utils/help'
 import { getStringWidth } from '@/utils/string'
@@ -178,8 +179,8 @@ async function submitInputText(formEl) {
   })
 }
 
-function handleChange(value: MediaItem[]) {
-  inputTextForm.images = value.length > 0 ? value.map((i) => i.url) : []
+function handleChange(value: string[]) {
+  inputTextForm.images = value.length > 0 ? value : []
 }
 
 const handleCloseDialogVisble = () => {

@@ -1,9 +1,7 @@
 <template>
   <div class="chato-form">
-    <div class="w-96 h-96">
-      <ImgUpload class="w-96 h-96" />
-    </div>
     <div class="chato-form-item flex gap-4 items-center w-full">
+      <ImgUpload :setInitUrl="setInitUrl" :fixed="true" :imgUrl="currentDomain.avatar" />
       <HansInputLimit
         v-model:value="currentDomain.name"
         type="text"
@@ -157,12 +155,10 @@
 
 <script setup lang="ts">
 import { deleteFile, getFilesByDomainId } from '@/api/file'
-import DefaultAvatar from '@/assets/img/avatar.png'
 import AIGenerateBtn from '@/components/AIGenerateBtn/index.vue'
 import EnterDoc from '@/components/EnterAnswer/EnterDoc.vue'
 import EnterQa from '@/components/EnterAnswer/EnterQa.vue'
 import ImgUpload from '@/components/NewImgUpload/ImgUpload.vue'
-// import ImgUpload from '@/components/ImgUpload/index.vue'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
 import SLTitle from '@/components/Title/SLTitle.vue'
 import { currentEnvConfig } from '@/config'
@@ -181,7 +177,6 @@ import { Close } from '@element-plus/icons-vue'
 import { ElMessageBox, ElNotification } from 'element-plus'
 import { computed, inject, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-// import { imgBlob } from '@/constant/uploadImg'
 
 const currentDomain = inject<Partial<IDomainInfo>>(DomainEditSymbol)
 const currentDomainHansLimit = inject<Record<string, string>>(DomainHansLimitSymbol)
@@ -219,6 +214,8 @@ const QAModalVisible = ref(false)
 const DOCModalVisible = ref(false)
 const uploadFilesListLoading = ref(false)
 const uploadFilesList = ref<IDocumentList[]>([])
+
+const setInitUrl = (value: string) => (currentDomain.avatar = value || '')
 
 const initFilesList = async () => {
   try {

@@ -9,7 +9,7 @@
           <div
             :class="[!userInfo.org.avatar && !isRemove ? 'hidden-img-upload' : 'show-img-upload']"
           >
-            <ImgUpload v-bind="uploadConfig" :value="avatar" @onChange="handleChange" />
+            <ImgUpload :setInitUrl="handleChange" :fixed="true" :initImgUrl="''" :imgUrl="avatar" />
           </div>
         </div>
         <span class="mx-4 text-sm" v-if="!isEdit">{{ name }}</span>
@@ -24,7 +24,9 @@
           :limit="20"
           :defaultFocus="true"
         />
-        <el-icon @click="handleEdit" :size="14"><Edit /></el-icon>
+        <el-icon @click="handleEdit" :size="14">
+          <Edit />
+        </el-icon>
       </div>
       <el-button
         link
@@ -76,7 +78,7 @@
               v-model="scope.row.role"
               class="custom-select text-[#3D3D3D]"
               :placeholder="$t(`选择角色`)"
-              @change="(e: ESettingSpaceRole) => handleSelect(scope.row.id,e)"
+              @change="(e: ESettingSpaceRole) => handleSelect(scope.row.id, e)"
               v-else
             >
               <el-option
@@ -121,6 +123,7 @@ import { removeSpaceMember, updateOrgSpaceInfo, updateSpaceMemberRole } from '@/
 import UserAvatar from '@/components/Avatar/UserAvatar.vue'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
 import useSpace from '@/composables/useSpace'
+import ImgUpload from '@/components/NewImgUpload/ImgUpload.vue'
 import useSpaceRights from '@/composables/useSpaceRights'
 import type { ESettingSpaceRole } from '@/enum/space'
 import { ESpaceRightsType } from '@/enum/space'
@@ -163,32 +166,12 @@ const roleList = [
   }
 ]
 
-const uploadConfig = {
-  uploadType: 1, // 1: 直接上传; 2: 打开图库上传
-  cropProps: {
-    aspectRatio: [1, 1], // 默认裁剪比例
-    autoAspectRatio: true, // 是否允许修改裁剪比例
-    notSelectCrop: false
-  },
-  showUploadList: {
-    // 可操作按钮
-    showCropIcon: true,
-    showPreviewIcon: true,
-    showRemoveIcon: true,
-    showDownloadIcon: true
-  },
-  maxLength: 1, // 限制上传数量
-  itemWidth: 48,
-  itemHeight: 48,
-  uploadFillet: true
-}
-
 const handleEdit = () => {
   isEdit.value = true
 }
 
-const handleChange = (value: any) => {
-  avatar.value = value.url
+const handleChange = (value: string) => {
+  avatar.value = value
   handleUpdateOrgInfo()
 }
 
@@ -299,20 +282,24 @@ init()
     overflow-y: auto;
     height: calc(100% - 190px);
   }
+
   .el-table__cell {
     border-bottom: none !important;
   }
+
   thead {
     .table-role-container {
       .cell {
         padding-left: 24px;
       }
     }
+
     .cell {
       color: #303133;
       font-weight: 500;
     }
   }
+
   .p-s-header {
     display: flex;
     justify-content: space-between;
@@ -323,17 +310,21 @@ init()
     border-radius: 8px;
     color: #3d3d3d;
     cursor: pointer;
+
     .header-left {
       display: flex;
       justify-content: flex-start;
       align-items: center;
+
       .img-upload-container {
         position: relative;
         width: 48px;
         height: 48px;
+
         .hidden-img-upload {
           opacity: 0;
         }
+
         .show-img-upload {
           opacity: 1;
         }
@@ -346,6 +337,7 @@ init()
       display: flex;
       justify-content: space-between;
       align-items: center;
+
       .item-left {
         display: flex;
         flex-direction: column;
@@ -367,6 +359,7 @@ init()
   width: 40px;
   height: 40px;
   font-size: 14px;
+
   &:hover {
     &::after {
       content: '替换';
@@ -376,6 +369,7 @@ init()
     }
   }
 }
+
 :deep(.el-select-dropdown__item) {
   .item-right {
     width: 14px;
@@ -383,11 +377,13 @@ init()
     border-radius: 100%;
     border: 1px solid #e4e7ed;
   }
+
   .item-selected {
     display: flex;
     justify-content: center;
     align-items: center;
     background: #7c5cfc;
+
     &::after {
       display: inline-block;
       content: '';
