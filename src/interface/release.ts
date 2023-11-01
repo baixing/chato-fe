@@ -328,3 +328,8 @@ export interface IMobileLimitItem {
   mobile: string
   remark: string
 }
+
+export interface IAppletDomainCheckParams {
+  file_url: string
+  file_name: string
+}

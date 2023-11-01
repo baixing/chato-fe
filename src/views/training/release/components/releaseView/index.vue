@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import useGlobalProperties from '@/composables/useGlobalProperties'
 import useSpaceRights from '@/composables/useSpaceRights'
 import { currentEnvConfig } from '@/config'
 import { PaidCommercialTypes } from '@/constant/space'
-import { ESpaceCommercialType, ESpaceRightsType } from '@/enum/space'
 import { EAccountSettingStatus, EAppletcStatus } from '@/enum/release'
+import { ESpaceCommercialType, ESpaceRightsType } from '@/enum/space'
 import type { ICreateAccountRes } from '@/interface/release'
 import { useBase } from '@/stores/base'
 import { useDomainStore } from '@/stores/domain'
@@ -14,11 +15,13 @@ import {
   CirclePlus,
   CopyDocument,
   Document,
+  FolderChecked,
   FullScreen,
   Tools,
   UploadFilled,
   View
 } from '@element-plus/icons-vue'
+import { useSessionStorage } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import {
   computed,
@@ -33,8 +36,6 @@ import {
 } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
-import { useSessionStorage } from '@vueuse/core'
-import useGlobalProperties from '@/composables/useGlobalProperties'
 import ReleaseBox from './components/ReleaseBox.vue'
 
 const SerachApi = defineAsyncComponent(() => import('./components/apiCall/SerachApi.vue'))
@@ -69,6 +70,9 @@ const DrawerAccount = defineAsyncComponent(
 const CreateApplet = defineAsyncComponent(() => import('./components/applet/CreateApplet.vue'))
 const DrawerApplet = defineAsyncComponent(() => import('./components/applet/DrawerApplet.vue'))
 const CreatePoster = defineAsyncComponent(() => import('./components/gzhPoster/SharePoster.vue'))
+const VerificationTxt = defineAsyncComponent(
+  () => import('./components/applet/VerificationTxt.vue')
+)
 
 const route = useRoute()
 const { t } = useI18n()
@@ -116,7 +120,8 @@ const features = reactive({
   drawerAccountVisible: false, // 微信聊天-查看聊天
   createAppletVisible: false, // 小程序-扫码授权
   drawerAppletVisible: false, // 小程序-查看授权结果
-  createPoster: false // 海报
+  createPoster: false, // 海报
+  domainVerificationVisible: false // 小程序-域名校验
 })
 
 const {
@@ -136,7 +141,8 @@ const {
   drawerAccountVisible,
   createAppletVisible,
   drawerAppletVisible,
-  createPoster
+  createPoster,
+  domainVerificationVisible
 } = toRefs(features)
 
 const { checkRightsTypeNeedUpgrade, isAllowedCommercialType } = useSpaceRights()
@@ -411,6 +417,12 @@ const releaseList = [
         label: t('配置文档'),
         scriptId: 'Chato-applet-document',
         click: () => handlePreview(appletConfigDocs)
+      },
+      {
+        icon: FolderChecked,
+        label: t('域名校验'),
+        scriptId: 'Chato-applet-domain',
+        click: () => commonVisible(domainVerificationVisible)
       }
     ]
   }
@@ -578,6 +590,10 @@ onMounted(() => {
       v-model:value="drawerAppletVisible"
       :domainId="domainInfo.id"
       @handleRetry="createAppletVisible = true"
+    />
+    <VerificationTxt
+      v-model:value="domainVerificationVisible"
+      :chatAPI="chatReleaseURL.chatWebPage"
     />
   </div>
 </template>

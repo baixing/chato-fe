@@ -1,4 +1,5 @@
 import { currentEnvConfig } from '@/config'
+import type { IResponse } from '@/interface/common'
 import COS from 'cos-js-sdk-v5'
 import { ElNotification } from 'element-plus'
 import { v4 as uuidv4 } from 'uuid'
@@ -44,19 +45,22 @@ const getUploadResult = (
 export const cosServe = async (
   file: Blob,
   url: string = 'avatar/bot',
+  needSuffix: boolean = true,
+  fileName?: string,
   onProgress?: (progressData: COS.ProgressInfo) => void,
   headers?: HeadersInit
 ): Promise<string> => {
   const { type } = file
   const date = new Date()
-  const name = uuidv4()
+  const name = needSuffix ? uuidv4() : '' + fileName
   const dateTime =
     '' + date.getFullYear() + (date.getMonth() > 10 ? date.getMonth() : '0' + date.getMonth()) + '/'
-  const imgName = url + '/' + dateTime + name + '.png'
+  const suffix = needSuffix ? dateTime : ''
+  const imgName = url + '/' + suffix + name
   const files = new File([file], imgName, { type: type })
   const cos = new COS({
     getAuthorization: async (_, callback) => {
-      const res: ITencentCloudFile = await fetch(
+      const { data: res }: IResponse<ITencentCloudFile> = await fetch(
         currentEnvConfig.baseURL + '/chato/api/file/upload/tencent_cloud_file?path=' + imgName,
         {
           headers

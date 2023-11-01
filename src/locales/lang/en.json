@@ -1351,5 +1351,11 @@
   "已爬": "Crawl",
   "条；重复": "article; duplicate ",
   "条；剩余": "articles; remaining ",
-  "数据总结": "Data Summary"
+  "数据总结": "Data Summary",
+  "域名校验": "Domain Verification",
+  "如何获取校验文件？": "How to get the verification file?",
+  "微信小程序域名校验文件获取指引": "(WeChat Mini Program Domain Verification File Acquisition Guide )",
+  "域名地址": "Domain Address",
+  "校验文件": "Verification File",
+  "后缀为：*.txt的文件，上传成功后约一分钟生效，请耐心等待": "The file suffix is *.txt, and the upload is successful after one minute. Please wait patiently"
 }

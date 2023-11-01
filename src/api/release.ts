@@ -22,7 +22,8 @@ import type {
   IAppletAuthRes,
   IGetBroadcastParams,
   ISettingBroadcastType,
-  IMobileLimitItem
+  IMobileLimitItem,
+  IAppletDomainCheckParams
 } from '@/interface/release'
 import type { IPageFilter } from '@/interface/common'
 import request from '@/utils/request'

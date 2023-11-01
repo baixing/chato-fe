@@ -44,31 +44,31 @@
           </p>
           <div class="w-full">
             <UploadFile
-              v-model:value="cnameSetModel.pub_key"
-              :disabled="cnameSetModel.pub_key.length > 0"
-              :apiUpload="apiUpload"
+              v-model:value="cnameUpload.pub_key"
+              :disabled="cnameUpload.pub_key.length > 0"
               :name="$t(`上传证书文件`)"
               :extra="$t(`后缀为：*.pem或*.crt的文件`)"
-              accept-type=".pem,.crt"
+              :maxSize="5"
+              :limitType="['.pem', '.crt']"
             />
           </div>
           <div class="w-full">
             <UploadFile
-              v-model:value="cnameSetModel.pri_key"
-              :disabled="cnameSetModel.pri_key.length > 0"
-              :apiUpload="apiUpload"
+              v-model:value="cnameUpload.pri_key"
+              :disabled="cnameUpload.pri_key.length > 0"
               :name="$t(`上传私钥文件`)"
               :extra="$t(`后缀为：*.key的文件`)"
-              accept-type=".key"
+              :maxSize="5"
+              :limitType="['.key']"
             />
           </div>
         </el-form-item>
         <el-form-item>
           <el-row justify="end" class="w-full">
             <el-col :lg="4" :xl="4" :md="12" :xs="12" :sm="12">
-              <el-button type="primary" size="large" :disabled="disabled" @click="handleSubmit">{{
-                $t('提交审核')
-              }}</el-button>
+              <el-button type="primary" size="large" :disabled="disabled" @click="handleSubmit">
+                {{ $t('提交审核') }}
+              </el-button>
             </el-col>
           </el-row>
         </el-form-item>
@@ -78,23 +78,17 @@
 </template>
 <script lang="ts" setup>
 import { saveBrandDomain } from '@/api/release'
-import { currentEnvConfig } from '@/config'
 import { EBrandCreateEditStatusType } from '@/enum/domain'
 import type { IBrandDomainType, IBrandDomainTypeKeyFile } from '@/interface/release'
+import { cosServe } from '@/utils/cos'
 import { $notnull } from '@/utils/help'
-import * as url from '@/utils/url'
-import type { FormInstance } from 'element-plus'
+import type { FormInstance, UploadUserFile } from 'element-plus'
 import { ElLoading, ElNotification as Notification } from 'element-plus'
 import { computed, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import UploadFile from './UploadFile.vue'
-import type { UploadResType } from '@/interface/utilsType'
+import UploadFile from '../../UploadFile.vue'
 
 const { t } = useI18n()
-type cnameSetModelType = IBrandDomainType & {
-  pub_key: UploadResType[]
-  pri_key: UploadResType[]
-}
 const props = defineProps<{
   slug: string
   status: EBrandCreateEditStatusType
@@ -102,12 +96,14 @@ const props = defineProps<{
 }>()
 const emit = defineEmits(['nextClick', 'handleSubmitSuccess'])
 const cnameSetForm = ref<FormInstance>()
-const cnameSetModel = reactive<cnameSetModelType>({
+const cnameUpload = reactive({
+  pub_key: [],
+  pri_key: []
+})
+const cnameSetModel = reactive<IBrandDomainType>({
   id: 0,
   hostname: '',
   record: '',
-  pub_key: [],
-  pri_key: [],
   status: EBrandCreateEditStatusType.create
 })
 const checked = ref(false)
@@ -120,13 +116,6 @@ const disabled = computed(() => {
   }
   return disable
 })
-const apiUpload = url.join(currentEnvConfig.uploadBaseURL, '/chato/api/file/upload/file')
-
-const PubkeyToData = (pubKey: UploadResType[]) => {
-  return pubKey.length > 0
-    ? JSON.stringify(pubKey.map((item) => ({ name: item.name, url: item.url }))[0])
-    : ''
-}
 
 const handleSubmit = async () => {
   // 提交审核
@@ -142,9 +131,7 @@ const handleSubmit = async () => {
     memo: '',
     status: $notnull(props.brandDomainInfo)
       ? EBrandCreateEditStatusType.create
-      : EBrandCreateEditStatusType.update,
-    pub_key: PubkeyToData(cnameSetModel.pub_key),
-    pri_key: PubkeyToData(cnameSetModel.pri_key)
+      : EBrandCreateEditStatusType.update
   }
   const res = await saveBrandDomain(props.slug, data)
   loading.close()
@@ -155,6 +142,22 @@ const handleSubmit = async () => {
     Notification.success(res.data.message)
   }
 }
+
+const onUploadPriFile = async (key: string, fileList: UploadUserFile[]) => {
+  await cosServe(fileList.at(-1).raw, `domain/${key}`, false, fileList.at(-1).name)
+}
+
+const watchAndUpload = (keyType: 'pem' | 'key', propName: 'pri_key' | 'pub_key') => {
+  watch(
+    () => cnameUpload[propName],
+    async (v) => {
+      await onUploadPriFile(keyType, v)
+    }
+  )
+}
+
+watchAndUpload('pem', 'pri_key')
+watchAndUpload('key', 'pub_key')
 
 watch(
   () => props.brandDomainInfo,
