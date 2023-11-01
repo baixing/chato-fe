@@ -416,7 +416,7 @@ onMounted(() => {
 })
 
 const onImgChange = (v) => {
-  currentDomain.brand_logo = v?.url || ''
+  currentDomain.brand_logo = v || ''
 }
 // ------------------
 </script>
