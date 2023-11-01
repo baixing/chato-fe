@@ -21,8 +21,10 @@ import type {
   IAppletAuthParams,
   IAppletAuthRes,
   IGetBroadcastParams,
-  ISettingBroadcastType
+  ISettingBroadcastType,
+  IMobileLimitItem
 } from '@/interface/release'
+import type { IPageFilter } from '@/interface/common'
 import request from '@/utils/request'
 
 // 创建账号-验证码校验
@@ -290,6 +292,14 @@ export function getTimeBroadcastAPI(data: IGetBroadcastParams) {
   })
 }
 
+// ------发布设置-手机号白名单------
+export function getMobileLimitAPI(domainId: number, data: IPageFilter<{}>) {
+  return request<IMobileLimitItem[]>({
+    url: `/chato/api/domains/${domainId}/mobile_limit`,
+    data
+  })
+}
+
 export function postTimeBroadcastAPI(data: ISettingBroadcastType) {
   return request({
     method: 'post',
@@ -298,6 +308,31 @@ export function postTimeBroadcastAPI(data: ISettingBroadcastType) {
   })
 }
 
+export function postMobileLimitAPI(domainId: number, data: IMobileLimitItem) {
+  return request({
+    method: 'post',
+    url: `/chato/api/domains/${domainId}/mobile_limit`,
+    data
+  })
+}
+
+export function postMobileLimitFileAPI(domainId: number, file: string) {
+  return request({
+    method: 'post',
+    url: `/chato/api/domains/${domainId}/mobile_limit/file`,
+    data: { file }
+  })
+}
+
+export function deleteMobileLimitAPI(domainId: number, limitId: number) {
+  return request({
+    method: 'delete',
+    url: `/chato/api/domains/${domainId}/mobile_limit/${limitId}`
+  })
+}
+// ----------------------
+
+// ------群聊广播-------
 export function patchTimeBroadcastAPI(data: ISettingBroadcastType) {
   return request({
     method: 'patch',

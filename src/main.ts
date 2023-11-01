@@ -1,4 +1,4 @@
-// 确保样式优先级
+// ----- 确保样式优先级 -----
 import '@/styles/main.scss'
 import 'prismjs/themes/prism.css'
 import 'wow.js/css/libs/animate.css'
@@ -9,6 +9,7 @@ import useBaiduPromotion from '@/composables/useBaiduPromotion'
 import useFavicon from '@/composables/useFavicon'
 import useSensors from '@/composables/useSensors'
 import useSentry from '@/composables/useSentry'
+import { useBase } from '@/stores/base'
 import elementIcon from '@/utils/elementIcon'
 import { copyPaste } from '@/utils/help'
 import ElementPlus from 'element-plus'
@@ -19,7 +20,6 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import i18n from './locales'
 import router from './router'
-import { useBase } from '@/stores/base'
 
 const app = createApp(App)
 

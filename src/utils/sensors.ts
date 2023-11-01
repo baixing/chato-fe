@@ -26,6 +26,13 @@ export default class Sensors {
     registerPlugin.hookRegister((eventInfo) => {
       const { event, properties } = eventInfo
       const customProperties = {}
+      const baseStoreI = useBase()
+      const { abTestConfig } = storeToRefs(baseStoreI)
+      Object.keys(abTestConfig.value).forEach((key) => {
+        if (abTestConfig.value[key]) {
+          customProperties['abtest_' + key] = abTestConfig.value[key]
+        }
+      })
       let matchRegStr
       if (event === '$pageview') {
         matchRegStr = this.pageViewPathKeys.find((item) =>
@@ -72,9 +79,7 @@ export default class Sensors {
           }
         },
         custom_property: (target: HTMLElement) => {
-          const baseStoreI = useBase()
-          const { abTestConfig } = storeToRefs(baseStoreI)
-          const res = { abtest: abTestConfig.value }
+          const res = {}
           Array.from(target.attributes).map((item) => {
             const matchAttr = item.name
               .match(/^data-sensors-(?!click\b)(.+)/)?.[1]

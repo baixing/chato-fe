@@ -11,6 +11,7 @@ export const useSpaceStore = defineStore('space', () => {
     consumed: 0,
     total: 0
   }) // 空间额度
+  const followPublicVisible = ref(false) // 引导关注公众号弹框
   const upgradeRightsVisible = ref(false) // 升级权益弹窗
   const upgradeRightsType = ref(ESpaceRightsType.default) // 升级权益类型
 
@@ -45,6 +46,7 @@ export const useSpaceStore = defineStore('space', () => {
     currentRights,
     upgradeRightsType,
     upgradeRightsVisible,
+    followPublicVisible,
     initSpaceRights,
     initSpaceQuota,
     initSpaceMembers

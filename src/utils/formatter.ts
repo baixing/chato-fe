@@ -1,4 +1,4 @@
-import { UPLOAD_FILE_VIDEO_AUDIO_TYPES } from '@/constant/common'
+import { UPLOAD_FILE_FORCED_CONVERSION_TO_TXT_TYPES } from '@/constant/common'
 
 export function formatPriceInFen(fen, decimal = 2) {
   decimal = Number.isInteger(decimal) ? decimal : 2
@@ -37,7 +37,7 @@ export const FILE_TYPE_NAMES = {
   pptx: 'pptx',
   xls: 'excel',
   xlsx: 'excel',
-  ...UPLOAD_FILE_VIDEO_AUDIO_TYPES.reduce((pre, cur) => {
+  ...UPLOAD_FILE_FORCED_CONVERSION_TO_TXT_TYPES.reduce((pre, cur) => {
     pre[cur.replace('.', '')] = 'txt'
     return pre
   }, {})
@@ -50,7 +50,7 @@ export function getFileTypeName(type) {
 export function getFileName(fileName: string) {
   const fileExtension = fileName.match(/\.([^.]+)$/)?.[1] // 使用正则表达式从文件名末尾提取文件后缀
 
-  if (fileExtension && UPLOAD_FILE_VIDEO_AUDIO_TYPES.includes(`.${fileExtension}`)) {
+  if (fileExtension && UPLOAD_FILE_FORCED_CONVERSION_TO_TXT_TYPES.includes(`.${fileExtension}`)) {
     const fileHeadName = fileName.replace(/\.[^.]+$/, '') // 使用正则表达式去除文件名末尾的后缀
     return `${fileHeadName} [${fileExtension}转txt]`
   }

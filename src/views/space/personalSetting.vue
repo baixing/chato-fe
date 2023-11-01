@@ -24,7 +24,7 @@
             v-else
             :class="[!settingForm.avatar && !isRemove ? 'hidden-img-upload' : 'show-img-upload']"
           >
-            <ImgUpload @change="handleChange" :fixed="true" v-model:img-url="settingForm.avatar" />
+            <ImgUpload :fixed="true" v-model:img-url="settingForm.avatar" />
           </div>
         </div>
       </el-form-item>

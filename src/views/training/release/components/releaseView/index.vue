@@ -34,26 +34,41 @@ import {
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import { useSessionStorage } from '@vueuse/core'
-import ReleaseBox from './ReleaseBox.vue'
+import useGlobalProperties from '@/composables/useGlobalProperties'
+import ReleaseBox from './components/ReleaseBox.vue'
 
-const SerachApi = defineAsyncComponent(() => import('./apiCall/SerachApi.vue'))
-const ApplicationForm = defineAsyncComponent(() => import('./application/ApplicationForm.vue'))
-const BrandDomain = defineAsyncComponent(() => import('./brandDomain/BrandDomainIndex.vue'))
-const CreateFeishu = defineAsyncComponent(() => import('./feishuPublic/CreateFeishu.vue'))
-const DrawerSite = defineAsyncComponent(() => import('./implantJs/DrawerSite.vue'))
-const SetEffectSite = defineAsyncComponent(() => import('./implantJs/SetEffectSite.vue'))
-const OfficialAccont = defineAsyncComponent(() => import('./officialAccount/OfficialAccont.vue'))
-const EmPower = defineAsyncComponent(() => import('./tiktok/EmPower.vue'))
-const Copylink = defineAsyncComponent(() => import('./webPage/Copylink.vue'))
-const CreatePoster = defineAsyncComponent(() => import('./gzhPoster/SharePoster.vue'))
-const CreateChat = defineAsyncComponent(() => import('./weixinChat/CreateChat.vue'))
-const DrawerChat = defineAsyncComponent(() => import('./weixinChat/DrawerChat.vue'))
-const WeixinService = defineAsyncComponent(() => import('./weixinService/WeixinService.vue'))
-const CreateDing = defineAsyncComponent(() => import('./dingDing/CreateDing.vue'))
-const CreateAccount = defineAsyncComponent(() => import('./weixinChat/CreateAccount.vue'))
-const DrawerAccount = defineAsyncComponent(() => import('./weixinChat/DrawerAccount.vue'))
-const CreateApplet = defineAsyncComponent(() => import('./applet/CreateApplet.vue'))
-const DrawerApplet = defineAsyncComponent(() => import('./applet/DrawerApplet.vue'))
+const SerachApi = defineAsyncComponent(() => import('./components/apiCall/SerachApi.vue'))
+const ApplicationForm = defineAsyncComponent(
+  () => import('./components/application/ApplicationForm.vue')
+)
+const BrandDomain = defineAsyncComponent(
+  () => import('./components/brandDomain/BrandDomainIndex.vue')
+)
+const CreateFeishu = defineAsyncComponent(
+  () => import('./components/feishuPublic/CreateFeishu.vue')
+)
+const DrawerSite = defineAsyncComponent(() => import('./components/implantJs/DrawerSite.vue'))
+const SetEffectSite = defineAsyncComponent(() => import('./components/implantJs/SetEffectSite.vue'))
+const OfficialAccont = defineAsyncComponent(
+  () => import('./components/officialAccount/OfficialAccont.vue')
+)
+const EmPower = defineAsyncComponent(() => import('./components/tiktok/EmPower.vue'))
+const Copylink = defineAsyncComponent(() => import('./components/webPage/Copylink.vue'))
+const CreateChat = defineAsyncComponent(() => import('./components/weixinChat/CreateChat.vue'))
+const DrawerChat = defineAsyncComponent(() => import('./components/weixinChat/DrawerChat.vue'))
+const WeixinService = defineAsyncComponent(
+  () => import('./components/weixinService/WeixinService.vue')
+)
+const CreateDing = defineAsyncComponent(() => import('./components/dingDing/CreateDing.vue'))
+const CreateAccount = defineAsyncComponent(
+  () => import('./components/weixinChat/CreateAccount.vue')
+)
+const DrawerAccount = defineAsyncComponent(
+  () => import('./components/weixinChat/DrawerAccount.vue')
+)
+const CreateApplet = defineAsyncComponent(() => import('./components/applet/CreateApplet.vue'))
+const DrawerApplet = defineAsyncComponent(() => import('./components/applet/DrawerApplet.vue'))
+const CreatePoster = defineAsyncComponent(() => import('./components/gzhPoster/SharePoster.vue'))
 
 const route = useRoute()
 const { t } = useI18n()
@@ -189,7 +204,7 @@ const handleCreateAccount = () => {
   createGroupChatVisible.value = true
   accountQrCode.value = null
 }
-
+const { $sensors } = useGlobalProperties()
 const releaseList = [
   {
     icon: 'wangye',
@@ -225,7 +240,12 @@ const releaseList = [
         icon: View,
         label: t('生成海报'),
         scriptId: 'Chato-preview-chat',
-        click: () => commonVisible(createPoster)
+        click: () => {
+          commonVisible(createPoster)
+          $sensors.track('bot_poster_click', {
+            bot_id: botId.value
+          })
+        }
       }
     ]
   },

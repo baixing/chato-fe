@@ -20,6 +20,7 @@ export const RoutesMap = {
   auth: {
     authName: 'auth',
     login: 'authLogin',
+    loginInvite: 'authLoginInvite',
     logout: 'authLogout',
     verify: 'authVerify'
   },
@@ -110,6 +111,11 @@ const coreRoutes = [
     path: '/auth/login',
     component: () => import('@/views/auth/LoginView.vue')
     // meta: { title: '登录' }
+  },
+  {
+    name: RoutesMap.auth.loginInvite,
+    path: '/auth/loginInvite',
+    component: () => import('@/views/auth/LoginInvitationView.vue')
   },
   {
     name: RoutesMap.auth.verify,

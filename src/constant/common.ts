@@ -17,6 +17,8 @@ export const UPLOAD_FILE_VIDEO_AUDIO_TYPES = [
   '.epub'
 ]
 
+export const UPLOAD_FILE_IMAGR_TYPES = ['.jpg', '.jpeg', '.png']
+
 export const UPLOAD_FILE_TYPES = [
   '.pdf',
   '.docx',
@@ -27,6 +29,12 @@ export const UPLOAD_FILE_TYPES = [
   '.csv',
   '.mobi',
   '.xlsx',
+  ...UPLOAD_FILE_IMAGR_TYPES,
+  ...UPLOAD_FILE_VIDEO_AUDIO_TYPES
+]
+
+export const UPLOAD_FILE_FORCED_CONVERSION_TO_TXT_TYPES = [
+  ...UPLOAD_FILE_IMAGR_TYPES,
   ...UPLOAD_FILE_VIDEO_AUDIO_TYPES
 ]
 

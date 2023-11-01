@@ -25,7 +25,7 @@
         style="margin-bottom: 15px"
       >
         <el-input
-          class="!w-[220px] md:!w-[60%]"
+          class="!w-[220px] md:!w-[65%]"
           v-model.trim="modelForm.code"
           type="text"
           size="large"
@@ -50,7 +50,7 @@
         {{ $t('收不到验证码？') }}
       </p>
       <el-form-item
-        v-if="!shareChannel && !isbindingMobile"
+        v-if="!shareChannel && requiredChannel"
         :label="$t(`来源（选填）`)"
         prop="channelType"
       >
@@ -82,53 +82,13 @@
           />
         </el-form-item>
       </el-form-item>
-      <div class="text-[#707070] flex items-center mb-2 text-xs mt-5">
-        <el-checkbox v-model="isBtnSubmitEnabled" label="" size="small" style="margin-right: 4px" />
-        {{ $t('同意') }}
-        <a class="theme-color mx-1" @click.prevent="() => openPreviewUrl(kPrivacyLinkUrl)">
-          {{ $t('隐私政策') }}
-        </a>
-        {{ $t('和') }}
-        <a class="theme-color ml-1" @click.prevent="() => openPreviewUrl(kUserAgreementLinkUrl)">
-          {{ $t('服务条款') }}
-        </a>
-        <span>，</span>
-        {{ $t('未注册的手机号将自动创建账号') }}
-      </div>
       <el-form-item class="!mb-0">
-        <el-row class="w-full" justify="space-between" v-if="isbindingMobile">
-          <el-col :span="10">
-            <el-button
-              size="large"
-              data-script="Chato-NotbindingMobile"
-              @click="emit('handleRescanCode')"
-            >
-              {{ $t('重新扫码') }}
-            </el-button>
-          </el-col>
-          <el-col :span="12" :offset="2">
-            <el-button
-              type="primary"
-              size="large"
-              data-script="Chato-bingingMobile"
-              :disabled="!isBtnSubmitEnabled"
-              @click="submitForm(refForm)"
-            >
-              {{ $t('绑定') }}
-            </el-button>
-          </el-col>
-        </el-row>
-        <el-button
-          v-else
-          data-script="Chato-loginOrReg"
-          class="w-full"
-          type="primary"
-          size="large"
-          :disabled="!isBtnSubmitEnabled"
-          @click="submitForm(refForm)"
-        >
-          {{ $t('登录/注册') }}
-        </el-button>
+        <slot
+          :ref="refForm"
+          :modelForm="modelForm"
+          :refBtnSend="refBtnSend"
+          :isInputChannel="isInputChannel"
+        />
       </el-form-item>
     </el-form>
   </div>
@@ -161,11 +121,8 @@
 
 <script lang="ts" setup>
 import { postSendSmsCodeAPI, getCheckChannelAPI } from '@/api/auth'
-import useBaiduPromotion from '@/composables/useBaiduPromotion'
 import useChannel from '@/composables/useChannel'
 import useGlobalProperties from '@/composables/useGlobalProperties'
-import { kPrivacyLinkUrl, kUserAgreementLinkUrl } from '@/constant/terms'
-import { openPreviewUrl } from '@/utils/help'
 import { validateCode, validateMobile } from '@/utils/validate'
 import {
   ElNotification as Notification,
@@ -190,24 +147,23 @@ withDefaults(
     mobileLabel: string
     codeLabel: string
     isbindingMobile: boolean
+    requiredChannel: boolean
   }>(),
   {
     labelPosition: 'top',
     mobileLabel: '',
     codeLabel: '',
-    isbindingMobile: false
+    isbindingMobile: false,
+    requiredChannel: true
   }
 )
-const emit = defineEmits(['handleSubmit', 'handleRescanCode'])
 
 const { checkRightsTypeNeedUpgrade } = useSpaceRights()
 const { encryption } = useRSA()
 const { t } = useI18n()
 const { shareChannel } = useChannel()
-const { baiduPromotionId, baiduPromotionKeyword } = useBaiduPromotion()
 const { $sensors } = useGlobalProperties()
 const isBtnSendDisabled = ref(false)
-const isBtnSubmitEnabled = ref(true)
 const codetText = ref(t('获取验证码'))
 const refForm = ref<FormInstance>(null)
 const refInputCode = ref(null)
@@ -339,27 +295,6 @@ const sendSmsCode = (refForm: FormInstance) => {
     } catch (error) {
       isBtnSendDisabled.value = false
       refInputCode.value.blur()
-    }
-  })
-}
-
-// 登录
-const submitForm = (refForm: FormInstance) => {
-  if (!refForm) return
-  refForm.validate(async (valid) => {
-    if (valid) {
-      const postData = {
-        mobile: encryption(modelForm.mobile),
-        verification_code: modelForm.code,
-        bd_vid: baiduPromotionId.value,
-        bd_keyword: baiduPromotionKeyword.value,
-        channel:
-          shareChannel.value || (isInputChannel.value ? modelForm.channel : modelForm.channelType)
-      }
-      emit('handleSubmit', postData)
-    } else {
-      Notification.error(t('抱歉，您填写的信息有误'))
-      refBtnSend.value.ref.blur()
     }
   })
 }

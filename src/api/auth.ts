@@ -1,4 +1,5 @@
 import type {
+  IChatCheckMobileRes,
   ILoginParams,
   ILoginQRCodeEmpowerResult,
   ILoginQRCodeResult,
@@ -55,5 +56,22 @@ export function logoutAccount() {
   return request({
     method: 'post',
     url: `/chato/api/v1/user/logout`
+  })
+}
+
+// C端登录
+export function postLoginCAPI(data: ILoginParams) {
+  return request({
+    method: 'post',
+    url: '/chato/api/v1/login/customer_user',
+    data
+  })
+}
+
+// C端校验
+export function postCheckLoginCAPI(slug: string, uid: string) {
+  return request<IChatCheckMobileRes>({
+    url: `/chato/api/v1/login/customer_user/${slug}`,
+    data: { sender_uid: uid }
   })
 }

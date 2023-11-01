@@ -25,3 +25,15 @@ export interface ILoginQRCodeEmpowerResult {
   external_user_id: string
   token: string | null
 }
+
+export interface ILoginMobile {
+  mobile: string
+  code: string
+  channelType: string
+  channel: string
+}
+
+export interface IChatCheckMobileRes {
+  login: boolean
+  usable: boolean
+}

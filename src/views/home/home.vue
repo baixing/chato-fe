@@ -36,7 +36,7 @@
         :data-sensors-abtest-value="home_quick_create"
         @click="onEnter()"
       >
-        {{ home_quick_create == 1 ? $t('免费创建数字分身') : $t('快速创建机器人') }}
+        {{ Number(home_quick_create) === 1 ? $t('免费创建数字分身') : $t('快速创建机器人') }}
       </el-button>
       <el-button
         id="Chato_top_video_click"

@@ -1,12 +1,20 @@
-import { removeCookie } from '@/utils/help'
+import { randomString, removeCookie } from '@/utils/help'
 import { useStorage } from '@vueuse/core'
 import { useCookies } from '@vueuse/integrations/useCookies'
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
 export const useAuthStore = defineStore('auth', () => {
   const cookieToken = useCookies(['auth_token'])?.get('auth_token') || ''
   const storageToken = useStorage('auth_token', '')
+  const $uid = useStorage('uid', '')
+
+  const uid = computed(() => {
+    if (!$uid.value || $uid.value === 'undefined') {
+      $uid.value = 'uid' + randomString(32)
+    }
+    return $uid.value
+  })
 
   const authToken = ref('')
 
@@ -26,10 +34,16 @@ export const useAuthStore = defineStore('auth', () => {
     setToken('')
   }
 
+  const setUid = (uid: string) => {
+    $uid.value = uid
+  }
+
   return {
     cookieToken,
     authToken,
+    uid,
     logout,
-    setToken
+    setToken,
+    setUid
   }
 })
