@@ -19,6 +19,7 @@
 import Modal from '@/components/Modal/index.vue'
 import { computed, ref } from 'vue'
 import { createPosterAPI } from '@/api/release'
+import useGlobalProperties from '@/composables/useGlobalProperties'
 
 const props = defineProps<{
   value: boolean
@@ -41,6 +42,7 @@ const init = async () => {
   base64Image.value = 'data:image/png;base64,' + data.data.data
 }
 
+const { $sensors } = useGlobalProperties()
 const downloadImage = () => {
   // Convert base64 to blob
   const byteString = atob(base64Image.value.split(',')[1])
@@ -59,6 +61,10 @@ const downloadImage = () => {
   document.body.appendChild(link)
   link.click()
   document.body.removeChild(link)
+
+  $sensors.track('bot_poster_save', {
+    bot_id: props.domainId
+  })
 }
 
 init()

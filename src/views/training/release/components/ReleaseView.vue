@@ -35,6 +35,7 @@ import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import { useSessionStorage } from '@vueuse/core'
 import ReleaseBox from './ReleaseBox.vue'
+import useGlobalProperties from '@/composables/useGlobalProperties'
 
 const SerachApi = defineAsyncComponent(() => import('./apiCall/SerachApi.vue'))
 const ApplicationForm = defineAsyncComponent(() => import('./application/ApplicationForm.vue'))
@@ -189,7 +190,7 @@ const handleCreateAccount = () => {
   createGroupChatVisible.value = true
   accountQrCode.value = null
 }
-
+const { $sensors } = useGlobalProperties()
 const releaseList = [
   {
     icon: 'wangye',
@@ -225,7 +226,12 @@ const releaseList = [
         icon: View,
         label: t('生成海报'),
         scriptId: 'Chato-preview-chat',
-        click: () => commonVisible(createPoster)
+        click: () => {
+          commonVisible(createPoster)
+          $sensors.track('bot_poster_click', {
+            bot_id: botId.value
+          })
+        }
       }
     ]
   },
