@@ -1325,5 +1325,7 @@
   "篇，预计需要": "articles, expected to be needed",
   "小时，是否确认抓取？": "Hours, do you want to confirm the crawl?",
   "正在进行的任务：已抓取的公众号文章": "Published tasks: Crawled public account articles",
-  "条；等待中的文章": "articles; waiting articles"
+  "条；等待中的文章": "articles; waiting articles",
+  "角色名称": "Bot Name",
+  "从模版中选择": "Choose from templates"
 }

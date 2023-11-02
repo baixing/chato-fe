@@ -1,5 +1,5 @@
 <template>
-  <div class="h-12">
+  <div :class="styleClass ?? 'w-12 h-12'">
     <el-upload
       ref="uploadRef"
       action="#"
@@ -13,13 +13,16 @@
       :disabled="disabled"
     >
       <template #trigger>
-        <div class="group/img h-12" v-if="!listType">
+        <div class="group/img h-12" v-if="!listType" :class="styleClass">
           <div
             class="w-12 h-12 rounded-full border-dashed bg-cover cursor-default box-border hover:border-[#634aca]"
             :style="{
               'background-image': `url(${imgUrl || (isInitialImg ? initialImgUrl : '')})`
             }"
-            :class="[imgUrl ? 'border-none' : 'border border-[--el-border-color-darker]']"
+            :class="[
+              imgUrl ? 'border-none' : 'border border-[--el-border-color-darker]',
+              styleClass
+            ]"
           >
             <div
               class="hidden w-full h-full rounded-full group-hover/img:flex flex-col justify-around"
@@ -131,13 +134,11 @@ const cropImgUrl = ref<string>()
 const dialogImageUrl = ref<string>()
 const fileList = ref<UploadUserFile[]>([])
 const imgUrl = computed({
-  get: () => {
-    console.log(props.imgUrl)
-    return props.imgUrl
-  },
+  get: () => props.imgUrl,
   set: (v) => emit('update:imgUrl', v)
 })
 const emit = defineEmits(['update:imgUrl'])
+
 const props = withDefaults(
   defineProps<
     {
@@ -147,6 +148,7 @@ const props = withDefaults(
       listType?: 'picture' | 'text' | 'picture-card'
       isInitialImg: boolean
       disabled: boolean
+      styleClass?: string
     } & Partial<IUploadOptions>
   >(),
   {
