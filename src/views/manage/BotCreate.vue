@@ -42,7 +42,7 @@
               v-for="item in createTypeSelectList"
               :key="item.icon"
               @click="onOpenTypeModal(item)"
-              class="text-[#7c5cfc] text-sm transition-colors ml-6 flex items-center hover:cursor-pointer"
+              class="text-[#7c5cfc] text-sm transition-colors ml-6 flex items-center cursor-pointer"
             >
               <div>{{ t(item.desc) }}</div>
               <svg-icon :name="item.icon" class="!w-4 !h-4 ml-1" />
@@ -226,7 +226,7 @@ import BotCreateTypeByTemplateModal from './components/BotCreateTypeByTemplateMo
 const { t } = useI18n()
 
 const createTypeSelectList = [
-  { icon: 'top_right', name: '选择模版创建', desc: '从模版中选择' },
+  { icon: 'top-right', name: '选择模版创建', desc: '从模版中选择' },
   { icon: 'magic', name: 'AI 一键创建', desc: 'AI 一键创建' }
 ] as const
 const defaultAIGenerateInputDisabled = {
@@ -291,7 +291,7 @@ const syncOriginalFormState = () => {
 }
 
 const onOpenTypeModal = (item: (typeof createTypeSelectList)[number]) => {
-  if (item.icon === 'top_right') {
+  if (item.icon === 'top-right') {
     templateModalVisible.value = true
   } else {
     AIModalVisible.value = true

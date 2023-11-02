@@ -1,5 +1,5 @@
 <template>
-  <div :class="styleClass ?? 'w-12 h-12'">
+  <div :class="styleClass && 'w-12 h-12'">
     <el-upload
       ref="uploadRef"
       action="#"
