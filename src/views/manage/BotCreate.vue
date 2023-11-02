@@ -27,7 +27,6 @@
         </template>
       </Topbar>
       <div class="bot-create-center-padding mb-16 flex-1 overflow-y-auto bot-create-block">
-        <!-- <h3 class="text-[#303133] font-medium text-xl mb-6">{{ t('创建机器人') }}</h3> -->
         <div class="flex justify-center py-8">
           <ImgUpload
             :fixed="true"
@@ -125,56 +124,6 @@
             <el-button link :icon="Close" @click="onDeleteFile(item.id)" />
           </p>
         </div>
-
-        <!-- <div class="create-input-label">
-          <SLTitle tips="基于机器人当前名字和角色设定生成">{{ t('角色简介') }}</SLTitle>
-          <AIGenerateBtn
-            v-model:generateStr="formState.desc"
-            :role="formState.name"
-            :role-requirement="roleRequirement"
-            :system-prompt="formState.system_prompt"
-            :type="EDomainAIGenerateType.intro"
-            :disabled="!formState.system_prompt || !formState.name || AIGenerateInputDisabled.desc"
-            disabled-tip="请填写名字和角色设定后生成"
-            @start="AIGenerateInputDisabled.desc = true"
-            @end="AIGenerateInputDisabled.desc = false"
-          />
-        </div>
-        <HansInputLimit
-          v-model:value="formState.desc"
-          type="textarea"
-          :rows="6"
-          size="large"
-          :limit="HansLimit.desc"
-          :disabled="AIGenerateInputDisabled.desc"
-          class="w-full mb-8"
-        /> -->
-
-        <!-- <div class="create-input-label">
-          <SLTitle tips="基于机器人当前名字和角色设定生成">{{ t('欢迎语') }}</SLTitle>
-          <AIGenerateBtn
-            v-model:generateStr="formState.welcome"
-            :role="formState.name"
-            :role-requirement="roleRequirement"
-            :system-prompt="formState.system_prompt"
-            :type="EDomainAIGenerateType.welcome"
-            :disabled="
-              !formState.system_prompt || !formState.name || AIGenerateInputDisabled.welcome
-            "
-            disabled-tip="请填写名字和角色设定后生成"
-            @start="AIGenerateInputDisabled.welcome = true"
-            @end="AIGenerateInputDisabled.welcome = false"
-          />
-        </div>
-        <HansInputLimit
-          v-model:value="formState.welcome"
-          type="textarea"
-          :rows="6"
-          size="large"
-          :limit="HansLimit.welcome"
-          :disabled="AIGenerateInputDisabled.welcome"
-          class="w-full mb-8"
-        /> -->
       </div>
       <div
         class="bot-create-center-padding py-4 box-border flex justify-end items-center gap-4 bg-white absolute z-[2] bottom-0 left-0 right-0"
