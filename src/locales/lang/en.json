@@ -1327,5 +1327,6 @@
   "正在进行的任务：已抓取的公众号文章": "Published tasks: Crawled public account articles",
   "条；等待中的文章": "articles; waiting articles",
   "角色名称": "Bot Name",
-  "从模版中选择": "Choose from templates"
+  "从模版中选择": "Choose from templates",
+  "抱歉，你输入的公众号不存在": "Sorry, the official account you entered does not exist"
 }
