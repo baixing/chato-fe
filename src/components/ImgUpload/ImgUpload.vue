@@ -116,17 +116,14 @@
 </template>
 
 <script setup lang="ts">
-import 'vue-cropper/dist/index.css'
-import { VueCropper } from 'vue-cropper'
 import DefaultAvatar from '@/assets/img/avatar.png'
 import Modal from '@/components/Modal/index.vue'
-import { ref } from 'vue'
-import { cosServe } from '@/utils/cos'
 import type { IUploadOptions } from '@/interface/uploadOptions'
+import { cosServe } from '@/utils/cos'
 import type { UploadFile, UploadFiles, UploadRawFile, UploadUserFile } from 'element-plus'
-import { computed } from 'vue'
 import { isArray } from 'lodash'
-import { watch } from 'vue'
+import { computed, ref, watch } from 'vue'
+import 'vue-cropper/dist/index.css'
 
 const cropper = ref()
 const zoomInDialogVisible = ref(false)
