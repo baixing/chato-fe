@@ -2,7 +2,7 @@
   <div class="w-full h-full overflow-hidden bg-white flex justify-center items-center">
     <div>
       <LoginHeader />
-      <div class="p-3 mt-14 m-auto border border-solid border-[#E4E7ED] md:border-none rounded-lg">
+      <div class="p-3 mt-14 m-auto border-[#E4E7ED] md:border-none rounded-lg">
         <BindingMobile
           v-if="isbindingMobile"
           :userId="userId"
@@ -10,7 +10,7 @@
           @handleRescanCode="handleRescanCode"
         />
         <template v-else>
-          <div class="flex justify-end items-center">
+          <!-- <div class="flex justify-end items-center">
             <div
               class="login-tip relative w-[110px] text-[#596780] text-center py-2 bg-[#F2F3F5] rounded-md mr-[9px]"
             >
@@ -21,7 +21,7 @@
               :name="loginWay"
               @click="handleChangeLoginWay"
             />
-          </div>
+          </div> -->
           <div class="px-8 md:px-0 pb-3 w-[360px]">
             <component
               :is="loginComponent[loginWay]"
@@ -75,7 +75,7 @@ const baseStoreI = useBase()
 const redir = route.query.redirect || '/'
 const authStoreI = useAuthStore()
 const { authToken } = storeToRefs(authStoreI)
-const loginWay = ref<ELoginWay>(isMobile ? ELoginWay.loginScanCode : ELoginWay.loginMobile)
+const loginWay = ref<ELoginWay>(ELoginWay.loginScanCode)
 const isbindingMobile = ref<boolean>(false)
 const loginQRCodeRes = ref<ILoginQRCodeResult>(null)
 const loginQRCodeEmpowerStatusRes = ref<ILoginQRCodeEmpowerResult>(null)
