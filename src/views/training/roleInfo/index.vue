@@ -181,6 +181,15 @@ watch(
     currentDomainInfo.llm = currentDomainInfo.llm || null
     currentDomainInfo.lang = currentDomainInfo.lang === 'auto' ? null : currentDomainInfo.lang
     currentDomainInfo.reply_length = currentDomainInfo.reply_length || null
+    currentDomainInfo.qa_threshold = currentDomainInfo.qa_threshold || 80
+    currentDomainInfo.doc_threshold = currentDomainInfo.doc_threshold || 60
+    currentDomainInfo.not_embedding_return_enabled =
+      currentDomainInfo.not_embedding_return_enabled || 0
+    currentDomainInfo.not_embedding_return_content =
+      currentDomainInfo.not_embedding_return_content ||
+      t(
+        '抱歉，我还没有学习到关于这个问题的知识。您可以尝试问些其他问题，或者联系我们的专业团队以获取支持。'
+      )
     originalDomain = cloneDeep(currentDomainInfo)
     currentDomain = Object.assign(currentDomain, currentDomainInfo)
   },

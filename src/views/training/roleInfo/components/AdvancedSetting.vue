@@ -119,23 +119,6 @@
       </div>
     </div>
     <div class="chato-form-item">
-      <SLTitle
-        tips="值为 0 时同一个问题的回复相对固定，值越大回复内容越随机多样具有创造性"
-        class="chato-form-label"
-      >
-        {{ $t('回复多样性') }}
-      </SLTitle>
-      <el-slider
-        v-model="currentDomain.temperature"
-        :step="2.5"
-        :max="10"
-        :min="0"
-        show-stops
-        :format-tooltip="(v) => diverstyToolTip[v]"
-        class="w-full"
-      />
-    </div>
-    <div class="chato-form-item">
       <div class="chato-form-label">
         {{ $t('对话上下文') }}
       </div>
@@ -230,6 +213,73 @@
           />
         </div>
       </div>
+    </div>
+    <div class="chato-form-item">
+      <SLTitle tips="基于知识库无法回复时，机器人回答内容" class="chato-form-label">
+        {{ $t('超纲问题回复') }}
+      </SLTitle>
+      <div class="exceed-radio flex items-center text-sm mb-4">
+        <el-radio-group v-model="currentDomain.not_embedding_return_enabled">
+          <el-radio :label="0" size="large">{{ $t('回复使用大模型知识') }}</el-radio>
+          <el-radio :label="1" size="large">{{ $t('自定义回复') }}</el-radio>
+        </el-radio-group>
+      </div>
+      <HansInputLimit
+        v-if="Number(currentDomain.not_embedding_return_enabled) === 1"
+        v-model:value="currentDomain.not_embedding_return_content"
+        type="textarea"
+        :rows="3"
+        size="large"
+        :placeholder="$t(`请输入自定义回复内容`)"
+        :limit="500"
+        class="w-full"
+      />
+    </div>
+    <div class="chato-form-item">
+      <SLTitle tips="数值越高所匹配的QA知识越精准，但知识数量可能变少" class="chato-form-label">
+        {{ $t('QA相关性') }}
+      </SLTitle>
+      <el-slider
+        v-model="currentDomain.qa_threshold"
+        :step="5"
+        :max="85"
+        :min="40"
+        show-stops
+        class="w-full"
+      />
+    </div>
+    <div class="chato-form-item">
+      <SLTitle
+        tips="数值越高所匹配的文档知识越精准，但来源文档数量可能变少"
+        class="chato-form-label"
+      >
+        {{ $t('文档相关性') }}
+      </SLTitle>
+      <el-slider
+        v-model="currentDomain.doc_threshold"
+        :step="5"
+        :max="85"
+        :min="40"
+        show-stops
+        class="w-full"
+      />
+    </div>
+    <div class="chato-form-item">
+      <SLTitle
+        tips="值为 0 时同一个问题的回复相对固定，值越大回复内容越随机多样具有创造性"
+        class="chato-form-label"
+      >
+        {{ $t('回复多样性') }}
+      </SLTitle>
+      <el-slider
+        v-model="currentDomain.temperature"
+        :step="2.5"
+        :max="10"
+        :min="0"
+        show-stops
+        :format-tooltip="(v) => diverstyToolTip[v]"
+        class="w-full"
+      />
     </div>
   </div>
   <Modal v-model:visible="exampleVisible" title="查看示例" :footer="false">
@@ -346,3 +396,11 @@ debouncedWatch(
   { immediate: true, debounce: 300 }
 )
 </script>
+
+<style lang="scss" scoped>
+.exceed-radio {
+  :deep(.el-radio__input.is-checked + .el-radio__label) {
+    color: #303133;
+  }
+}
+</style>

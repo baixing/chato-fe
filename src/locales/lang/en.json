@@ -1328,5 +1328,15 @@
   "条；等待中的文章": "articles; waiting articles",
   "角色名称": "Bot Name",
   "从模版中选择": "Choose from templates",
-  "抱歉，你输入的公众号不存在": "Sorry, the official account you entered does not exist"
+  "抱歉，你输入的公众号不存在": "Sorry, the official account you entered does not exist",
+  "抱歉，我还没有学习到关于这个问题的知识。您可以尝试问些其他问题，或者联系我们的专业团队以获取支持。": "Sorry, I haven't learned about this question. You can try to ask other questions, or contact our professional team for support.",
+  "超纲问题回复": "Out of scope question reply",
+  "基于知识库无法回复时，机器人回答内容": "The content of the robot's answer based on the knowledge base when it cannot be answered",
+  "回复使用大模型知识": "Use the large model knowledge to reply",
+  "自定义回复": "Custom reply",
+  "请输入自定义回复内容": "Please enter the content of the custom reply",
+  "数值越高所匹配的QA知识越精准，但知识数量可能变少": "The higher the value, the more accurate the QA knowledge is, but the knowledge number may be less",
+  "QA相关性": "QA relatedness",
+  "数值越高所匹配的文档知识越精准，但来源文档数量可能变少": "The higher the value, the more accurate the document knowledge is, but the number of documents may be less",
+  "文档相关性": "Document relatedness"
 }
