@@ -1,6 +1,7 @@
 <template>
   <div class="overflow-y-auto h-full">
-    <SquareHeader />
+    <Topbar v-if="requiredTopbar" title="" class="h-0 md:!h-16" />
+    <SquareHeader :requiredTopbar="requiredTopbar" />
     <ContentLayout
       class="!overflow-hidden !h-auto"
       v-loading="initing"
@@ -68,10 +69,12 @@ const props = withDefaults(
   defineProps<{
     prefix: string
     existMenuMore: boolean
+    requiredTopbar: boolean
   }>(),
   {
     prefix: '/c',
-    existMenuMore: true
+    existMenuMore: true,
+    requiredTopbar: true
   }
 )
 

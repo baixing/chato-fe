@@ -62,6 +62,9 @@
         >
           <div
             v-for="(item, index) in recommendQuestions"
+            data-sensors-click
+            :data-sensors-recommend-base-question="recommendBaseQuestion"
+            :data-sensors-recommend-click-question="item.question"
             :key="`rq_${index}`"
             @click="onClickRecommend(item.question)"
             class="cursor-pointer px-4 py-1 text-[#2F3447] rounded-3xl text-sm leading-6 tracking-[0.13px] border border-solid border-[#E4E7ED] flex items-center justify-between gap-2 transition-opacity hover:opacity-80"
@@ -203,7 +206,7 @@ import SSE from '@/utils/sse'
 import { getStringWidth } from '@/utils/string'
 import { isURL } from '@/utils/url'
 import shareWeixin from '@/utils/weixinShare'
-import { useDebounceFn, useStorage } from '@vueuse/core'
+import { useDebounceFn } from '@vueuse/core'
 import { ElMessage, ElMessageBox, ElNotification as Notification } from 'element-plus'
 import 'highlight.js/styles/default.css'
 import { random, remove } from 'lodash'
@@ -1054,10 +1057,12 @@ const onElClick = (event) => {
 }
 
 const recommendQuestionsLoading = ref(false)
+const recommendBaseQuestion = ref('')
 const recommendQuestions = ref<IRecommendQuestion[]>([])
 
 const initRecommendQuestions = async (question: string) => {
   try {
+    recommendBaseQuestion.value = question
     recommendQuestions.value = []
     recommendQuestionsLoading.value = true
     const {

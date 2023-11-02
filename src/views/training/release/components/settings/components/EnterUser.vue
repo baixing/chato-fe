@@ -63,7 +63,7 @@ const headers = {
 }
 const acceptFileTypes = UPLOAD_TEMPLATE_FILE_TYPES.join(',')
 const downloadUrl =
-  'https://afu-1255830993.cos.ap-shanghai.myqcloud.com/chato/org_208/8ee244e6393e6b4e70ded49a008eff6b.xlsx'
+  'https://afu-1255830993.cos.ap-shanghai.myqcloud.com/chato/org_208/c3d9f7739a4a416c07602babb4ecf002.xlsx'
 const activeName = ref<ESettingEnterMobile.quickEnter>(ESettingEnterMobile.quickEnter)
 const uploadFileList = ref([])
 

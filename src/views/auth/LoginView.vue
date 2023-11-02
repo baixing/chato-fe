@@ -2,9 +2,7 @@
   <div class="w-full h-full overflow-hidden bg-white flex justify-center items-center">
     <div>
       <LoginHeader />
-      <div
-        class="p-3 md:p-0 mt-14 m-auto border border-solid border-[#E4E7ED] md:border-none rounded-lg"
-      >
+      <div class="p-3 mt-14 m-auto border border-solid border-[#E4E7ED] md:border-none rounded-lg">
         <BindingMobile
           v-if="isbindingMobile"
           :userId="userId"
@@ -24,7 +22,7 @@
               @click="handleChangeLoginWay"
             />
           </div>
-          <div class="px-8 md:px-0 pb-3 w-[360px] md:w-full">
+          <div class="px-8 md:px-0 pb-3 w-[360px]">
             <component
               :is="loginComponent[loginWay]"
               :timeout="timeout"
