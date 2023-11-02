@@ -7,7 +7,7 @@ export default function useByteDancePromotion() {
   const clickid = ref('')
   const parsedUrl = qs.parseUrl(window.location.href).query
 
-  const routerClickid = parsedUrl.clickid || ''
+  const routerClickid = parsedUrl?.clickid || ''
 
   function updateSessionStorage(key, refVar, routerVar) {
     if (!refVar.value && routerVar) {
