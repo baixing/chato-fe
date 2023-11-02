@@ -5,6 +5,7 @@ export interface IDomainCustomerLimit {
   mobile_limit_switch: number
   rate_limit_switch: number
   rate_limit: {
+    time_unit: number
     time_seconds: number
     num: number
     response: string
