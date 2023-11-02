@@ -6,6 +6,7 @@ export interface ILoginParams {
   channel: string
   bd_vid: string
   bd_keyword: string
+  dy_clickid: string
   nickname?: string
   eid?: string
   external_user_id?: number
