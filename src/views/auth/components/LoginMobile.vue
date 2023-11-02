@@ -60,6 +60,7 @@ import type { ILoginMobile } from '@/interface/auth'
 import useRSA from '@/composables/useRSA'
 import useChannel from '@/composables/useChannel'
 import useBaiduPromotion from '@/composables/useBaiduPromotion'
+import useByteDancePromotion from '@/composables/useByteDancePromotion'
 import { openPreviewUrl } from '@/utils/help'
 import { kPrivacyLinkUrl, kUserAgreementLinkUrl } from '@/constant/terms'
 
@@ -81,6 +82,7 @@ const { t } = useI18n()
 const { encryption } = useRSA()
 const { shareChannel } = useChannel()
 const { baiduPromotionId, baiduPromotionKeyword } = useBaiduPromotion()
+const { bytedancePromotionClickid } = useByteDancePromotion()
 const isBtnSubmitEnabled = ref(true)
 
 const submitForm = (
@@ -97,6 +99,7 @@ const submitForm = (
         verification_code: modelForm.code,
         bd_vid: baiduPromotionId.value,
         bd_keyword: baiduPromotionKeyword.value,
+        dy_clickid: bytedancePromotionClickid.value,
         channel: shareChannel.value || (isInputChannel ? modelForm.channel : modelForm.channelType)
       }
       emit('handleSubmitLogin', postData)

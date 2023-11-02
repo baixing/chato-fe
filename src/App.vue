@@ -8,6 +8,7 @@
 
 <script setup lang="ts">
 import useBaiduPromotion from '@/composables/useBaiduPromotion'
+import useByteDancePromotion from '@/composables/useByteDancePromotion'
 import useFavicon from '@/composables/useFavicon'
 import { Elementlocales } from '@/locales'
 import { useBase } from '@/stores/base'
@@ -19,6 +20,7 @@ import { computed, onMounted } from 'vue'
 // 设置不同环境的 Favicon
 useFavicon()
 useBaiduPromotion()
+useByteDancePromotion()
 const base = useBase()
 const { locale } = storeToRefs(useLocales())
 const clocale = computed(() => Elementlocales[locale.value])

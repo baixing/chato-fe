@@ -64,6 +64,7 @@ import { postBindingMobileAPI } from '@/api/auth'
 import { useI18n } from 'vue-i18n'
 import useRSA from '@/composables/useRSA'
 import useBaiduPromotion from '@/composables/useBaiduPromotion'
+import useByteDancePromotion from '@/composables/useByteDancePromotion'
 import useChannel from '@/composables/useChannel'
 import { ref } from 'vue'
 import { openPreviewUrl } from '@/utils/help'
@@ -78,6 +79,7 @@ const { t } = useI18n()
 const { encryption } = useRSA()
 const { shareChannel } = useChannel()
 const { baiduPromotionId, baiduPromotionKeyword } = useBaiduPromotion()
+const { bytedancePromotionClickid } = useByteDancePromotion()
 const isBtnSubmitEnabled = ref(true)
 
 const handleSubmitBinding = async (data: ILoginParams) => {
@@ -115,6 +117,7 @@ const submitForm = (
         verification_code: modelForm.code,
         bd_vid: baiduPromotionId.value,
         bd_keyword: baiduPromotionKeyword.value,
+        dy_clickid: bytedancePromotionClickid.value,
         channel: shareChannel.value || (isInputChannel ? modelForm.channel : modelForm.channelType)
       }
       handleSubmitBinding(postData)
