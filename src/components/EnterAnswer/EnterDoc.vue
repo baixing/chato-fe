@@ -426,7 +426,13 @@ async function submitInputText() {
           const { data } = res.data
           if (requestFunc === 'uploadPublicAsync') {
             Notification.success(
-              t(`爬取新文章${data.result.length}条；重复文章${data.repeated.length}条；`)
+              t(`已爬`) +
+                data.result.length +
+                t(`条；重复`) +
+                data.repeated.length +
+                t(`条；剩余`) +
+                (spliderPublicForm.content - data.result.length - data.repeated.length) +
+                t(`条`)
             )
           } else {
             Notification.success(t('保存成功'))

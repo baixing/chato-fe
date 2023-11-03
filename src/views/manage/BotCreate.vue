@@ -137,7 +137,6 @@
     </div>
     <BotCreateChat v-if="!isMobile" />
   </div>
-
   <BotCreateTypeByTemplateModal
     v-model:visible="templateModalVisible"
     @submit="onTemplateTypeModalSubmit"
@@ -308,12 +307,10 @@ const onAIUpdateDomainField = (fieldType: string, fieldValue: string) => {
   }
 }
 
-const onTemplateTypeModalSubmit = (
-  item: Pick<IDomainInfo, 'name' | 'system_prompt' | 'desc' | 'welcome'>
-) => {
-  const { name, system_prompt, desc, welcome } = item
-  originalTemplateFormState = { name, system_prompt, desc, welcome }
-  formState = Object.assign(formState, { name, system_prompt, desc, welcome })
+const onTemplateTypeModalSubmit = (item: Pick<IDomainInfo, 'name' | 'system_prompt'>) => {
+  const { name, system_prompt } = item
+  originalTemplateFormState = { name, system_prompt }
+  formState = Object.assign(formState, { name, system_prompt })
 }
 
 const onAITypeModalSubmit = (name: string, roleReq: string) => {

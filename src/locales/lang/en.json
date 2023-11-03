@@ -1347,5 +1347,8 @@
   "数值越高所匹配的QA知识越精准，但知识数量可能变少": "The higher the value, the more accurate the QA knowledge is, but the knowledge number may be less",
   "QA相关性": "QA relatedness",
   "数值越高所匹配的文档知识越精准，但来源文档数量可能变少": "The higher the value, the more accurate the document knowledge is, but the number of documents may be less",
-  "文档相关性": "Document relatedness"
+  "文档相关性": "Document relatedness",
+  "已爬": "Crawl",
+  "条；重复": "article; duplicate ",
+  "条；剩余": "articles; remaining "
 }
