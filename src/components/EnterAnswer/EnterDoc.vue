@@ -379,10 +379,6 @@ const onSubmit = () => {
 }
 
 async function submitInputText() {
-  if (activeName.value === EDocumentTabType.inputPublic && spliderPublicForm.publicName) {
-    Notification.error(t(`抱歉，你输入的公众号不存在`))
-    return
-  }
   if (activeName.value === EDocumentTabType.inputPublic && spliderPublicForm.content === -1) {
     spliderPublicForm.maxContent = await getPublicContent()
     publicDialogVisible.value = true
