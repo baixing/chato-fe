@@ -289,7 +289,7 @@ onMounted(() => {
 
 watch(domainList, (d) => {
   if (!d.length) {
-    router.push({ name: RoutesMap.manager.create })
+    router.push({ name: RoutesMap.manager.center })
   }
 })
 </script>

@@ -25,7 +25,6 @@
     <Sidebar />
   </el-drawer>
   <UpgradeRightsModal />
-  <FirstGuide />
   <FollowPublic />
 </template>
 <script setup lang="ts">
@@ -36,13 +35,14 @@ import useSidebar from '@/composables/useSidebar'
 import useSpaceRights from '@/composables/useSpaceRights'
 import useVersionCheck from '@/composables/useVersionCheck'
 import { ESpaceRightsType } from '@/enum/space'
+import { RoutesMap } from '@/router'
+import { useAuthStore } from '@/stores/auth'
 import { useBase } from '@/stores/base'
 import { useChatStore } from '@/stores/chat'
 import { useDomainStore } from '@/stores/domain'
 import { useSpaceStore } from '@/stores/space'
 import { nextTick, ref } from 'vue'
-import { RouterView, useRoute } from 'vue-router'
-import FirstGuide from './components/FirstGuide/index.vue'
+import { RouterView, useRoute, useRouter } from 'vue-router'
 import Sidebar from './components/Sidebar/MainSidebar.vue'
 import Skeleton from './components/Skeleton/index.vue'
 
@@ -52,10 +52,12 @@ const { isMobile } = useBasicLayout()
 const loading = ref(false)
 
 const route = useRoute()
-const base = useBase()
+const router = useRouter()
+const baseStoreI = useBase()
 const chatStoreI = useChatStore()
 const domainStoreI = useDomainStore()
 const spaceStoreI = useSpaceStore()
+const { cookieToken } = useAuthStore()
 
 useVersionCheck()
 
@@ -67,9 +69,18 @@ const init = async () => {
   try {
     loading.value = true
 
-    await base.getAuthToken()
-    const res = await base.getUserInfo()
-    $sensors?.login(res.id.toString())
+    await baseStoreI.getAuthToken()
+    const userInfoRes = await baseStoreI.getUserInfo()
+    $sensors?.login(userInfoRes.id.toString())
+
+    // 新用户跳转对话引导页
+    if (userInfoRes.id === userInfoRes.org.owner_id && !userInfoRes.org.additions && !cookieToken) {
+      if (route.name !== RoutesMap.guide.first) {
+        router.replace({ name: RoutesMap.guide.first })
+      }
+    } else if (route.name === RoutesMap.guide.first) {
+      router.replace({ name: RoutesMap.manager.center })
+    }
 
     await Promise.all([
       domainStoreI.initDomainList(route),
