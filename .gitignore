@@ -22,7 +22,7 @@ yarn.lock
 
 # Editor directories and files
 .VSCodeCounter
-.vscode/*
+# .vscode/*
 .idea
 *.suo
 *.ntvs*
