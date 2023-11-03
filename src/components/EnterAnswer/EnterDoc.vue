@@ -155,8 +155,9 @@
                     :key="item.fakeid"
                     :label="item.nickname"
                     :value="item.nickname"
-                    >{{ item.nickname }}</el-option
                   >
+                    {{ item.nickname }}
+                  </el-option>
                 </el-select>
               </div>
             </el-form-item>
@@ -378,7 +379,7 @@ const onSubmit = () => {
 }
 
 async function submitInputText() {
-  if (activeName.value === EDocumentTabType.inputPublic && spliderPublicForm.publicName === '') {
+  if (activeName.value === EDocumentTabType.inputPublic && spliderPublicForm.publicName) {
     Notification.error(t(`抱歉，你输入的公众号不存在`))
     return
   }
