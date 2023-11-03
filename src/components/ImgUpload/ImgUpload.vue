@@ -107,7 +107,7 @@
     :appendToBody="true"
   >
     <div class="w-full h-96">
-      <vueCropper ref="cropper" v-bind="props" :img="cropImgUrl" />
+      <VueCropper ref="cropper" v-bind="(props as any)" :img="cropImgUrl" />
     </div>
   </Modal>
   <Modal v-model:visible="zoomInDialogVisible" title="图片预览">
@@ -118,6 +118,7 @@
 <script setup lang="ts">
 import DefaultAvatar from '@/assets/img/avatar.png'
 import Modal from '@/components/Modal/index.vue'
+import { VueCropper } from 'vue-cropper'
 import type { IUploadOptions } from '@/interface/uploadOptions'
 import { cosServe } from '@/utils/cos'
 import type { UploadFile, UploadFiles, UploadRawFile, UploadUserFile } from 'element-plus'
