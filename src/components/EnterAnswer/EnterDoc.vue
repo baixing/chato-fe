@@ -379,10 +379,6 @@ const onSubmit = () => {
 }
 
 async function submitInputText() {
-  if (activeName.value === EDocumentTabType.inputPublic && spliderPublicForm.publicName) {
-    Notification.error(t(`抱歉，你输入的公众号不存在`))
-    return
-  }
   if (activeName.value === EDocumentTabType.inputPublic && spliderPublicForm.content === -1) {
     spliderPublicForm.maxContent = await getPublicContent()
     publicDialogVisible.value = true
@@ -416,7 +412,7 @@ async function submitInputText() {
           break
         default:
           requestFunc = 'uploadPublicAsync'
-          requestParams = [spliderPublicForm.publicName]
+          requestParams = [spliderPublicForm.publicName || spliderPublicForm.publicSearchName]
           requestParamsPath = {
             count:
               spliderPublicForm.content === -1
@@ -437,13 +433,16 @@ async function submitInputText() {
           }
           spliderUrlForm.urlData = ''
           spliderPublicForm.publicName = ''
-          spliderPublicForm.content = 0
+          spliderPublicForm.content = 10
           spliderPublicForm.publicSearchName = ''
           emit('setSuccess')
         })
         .catch((err) => {})
         .finally(() => {
           loading.close()
+          spliderPublicForm.publicName = ''
+          spliderPublicForm.content = 10
+          spliderPublicForm.publicSearchName = ''
           emit('closeDialogVisble')
         })
     } else {
