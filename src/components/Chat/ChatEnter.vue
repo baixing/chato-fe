@@ -111,7 +111,7 @@ import { useBasicLayout } from '@/composables/useBasicLayout'
 import useRecognizer from '@/composables/useRecognizer'
 import { SymChatDomainDetail } from '@/constant/chat'
 import { PaidCommercialTypes } from '@/constant/space'
-import { EDomainConversationMode } from '@/enum/domain'
+import { EDomainConversationMode, EDomainConversationModeArousalMethod } from '@/enum/domain'
 import type { IDomainInfo } from '@/interface/domain'
 import { RoutesMap } from '@/router'
 import { debounce } from 'lodash'
@@ -135,6 +135,7 @@ const { isMobile } = useBasicLayout()
 const domainDetail = inject<Ref<IDomainInfo>>(SymChatDomainDetail)
 
 const chatRecordingEnterVisible = ref(false)
+
 const chatEnterType = ref<EDomainConversationMode>(EDomainConversationMode.text)
 
 const internalValue = computed({
@@ -257,6 +258,7 @@ const onSend = (val?: string) => {
 
 // 语音对话，进来就开启录音
 watch([isAudioChatModeDomain, isRecording, internalEnterDisabled, audioPlaying], () => {
+  console.log(isAudioChatModeDomain, isRecording, internalEnterDisabled, audioPlaying)
   if (!isAudioChatModeDomain.value || inDebug.value) {
     return
   }

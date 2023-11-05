@@ -33,3 +33,8 @@ export const enum EDomainConversationMode {
   audio = 'audio',
   video = 'video'
 }
+
+export const enum EDomainConversationModeArousalMethod {
+  ActiveTrigger = 0, //主动触发
+  AutomaticSpeechRecognition = 1 //自动识别
+}
