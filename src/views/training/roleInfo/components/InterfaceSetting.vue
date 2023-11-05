@@ -124,7 +124,25 @@
       </div>
       <div
         class="flex gap-4 items-center text-[#303133] text-sm mt-[10px]"
-        v-if="currentDomain.conversation_mode === 'audio'"
+        v-if="currentDomain.conversation_mode === EDomainConversationMode.audio"
+      >
+        <span>{{ t('唤起方式：') }}</span>
+        <el-radio-group
+          v-model="currentDomain.conversation_arouse_mode"
+          @change="changeConversation"
+        >
+          <el-radio
+            v-for="item in DomainConversationModeArousalMethodOptions"
+            :key="item.value"
+            :label="item.value"
+          >
+            {{ t(item.label) }}
+          </el-radio>
+        </el-radio-group>
+      </div>
+      <div
+        class="flex gap-4 items-center text-[#303133] text-sm mt-[10px]"
+        v-if="currentDomain.conversation_mode === EDomainConversationMode.audio"
       >
         <span>{{ t('音色选择：') }}</span>
         <TimbreItem
@@ -221,26 +239,29 @@
 import {
   checkDomainCorrectTicketIsExpired,
   generateDomainCorrectTicket,
-  getTimbreList as getTimbreListApi,
-  getTestTimbreUrl as getTestTimbreUrlApi
+  getTestTimbreUrl as getTestTimbreUrlApi,
+  getTimbreList as getTimbreListApi
 } from '@/api/domain'
+import TimbreItem from '@/components/BotSetting/TimbreItem.vue'
 import ImgUpload from '@/components/ImgUpload/ImgUpload.vue'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
 import Modal from '@/components/Modal/index.vue'
 import SpaceRightsMask from '@/components/Space/SpaceRightsMask.vue'
 import SwitchWithStateMsg from '@/components/SwitchWithStateMsg/index.vue'
-import TimbreItem from '@/components/BotSetting/TimbreItem.vue'
 import SLTitle from '@/components/Title/SLTitle.vue'
 import useImagePath from '@/composables/useImagePath'
 import { currentEnvConfig } from '@/config'
 import {
+  DomainConversationModeArousalMethodOptions,
   DomainConversationModeOptions,
   DomainEditSymbol,
   DomainHansLimitSymbol
 } from '@/constant/domain'
+import { EDomainConversationMode } from '@/enum/domain'
 import { EReleaseSettingExampleType } from '@/enum/release'
 import { ESpaceRightsType } from '@/enum/space'
 import type { IDomainInfo } from '@/interface/domain'
+import type { ITimbreOptions } from '@/interface/tts'
 import { useSpaceStore } from '@/stores/space'
 import { copyPaste } from '@/utils/help'
 import { ElMessageBox, ElNotification } from 'element-plus'
@@ -248,7 +269,6 @@ import { storeToRefs } from 'pinia'
 import { computed, inject, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ChatShortcuts from './ChatShortcuts.vue'
-import type { ITimbreOptions } from '@/interface/tts'
 
 const currentDomain = inject<Partial<IDomainInfo>>(DomainEditSymbol)
 const currentDomainHansLimit = inject<Record<string, number>>(DomainHansLimitSymbol)
@@ -336,7 +356,11 @@ const checkCorrectTicketExpired = async () => {
 }
 
 const changeConversation = (value) => {
-  if (value === 'audio' && !currentDomain.conversation_mode_meta && timbreList.value.length > 0)
+  if (
+    value === EDomainConversationMode.video &&
+    !currentDomain.conversation_mode_meta &&
+    timbreList.value.length > 0
+  )
     currentDomain.conversation_mode_meta = timbreList.value[0]?.value
 }
 
