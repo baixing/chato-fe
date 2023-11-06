@@ -238,14 +238,13 @@ const onClearRecorder = () => {
 }
 
 const onCloseRecorder = () => {
+  console.log(123)
   if (isRecording.value) {
     stopRecording()
   }
   onClearRecorder()
   internalEnterDisabled.value = false
-  chatRecordingEnterVisible.value =
-    domainDetail.value.conversation_arouse_mode ===
-    EDomainConversationModeArousalMethod.AutomaticSpeechRecognition
+  chatRecordingEnterVisible.value = false
 }
 
 const onSendRecorder = () => {
@@ -260,8 +259,16 @@ const onSend = (val?: string) => {
 
 // 语音对话，进来就开启录音
 watch([isAudioChatModeDomain, isRecording, internalEnterDisabled, audioPlaying], () => {
-  console.log(isAudioChatModeDomain, isRecording, internalEnterDisabled, audioPlaying)
-  if (!isAudioChatModeDomain.value || inDebug.value) {
+  console.log(
+    domainDetail.value?.conversation_arouse_mode ===
+      EDomainConversationModeArousalMethod.ActiveTrigger
+  )
+  if (
+    !isAudioChatModeDomain.value ||
+    inDebug.value ||
+    domainDetail.value?.conversation_arouse_mode ===
+      EDomainConversationModeArousalMethod.ActiveTrigger
+  ) {
     return
   }
 
