@@ -14,6 +14,14 @@
         <svg-icon name="rights" svg-class="w-4 h-4" />
         {{ $t('空间权益') }}
       </li>
+      <li
+        v-show="spaceRightsVisible"
+        @click="onLinkData"
+        class="px-4 cursor-pointer h-9 flex items-center gap-2 rounded-lg transition-colors bg-[#242A40] hover:text-white"
+      >
+        <el-icon size="16"><DataAnalysis /></el-icon>
+        {{ $t('数据总结') }}
+      </li>
       <SuspendHelp />
       <UserSetting />
     </ul>
@@ -47,6 +55,12 @@ const onLinkSpace = () => {
   drawerVisible.value = false
 
   router.push({ name: RoutesMap.namespace.management, params: { spaceId: userInfo.value.org.id } })
+}
+
+const onLinkData = () => {
+  drawerVisible.value = false
+
+  router.push({ name: RoutesMap.namespace.summary, params: { spaceId: userInfo.value.org.id } })
 }
 </script>
 

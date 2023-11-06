@@ -51,7 +51,8 @@ export const RoutesMap = {
   namespace: {
     namespaceName: 'namespace',
     personalSetting: 'namespacePersonalSetting',
-    management: 'namespacePersonalManagement'
+    management: 'namespacePersonalManagement',
+    summary: 'namespaceSummary'
   },
   inviteMember: 'inviteMember',
   guide: {
@@ -299,6 +300,11 @@ const spaceManager = [
         // meta: { title: '个人设置' },
         path: 'personal',
         component: () => import('@/views/space/personalSetting.vue')
+      },
+      {
+        name: RoutesMap.namespace.summary,
+        path: 'summary/:type?',
+        component: () => import('@/views/space/summarySpace.vue')
       },
       {
         // meta: { title: '空间管理' },

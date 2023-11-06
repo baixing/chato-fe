@@ -28,6 +28,10 @@
         <el-icon class="mr-2"><Edit /></el-icon>
         {{ $t('个人设置') }}
       </el-button>
+      <!--      <el-button link @click="onLinkTo(RoutesMap.namespace.summary)" class="btn">-->
+      <!--        <el-icon class="mr-2"><DataAnalysis /></el-icon>-->
+      <!--        {{ $t('数据总结') }}-->
+      <!--      </el-button>-->
       <el-button link @click="onLinkTo(RoutesMap.auth.logout)" class="btn">
         <el-icon class="mr-2"><SwitchButton /></el-icon>
         {{ $t('退出登录') }}

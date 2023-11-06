@@ -149,16 +149,6 @@
         />
       </div>
     </div>
-    <EnterQa
-      activeNames="input-text"
-      :defaultForm="defaultForm"
-      :domainId="domainId"
-      :sizeLimit="10"
-      :qtyLimit="20"
-      :apiUpload="apiUpload"
-      :dialogVisible="dialogVisibleQa"
-      @closeDialogVisble="() => (dialogVisibleQa = false)"
-    />
   </div>
 </template>
 <script setup>
@@ -168,7 +158,6 @@ import SearchInput from '@/components/Input/SearchInput.vue'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import { currentEnvConfig } from '@/config'
 import { RoutesMap } from '@/router'
-import { useDomainStore } from '@/stores/domain'
 import { toSimpleDateTime } from '@/utils/formatter'
 import { detectMarkdown, renderMarkdown } from '@/utils/markdown'
 import * as url from '@/utils/url'
@@ -182,9 +171,6 @@ import { useRoute, useRouter } from 'vue-router'
 const { t } = useI18n()
 const router = useRouter()
 const route = useRoute()
-const domainStoreI = useDomainStore()
-const { domainInfo } = storeToRefs(domainStoreI)
-const domainId = computed(() => domainInfo.value.id || route.params.botId)
 const { isMobile } = useBasicLayout()
 
 const source = ref('all')
@@ -218,9 +204,6 @@ const sourceName = computed(() => {
 const isListLoading = ref(true) // 列表加载状态
 const $items = ref([]) // 列表内容
 const $pagination = ref({}) // 分页信息（主要用于获取总条数）
-const apiUpload = computed(() =>
-  url.join(currentEnvConfig.uploadBaseURL, `/chato/api/domains/${domainId.value}/files/upload/qa`)
-)
 const dialogVisibleQa = ref(false)
 const defaultForm = reactive({
   title: '',
@@ -313,7 +296,6 @@ function updateList(page = 1) {
   const end_time = timeRange.value ? timeRange.value[1] : null
   apiReport
     .getQuestions({
-      // domainId: domainId.value,
       source: source.value,
       evaluation: evaluation.value == 'all' ? null : evaluation.value,
       page,
@@ -402,7 +384,7 @@ async function handleExport(isAll = false) {
   }
   isListLoading.value = true
   apiReport
-    .exportQuestions({ id: exportArray, domainId: domainId.value })
+    .exportQuestions({ id: exportArray })
     .then((res) => {
       let blob = new Blob([res.data], {
         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8',
@@ -419,8 +401,8 @@ async function handleExport(isAll = false) {
       isListLoading.value = false
     })
 }
-
-watch(domainId, (v) => v && init(), { immediate: true })
+init()
+// watch(domainId, (v) => v && init(), { immediate: true })
 </script>
 <style lang="scss" scoped>
 .content-view-container {

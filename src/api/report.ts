@@ -4,21 +4,22 @@ import type { IFormCollectDetailList, IFormCollectSelect } from '@/interface/rep
 import { paramsSerializer } from '@/utils/help'
 import request from '@/utils/request'
 
-const pageSize = 20
+export function getQuestionsSummary(orgId, domainId = null) {
+  const params = {
+    org_id: orgId,
+    source: 'all'
+  }
+  if (domainId !== null) {
+    params.domain_id = domainId // 只在domainId不为null时包括该参数
+  }
 
-export function getQuestionsSummary(orgId, domainId) {
   return request({
     url: `/chato/api/v1/statistics/questions/summary`,
-    params: {
-      org_id: orgId,
-      domain_id: domainId,
-      source: 'all'
-    }
+    params
   })
 }
-
 export function getQuestions({
-  domainId,
+  domainId = null,
   source,
   evaluation,
   page,
@@ -28,35 +29,43 @@ export function getQuestions({
   mid_question_id,
   keyword
 }: IQuestionFilter) {
+  const params = {
+    // domain_id: domainId,
+    source: source,
+    page: page,
+    evaluation: evaluation,
+    page_size,
+    begin_time: begin_time,
+    end_time: end_time,
+    mid_question_id,
+    keyword
+  }
+  if (domainId != null) {
+    params.domain_id = domainId
+  }
   return request({
     url: `/chato/api/v1/statistics/questions/query`,
-    params: {
-      domain_id: domainId,
-      source: source,
-      page: page,
-      evaluation: evaluation,
-      page_size,
-      begin_time: begin_time,
-      end_time: end_time,
-      mid_question_id,
-      keyword
-    }
+    params
   })
 }
 
-export function exportQuestions({ ids, domainId, midQuestionId }) {
+export function exportQuestions({ ids, domainId = null, midQuestionId }) {
+  const data = {
+    ids: ids,
+    mid_question_id: midQuestionId
+  }
+
+  if (domainId !== null) {
+    data.domain_id = domainId // 只在domainId不为null时包括该参数
+  }
+
   return request({
     method: 'post',
     responseType: 'arraybuffer',
     url: '/chato/api/v1/statistics/questions/export',
-    data: {
-      domain_id: domainId,
-      ids: ids,
-      mid_question_id: midQuestionId
-    }
+    data
   })
 }
-
 /**
  * @function
  * @description 表单数据筛选
