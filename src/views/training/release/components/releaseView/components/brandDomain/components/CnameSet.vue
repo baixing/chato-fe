@@ -48,7 +48,7 @@
               :disabled="cnameUpload.pub_key.length > 0"
               :name="$t(`上传证书文件`)"
               :extra="$t(`后缀为：*.pem或*.crt的文件`)"
-              :maxSize="5"
+              :maxSize="0.5"
               :limitType="['.pem', '.crt']"
             />
           </div>
@@ -58,7 +58,7 @@
               :disabled="cnameUpload.pri_key.length > 0"
               :name="$t(`上传私钥文件`)"
               :extra="$t(`后缀为：*.key的文件`)"
-              :maxSize="5"
+              :maxSize="0.5"
               :limitType="['.key']"
             />
           </div>

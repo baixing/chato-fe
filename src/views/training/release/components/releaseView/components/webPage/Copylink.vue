@@ -28,6 +28,7 @@
 
 <script setup lang="ts">
 import Modal from '@/components/Modal/index.vue'
+import { CHATO_SOURCE_SHARE } from '@/constant/common'
 import { computed } from 'vue'
 import QrCode from './QrCode.vue'
 
@@ -38,7 +39,7 @@ const props = defineProps<{
 
 const emit = defineEmits(['update:value', 'handleCopyLink'])
 
-const authenticChatWebPage = computed(() => `${props.chatWebPage}?source=Chato_share_web`)
+const authenticChatWebPage = computed(() => `${props.chatWebPage}?source=${CHATO_SOURCE_SHARE}`)
 const internalVisible = computed({
   get: () => props.value,
   set: (v) => emit('update:value', v)

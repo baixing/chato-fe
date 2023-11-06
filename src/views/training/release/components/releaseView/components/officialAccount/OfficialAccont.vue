@@ -10,7 +10,7 @@
       <el-tab-pane :label="$t(`添加菜单`)" name="addMenuTab"
         ><AddMenuTab
           @handleEventSet="handleEventSet"
-          :link="link + '?source=mp_menu'"
+          :link="link + `?source=${CHATO_SOURCE_PUBLIC}`"
           :qrcode="qrcode"
       /></el-tab-pane>
       <el-tab-pane :label="$t(`自动回复`)" name="automaticTab" :qrcode="qrcode"
@@ -32,6 +32,7 @@
 
 <script setup lang="ts">
 import Modal from '@/components/Modal/index.vue'
+import { CHATO_SOURCE_PUBLIC } from '@/constant/common'
 import { useQRCode } from '@vueuse/integrations/useQRCode'
 import { computed, ref } from 'vue'
 import SketchDialog from '../SketchDialog.vue'

@@ -73,6 +73,7 @@
 <script lang="ts" setup>
 import { createDeleteEditSites, getCreateSites } from '@/api/iframe'
 import { useBasicLayout } from '@/composables/useBasicLayout'
+import { CHATO_SOURCE_JS } from '@/constant/common'
 import { ESiteShowLocationType, ESiteStatus } from '@/enum/release'
 import type {
   ICreateDeleteEditSitesData,
@@ -105,10 +106,10 @@ const loading = ref()
 const activeNames = ref('')
 const sitesList = ref<ICreateSitesChannelsRes[]>([])
 
-const codeIframeHtml = (source: string) => {
+const codeIframeHtml = () => {
   return `
   <iframe
-  src="${props.chatWebPage}?source=${source}"
+  src="${props.chatWebPage}?source=${CHATO_SOURCE_JS}"
   style="width: 100%;height: 100%;min-height: 700px;"
   frameborder="0"
   allow="microphone">
@@ -192,7 +193,7 @@ const initSitesList = async () => {
   sitesList.value = channels.map((item) => ({
     ...item,
     codeContent: codeContent(item.id),
-    codeIframeHtml: codeIframeHtml(item.source)
+    codeIframeHtml: codeIframeHtml()
   }))
 }
 

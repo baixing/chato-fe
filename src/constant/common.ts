@@ -1,11 +1,10 @@
 export const FULL_SITE_NAME = 'Chato - 基于AI技术 轻松创建对话机器人'
 export const SITE_NAME = 'Chato'
-export const CHARO_SOURCE = 'Chato_main_web'
-export const CHARO_SOURCE_PC = 'Chato_main_web_pc'
-export const CHARO_SOURCE_WAP = 'Chato_main_web_wap'
-export const CHATO_SHARE_SOURCE = 'Chato_share_web'
-export const CHATO_SHARE_SOURCE_PC = 'Chato_share_web_pc'
-export const CHATO_SHARE_SOURCE_WAP = 'Chato_share_web_wap'
+export const CHARO_SOURCE_RESOURCE = 'Chato_resource_web' // 资源广场-默认source
+export const CHATO_SOURCE_SHARE = 'Chato_share_web' // 网页分享
+export const CHATO_SOURCE_SHAKEDOWN = 'Chato_shakedown_web' // 调试页面
+export const CHATO_SOURCE_JS = 'Chato_share_js' // js嵌入
+export const CHATO_SOURCE_PUBLIC = 'mp_menu' // 微信公众号
 
 export const UPLOAD_FILE_VIDEO_AUDIO_TYPES = [
   '.mp3',

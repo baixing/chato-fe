@@ -8,7 +8,7 @@
         :name="$t(`上传文件`)"
         :extra="$t(`后缀为：*.txt的文件，上传成功后约一分钟生效，请耐心等待`)"
         class="w-full"
-        :maxSize="5"
+        :maxSize="0.5"
         :limitType="['.txt']"
       />
     </div>
