@@ -238,7 +238,6 @@ const onClearRecorder = () => {
 }
 
 const onCloseRecorder = () => {
-  console.log(123)
   if (isRecording.value) {
     stopRecording()
   }
@@ -259,10 +258,6 @@ const onSend = (val?: string) => {
 
 // 语音对话，进来就开启录音
 watch([isAudioChatModeDomain, isRecording, internalEnterDisabled, audioPlaying], () => {
-  console.log(
-    domainDetail.value?.conversation_arouse_mode ===
-      EDomainConversationModeArousalMethod.ActiveTrigger
-  )
   if (
     !isAudioChatModeDomain.value ||
     inDebug.value ||
