@@ -86,7 +86,16 @@
         <p class="text-[#9DA3AF] leading-4 text-xs">{{ t('点击下方语音图标可停止录音') }}</p>
       </div>
       <div class="flex gap-10 items-center justify-center relative">
-        <el-button link type="info" :disabled="!internalValue" @click="onClearRecorder">
+        <el-button
+          link
+          type="info"
+          :disabled="!internalValue"
+          @click="onClearRecorder"
+          v-if="
+            domainDetail?.conversation_arouse_mode !==
+            EDomainConversationModeArousalMethod.AutomaticSpeechRecognition
+          "
+        >
           {{ t('清空') }}
         </el-button>
         <span
@@ -95,7 +104,16 @@
         >
           <svg-icon svg-class="w-5 h-5 text-white" name="chat-sound" />
         </span>
-        <el-button link type="info" :disabled="!internalValue" @click="onSendRecorder">
+        <el-button
+          link
+          type="info"
+          :disabled="!internalValue"
+          @click="onSendRecorder"
+          v-if="
+            domainDetail?.conversation_arouse_mode !==
+            EDomainConversationModeArousalMethod.AutomaticSpeechRecognition
+          "
+        >
           {{ t('发送') }}
         </el-button>
         <WaterRipples v-show="isRecording" />
