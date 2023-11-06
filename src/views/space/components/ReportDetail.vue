@@ -130,14 +130,6 @@
             </template>
           </el-table-column>
         </el-tooltip>
-        <el-table-column fixed="right" :label="$t(`操作`)" :width="isMobile ? 60 : 150">
-          <template #default="{ row }">
-            <el-button type="primary" link @click="correctAnswer(row)">{{ $t('修正') }}</el-button>
-            <el-button v-if="!isMobile" type="primary" link @click="onLinkContext(row)">
-              {{ $t('查看上下文') }}
-            </el-button>
-          </template>
-        </el-table-column>
       </el-table>
       <div class="pagination">
         <el-pagination
@@ -331,25 +323,6 @@ const handleCommand = (command) => {
 const handleEvaluationCommand = (command) => {
   evaluation.value = command
   updateList(1)
-}
-
-const onLinkContext = (row) => {
-  const { id } = row
-  router.push({
-    name: RoutesMap.tranning.report,
-    params: {
-      ...route.params,
-      type: 'context',
-      chatId: `${id}_q`
-    }
-  })
-}
-
-function correctAnswer(e) {
-  defaultForm.title = e.question
-  defaultForm.question_id = e.id
-  defaultForm.content = e.answer
-  dialogVisibleQa.value = true
 }
 
 function handleSelect(val, row) {
