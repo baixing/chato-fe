@@ -243,7 +243,9 @@ const onCloseRecorder = () => {
   }
   onClearRecorder()
   internalEnterDisabled.value = false
-  chatRecordingEnterVisible.value = false
+  chatRecordingEnterVisible.value =
+    domainDetail.value.conversation_arouse_mode ===
+    EDomainConversationModeArousalMethod.AutomaticSpeechRecognition
 }
 
 const onSendRecorder = () => {
