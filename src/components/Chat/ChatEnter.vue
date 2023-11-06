@@ -181,7 +181,11 @@ const onAudioChat = (str) => {
     return
   }
   chatRecordingEnterVisible.value = true
-  onAudioSend()
+  if (
+    domainDetail.value?.conversation_arouse_mode ===
+    EDomainConversationModeArousalMethod.AutomaticSpeechRecognition
+  )
+    onAudioSend()
 }
 // --- 语音对话逻辑 end ---
 
@@ -266,7 +270,6 @@ watch([isAudioChatModeDomain, isRecording, internalEnterDisabled, audioPlaying],
   ) {
     return
   }
-
   if (isRecording.value) {
     if (internalEnterDisabled.value || audioPlaying.value) {
       stopRecording()
