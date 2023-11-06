@@ -318,7 +318,8 @@ const chatHistoryParams: ChatHistoryParams = reactive({
 const SSEInstance = new SSE()
 
 const link = computed(
-  () => `${window.location.origin}/${detail.value.org.id === 45 ? 'bot' : 'b'}/${detail.value.slug}`
+  () =>
+    `${window.location.origin}/${detail.value.org.id === 208 ? 'bot' : 'b'}/${detail.value.slug}`
 )
 
 const copyText = (str: string) => {
