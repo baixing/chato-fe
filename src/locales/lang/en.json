@@ -1388,5 +1388,16 @@
   "生成的小程序码，永久有效": "The generated Mini Program QR Code is permanent",
   "下载": "Download",
   "2、小程序链接": "2、Mini Program Link",
-  "适用于短信、邮件、网页、微信内等拉起小程序的业务场景": "Applicable to the business scene such as SMS, email, web page, and WeChat within"
+  "适用于短信、邮件、网页、微信内等拉起小程序的业务场景": "Applicable to the business scene such as SMS, email, web page, and WeChat within",
+  "已审核 （{count1}）条；待审核（{count2}）条": "{count1} articles have been reviewed; {count2} articles are waiting for review",
+  "生成问答": "Generate Q&A",
+  "审阅问答": "Review Q&A",
+  "暂无审核内容": "No content to be reviewed",
+  "请确认是否全部弃用，弃后不可恢复？": "Are you sure you want to abandon all? It cannot be restored after abandoning",
+  "请确认是否全部转存？": "Are you sure you want to transfer all? It cannot be restored after transferring",
+  "已转存": "Transferred",
+  "已弃用": "Abandoned",
+  "全部转存": "Transfer all",
+  "批量生成问答并经过人工审阅后可录入问答库，问答的索引匹配度通常高于文档。内测期间，验收不占用问答额度。是否确认生成？": "Batch generation of Q&A and manual review after it can be entered into the Q&A library. The index match of the Q&A is usuall",
+  "问答生成成功": "Q&A generation succeeded"
 }

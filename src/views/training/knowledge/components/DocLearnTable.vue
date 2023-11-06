@@ -1,7 +1,11 @@
 <script lang="ts" setup>
 import { deleteFile, getWXPublicLearnCount } from '@/api/file'
 import { useBasicLayout } from '@/composables/useBasicLayout'
-import { UPLOAD_FILE_FORCED_CONVERSION_TO_TXT_TYPES } from '@/constant/common'
+import {
+  UPLOAD_FILE_FORCED_CONVERSION_TO_TXT_TYPES,
+  UPLOAD_FILE_VIDEO_AUDIO_TYPES
+} from '@/constant/common'
+import { KnowledgeQuestionConvertQABtn } from '@/constant/knowledge'
 import { EDocumentOperateType, LearningStatesPerformanceType } from '@/enum/knowledge'
 import type { IPage } from '@/interface/common'
 import type { IDocumentList } from '@/interface/knowledge'
@@ -15,7 +19,7 @@ import {
 } from '@/utils/formatter'
 import { convertSize, openPreviewUrl } from '@/utils/help'
 import { ElMessageBox, ElNotification as Notification } from 'element-plus'
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ReplaceFile from './ReplaceFile.vue'
 import { selectableDeclarations } from './config'
@@ -39,6 +43,8 @@ const emit = defineEmits([
   'update:pagination',
   'editPreviewDoc',
   'removeDoc',
+  'generateQA',
+  'generateQARouter',
   'update:selectStatus',
   'update:multipleSelection'
 ])
@@ -137,6 +143,10 @@ const formatDisplayFileName = (rowData: IDocumentList) => {
   }
 }
 
+const checkDocTypeQuestionConvert = (rowData: IDocumentList) => {
+  return UPLOAD_FILE_VIDEO_AUDIO_TYPES.includes(`.${rowData.type}`)
+}
+
 const formatDisplayFileType = (rowData: IDocumentList) => {
   if (
     UPLOAD_FILE_FORCED_CONVERSION_TO_TXT_TYPES.includes(`.${rowData.type}`) &&
@@ -160,6 +170,35 @@ const formatDisplayCharacter = (rowData: IDocumentList) => {
     return convertSize(rowData.raw_size)
   }
 }
+
+// 生成问答/审阅问答
+const onHandleQuestion = (item: IDocumentList) => {
+  // 生成问答
+  if (item.qa_status === 0) {
+    const confirmMessage = t(
+      '批量生成问答并经过人工审阅后可录入问答库，问答的索引匹配度通常高于文档。内测期间，验收不占用问答额度。是否确认生成？'
+    )
+    ElMessageBox.confirm(confirmMessage, t('生成问答'), {
+      confirmButtonText: t('确认'),
+      cancelButtonText: t('取消'),
+      type: 'warning'
+    })
+      .then(() => {
+        internalLoading.value = true
+        emit('generateQA', item.id)
+      })
+      .catch(() => {
+        Notification({
+          type: 'info',
+          message: t('已取消')
+        })
+      })
+  } else {
+    // 审阅问答
+    emit('generateQARouter', item.id)
+  }
+}
+
 onUnmounted(() => {
   clearInterval(timerPublicLearn)
 })
@@ -241,7 +280,7 @@ onUnmounted(() => {
           {{ toSimpleDateTime(scope.row.created) }}
         </template>
       </el-table-column>
-      <el-table-column :label="$t('操作')" width="120" fixed="right">
+      <el-table-column :label="$t('操作')" width="180" fixed="right">
         <template #default="scope">
           <div class="flex flex-wrap gap-3 items-center">
             <el-button
@@ -270,6 +309,15 @@ onUnmounted(() => {
               type="file"
               @removeFile="removeFileCommon"
             />
+            <el-button
+              v-if="!checkDocTypeQuestionConvert(scope.row)"
+              link
+              type="primary"
+              :disabled="scope.row.qa_status === 1"
+              @click="onHandleQuestion(scope.row)"
+            >
+              {{ $t(KnowledgeQuestionConvertQABtn[scope.row.qa_status]) }}
+            </el-button>
             <el-button link type="danger" class="p-0 !ml-0" @click="onDeleteFile(scope.row.id)">
               {{ $t('删除') }}
             </el-button>

@@ -62,7 +62,6 @@ const chatReleaseURL = computed(() => {
   }
 })
 const weixinServiceDocs = 'https://baixingwang.feishu.cn/docx/CXyTdSKF6oPCiLxAQTacrHvUnfe'
-const appletConfigDocs = 'https://baixingwang.feishu.cn/docx/C2shd2MHfo7aPfxkUl8cJVJMnGf'
 
 const accountQrCode = ref<ICreateAccountRes>()
 const accountCreateStatus = ref<EAccountSettingStatus>(EAccountSettingStatus.creating)
@@ -96,10 +95,7 @@ const {
   tiktokService,
   dingDingVisible,
   createAccountVisible,
-  drawerAccountVisible,
-  createAppletVisible,
-  drawerAppletVisible,
-  domainVerificationVisible
+  drawerAccountVisible
 } = toRefs(features)
 
 const { checkRightsTypeNeedUpgrade, isAllowedCommercialType } = useSpaceRights()
