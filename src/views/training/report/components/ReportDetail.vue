@@ -313,7 +313,7 @@ function updateList(page = 1) {
   const end_time = timeRange.value ? timeRange.value[1] : null
   apiReport
     .getQuestions({
-      // domainId: domainId.value,
+      domainId: domainId.value,
       source: source.value,
       evaluation: evaluation.value == 'all' ? null : evaluation.value,
       page,
