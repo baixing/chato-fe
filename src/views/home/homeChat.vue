@@ -11,7 +11,7 @@
       </span>
       <homeChatItem />
       <span
-        @click="$copyText(link)"
+        @click="copyText(link)"
         class="flex w-fit cursor-pointer rounded-full absolute z-[999] top-0 right-0 h-14 items-center text-base pr-5"
       >
         <svg-icon name="share" svg-class="text-[#303133] mt-1 w-6 h-6" />
@@ -33,12 +33,32 @@
 
 <script setup lang="ts">
 import { useBasicLayout } from '@/composables/useBasicLayout'
+import useGlobalProperties from '@/composables/useGlobalProperties'
 import ChatSidebar from '@/layout/components/Sidebar/ChatSidebar.vue'
+import dayjs from 'dayjs'
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import homeChatItem from './components/homeChatItem.vue'
 
 const { isMobile } = useBasicLayout()
 const loading = ref(false)
 const drawerVisible = ref<boolean>(false)
 const link = window.location.href
+const { $sensors, $copyText } = useGlobalProperties()
+const { t } = useI18n()
+
+const copyText = (str: string) => {
+  scanCodeSuccessRBI()
+  $copyText(str)
+}
+
+const scanCodeSuccessRBI = () => {
+  $sensors?.track('chat_share', {
+    name: t('分享成功'),
+    type: 'chat_share',
+    data: {
+      time: dayjs().format('YYYY-MM-DD HH:mm:ss')
+    }
+  })
+}
 </script>

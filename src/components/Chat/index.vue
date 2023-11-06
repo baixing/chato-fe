@@ -12,7 +12,7 @@
       />
       <span>{{ detail.name || '...' }}</span>
       <span
-        @click="$copyText(link)"
+        @click="copyText(link)"
         class="flex w-fit cursor-pointer rounded-full absolute z-[999] top-0 right-0 h-14 items-center text-base pr-5"
       >
         <svg-icon name="share" svg-class="text-[#303133] mt-1 w-6 h-6" />
@@ -174,6 +174,7 @@ import ChatEnter from '@/components/Chat/ChatEnter.vue'
 import MessageItem from '@/components/Chat/ChatMessageItem.vue'
 import CustomerFormDialog from '@/components/Customer/CustomerFormDialog.vue'
 import useAudioPlayer from '@/composables/useAudioPlayer'
+import useGlobalProperties from '@/composables/useGlobalProperties'
 import useSSEAudio from '@/composables/useSSEAudio'
 import { useSource } from '@/composables/useSource'
 import useSpaceRights from '@/composables/useSpaceRights'
@@ -213,6 +214,7 @@ import { getStringWidth } from '@/utils/string'
 import { isURL } from '@/utils/url'
 import shareWeixin from '@/utils/weixinShare'
 import { useDebounceFn } from '@vueuse/core'
+import dayjs from 'dayjs'
 import { ElMessage, ElMessageBox, ElNotification as Notification } from 'element-plus'
 import 'highlight.js/styles/default.css'
 import { random, remove } from 'lodash'
@@ -265,6 +267,7 @@ const { userInfo } = storeToRefs(base)
 const authStoreI = useAuthStore()
 const { authToken, uid } = storeToRefs(authStoreI)
 const emit = defineEmits(['showDrawer', 'correctAnswer'])
+const { $sensors, $copyText } = useGlobalProperties()
 const botSlug = computed(() => {
   if (debugDomain?.slug) {
     return debugDomain.slug
@@ -317,6 +320,23 @@ const SSEInstance = new SSE()
 const link = computed(
   () => `${window.location.origin}/${detail.value.org.id === 45 ? 'bot' : 'b'}/${detail.value.slug}`
 )
+
+const copyText = (str: string) => {
+  scanCodeSuccessRBI()
+  $copyText(str)
+}
+
+// ---- 业务打点-----
+const scanCodeSuccessRBI = () => {
+  $sensors?.track('chat_share', {
+    name: t('分享成功'),
+    type: 'chat_share',
+    data: {
+      time: dayjs().format('YYYY-MM-DD HH:mm:ss')
+    }
+  })
+}
+// ----------------
 
 // 水印
 const watermarkFunc = () => {
