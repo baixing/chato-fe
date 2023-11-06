@@ -165,7 +165,7 @@
     >
       <div class="fixed-btn" id="Chato_right_service_click" data-sensors-click @click="onContactUs">
         <svg-icon class="text-xl mb-[4px]" svg-class="w-5 h-5" name="wechat" />
-        <span v-if="!isMobile" class="scale-90">{{ $t('微信咨询') }}</span>
+        <span v-if="!isMobile" class="scale-90">{{ $t('咨询客服') }}</span>
       </div>
       <div id="Chato_right_login_click" data-sensors-click @click="onEnter()" class="fixed-btn">
         <svg-icon class="text-xl mb-[4px]" name="free-experience" />
@@ -209,11 +209,12 @@ import { useBase } from '@/stores/base'
 import { useChatStore } from '@/stores/chat'
 import { useLocales } from '@/stores/locales'
 import { openPreviewUrl, randomString } from '@/utils/help'
+import { chatoIframe } from '@/utils/iframe'
 import { ArrowDown } from '@element-plus/icons-vue'
 import { useDebounceFn, useStorage } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import type { Ref } from 'vue'
-import { computed, defineAsyncComponent, onMounted, ref } from 'vue'
+import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import WOW from 'wow.js'
@@ -294,7 +295,8 @@ const onEnter = (type?: string) => {
 }
 
 const onContactUs = () => {
-  checkRightsTypeNeedUpgrade(ESpaceRightsType.default)
+  const containerEl = document.getElementById('inframe_container')
+  containerEl && (containerEl.style.display = 'block')
 }
 
 const onFormModal = (showRef: Ref) => {
@@ -384,6 +386,19 @@ const init = async () => {
   res?.id && $sensors?.login(res.id.toString())
 }
 
+const onRegisterContactUS = () => {
+  window.ChatoBotConfig = {
+    baseURL: 'https://api.chato.cn',
+    wwwBaseURL: 'https://chato.cn',
+    token: 'kv9ez5y8qxp7l3m4',
+    id: 835
+  }
+  chatoIframe()
+  setTimeout(() => {
+    onContactUs()
+  }, 5000)
+}
+
 onMounted(() => {
   const wow = new WOW({
     offset: 100, // 定义浏览器视口底部与隐藏框顶部之间的距离。当用户滚动并到达此距离时，隐藏的框会显示出来。
@@ -395,6 +410,12 @@ onMounted(() => {
 
   initUid()
   init()
+  onRegisterContactUS()
+})
+
+onBeforeUnmount(() => {
+  const iframeContainerEl = document.getElementById('inframe_container')
+  iframeContainerEl?.remove()
 })
 </script>
 <style lang="scss" scoped>

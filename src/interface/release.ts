@@ -1,12 +1,12 @@
 import type { EBrandCreateEditStatusType, EBrandDomainStatusType } from '@/enum/domain'
 import type {
   EAfficialAccountStatusType,
+  EQrCodeHookType,
   ESitePopupType,
-  ESiteShowLocationType,
-  EQrCodeHookType
+  ESiteShowLocationType
 } from '@/enum/release'
-import type { IDomainInfo } from './domain'
 import type { UploadUserFile } from 'element-plus'
+import type { IDomainInfo } from './domain'
 
 export interface IApplicationFormData {
   org_id: number
@@ -51,6 +51,7 @@ export interface ICreateSitesChannelsRes {
   modified: string
   source: string
   show_location: ESiteShowLocationType
+  show_bubble: number
   popup_frequency: number
   popup: ESitePopupType
   codeIframeHtml?: string

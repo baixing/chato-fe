@@ -41,29 +41,35 @@
           </el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item
-        prop="popup_frequency"
-        v-if="inputCreateSiteForm.popup === ESitePopupType.active"
-      >
-        <NumberInput
-          prefix="访问停留"
-          suffix="秒后自动弹出"
-          inputClass="!w-32"
-          v-model:value="inputCreateSiteForm.popup_frequency"
-        />
-      </el-form-item>
+      <template v-if="inputCreateSiteForm.popup === ESitePopupType.active">
+        <el-form-item prop="popup_frequency">
+          <NumberInput
+            prefix="访问停留"
+            suffix="秒后自动弹出"
+            inputClass="!w-32"
+            v-model:value="inputCreateSiteForm.popup_frequency"
+          />
+        </el-form-item>
+        <el-form-item>
+          <div class="flex items-center justify-between w-full">
+            {{ $t('气泡展示') }}
+            <SwitchWithStateMsg v-model:value="inputCreateSiteForm.show_bubble" />
+          </div>
+        </el-form-item>
+      </template>
     </template>
   </el-form>
   <slot :submit="inputCreateSiteForm" :ruleFormCreateSiteRef="ruleFormCreateSiteRef"></slot>
 </template>
 <script lang="ts" setup>
-import { reactive, ref, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { ESiteShowLocationType, ESitePopupType } from '@/enum/release'
 import siteShowFull from '@/assets/img/release/site-show-full.png'
 import siteShowRight from '@/assets/img/release/site-show-right.png'
 import NumberInput from '@/components/Input/NumberInput.vue'
+import SwitchWithStateMsg from '@/components/SwitchWithStateMsg/index.vue'
+import { ESitePopupType, ESiteShowLocationType } from '@/enum/release'
 import { $notnull } from '@/utils/help'
+import { reactive, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 const props = withDefaults(
@@ -72,13 +78,15 @@ const props = withDefaults(
     popupFrequency?: number
     popup: ESitePopupType
     showLocation: ESiteShowLocationType
+    showBubble?: number
     visible?: boolean
   }>(),
   {
     source: '',
     popupFrequency: 0,
     popup: ESitePopupType.passive,
-    showLocation: ESiteShowLocationType.lower_right
+    showLocation: ESiteShowLocationType.lower_right,
+    showBubble: 1
   }
 )
 const ShowLocationList = [
@@ -112,6 +120,7 @@ const rulesCreateSitePublic = reactive({
 const inputCreateSiteForm = reactive({
   source: '',
   show_location: ESiteShowLocationType.lower_right,
+  show_bubble: 1,
   popup: ESitePopupType.passive,
   popup_frequency: 10
 })
@@ -122,6 +131,7 @@ watch(
     if ($notnull(v)) {
       inputCreateSiteForm.source = v.source
       inputCreateSiteForm.show_location = v.showLocation || ESiteShowLocationType.lower_right
+      inputCreateSiteForm.show_bubble = v.showBubble
       inputCreateSiteForm.popup = v.popup || ESitePopupType.passive
       inputCreateSiteForm.popup_frequency = v.popupFrequency
     }

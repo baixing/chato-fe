@@ -1,7 +1,5 @@
 window.onload = () => {
   async function chatoIframe() {
-    const IFRAME_CONTAINER_WIDTH = 408
-    const IFRAME_CONTAINER_HEIGHT = 594
     const ChatDotSquare = `
         <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="none" version="1.1" width="22"
         height="22" viewBox="0 0 22 22">
@@ -22,6 +20,7 @@ window.onload = () => {
             </g>
       </svg>
     `
+
     const createChatoConfig = {
       tipChatoBg: '#4C83F3',
       tipChatoColor: '#fff',
@@ -45,10 +44,10 @@ window.onload = () => {
       createChatoConfig.tipChatoColor = data.data.suspend_style_color || '#fff'
       createChatoConfig.chatoIframeSrc = `${createChatoConfig.wwwBaseURL}/b/${createChatoConfig.domainSlug}?source=${data.data.source}`
       createChatoConfig.popupFrequency = data.data.popup_frequency
-      return Promise.resolve()
+      return Promise.resolve(data.data)
     }
 
-    async function createChato() {
+    async function createChato(domainConfig) {
       const tip_chato = document.createElement('div')
       const inframe_container = document.createElement('div')
       const iframe_chato = document.createElement('iframe')
@@ -84,13 +83,16 @@ window.onload = () => {
       display: none;
       position: fixed;
       z-index: 999999;
-      width: ${IFRAME_CONTAINER_WIDTH}px;
-      height: ${IFRAME_CONTAINER_HEIGHT}px;
-      right: 44px;
-      bottom: 44px;
-      border: 1px solid #DCDFE6;
+      width: 85vw;
+      max-width: 375px;
+      height: 60vh;
+      max-height: 667px;
+      right: 12px;
+      bottom: 12px;
       overflow: hidden;
-    `
+      box-shadow: 0px 8px 32px 0px rgba(0, 0, 0, 0.16);
+      border-radius: 16px;
+      `
       )
       iframe_chato.setAttribute(
         'style',
@@ -101,12 +103,23 @@ window.onload = () => {
     `
       )
 
-      inframe_container.innerHTML = `<div id="close_chato" style="position: absolute; right: 5px; top: 22px; height: 3px; width: 27px; text-align: right; background-color: #888; cursor: pointer;">
-      <span class="click-area" style="position: absolute; top: -10px; right: -10px; bottom: -10px; left: -10px;"></span>
-    </div>`
+      inframe_container.innerHTML = `<div id="close_chato" style="position: absolute; right: 16px; top: 20px; cursor: pointer;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none">
+          <defs>
+            <clipPath id="a">
+              <rect width="16" height="16" rx="0"/>
+            </clipPath>
+          </defs>
+          <g clip-path="url(#a)">
+            <path fill="#303133" d="M13.422 12.463a.689.689 0 0 1-.974.974L8 8.99 3.55 13.437a.687.687 0 0 1-.973 0 .689.689 0 0 1 0-.974l4.448-4.448-4.449-4.449a.689.689 0 0 1 .974-.974L8 7.041l4.448-4.448a.689.689 0 1 1 .974.974L8.974 8.015l4.448 4.448Z"/>
+          </g>
+        </svg>
+      </div>`
       inframe_container.appendChild(iframe_chato)
 
-      body.appendChild(tip_chato)
+      if (domainConfig.show_bubble) {
+        body.appendChild(tip_chato)
+      }
       body.appendChild(inframe_container)
 
       let isDragging = false
@@ -115,7 +128,7 @@ window.onload = () => {
       let lastX = 0
       let lastY = 0
 
-      tip_chato.addEventListener('mousedown', startDrag)
+      tip_chato?.addEventListener('mousedown', startDrag)
       document.addEventListener('mousemove', drag)
       document.addEventListener('mouseup', endDrag)
 
@@ -153,46 +166,51 @@ window.onload = () => {
         tip_chato.style.left = `${newX}px`
         tip_chato.style.top = `${newY}px`
 
-        const maxWidth = window.innerWidth - IFRAME_CONTAINER_WIDTH - 44
-        const maxHeight = window.innerHeight - IFRAME_CONTAINER_HEIGHT - 44
+        const containerEl = document.getElementById('inframe_container')
+        const maxWidth = window.innerWidth - containerEl.clientWidth - 44
+        const maxHeight = window.innerHeight - containerEl.clientHeight - 44
         inframe_container.style.left = `${Math.min(newX, maxWidth)}px`
         inframe_container.style.top = `${Math.min(newY, maxHeight)}px`
       }
 
       function visibleChato(tipV = 'none', inframeV = 'block') {
-        tip_chato.style.display = tipV
+        tip_chato && (tip_chato.style.display = tipV)
         inframe_container.style.display = inframeV
       }
 
+      let intervaler = null
+
       function popupFrequencyChato(rate: number) {
         if (rate > 0) {
-          setInterval(function () {
+          if (intervaler) {
+            clearInterval(intervaler)
+          }
+          intervaler = setInterval(function () {
             visibleChato('none', 'block')
           }, rate * 1000)
         }
       }
 
-      tip_chato.addEventListener('click', function () {
+      tip_chato?.addEventListener('click', function () {
         visibleChato()
       })
 
       document.getElementById('close_chato')?.addEventListener('click', function () {
         inframe_container.style.display = 'none'
-        tip_chato.style.display = 'block'
+        tip_chato && (tip_chato.style.display = 'block')
+        popupFrequencyChato(createChatoConfig.popupFrequency)
       })
 
       popupFrequencyChato(createChatoConfig.popupFrequency)
     }
 
     try {
-      await fetchChatoDetail()
-      await createChato()
+      const domainConfig = await fetchChatoDetail()
+      await createChato(domainConfig)
     } catch (error) {
       console.error(error)
     }
   }
+
   chatoIframe()
 }
-
-export { }
-

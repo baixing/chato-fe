@@ -17,6 +17,7 @@
             :popupFrequency="item.popup_frequency"
             :popup="item.popup"
             :showLocation="item.show_location"
+            :showBubble="item.show_bubble"
             :visible="visible"
           >
             <div class="text-xs">
@@ -72,12 +73,12 @@
 <script lang="ts" setup>
 import { createDeleteEditSites, getCreateSites } from '@/api/iframe'
 import { useBasicLayout } from '@/composables/useBasicLayout'
+import { ESiteShowLocationType, ESiteStatus } from '@/enum/release'
 import type {
   ICreateDeleteEditSitesData,
   ICreateSitesChannelsRes,
   ISetSiteFormType
 } from '@/interface/release'
-import { ESiteShowLocationType, ESiteStatus } from '@/enum/release'
 import { renderMarkdown } from '@/utils/markdown'
 import type { FormInstance } from 'element-plus'
 import { ElLoading, ElMessageBox, ElNotification as Notification } from 'element-plus'
