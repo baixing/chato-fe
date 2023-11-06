@@ -359,9 +359,10 @@ const changeConversation = (value) => {
   if (
     value === EDomainConversationMode.video &&
     !currentDomain.conversation_mode_meta &&
-    timbreList.value.length > 0
-  )
+    timbreList.value.length
+  ) {
     currentDomain.conversation_mode_meta = timbreList.value[0]?.value
+  }
 }
 
 const getTimbreList = async () => {

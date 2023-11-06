@@ -202,8 +202,9 @@ const onAudioChat = (str) => {
   if (
     domainDetail.value?.conversation_arouse_mode ===
     EDomainConversationModeArousalMethod.AutomaticSpeechRecognition
-  )
+  ) {
     onAudioSend()
+  }
 }
 // --- 语音对话逻辑 end ---
 
