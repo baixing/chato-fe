@@ -359,8 +359,8 @@ const changeConversation = (value) => {
   if (
     value === EDomainConversationMode.video &&
     !currentDomain.conversation_mode_meta &&
-    timbreList.value.length
-  ) {
+    timbreList.value.length > 0
+  )
     currentDomain.conversation_mode_meta = timbreList.value[0]?.value
   }
 }
