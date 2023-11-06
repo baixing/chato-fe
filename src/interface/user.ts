@@ -1,5 +1,6 @@
 import type { ESpaceCommercialType } from '@/enum/space'
 import type { EAllRole } from '@/enum/user'
+import type { EUserOriganizationRole } from '@/enum/userInformation'
 import type { IDomainInfo } from './domain'
 
 export interface IOrg {
@@ -38,6 +39,12 @@ export interface IUserInfo {
   channel: string
   unified_user_id: string
   token: string
+}
+
+export interface IUserIdentity {
+  organization_type?: EUserOriganizationRole
+  surname?: string
+  company?: string
 }
 
 export interface IOrgUserList {

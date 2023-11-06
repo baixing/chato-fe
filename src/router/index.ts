@@ -1,7 +1,7 @@
+import useCheckDomain from '@/composables/useCheckDomain'
 import usePageTitle from '@/composables/usePageTitle'
 import useRoleCheck from '@/composables/useRoleCheck'
 import useSidebar from '@/composables/useSidebar'
-import useCheckDomain from '@/composables/useCheckDomain'
 import { useAuthStore } from '@/stores/auth'
 import Sensors from '@/utils/sensors'
 import { locationComToCn } from '@/utils/url'
@@ -54,6 +54,9 @@ export const RoutesMap = {
     management: 'namespacePersonalManagement'
   },
   inviteMember: 'inviteMember',
+  guide: {
+    first: 'guideFirst'
+  },
   namespaceSwitch: 'namespaceSwitch',
   endPlatform: {
     adCollectForm: 'endPlatformadCollectForm'
@@ -322,6 +325,15 @@ const inviteMember = [
   }
 ]
 
+// 引导
+const guideRoutes = [
+  {
+    name: RoutesMap.guide.first,
+    path: '/guide/first',
+    component: () => import('@/views/guide/firstGuide.vue')
+  }
+]
+
 const namespaceSwitch = [
   {
     name: RoutesMap.namespaceSwitch,
@@ -340,7 +352,8 @@ const loginedRoutes = [
       ...trainningRoutes, // 训练中心
       ...managerRoutes, // 管理机器人
       ...resourceSquareRoutes, // 资源广场
-      ...spaceManager
+      ...spaceManager,
+      ...guideRoutes // 引导
     ]
   }
 ]

@@ -5,6 +5,7 @@ export interface IDomainCustomerLimit {
   mobile_limit_switch: number
   rate_limit_switch: number
   rate_limit: {
+    time_unit: number
     time_seconds: number
     num: number
     response: string
@@ -44,6 +45,10 @@ export interface IDomainInfo {
   reply_tone: string
   reply_length: number
   temperature: number
+  doc_threshold: number
+  qa_threshold: number
+  not_embedding_return_enabled: 0 | 1
+  not_embedding_return_content: string
   customer_limit: Partial<IDomainCustomerLimit>
   shortcuts: string
   desc: string

@@ -2,7 +2,7 @@
   <header
     :class="[
       'flex shrink-0',
-      title ? 'mt-10 mb-8 lg:my-4' : 'h-16',
+      title ? 'mt-10 mb-8 lg:my-4' : 'h-14',
       center && 'justify-center',
       slotExtra && 'justify-between'
     ]"

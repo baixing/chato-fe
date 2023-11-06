@@ -35,7 +35,7 @@
                 "
               />
               <el-select
-                v-model="currentFrequency"
+                v-model="currentDomain.customer_limit.rate_limit.time_unit"
                 class="ml-2 w-[74px]"
                 :placeholder="$t('请选择频率')"
               >
@@ -226,6 +226,7 @@ const defaultCustomerLimit = {
   mobile_limit_switch: 0,
   rate_limit_switch: 0,
   rate_limit: {
+    time_unit: 1,
     time_seconds: 60,
     num: 60,
     response: t('当前咨询用户过多，请排队等候')
@@ -253,7 +254,6 @@ const DefaultADContent = t(
   'Chato ——基于AI技术 轻松创建对话机器人，赶快来 Chato 创建一个属于自己的机器人吧'
 )
 
-const currentFrequency = ref(1)
 const frequencyUnitList = [
   {
     value: 1,
@@ -312,23 +312,10 @@ const onSave = async () => {
       background: 'rgba(0, 0, 0, 0.7)'
     })
 
-    const customer_limit = {
-      ...currentDomain.customer_limit,
-      rate_limit: {
-        ...currentDomain.customer_limit.rate_limit,
-        time_seconds:
-          Number(currentFrequency.value) * currentDomain.customer_limit.rate_limit.time_seconds
-      }
-    }
-    const saveDomain = { ...toRaw(currentDomain) }
-    await updateDomain(currentDomain.id, {
-      ...saveDomain,
-      customer_limit
-    })
+    await updateDomain(currentDomain.id, currentDomain)
     collectFormConfigRef.value?.onUpdateAbleAdForm()
     await domainStoreI.initDomainList(route)
     syncOriginalFormState()
-    currentFrequency.value = 1
     ElNotification.success(t('保存成功'))
   } catch (e) {
   } finally {

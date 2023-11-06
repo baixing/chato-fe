@@ -62,7 +62,7 @@
   </el-checkbox>
 </template>
 <script lang="ts" setup>
-import { getFirstGuideSelect } from '@/api/userInformation'
+import { getFirstGuideIndustry } from '@/api/industry'
 import useGlobalProperties from '@/composables/useGlobalProperties'
 import { kPrivacyLinkUrl, kUserAgreementLinkUrl } from '@/constant/terms'
 import { openPreviewUrl } from '@/utils/help'
@@ -108,7 +108,7 @@ const init = async () => {
     industryState.loading = true
     const {
       data: { data }
-    } = await getFirstGuideSelect()
+    } = await getFirstGuideIndustry()
     industryState.list = data?.industry || []
   } catch (err) {
   } finally {

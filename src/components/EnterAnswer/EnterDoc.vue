@@ -125,14 +125,6 @@
             :model="spliderPublicForm"
             class="input-text-form special-text-form"
           >
-            <!-- <el-form-item prop="publicData"> -->
-            <!-- <el-input
-                type="textarea"
-                :rows="10"
-                v-model="spliderPubliceForm.publicData"
-                :placeholder="$t('请输入要爬取的公众号名称，用英文,分隔')"
-              />
-            </el-form-item> -->
             <el-form-item prop="title" class="text-black" :label="$t('搜索名称')">
               <div class="relative w-full h-10">
                 <el-input
@@ -140,6 +132,7 @@
                   v-model="spliderPublicForm.publicSearchName"
                   :placeholder="$t('请输入公众号的名称')"
                   maxlength="30"
+                  @change="getWXPublicListByPublicName"
                 >
                   <template #suffix>
                     <el-icon
@@ -162,7 +155,9 @@
                     :key="item.fakeid"
                     :label="item.nickname"
                     :value="item.nickname"
-                  />
+                  >
+                    {{ item.nickname }}
+                  </el-option>
                 </el-select>
               </div>
             </el-form-item>
@@ -229,6 +224,7 @@
 <script setup lang="ts">
 import * as apiFile from '@/api/file'
 import Modal from '@/components/Modal/index.vue'
+import Avatar from '@/components/Avatar/index.vue'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import useGlobalProperties from '@/composables/useGlobalProperties'
@@ -416,7 +412,7 @@ async function submitInputText() {
           break
         default:
           requestFunc = 'uploadPublicAsync'
-          requestParams = [spliderPublicForm.publicName]
+          requestParams = [spliderPublicForm.publicName || spliderPublicForm.publicSearchName]
           requestParamsPath = {
             count:
               spliderPublicForm.content === -1
@@ -428,22 +424,31 @@ async function submitInputText() {
       apiFile[requestFunc](props.domainId, requestParams, requestParamsPath)
         .then((res) => {
           const { data } = res.data
-          if (requestFunc === 'uploadPublic') {
+          if (requestFunc === 'uploadPublicAsync') {
             Notification.success(
-              t(`爬取新文章${data.result.length}条；重复文章${data.repeated.length}条；`)
+              t(`已爬`) +
+                data.result.length +
+                t(`条；重复`) +
+                data.repeated.length +
+                t(`条；剩余`) +
+                (spliderPublicForm.content - data.result.length - data.repeated.length) +
+                t(`条`)
             )
           } else {
             Notification.success(t('保存成功'))
           }
           spliderUrlForm.urlData = ''
           spliderPublicForm.publicName = ''
-          spliderPublicForm.content = 0
+          spliderPublicForm.content = 10
           spliderPublicForm.publicSearchName = ''
           emit('setSuccess')
         })
         .catch((err) => {})
         .finally(() => {
           loading.close()
+          spliderPublicForm.publicName = ''
+          spliderPublicForm.content = 10
+          spliderPublicForm.publicSearchName = ''
           emit('closeDialogVisble')
         })
     } else {

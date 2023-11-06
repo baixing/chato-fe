@@ -27,30 +27,29 @@
         </template>
       </Topbar>
       <div class="bot-create-center-padding mb-16 flex-1 overflow-y-auto bot-create-block">
-        <h3 class="text-[#303133] font-medium text-xl mb-6">{{ t('创建机器人') }}</h3>
-        <div class="inline-block p-4 bg-[#F2F3F5] rounded-lg mb-10 lg:block">
-          <p class="text-xs text-[#596780] leading-5 mb-3">
-            {{ t('通过以下两种方式之一，只要 20 秒即可快速填充基础信息') }}
-          </p>
-          <div class="grid grid-cols-2 gap-5 lg:grid-cols-1 lg:gap-4">
+        <div class="flex justify-center py-8">
+          <ImgUpload
+            :fixed="true"
+            v-model:img-url="formState.avatar"
+            :is-initial-img="true"
+            styleClass="h-[72px] w-[72px]"
+          />
+        </div>
+        <div class="create-input-label">
+          <SLTitle>{{ t('角色名称') }}</SLTitle>
+          <div class="flex">
             <div
               v-for="item in createTypeSelectList"
               :key="item.icon"
               @click="onOpenTypeModal(item)"
-              class="create-type-card"
+              class="text-[#7c5cfc] text-sm transition-colors ml-6 flex items-center cursor-pointer"
             >
-              <svg-icon :name="item.icon" svg-class="w-8 h-8 text-[#7c5cfc] shrink-0" />
-              <div class="space-y-1">
-                <p class="text-[#303133] text-sm font-medium tracking-[0.13px] transition-colors">
-                  {{ t(item.name) }}
-                </p>
-                <p class="text-[#9DA3AF] text-xs transition-colors">{{ t(item.desc) }}</p>
-              </div>
+              <div>{{ t(item.desc) }}</div>
+              <svg-icon :name="item.icon" class="!w-4 !h-4 ml-1" />
             </div>
           </div>
         </div>
         <div class="flex gap-4 items-center mb-8">
-          <ImgUpload :fixed="true" v-model:img-url="formState.avatar" />
           <HansInputLimit
             v-model:value="formState.name"
             type="text"
@@ -73,6 +72,7 @@
             :role-requirement="roleRequirement"
             :system-prompt="formState.system_prompt"
             :type="EDomainAIGenerateType.role"
+            :link="true"
             :disabled="!formState.name || AIGenerateInputDisabled.system_prompt"
             disabled-tip="请填写名字后生成"
             @start="AIGenerateInputDisabled.system_prompt = true"
@@ -89,15 +89,19 @@
           class="w-full mb-8"
         />
 
-        <SLTitle class="mb-4">{{ t('知识') }}</SLTitle>
+        <SLTitle class="mb-4">{{ t('训练数据') }}</SLTitle>
         <div class="flex gap-4">
-          <el-button plain @click="DOCModalVisible = true">
-            <template #icon><svg-icon name="document" svg-class="w-4 h-4" /></template>
-            {{ t('录入文档') }}
+          <el-button plain @click="DOCModalVisible = true" class="w-full !h-auto !p-0">
+            <div class="py-5">
+              <div><svg-icon name="document" svg-class="w-4 h-4 mb-1" /></div>
+              <div>{{ t('录入文档') }}</div>
+            </div>
           </el-button>
-          <el-button plain @click="onOpenQAModal">
-            <template #icon><svg-icon name="qa" svg-class="w-4 h-4" /></template>
-            {{ t('录入问答') }}
+          <el-button plain @click="onOpenQAModal" class="w-full !h-auto !p-0">
+            <div class="py-5">
+              <div><svg-icon name="qa" svg-class="w-4 h-4 mb-1" /></div>
+              <div>{{ t('录入问答') }}</div>
+            </div>
           </el-button>
         </div>
         <div
@@ -120,56 +124,6 @@
             <el-button link :icon="Close" @click="onDeleteFile(item.id)" />
           </p>
         </div>
-
-        <div class="create-input-label">
-          <SLTitle tips="基于机器人当前名字和角色设定生成">{{ t('角色简介') }}</SLTitle>
-          <AIGenerateBtn
-            v-model:generateStr="formState.desc"
-            :role="formState.name"
-            :role-requirement="roleRequirement"
-            :system-prompt="formState.system_prompt"
-            :type="EDomainAIGenerateType.intro"
-            :disabled="!formState.system_prompt || !formState.name || AIGenerateInputDisabled.desc"
-            disabled-tip="请填写名字和角色设定后生成"
-            @start="AIGenerateInputDisabled.desc = true"
-            @end="AIGenerateInputDisabled.desc = false"
-          />
-        </div>
-        <HansInputLimit
-          v-model:value="formState.desc"
-          type="textarea"
-          :rows="6"
-          size="large"
-          :limit="HansLimit.desc"
-          :disabled="AIGenerateInputDisabled.desc"
-          class="w-full mb-8"
-        />
-
-        <div class="create-input-label">
-          <SLTitle tips="基于机器人当前名字和角色设定生成">{{ t('欢迎语') }}</SLTitle>
-          <AIGenerateBtn
-            v-model:generateStr="formState.welcome"
-            :role="formState.name"
-            :role-requirement="roleRequirement"
-            :system-prompt="formState.system_prompt"
-            :type="EDomainAIGenerateType.welcome"
-            :disabled="
-              !formState.system_prompt || !formState.name || AIGenerateInputDisabled.welcome
-            "
-            disabled-tip="请填写名字和角色设定后生成"
-            @start="AIGenerateInputDisabled.welcome = true"
-            @end="AIGenerateInputDisabled.welcome = false"
-          />
-        </div>
-        <HansInputLimit
-          v-model:value="formState.welcome"
-          type="textarea"
-          :rows="6"
-          size="large"
-          :limit="HansLimit.welcome"
-          :disabled="AIGenerateInputDisabled.welcome"
-          class="w-full mb-8"
-        />
       </div>
       <div
         class="bot-create-center-padding py-4 box-border flex justify-end items-center gap-4 bg-white absolute z-[2] bottom-0 left-0 right-0"
@@ -183,7 +137,6 @@
     </div>
     <BotCreateChat v-if="!isMobile" />
   </div>
-
   <BotCreateTypeByTemplateModal
     v-model:visible="templateModalVisible"
     @submit="onTemplateTypeModalSubmit"
@@ -272,9 +225,9 @@ import BotCreateTypeByTemplateModal from './components/BotCreateTypeByTemplateMo
 const { t } = useI18n()
 
 const createTypeSelectList = [
-  { icon: 'collection', name: '选择模版创建', desc: '海量模版助你快速创建' },
-  { icon: 'robot-ai', name: 'AI 一键创建', desc: 'AI 生成，匹配度更高' }
-]
+  { icon: 'top-right', name: '选择模版创建', desc: '从模版中选择' },
+  { icon: 'magic', name: 'AI 一键创建', desc: 'AI 一键创建' }
+] as const
 const defaultAIGenerateInputDisabled = {
   desc: false,
   system_prompt: false,
@@ -336,8 +289,8 @@ const syncOriginalFormState = () => {
   originalFormState = toRaw(formState)
 }
 
-const onOpenTypeModal = (item: any) => {
-  if (item.icon === 'collection') {
+const onOpenTypeModal = (item: (typeof createTypeSelectList)[number]) => {
+  if (item.icon === 'top-right') {
     templateModalVisible.value = true
   } else {
     AIModalVisible.value = true
@@ -354,12 +307,10 @@ const onAIUpdateDomainField = (fieldType: string, fieldValue: string) => {
   }
 }
 
-const onTemplateTypeModalSubmit = (
-  item: Pick<IDomainInfo, 'name' | 'system_prompt' | 'desc' | 'welcome'>
-) => {
-  const { name, system_prompt, desc, welcome } = item
-  originalTemplateFormState = { name, system_prompt, desc, welcome }
-  formState = Object.assign(formState, { name, system_prompt, desc, welcome })
+const onTemplateTypeModalSubmit = (item: Pick<IDomainInfo, 'name' | 'system_prompt'>) => {
+  const { name, system_prompt } = item
+  originalTemplateFormState = { name, system_prompt }
+  formState = Object.assign(formState, { name, system_prompt })
 }
 
 const onAITypeModalSubmit = (name: string, roleReq: string) => {

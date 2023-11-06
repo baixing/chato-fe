@@ -1,5 +1,5 @@
 <template>
-  <div class="h-12">
+  <div :class="styleClass && 'w-12 h-12'">
     <el-upload
       ref="uploadRef"
       action="#"
@@ -13,13 +13,16 @@
       :disabled="disabled"
     >
       <template #trigger>
-        <div class="group/img h-12" v-if="!listType">
+        <div class="group/img h-12" v-if="!listType" :class="styleClass">
           <div
             class="w-12 h-12 rounded-full border-dashed bg-cover cursor-default box-border hover:border-[#634aca]"
             :style="{
               'background-image': `url(${imgUrl || (isInitialImg ? initialImgUrl : '')})`
             }"
-            :class="[imgUrl ? 'border-none' : 'border border-[--el-border-color-darker]']"
+            :class="[
+              imgUrl ? 'border-none' : 'border border-[--el-border-color-darker]',
+              styleClass
+            ]"
           >
             <div
               class="hidden w-full h-full rounded-full group-hover/img:flex flex-col justify-around"
@@ -104,7 +107,7 @@
     :appendToBody="true"
   >
     <div class="w-full h-96">
-      <vueCropper ref="cropper" v-bind="props" :img="cropImgUrl" />
+      <VueCropper ref="cropper" v-bind="(props as any)" :img="cropImgUrl" />
     </div>
   </Modal>
   <Modal v-model:visible="zoomInDialogVisible" title="图片预览">
@@ -113,17 +116,15 @@
 </template>
 
 <script setup lang="ts">
-import 'vue-cropper/dist/index.css'
-import { VueCropper } from 'vue-cropper'
 import DefaultAvatar from '@/assets/img/avatar.png'
 import Modal from '@/components/Modal/index.vue'
-import { ref } from 'vue'
-import { cosServe } from '@/utils/cos'
+import { VueCropper } from 'vue-cropper'
 import type { IUploadOptions } from '@/interface/uploadOptions'
+import { cosServe } from '@/utils/cos'
 import type { UploadFile, UploadFiles, UploadRawFile, UploadUserFile } from 'element-plus'
-import { computed } from 'vue'
 import { isArray } from 'lodash'
-import { watch } from 'vue'
+import { computed, ref, watch } from 'vue'
+import 'vue-cropper/dist/index.css'
 
 const cropper = ref()
 const zoomInDialogVisible = ref(false)
@@ -131,13 +132,11 @@ const cropImgUrl = ref<string>()
 const dialogImageUrl = ref<string>()
 const fileList = ref<UploadUserFile[]>([])
 const imgUrl = computed({
-  get: () => {
-    console.log(props.imgUrl)
-    return props.imgUrl
-  },
+  get: () => props.imgUrl,
   set: (v) => emit('update:imgUrl', v)
 })
 const emit = defineEmits(['update:imgUrl'])
+
 const props = withDefaults(
   defineProps<
     {
@@ -147,6 +146,7 @@ const props = withDefaults(
       listType?: 'picture' | 'text' | 'picture-card'
       isInitialImg: boolean
       disabled: boolean
+      styleClass?: string
     } & Partial<IUploadOptions>
   >(),
   {

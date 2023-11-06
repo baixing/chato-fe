@@ -8,6 +8,7 @@
       type="primary"
       size="default"
       :disabled="disabled || generating"
+      :link="link"
       style="
         --el-button-hover-text-color: #7c5cfc;
         --el-button-hover-bg-color: white;
@@ -35,6 +36,7 @@ const props = defineProps<{
   roleRequirement?: string
   disabled?: boolean
   disabledTip?: string
+  link?: boolean
 }>()
 
 const emit = defineEmits(['update:generateStr', 'start', 'end'])
