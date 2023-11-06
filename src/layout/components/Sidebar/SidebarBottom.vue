@@ -60,7 +60,7 @@ const onLinkSpace = () => {
 const onLinkData = () => {
   drawerVisible.value = false
 
-  router.push({ name: RoutesMap.namespace.summary, params: { spaceId: userInfo.value.org.id } })
+  router.push({ name: RoutesMap.namespace.summary })
 }
 </script>
 
