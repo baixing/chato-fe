@@ -29,7 +29,7 @@
         />
       </el-select>
       <p class="flex justify-start items-center text-[#596780]">
-        {{ $t('是否使用自己的账号？') }}
+        {{ $t('暂无账号？') }}
         <el-button type="primary" link @click="emit('handleCreateAccount')">
           {{ $t('去创建') }}
         </el-button>
@@ -77,10 +77,10 @@
 
 <script setup lang="ts">
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
-import type { FormInstance, FormRules } from 'element-plus'
-import { reactive, ref, computed } from 'vue'
-import { useI18n } from 'vue-i18n'
 import type { IAccountList } from '@/interface/release'
+import type { FormInstance, FormRules } from 'element-plus'
+import { computed, reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const props = withDefaults(
   defineProps<{
@@ -96,11 +96,15 @@ const emit = defineEmits(['handleSubmit', 'handleCreateAccount'])
 
 const { t } = useI18n()
 const ruleFormCreateGroupRef = ref<FormInstance>()
-const accountListSelect = computed(() => [
-  { wx_user_id: '', name: t('系统账号') },
-  ...props.accountList
-])
+const accountListSelect = computed(() => [...props.accountList])
 const rulesCreateGroup = reactive<FormRules>({
+  custom_robot_wx_user_id: [
+    {
+      required: true,
+      trigger: 'blur',
+      message: t('请选择账号')
+    }
+  ],
   name: [
     {
       required: props.nameRequired,

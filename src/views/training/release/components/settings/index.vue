@@ -96,12 +96,19 @@
         <template #header>
           <div class="flex justify-between items-center text-sm font-medium">
             <span class="text-[#3D3D3D]">{{ $t('按手机号') }}</span>
-            <SwitchWithStateMsg
-              v-model:value="currentDomain.customer_limit.mobile_limit_switch"
-              size="small"
-              close-msg="关闭"
-              open-msg="开启"
-            />
+            <div
+              class=""
+              @click.capture="
+                (e) => onHandleSwitchMobile(e, currentDomain.customer_limit.mobile_limit_switch)
+              "
+            >
+              <SwitchWithStateMsg
+                v-model:value="currentDomain.customer_limit.mobile_limit_switch"
+                size="small"
+                close-msg="关闭"
+                open-msg="开启"
+              />
+            </div>
           </div>
         </template>
         <div class="flex items-center text-[#3D3D3D]">
@@ -331,6 +338,24 @@ const initMobileList = async () => {
   pageMobileConfig.total = pagination.total
   pageMobileConfig.page_count = pagination.page_count
   pageMobileConfig.page_size = pagination.page_size
+}
+
+const onHandleSwitchMobile = async (e: Event, mobileSwitch: number) => {
+  e.stopPropagation()
+
+  if (mobileSwitch === 0) {
+    await showMobileSwitchWarning()
+  }
+
+  currentDomain.customer_limit.mobile_limit_switch = mobileSwitch === 1 ? 0 : 1
+}
+
+const showMobileSwitchWarning = async () => {
+  await ElMessageBox.confirm(t('用量限制只对有网页、JS有效，其他端暂不可用'), t('温馨提示'), {
+    confirmButtonText: t('确认'),
+    cancelButtonText: t('取消'),
+    type: 'warning'
+  })
 }
 
 watch(

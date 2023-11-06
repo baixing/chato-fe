@@ -1358,5 +1358,10 @@
   "微信小程序域名校验文件获取指引": "(WeChat Mini Program Domain Verification File Acquisition Guide )",
   "域名地址": "Domain Address",
   "校验文件": "Verification File",
-  "后缀为：*.txt的文件，上传成功后约一分钟生效，请耐心等待": "The file suffix is *.txt, and the upload is successful after one minute. Please wait patiently"
+  "后缀为：*.txt的文件，上传成功后约一分钟生效，请耐心等待": "The file suffix is *.txt, and the upload is successful after one minute. Please wait patiently",
+  "暂无账号？": "No account?",
+  "a.使用企业微信扫码后添加机器人为好友，将机器人拉入企业微信创建的群中，使用激活码激活": "a.Use the QR code to scan the enterprise WeChat, add the robot as a friend, and add the robot to the group created by the",
+  "b.若机器人已是好友、已在群中，任意用户在群内发送激活码即可激活": "b.If the robot is a friend, the robot is already in the group, any user in the group can send the activation code to activate",
+  "c.激活机器人后，在群内@机器人提问": "c.After activating the robot, ask questions in the group @ the robot",
+  "用量限制只对有网页、JS有效，其他端暂不可用": "The quota limit only takes effect for the web, JS, and other endpoints are temporarily unavailable"
 }
