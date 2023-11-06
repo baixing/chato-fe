@@ -3,18 +3,17 @@ import '@/styles/main.scss'
 import 'prismjs/themes/prism.css'
 import 'wow.js/css/libs/animate.css'
 //
-
-import SvgIcon from '@/components/SvgIcon/index.vue'
 import useSensors from '@/composables/useSensors'
 import useSentry from '@/composables/useSentry'
-import { useBase } from '@/stores/base'
 import elementIcon from '@/utils/elementIcon'
+import { globalComponents } from '@/utils/globalComponents'
 import { copyPaste } from '@/utils/help'
 import ElementPlus from 'element-plus'
 import 'github-markdown-css/github-markdown-light.css'
 import { createPinia } from 'pinia'
 import 'virtual:svg-icons-register'
 import { createApp } from 'vue'
+import asyncRegisterGlobalComponents from '../plugins/asyncRegisterGlobalComponents'
 import App from './App.vue'
 import i18n from './locales'
 import router from './router'
@@ -26,8 +25,8 @@ app.use(createPinia())
 app.use(router)
 app.use(i18n)
 
+app.use(asyncRegisterGlobalComponents, globalComponents)
 app.use(elementIcon)
-app.component('svg-icon', SvgIcon)
 
 useSensors(app)
 

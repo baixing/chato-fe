@@ -86,7 +86,16 @@
         <p class="text-[#9DA3AF] leading-4 text-xs">{{ t('点击下方语音图标可停止录音') }}</p>
       </div>
       <div class="flex gap-10 items-center justify-center relative">
-        <el-button link type="info" :disabled="!internalValue" @click="onClearRecorder">
+        <el-button
+          link
+          type="info"
+          :disabled="!internalValue"
+          @click="onClearRecorder"
+          v-if="
+            domainDetail?.conversation_arouse_mode !==
+            EDomainConversationModeArousalMethod.AutomaticSpeechRecognition
+          "
+        >
           {{ t('清空') }}
         </el-button>
         <span
@@ -95,7 +104,16 @@
         >
           <svg-icon svg-class="w-5 h-5 text-white" name="chat-sound" />
         </span>
-        <el-button link type="info" :disabled="!internalValue" @click="onSendRecorder">
+        <el-button
+          link
+          type="info"
+          :disabled="!internalValue"
+          @click="onSendRecorder"
+          v-if="
+            domainDetail?.conversation_arouse_mode !==
+            EDomainConversationModeArousalMethod.AutomaticSpeechRecognition
+          "
+        >
           {{ t('发送') }}
         </el-button>
         <WaterRipples v-show="isRecording" />
@@ -111,7 +129,7 @@ import { useBasicLayout } from '@/composables/useBasicLayout'
 import useRecognizer from '@/composables/useRecognizer'
 import { SymChatDomainDetail } from '@/constant/chat'
 import { PaidCommercialTypes } from '@/constant/space'
-import { EDomainConversationMode } from '@/enum/domain'
+import { EDomainConversationMode, EDomainConversationModeArousalMethod } from '@/enum/domain'
 import type { IDomainInfo } from '@/interface/domain'
 import { RoutesMap } from '@/router'
 import { debounce } from 'lodash'
@@ -135,6 +153,7 @@ const { isMobile } = useBasicLayout()
 const domainDetail = inject<Ref<IDomainInfo>>(SymChatDomainDetail)
 
 const chatRecordingEnterVisible = ref(false)
+
 const chatEnterType = ref<EDomainConversationMode>(EDomainConversationMode.text)
 
 const internalValue = computed({
@@ -180,7 +199,12 @@ const onAudioChat = (str) => {
     return
   }
   chatRecordingEnterVisible.value = true
-  onAudioSend()
+  if (
+    domainDetail.value?.conversation_arouse_mode ===
+    EDomainConversationModeArousalMethod.AutomaticSpeechRecognition
+  ) {
+    onAudioSend()
+  }
 }
 // --- 语音对话逻辑 end ---
 
@@ -257,10 +281,14 @@ const onSend = (val?: string) => {
 
 // 语音对话，进来就开启录音
 watch([isAudioChatModeDomain, isRecording, internalEnterDisabled, audioPlaying], () => {
-  if (!isAudioChatModeDomain.value || inDebug.value) {
+  if (
+    !isAudioChatModeDomain.value ||
+    inDebug.value ||
+    domainDetail.value?.conversation_arouse_mode ===
+      EDomainConversationModeArousalMethod.ActiveTrigger
+  ) {
     return
   }
-
   if (isRecording.value) {
     if (internalEnterDisabled.value || audioPlaying.value) {
       stopRecording()

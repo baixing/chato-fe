@@ -1,4 +1,9 @@
-import type { EDomainConversationMode, EDomainStatus, EDomainType } from '@/enum/domain'
+import type {
+  EDomainConversationMode,
+  EDomainConversationModeArousalMethod,
+  EDomainStatus,
+  EDomainType
+} from '@/enum/domain'
 import type { IOrg } from './user'
 
 export interface IDomainCustomerLimit {
@@ -81,6 +86,7 @@ export interface IDomainInfo {
   is_session_effective: number
   show_recommend_question: number // 问题推荐
   conversation_mode_meta?: string
+  conversation_arouse_mode?: EDomainConversationModeArousalMethod
 }
 
 export interface IDomainShortcut {

@@ -181,7 +181,7 @@ import {
 import { DebugDomainSymbol, MidJourneyDomainSlug } from '@/constant/domain'
 import { PaidCommercialTypes } from '@/constant/space'
 import { XSSOptions } from '@/constant/xss'
-import { EDomainConversationMode } from '@/enum/domain'
+import { EDomainConversationMode, EDomainConversationModeArousalMethod } from '@/enum/domain'
 import {
   EMessageActionType,
   EMessageDisplayType,
@@ -413,10 +413,12 @@ function getBotInfo() {
       document.title = detail.value.name
       if (
         [RoutesMap.chat.c, RoutesMap.chat.release].includes(route.name as string) &&
-        EDomainConversationMode.audio === detail.value.conversation_mode
+        EDomainConversationMode.audio === detail.value.conversation_mode &&
+        EDomainConversationModeArousalMethod.AutomaticSpeechRecognition ===
+          detail.value.conversation_arouse_mode
       ) {
         ElMessageBox.confirm(
-          t('当前机器人开启了语音对话模式，为了保证您的对话体验，稍后会请求授权您的麦克风权限。'),
+          t('当前机器人开启了自动语音对话，将会实时主动检索声音'),
           t('温馨提示'),
           {
             confirmButtonText: t('知道了'),

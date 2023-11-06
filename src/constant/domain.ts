@@ -1,4 +1,4 @@
-import { EDomainConversationMode } from '@/enum/domain'
+import { EDomainConversationMode, EDomainConversationModeArousalMethod } from '@/enum/domain'
 
 export const DomainCategoryOptions = [
   {
@@ -69,6 +69,11 @@ export const DomainConversationModeOptions = [
   { label: '文字', value: EDomainConversationMode.text },
   { label: '语音', value: EDomainConversationMode.audio }
 ]
+
+export const DomainConversationModeArousalMethodOptions = [
+  { label: '主动触发', value: EDomainConversationModeArousalMethod.ActiveTrigger },
+  { label: '自动识别语音', value: EDomainConversationModeArousalMethod.AutomaticSpeechRecognition }
+] as const
 
 export const DebugDomainSymbol = Symbol('temporary-debug-domain')
 export const DomainEditSymbol = Symbol('domain-edit')
