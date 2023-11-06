@@ -11,6 +11,12 @@
         alt=""
       />
       <span>{{ detail.name || '...' }}</span>
+      <span
+        @click="$copyText(link)"
+        class="flex w-fit cursor-pointer rounded-full absolute z-[999] top-0 right-0 h-14 items-center text-base pr-5"
+      >
+        <svg-icon name="share" svg-class="text-[#303133] mt-1 w-6 h-6" />
+      </span>
     </div>
     <div
       :class="['flex flex-col h-full w-full overflow-hidden', chatClassName]"
@@ -307,6 +313,10 @@ const chatHistoryParams: ChatHistoryParams = reactive({
 })
 
 const SSEInstance = new SSE()
+
+const link = computed(
+  () => `${window.location.origin}/${detail.value.org.id === 45 ? 'bot' : 'b'}/${detail.value.slug}`
+)
 
 // 水印
 const watermarkFunc = () => {

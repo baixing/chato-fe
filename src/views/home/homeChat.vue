@@ -10,6 +10,12 @@
         <svg-icon name="menu-more" svg-class="w-10 h-10 text-[#303133] mt-1" />
       </span>
       <homeChatItem />
+      <span
+        @click="$copyText(link)"
+        class="flex w-fit cursor-pointer rounded-full absolute z-[999] top-0 right-0 h-14 items-center text-base pr-5"
+      >
+        <svg-icon name="share" svg-class="text-[#303133] mt-1 w-6 h-6" />
+      </span>
     </div>
     <el-drawer
       v-model="drawerVisible"
@@ -28,10 +34,11 @@
 <script setup lang="ts">
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import ChatSidebar from '@/layout/components/Sidebar/ChatSidebar.vue'
-import homeChatItem from './components/homeChatItem.vue'
 import { ref } from 'vue'
+import homeChatItem from './components/homeChatItem.vue'
 
 const { isMobile } = useBasicLayout()
 const loading = ref(false)
 const drawerVisible = ref<boolean>(false)
+const link = window.location.href
 </script>
