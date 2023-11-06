@@ -415,16 +415,25 @@ function getBotInfo() {
         [RoutesMap.chat.c, RoutesMap.chat.release].includes(route.name as string) &&
         EDomainConversationMode.audio === detail.value.conversation_mode
       ) {
-        ElMessageBox.confirm(
-          t('当前机器人开启了语音对话模式，为了保证您的对话体验，稍后会请求授权您的麦克风权限。'),
-          t('温馨提示'),
-          {
-            confirmButtonText: t('知道了'),
-            showCancelButton: false,
-            type: 'warning',
-            customClass: '!max-w-[470px]'
-          }
-        )
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+          navigator.mediaDevices.getUserMedia({ audio: true }).catch(function (error) {
+            console.log(123)
+            ElMessageBox.confirm(
+              t(
+                '当前机器人开启了语音对话模式，为了保证您的对话体验，稍后会请求授权您的麦克风权限。'
+              ),
+              t('温馨提示'),
+              {
+                confirmButtonText: t('知道了'),
+                showCancelButton: false,
+                type: 'warning',
+                customClass: '!max-w-[470px]'
+              }
+            )
+          })
+        } else {
+          console.log('浏览器不支持 getUserMedia 或者 MediaDevices API')
+        }
       }
       if (props.chatByAudio) {
         detail.value.conversation_mode = EDomainConversationMode.audio
