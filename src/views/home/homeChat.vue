@@ -49,7 +49,7 @@ const { t } = useI18n()
 
 const copyText = (str: string) => {
   scanCodeSuccessRBI()
-  $copyText(str)
+  $copyText(str, '链接已复制成功，快分享给你的好友吧！')
 }
 
 const scanCodeSuccessRBI = () => {

@@ -30,7 +30,8 @@ app.use(elementIcon)
 
 useSensors(app)
 
-app.config.globalProperties.$copyText = (text: string) => copyPaste(text)
+app.config.globalProperties.$copyText = (text: string, successMessage?: string) =>
+  copyPaste(text, successMessage)
 app.mount('#app')
 
 useSentry(app, router)

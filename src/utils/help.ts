@@ -72,7 +72,7 @@ export function removeCookie(name: string) {
 }
 
 // 复制粘贴
-export const copyPaste = (text: any) => {
+export const copyPaste = (text: string, successMessage?: string) => {
   if (navigator.clipboard) {
     const { copy, isSupported } = useClipboard({ legacy: true })
 
@@ -89,7 +89,7 @@ export const copyPaste = (text: any) => {
     document.body.removeChild(input)
   }
 
-  ElNotification.success('复制成功')
+  ElNotification.success(successMessage ?? '复制成功')
 }
 
 export const downloadImg = async (fileUrl: string) => {

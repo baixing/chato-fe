@@ -47,7 +47,6 @@
     append-to-body
     class="chat-mobile-chat-drawer relative"
   >
-    <DebugChat class="!w-full !h-full" />
     <el-icon
       :size="24"
       class="!absolute top-4 right-4 z-[51] !text-[#4F4F4F] cursor-pointer hover:opacity-80"
@@ -55,11 +54,12 @@
     >
       <Close />
     </el-icon>
+    <DebugChat class="!w-full !h-full" />
   </el-drawer>
 </template>
 
 <script setup lang="ts">
-import { updateDomain, domainLLMConfigAPI } from '@/api/domain'
+import { domainLLMConfigAPI, updateDomain } from '@/api/domain'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import { DebugDomainSymbol, DomainEditSymbol, DomainHansLimitSymbol } from '@/constant/domain'
 import type { IDomainInfo, IDomainLLMConfig } from '@/interface/domain'
