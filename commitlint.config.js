@@ -19,6 +19,7 @@ module.exports = {
         'build', // 构建流程、外部依赖变更（如升级 npm 包、修改 webpack 配置等）
         'ci', // 修改 CI 配置、脚本
         'revert', // 回滚 commit
+        'misc', // 杂项
         'chore' // 对构建过程或辅助工具和库的更改（不影响源文件、测试用例）
       ]
     ],
