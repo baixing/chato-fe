@@ -23,7 +23,7 @@ type TGlobalComponents<
 declare module 'vue' {
   export interface ComponentCustomProperties {
     $sensors?: typeof sensors
-    $copyText: (e: string, successMessage?: string) => void
+    $copyText: (e: string) => void
   }
   export interface GlobalComponents extends TGlobalComponents {}
 }

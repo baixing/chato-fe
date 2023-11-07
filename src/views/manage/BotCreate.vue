@@ -175,14 +175,14 @@
     append-to-body
     class="chat-mobile-chat-drawer relative"
   >
+    <BotCreateChat class="!w-full !h-full" />
     <el-icon
       :size="24"
-      class="!absolute top-4 left-4 z-[51] !text-[#4F4F4F] cursor-pointer hover:opacity-80"
+      class="!absolute top-4 right-4 z-[51] !text-[#4F4F4F] cursor-pointer hover:opacity-80"
       @click="chatMobileModalVisible = false"
     >
       <Close />
     </el-icon>
-    <BotCreateChat class="!w-full !h-full" />
   </el-drawer>
 </template>
 
