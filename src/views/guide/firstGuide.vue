@@ -111,8 +111,8 @@ import { nextTick, reactive, ref, watch } from 'vue'
 import ChatoDomainAvatar from './components/ChatoDomainAvatar.vue'
 
 const ScenesList = [
-  { label: '公司业务使用', value: EUserOriganizationRole.company },
-  { label: '个人体验使用', value: EUserOriganizationRole.person }
+  { label: '企业降本增效', value: EUserOriganizationRole.company },
+  { label: '个人工作学习提效', value: EUserOriganizationRole.person }
 ] as const
 
 const baseStoreI = useBase()

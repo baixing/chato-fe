@@ -295,8 +295,8 @@ const releaseList = [
   },
   {
     icon: 'weixin-qun',
-    title: t('微信聊天'),
-    desc: t('使用企微账号自动回复微信用户单/群聊信息'),
+    title: t('企微托管'),
+    desc: t('绑定企业自有企微账号，实现企微一对一自动回复及群聊自动回复功能'),
     setList: [
       {
         icon: Tools,
