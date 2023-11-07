@@ -1,15 +1,25 @@
 <template>
-  <ContentLayout :key="route.name" class="bg-white pt-8">
-    <el-tabs
-      type="card"
-      :model-value="activeTab"
-      @tab-click="({ paneName }) => onClickTab(paneName)"
-      class="chato-card-tab w-full"
-    >
-      <el-tab-pane v-for="item in tabs" :key="item.key" :name="item.key" :label="$t(item.title)" />
-    </el-tabs>
-    <component :is="tabComponents[activeTab]" />
-  </ContentLayout>
+  <Topbar :title="$t(`数据总结`)" />
+  <div class="page-body-container">
+    <div class="page-center-container page-content-container">
+      <ContentLayout :key="route.name" class="bg-white pt-8">
+        <el-tabs
+          type="card"
+          :model-value="activeTab"
+          @tab-click="({ paneName }) => onClickTab(paneName)"
+          class="chato-card-tab w-full"
+        >
+          <el-tab-pane
+            v-for="item in tabs"
+            :key="item.key"
+            :name="item.key"
+            :label="$t(item.title)"
+          />
+        </el-tabs>
+        <component :is="tabComponents[activeTab]" />
+      </ContentLayout>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -19,6 +29,7 @@ import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import ReportDetail from './components/ReportDetail.vue'
 import ReportView from './components/ReportView.vue'
+import Topbar from '@/components/Topbar/index.vue'
 
 const route = useRoute()
 const router = useRouter()

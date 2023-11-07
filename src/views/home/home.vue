@@ -27,26 +27,26 @@
         {{ $t('释放难以想象的产出与价值。') }}
       </p>
     </section>
-    <div class="text-center flex gap-8 items-center justify-center lg:gap-4">
-      <el-button
-        class="w-[228px] !h-[60px] !text-lg font-medium tracking-[0.08em] !rounded-lg mt-7 !ml-0 hover:!scale-105 lg:!text-sm lg:w-[153px] lg:!h-[45px] lg:mt-5 btn-grad shadow-lg"
-        type="primary"
-        id="Chato_top_create_click"
-        data-sensors-abtest-id="2"
-        :data-sensors-abtest-value="currentABTestConfig"
-        @click="onEnter()"
-      >
-        <ABTestRender :case-num="2">
-          <template #viewA>
-            <span>{{ $t('快速创建机器人') }}</span>
-          </template>
-          <template #viewB>
-            <span>{{ $t('免费创建机器人') }}</span>
-          </template>
-        </ABTestRender>
-      </el-button>
-      <ABTestRender :case-num="3">
-        <template #viewA>
+    <ABTestRender :case-num="3">
+      <template #viewA>
+        <div class="text-center flex gap-8 items-center justify-center lg:gap-4">
+          <el-button
+            class="w-[228px] !h-[60px] !text-lg font-medium tracking-[0.08em] !rounded-lg mt-7 !ml-0 hover:!scale-105 lg:!text-sm lg:w-[153px] lg:!h-[45px] lg:mt-5 btn-grad shadow-lg"
+            type="primary"
+            id="Chato_top_create_click"
+            data-sensors-abtest-id="2"
+            :data-sensors-abtest-value="currentABTestConfig"
+            @click="onEnter()"
+          >
+            <ABTestRender :case-num="2">
+              <template #viewA>
+                <span>{{ $t('快速创建机器人') }}</span>
+              </template>
+              <template #viewB>
+                <span>{{ $t('免费创建机器人') }}</span>
+              </template>
+            </ABTestRender>
+          </el-button>
           <el-button
             id="Chato_top_video_click"
             class="w-[228px] !h-[60px] !text-lg font-medium tracking-[0.08em] !rounded-lg mt-7 !ml-0 hover:!scale-105 lg:!text-sm lg:w-[153px] lg:!h-[45px] !border-[#7C5CFC] lg:mt-5 !bg-[#F2F2F5] !text-[#7C5CFC] shadow-lg"
@@ -57,10 +57,58 @@
             </template>
             {{ $t('观看视频') }}
           </el-button>
-        </template>
-        <template #viewB> </template>
-      </ABTestRender>
-    </div>
+        </div>
+      </template>
+      <template #viewB>
+        <div class="text-center flex gap-8 items-center justify-center lg:gap-4">
+          <el-button
+            class="w-[348px] !h-[80px] !text-2xl font-medium tracking-[0.08em] !rounded-lg mt-7 !ml-0 hover:!scale-105 lg:!text-xl lg:w-[273px] lg:!h-[60px] lg:mt-5 btn-grad shadow-lg"
+            type="primary"
+            id="Chato_top_create_click"
+            data-sensors-abtest-id="2"
+            :data-sensors-abtest-value="currentABTestConfig"
+            @click="onEnter()"
+          >
+            <ABTestRender :case-num="2">
+              <template #viewA>
+                <span>{{ $t('快速创建机器人') }}</span>
+              </template>
+              <template #viewB>
+                <span>{{ $t('免费创建机器人') }}</span>
+              </template>
+            </ABTestRender>
+          </el-button>
+        </div>
+      </template>
+      <template #viewC>
+        <div class="text-center flex gap-8 items-center justify-center lg:gap-4">
+          <el-button
+            class="w-[228px] !h-[60px] !text-lg font-medium tracking-[0.08em] !rounded-lg mt-7 !ml-0 hover:!scale-105 lg:!text-sm lg:w-[153px] lg:!h-[45px] lg:mt-5 btn-grad shadow-lg"
+            type="primary"
+            id="Chato_top_create_click"
+            data-sensors-abtest-id="2"
+            :data-sensors-abtest-value="currentABTestConfig"
+            @click="onEnter()"
+          >
+            <ABTestRender :case-num="2">
+              <template #viewA>
+                <span>{{ $t('快速创建机器人') }}</span>
+              </template>
+              <template #viewB>
+                <span>{{ $t('免费创建机器人') }}</span>
+              </template>
+            </ABTestRender>
+          </el-button>
+          <el-button
+            id="Chato_top_resource_click"
+            class="w-[228px] !h-[60px] !text-lg font-medium tracking-[0.08em] !rounded-lg mt-7 !ml-0 hover:!scale-105 lg:!text-sm lg:w-[153px] lg:!h-[45px] !border-[#7C5CFC] lg:mt-5 !bg-[#F2F2F5] !text-[#7C5CFC] shadow-lg"
+            @click="onEnter('Chato_top_resource_click')"
+          >
+            {{ $t('进入资源广场') }}
+          </el-button>
+        </div>
+      </template>
+    </ABTestRender>
     <IndustryCase />
   </div>
   <div class="line-grad-bg pt-20 pb-24 mb-32 home-center-padding lg:!px-2 lg:pt-9 lg:pb-9">

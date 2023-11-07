@@ -277,6 +277,10 @@ const onEnter = (type?: string) => {
     videoMask.value = true
     return
   }
+  if (type === 'Chato_top_resource_click') {
+    router.push({ name: RoutesMap.home.homeResource })
+    return
+  }
 
   if (type === 'Chato_bottom_conact_click' || type === 'Chato_case_bottom_wechat_click') {
     checkRightsTypeNeedUpgrade(ESpaceRightsType.default)
