@@ -132,3 +132,10 @@ export interface IDomainLLMConfig {
   consume_quota: number
   need_vip: boolean
 }
+
+export interface IDemonstration {
+  file_url: string
+  text: string
+  web_url: string
+  wx_public_url: string
+}

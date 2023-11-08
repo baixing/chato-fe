@@ -54,6 +54,13 @@
                 {{ $t('将文件拖到此处，或') }}<em>{{ $t('点击上传') }}</em>
               </div>
             </el-upload>
+            <div
+              class="text-[#7C5CFC] text-xs cursor-pointer"
+              @click="demonstrationFile"
+              v-if="demonstrationData.file_url"
+            >
+              {{ $t('上传示例文档') }}
+            </div>
           </div>
         </el-tab-pane>
         <el-tab-pane :label="$t('输入文本')" name="input-text">
@@ -84,6 +91,13 @@
                 class="w-full mb-4"
               />
             </el-form-item>
+            <div
+              class="text-[#7C5CFC] text-xs cursor-pointer"
+              @click="onDemonstration(() => (inputTextForm.content_html = demonstrationData.text))"
+              v-if="demonstrationData.text"
+            >
+              {{ $t('填充示例文本') }}
+            </div>
           </el-form>
         </el-tab-pane>
         <el-tab-pane :label="$t('网页抓取')" name="input-url">
@@ -109,6 +123,13 @@
                 :placeholder="$t('输入要爬取的网页地址，使用英文,分隔')"
               />
             </el-form-item>
+            <div
+              class="text-[#7C5CFC] text-xs cursor-pointer"
+              @click="onDemonstration(() => (spliderUrlForm.urlData = demonstrationData.web_url))"
+              v-if="demonstrationData.web_url"
+            >
+              {{ $t('填充示例网址') }}
+            </div>
           </el-form>
         </el-tab-pane>
         <el-tab-pane :label="$t('公众号抓取')" name="input-public">
@@ -125,7 +146,12 @@
             :model="spliderPublicForm"
             class="input-text-form special-text-form"
           >
-            <el-form-item prop="title" class="text-black" :label="$t('搜索名称')">
+            <el-form-item
+              prop="title"
+              class="text-black"
+              :class="{ '!mb-0': demonstrationData.wx_public_url }"
+              :label="$t('搜索名称')"
+            >
               <div class="relative w-full h-10">
                 <el-input
                   type="text"
@@ -159,6 +185,17 @@
                     {{ item.nickname }}
                   </el-option>
                 </el-select>
+              </div>
+              <div
+                class="text-[#7C5CFC] text-xs cursor-pointer !leading-6 z-[999]"
+                @click="
+                  onDemonstration(
+                    () => (spliderPublicForm.publicSearchName = '百姓课堂-' + domainName)
+                  )
+                "
+                v-if="demonstrationData.wx_public_url"
+              >
+                {{ t('填充示例公众号') }}
               </div>
             </el-form-item>
             <el-form-item prop="content_html" class="text-black" :label="$t('回答来源')">
@@ -222,19 +259,21 @@
 </template>
 
 <script setup lang="ts">
+import { getDemonstration } from '@/api/domain'
 import * as apiFile from '@/api/file'
-import Modal from '@/components/Modal/index.vue'
-import Avatar from '@/components/Avatar/index.vue'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
+import Modal from '@/components/Modal/index.vue'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import useGlobalProperties from '@/composables/useGlobalProperties'
 import useSpaceRights from '@/composables/useSpaceRights'
 import { UPLOAD_FILE_TYPES, UPLOAD_FILE_VIDEO_AUDIO_TYPES } from '@/constant/common'
 import { PaidCommercialTypes } from '@/constant/space'
-import { ESpaceRightsType } from '@/enum/space'
 import { EDocumentTabType } from '@/enum/knowledge'
+import { ESpaceRightsType } from '@/enum/space'
+import type { IDemonstration } from '@/interface/domain'
 import type { IDocumentForm, IWXPublic } from '@/interface/knowledge'
 import { useAuthStore } from '@/stores/auth'
+import { getFileByUrl } from '@/utils/cos'
 import { $notnull } from '@/utils/help'
 import { getStringWidth } from '@/utils/string'
 import dayjs from 'dayjs'
@@ -244,7 +283,8 @@ import type {
   FormRules,
   UploadFile,
   UploadFiles,
-  UploadRawFile
+  UploadRawFile,
+  UploadUserFile
 } from 'element-plus'
 import { ElLoading, ElMessage, ElNotification as Notification } from 'element-plus'
 import { storeToRefs } from 'pinia'
@@ -256,6 +296,7 @@ const { t } = useI18n()
 interface Props {
   apiUpload: string
   domainId: string | number
+  domainName?: string
   dialogVisible: boolean
   defaultForm: IDocumentForm
   sizeLimit?: number
@@ -270,6 +311,7 @@ const props = withDefaults(defineProps<Props>(), {
   qtyLimit: 20,
   mediaLimit: 25
 })
+const demonstrationData = reactive<Partial<IDemonstration>>({})
 const { isAllowedCommercialType, checkRightsTypeNeedUpgrade } = useSpaceRights()
 const needUpgrade = isAllowedCommercialType(PaidCommercialTypes)
 const publicDialogVisible = ref(false)
@@ -279,7 +321,7 @@ const { isMobile } = useBasicLayout()
 const visible = ref<boolean>(false)
 const spliderPublicFormName = ref<typeof ElSelect>()
 const showSubmit = ref<boolean>(false)
-const uploadFileList = ref([])
+const uploadFileList = ref<UploadUserFile[]>([])
 const activeName = ref<EDocumentTabType>(EDocumentTabType.uploadDoc)
 const ruleFormRef = ref<FormInstance>()
 const spliderUrl = ref()
@@ -368,9 +410,65 @@ const rules = reactive<FormRules>({
     }
   ]
 })
+
+const demonstrationNameList = [
+  '售后客服',
+  '培训专家',
+  '售前顾问',
+  '营销获客',
+  '数字分身',
+  '内部知识库',
+  '私域运营',
+  '学习助手',
+  '文案创作'
+]
+
 const $textExceedLimit = computed(() => {
   return getStringWidth(inputTextForm.content_html + inputTextForm.title || '') > limit.text_prompt
 })
+const domainName = computed(() => props.domainName)
+
+const demonstrationFile = async () => {
+  demonstrationSensors()
+  const loading = ElLoading.service({
+    lock: true,
+    text: t('保存中'),
+    background: 'rgba(0, 0, 0, 0.7)'
+  })
+  try {
+    const file = await getFileByUrl(demonstrationData.file_url)
+    const body = new FormData()
+    body.append('file', file)
+    fetch(props.apiUpload, {
+      method: 'POST',
+      headers,
+      body
+    })
+      .then((value) => value.json())
+      .then(() => {
+        loading.close()
+        emit('reloadList')
+        emit('setSuccess')
+      })
+  } catch (error) {
+    loading.close()
+  }
+}
+
+const onDemonstration = (cd: Function) => {
+  demonstrationSensors()
+  cd()
+}
+
+const demonstrationSensors = () => {
+  $sensors?.track('demonstration_sensors', {
+    name: t('使用示例填充'),
+    type: 'demonstration_sensors',
+    data: {
+      time: dayjs().format('YYYY-MM-DD HH:mm:ss')
+    }
+  })
+}
 
 const onSubmit = () => {
   spliderPublicForm.content = spliderPublicForm.maxContent
@@ -566,20 +664,35 @@ function onExceed() {
   )
 }
 
-function resetInputTextForm() {
+const getDemonstrationInit = async () => {
+  const res = await getDemonstration(domainName.value)
+  const { data } = res.data
+  demonstrationData.file_url = data.file_url
+  demonstrationData.text = data.text
+  demonstrationData.web_url = data.web_url
+  demonstrationData.wx_public_url = data.wx_public_url
+}
+
+async function resetInputTextForm() {
   inputTextForm.title = t('文本：') + dayjs(new Date()).format('YYYY-MM-DD HH:mm:ss')
   inputTextForm.id = 0
   inputTextForm.content_html = ''
   inputTextForm.status = 'create'
+  demonstrationData.file_url = undefined
+  demonstrationData.text = undefined
+  demonstrationData.web_url = undefined
+  demonstrationData.wx_public_url = undefined
+  if (demonstrationNameList.includes(domainName.value)) await getDemonstrationInit()
 }
 
 const watchProps = watch(
   props,
-  (v) => {
+  async (v) => {
+    console.log(v)
     visible.value = v.dialogVisible
     const defaultForm = v.defaultForm || {}
     if (v.dialogVisible) {
-      resetInputTextForm()
+      await resetInputTextForm()
       if (ruleFormRef.value && v) ruleFormRef.value.resetFields()
     }
     // 预览和编辑模式

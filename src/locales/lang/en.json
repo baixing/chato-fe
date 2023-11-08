@@ -1370,5 +1370,10 @@
   "用量限制只对有网页、JS有效，其他端暂不可用": "The quota limit only takes effect for the web, JS, and other endpoints are temporarily unavailable",
   "选择头像": "Choose Avatar",
   "预览头像": "Preview avatar",
-  "自定义头像颜色": "Custom avatar color"
+  "自定义头像颜色": "Custom avatar color",
+  "使用示例填充": "Fill in with examples",
+  "填充示例公众号": "Fill in the sample official account",
+  "填充示例文本": "Populate sample text",
+  "填充示例网址": "Populate sample URL",
+  "上传示例文档": "Upload sample document"
 }
