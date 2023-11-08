@@ -99,7 +99,7 @@
           {{ t('清空') }}
         </el-button>
         <span
-          @click="onRecording"
+          @click="(event) => onRecording(event, internalValue)"
           class="flex w-9 h-9 rounded-full overflow-hidden bg-[#7C5CFC] items-center justify-center cursor-pointer transition-opacity hover:opacity-80"
         >
           <svg-icon svg-class="w-5 h-5 text-white" name="chat-sound" />
@@ -198,11 +198,11 @@ const onAudioChat = (str) => {
   if (!isAudioChatModeDomain.value || inDebug.value || !str) {
     return
   }
-  chatRecordingEnterVisible.value = true
   if (
     domainDetail.value?.conversation_arouse_mode ===
     EDomainConversationModeArousalMethod.AutomaticSpeechRecognition
   ) {
+    chatRecordingEnterVisible.value = true
     onAudioSend()
   }
 }
@@ -238,10 +238,10 @@ const { startRecording, stopRecording, resetAsr, isRecording } = useRecognizer({
 })
 
 // 触发录音
-const onRecording = () => {
-  internalValue.value = ''
+const onRecording = (_: MouseEvent, str?: string) => {
+  internalValue.value = str ?? ''
   chatRecordingEnterVisible.value = true
-  isRecording.value ? stopRecording() : startRecording()
+  isRecording.value ? stopRecording() : startRecording(internalValue.value)
 }
 
 const onKeydownEnter = (e: KeyboardEvent) => {
