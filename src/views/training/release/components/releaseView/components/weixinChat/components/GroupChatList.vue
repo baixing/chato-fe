@@ -201,37 +201,37 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, reactive } from 'vue'
-import { $notnull } from '@/utils/help'
-import TransferResult from './TransferResult.vue'
-import TransferPublic from './TransferPublic.vue'
-import type { IDomainInfo } from '@/interface/domain'
-import { useDomainStore } from '@/stores/domain'
-import { storeToRefs } from 'pinia'
 import {
-  ElMessageBox,
+  deleteGroupChatAPI,
+  deleteTimeBroadcastAPI,
+  editGroupAPI,
+  getGroupImgAPI,
+  getTimeBroadcastAPI,
+  patchTimeBroadcastAPI,
+  postTimeBroadcastAPI,
+  transferGroupAPI
+} from '@/api/release'
+import { RGroupChatListTip } from '@/constant/release'
+import { EAccountStatus, ESettingBroadcastStatus } from '@/enum/release'
+import type { IDomainInfo } from '@/interface/domain'
+import type { IGroupList, ISettingBroadcastType } from '@/interface/release'
+import { RoutesMap } from '@/router'
+import { useDomainStore } from '@/stores/domain'
+import { $notnull } from '@/utils/help'
+import {
   ElLoading,
+  ElMessageBox,
   ElNotification,
   type FormInstance,
   type FormRules
 } from 'element-plus'
-import { RoutesMap } from '@/router'
-import { useRouter } from 'vue-router'
-import {
-  transferGroupAPI,
-  getGroupImgAPI,
-  deleteGroupChatAPI,
-  editGroupAPI,
-  getTimeBroadcastAPI,
-  postTimeBroadcastAPI,
-  deleteTimeBroadcastAPI,
-  patchTimeBroadcastAPI
-} from '@/api/release'
+import { storeToRefs } from 'pinia'
+import { reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import type { IGroupList, ISettingBroadcastType } from '@/interface/release'
-import { EAccountStatus, ESettingBroadcastStatus } from '@/enum/release'
-import { RGroupChatListTip } from '@/constant/release'
+import { useRouter } from 'vue-router'
 import SettingRadio from './SettingRadio.vue'
+import TransferPublic from './TransferPublic.vue'
+import TransferResult from './TransferResult.vue'
 
 const props = defineProps<{
   domainId: number
@@ -457,15 +457,18 @@ watch(transferVisible, (v) => {
 
 watch(activeNames, (v: number) => {
   if (v) {
-    const result = props.groupList.filter(
-      (item) => v === item.id && item.is_system_robot && item.status === EAccountStatus.online
-    )
+    const result = props.groupList.filter((item) => v === item.id && item.is_system_robot)
+    const onlineList = result.filter((item) => item.status === EAccountStatus.online)
+
     if (result.length) {
-      const roomId = result[0].room_id
-      url.value = result[0].group_qr_code_data
+      initTimeBroadcast(result[0].room_id)
+    }
+
+    if (onlineList.length) {
+      const roomId = onlineList[0].room_id
+      url.value = onlineList[0].group_qr_code_data
       curRoomId.value = roomId
       getGroupQrCode(roomId)
-      initTimeBroadcast(roomId)
     }
   }
 })

@@ -54,6 +54,7 @@ defineProps<{
     .r-set-container {
       display: flex;
       justify-content: flex-start;
+      flex-wrap: wrap;
       align-items: center;
       margin-top: 24px;
     }
