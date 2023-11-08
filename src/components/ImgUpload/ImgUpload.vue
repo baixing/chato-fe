@@ -122,7 +122,7 @@ import type { IUploadOptions } from '@/interface/uploadOptions'
 import { cosServe } from '@/utils/cos'
 import type { UploadFile, UploadFiles, UploadRawFile, UploadUserFile } from 'element-plus'
 import { isArray } from 'lodash'
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { VueCropper } from 'vue-cropper'
 import 'vue-cropper/dist/index.css'
 
@@ -182,10 +182,9 @@ const listType = computed(() => {
 const getFileList = () =>
   isArray(imgUrl.value) ? imgUrl.value.map((item) => ({ name: 'item', url: item })) : []
 
-onMounted(() => {
-  console.log(props.disabled)
-  fileList.value = getFileList()
-})
+fileList.value = getFileList()
+
+watch(imgUrl, () => (fileList.value = getFileList()))
 
 watch(fileList, async (value: UploadFiles, oldValue: UploadFiles) => {
   if (props.disabled) return
