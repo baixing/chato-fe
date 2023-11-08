@@ -1,27 +1,14 @@
 <script setup lang="ts">
-import useGlobalProperties from '@/composables/useGlobalProperties'
 import useSpaceRights from '@/composables/useSpaceRights'
 import { currentEnvConfig } from '@/config'
 import { PaidCommercialTypes } from '@/constant/space'
-import { EAccountSettingStatus, EAppletcStatus } from '@/enum/release'
+import { EAccountSettingStatus } from '@/enum/release'
 import { ESpaceCommercialType, ESpaceRightsType } from '@/enum/space'
 import type { ICreateAccountRes } from '@/interface/release'
 import { useBase } from '@/stores/base'
 import { useDomainStore } from '@/stores/domain'
-import { useSpaceStore } from '@/stores/space'
 import { copyPaste } from '@/utils/help'
-import {
-  ChatDotRound,
-  CirclePlus,
-  CopyDocument,
-  Document,
-  FolderChecked,
-  FullScreen,
-  Tools,
-  UploadFilled,
-  View
-} from '@element-plus/icons-vue'
-import { useSessionStorage } from '@vueuse/core'
+import { ChatDotRound, Document, FullScreen, Tools, View } from '@element-plus/icons-vue'
 import { storeToRefs } from 'pinia'
 import {
   computed,
@@ -35,26 +22,18 @@ import {
   type Ref
 } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRoute } from 'vue-router'
 import ReleaseBox from './components/ReleaseBox.vue'
 
-const SerachApi = defineAsyncComponent(() => import('./components/apiCall/SerachApi.vue'))
 const ApplicationForm = defineAsyncComponent(
   () => import('./components/application/ApplicationForm.vue')
-)
-const BrandDomain = defineAsyncComponent(
-  () => import('./components/brandDomain/BrandDomainIndex.vue')
 )
 const CreateFeishu = defineAsyncComponent(
   () => import('./components/feishuPublic/CreateFeishu.vue')
 )
-const DrawerSite = defineAsyncComponent(() => import('./components/implantJs/DrawerSite.vue'))
-const SetEffectSite = defineAsyncComponent(() => import('./components/implantJs/SetEffectSite.vue'))
 const OfficialAccont = defineAsyncComponent(
   () => import('./components/officialAccount/OfficialAccont.vue')
 )
 const EmPower = defineAsyncComponent(() => import('./components/tiktok/EmPower.vue'))
-const Copylink = defineAsyncComponent(() => import('./components/webPage/Copylink.vue'))
 const CreateChat = defineAsyncComponent(() => import('./components/weixinChat/CreateChat.vue'))
 const DrawerChat = defineAsyncComponent(() => import('./components/weixinChat/DrawerChat.vue'))
 const WeixinService = defineAsyncComponent(
@@ -67,24 +46,14 @@ const CreateAccount = defineAsyncComponent(
 const DrawerAccount = defineAsyncComponent(
   () => import('./components/weixinChat/DrawerAccount.vue')
 )
-const CreateApplet = defineAsyncComponent(() => import('./components/applet/CreateApplet.vue'))
-const DrawerApplet = defineAsyncComponent(() => import('./components/applet/DrawerApplet.vue'))
-const CreatePoster = defineAsyncComponent(() => import('./components/gzhPoster/SharePoster.vue'))
-const VerificationTxt = defineAsyncComponent(
-  () => import('./components/applet/VerificationTxt.vue')
-)
 
-const route = useRoute()
 const { t } = useI18n()
 const base = useBase()
-const spaceStoreI = useSpaceStore()
 const domainStoreI = useDomainStore()
 const { userInfo, orgInfo, userCommercialType } = storeToRefs(base)
-const { currentRights } = storeToRefs(spaceStoreI)
 const { domainInfo } = storeToRefs(domainStoreI)
 const userRoute = `/t/bot/${domainInfo.value.id}/roleInfo`
 const botSlug = computed(() => domainInfo.value.slug)
-const botId = computed(() => domainInfo.value.id)
 const chatWebPageBaseURL = `${currentEnvConfig.baseURL}`
 const chatReleaseURL = computed(() => {
   return {
@@ -92,16 +61,11 @@ const chatReleaseURL = computed(() => {
     chatAPI: `${chatWebPageBaseURL}/chato/api-public/domains/${botSlug.value}/chat`
   }
 })
-const chatScript = `${currentEnvConfig.scriptURL}/assets/iframe.min.js`
-const wssApiDocs =
-  'https://apifox.com/apidoc/shared-74401769-7cc9-4d75-a57e-892dc6aa5960/api-95610185'
 const weixinServiceDocs = 'https://baixingwang.feishu.cn/docx/CXyTdSKF6oPCiLxAQTacrHvUnfe'
 const appletConfigDocs = 'https://baixingwang.feishu.cn/docx/C2shd2MHfo7aPfxkUl8cJVJMnGf'
 
 const accountQrCode = ref<ICreateAccountRes>()
 const accountCreateStatus = ref<EAccountSettingStatus>(EAccountSettingStatus.creating)
-const defaultAppletcStatus = ref<EAppletcStatus>()
-const releaseChannel = useSessionStorage('releaseChannel', '')
 
 const features = reactive({
   showDrawerChatVisible: false, // 查看群聊
@@ -115,7 +79,6 @@ const features = reactive({
   weixinService: false, // 微信客服
   tiktokService: false, // 抖音
   dingDingVisible: false, // 钉钉
-  showCopyApiVisible: false, // API 调用
   createAccountVisible: false, // 微信聊天-创建账号
   drawerAccountVisible: false, // 微信聊天-查看聊天
   createAppletVisible: false, // 小程序-扫码授权
@@ -128,20 +91,14 @@ const {
   showDrawerChatVisible,
   createGroupChatVisible,
   configAccountVisible,
-  showCopyLinkVisbile,
-  siteListVisible,
-  createSiteVisible,
-  brandDomainVisible,
   feiShuVisible,
   weixinService,
   tiktokService,
   dingDingVisible,
-  showCopyApiVisible,
   createAccountVisible,
   drawerAccountVisible,
   createAppletVisible,
   drawerAppletVisible,
-  createPoster,
   domainVerificationVisible
 } = toRefs(features)
 
@@ -188,15 +145,6 @@ const commonVisible = (visibleRef: Ref<boolean>) => {
   visibleRef.value = true
 }
 
-// 域名部署
-const brandDomain = async () => {
-  if (!currentRights.value.dns) {
-    checkRightsTypeNeedUpgrade(ESpaceRightsType.brand)
-    return
-  }
-  brandDomainVisible.value = true
-}
-
 // 重启账号
 const handleRestartAccount = (row: ICreateAccountRes) => {
   accountQrCode.value = row
@@ -210,89 +158,7 @@ const handleCreateAccount = () => {
   createGroupChatVisible.value = true
   accountQrCode.value = null
 }
-const { $sensors } = useGlobalProperties()
 const releaseList = [
-  {
-    icon: 'wangye',
-    title: t('网页'),
-    desc: t('用户在此链接可以直接和您的机器人聊天'),
-    setList: [
-      {
-        icon: CopyDocument,
-        label: t('复制链接'),
-        scriptId: 'Chato-copy-link',
-        click: () => commonVisible(showCopyLinkVisbile)
-      },
-      {
-        icon: View,
-        label: t('预览体验'),
-        scriptId: 'Chato-preview-chat',
-        click: () => handlePreview(chatReleaseURL.value.chatWebPage)
-      },
-      {
-        icon: UploadFilled,
-        label: t('域名部署'),
-        scriptId: 'Chato-brand-domain',
-        click: brandDomain
-      }
-    ]
-  },
-  {
-    icon: 'wechat-pyq',
-    title: t('朋友圈'),
-    desc: t('用户扫码后，可直接和您的机器人聊天'),
-    setList: [
-      {
-        icon: View,
-        label: t('生成海报'),
-        scriptId: 'Chato-preview-chat',
-        click: () => {
-          commonVisible(createPoster)
-          $sensors.track('bot_poster_click', {
-            bot_id: botId.value
-          })
-        }
-      }
-    ]
-  },
-  {
-    icon: 'js-qianru',
-    title: t('JS嵌入'),
-    desc: t('可添加到网站的任何位置，将此 iframe 添加到 html 代码中'),
-    setList: [
-      {
-        icon: CirclePlus,
-        label: t('创建站点'),
-        scriptId: 'Chato-setted-effect-site',
-        click: () => commonVisible(createSiteVisible)
-      },
-      {
-        icon: View,
-        label: t('查看代码'),
-        scriptId: 'Chato-copy-code',
-        click: () => commonVisible(siteListVisible)
-      }
-    ]
-  },
-  {
-    icon: 'api-diaoyong',
-    title: t('API调用'),
-    desc: t('通过API，可直接进行调用或发出请求'),
-    setList: [
-      {
-        icon: View,
-        label: t('接口秘钥'),
-        scriptId: 'Chato-fetch-api',
-        click: () => commonVisible(showCopyApiVisible)
-      },
-      {
-        icon: Document,
-        label: t('接口文档'),
-        scriptId: 'Chato-api-document',
-        click: () => handlePreview(wssApiDocs)
-      }
-    ]
-  },
   {
     icon: 'weixin-qun',
     title: t('企微托管'),
@@ -394,37 +260,6 @@ const releaseList = [
         click: () => commonVisible(dingDingVisible)
       }
     ]
-  },
-  {
-    icon: 'applet',
-    title: t('微信小程序'),
-    desc: t('支持企业授权绑定小程序，提供机器人服务'),
-    setList: [
-      {
-        icon: FullScreen,
-        label: t('扫码授权'),
-        scriptId: 'Chato-applet-set',
-        click: () => commonVisible(createAppletVisible)
-      },
-      {
-        icon: View,
-        label: t('查看小程序'),
-        scriptId: 'Chato-applet-view',
-        click: () => commonVisible(drawerAppletVisible)
-      },
-      {
-        icon: Document,
-        label: t('配置文档'),
-        scriptId: 'Chato-applet-document',
-        click: () => handlePreview(appletConfigDocs)
-      },
-      {
-        icon: FolderChecked,
-        label: t('域名校验'),
-        scriptId: 'Chato-applet-domain',
-        click: () => commonVisible(domainVerificationVisible)
-      }
-    ]
   }
 ]
 
@@ -432,18 +267,6 @@ const handleCopyButtonClick = (e: MouseEvent) => {
   e.stopPropagation()
   copyPaste((e.target as HTMLElement).querySelector('.text').innerHTML)
 }
-
-watch(
-  () => route.query,
-  (v) => {
-    if (v.releaseChannel && v.releaseChannel !== releaseChannel.value) {
-      releaseChannel.value = v.releaseChannel as string
-      defaultAppletcStatus.value = EAppletcStatus.empowerSuccess
-      createAppletVisible.value = true
-    }
-  },
-  { immediate: true }
-)
 
 watch(createAccountVisible, (v) => {
   !v && (accountCreateStatus.value = EAccountSettingStatus.creating)
@@ -478,6 +301,17 @@ onMounted(() => {
 <template>
   <div class="release-drawer-container">
     <template v-if="!maskVisible">
+      <p class="text-lg text-[#303133] font-medium">{{ $t('全部渠道') }}</p>
+      <div class="flex justify-start items-center text-[#9da3af] text-sm mt-3 mb-7 md:text-xs">
+        {{ $t('发布平台持续迭代中，如有其他发布诉求请反馈至') }}
+        <el-button
+          type="primary"
+          link
+          @click="checkRightsTypeNeedUpgrade(ESpaceRightsType.default)"
+        >
+          {{ $t('产品顾问') }}
+        </el-button>
+      </div>
       <div class="mx-auto my-0">
         <div class="overflow-hidden flex flex-wrap justify-between">
           <ReleaseBox
@@ -501,18 +335,6 @@ onMounted(() => {
           </ReleaseBox>
         </div>
       </div>
-      <div
-        class="flex justify-center items-center text-[#9da3af] font-medium text-sm mt-[36px] md:text-xs"
-      >
-        {{ $t('发布平台持续迭代中，如有其他发布诉求请反馈至') }}
-        <el-button
-          type="primary"
-          link
-          @click="checkRightsTypeNeedUpgrade(ESpaceRightsType.default)"
-        >
-          {{ $t('产品顾问') }}
-        </el-button>
-      </div>
     </template>
     <ApplicationForm
       v-else
@@ -520,26 +342,11 @@ onMounted(() => {
       :orgId="userInfo.org.id"
       :orgUserId="userInfo.id"
     />
-    <BrandDomain :slug="botSlug" v-model:value="brandDomainVisible" />
-    <DrawerSite
-      v-model:value="siteListVisible"
-      :slug="botSlug"
-      :chatScript="chatScript"
-      :chatWebPage="chatReleaseURL.chatWebPage"
-      :wwwBaseURL="currentEnvConfig.wwwBaseURL"
-      :baseURL="chatWebPageBaseURL"
-    >
-    </DrawerSite>
     <OfficialAccont
       v-model:value="configAccountVisible"
       @handleCopyLink="copyPaste"
       :link="chatReleaseURL.chatWebPage"
       :slugId="botSlug"
-    />
-    <SetEffectSite
-      v-model:value="createSiteVisible"
-      :slug="domainInfo.slug"
-      @showDrawerSite="() => (siteListVisible = true)"
     />
     <DrawerChat
       v-model:value="showDrawerChatVisible"
@@ -561,9 +368,6 @@ onMounted(() => {
       :welcome="domainInfo.welcome"
       @handleCreateAccount="createAccountVisible = true"
     />
-    <SerachApi v-model:value="showCopyApiVisible" :chatAPI="domainInfo.token" :slug="botSlug" />
-    <Copylink v-model:value="showCopyLinkVisbile" :chatWebPage="chatReleaseURL.chatWebPage" />
-    <CreatePoster v-model:value="createPoster" :domainId="botId" />
     <CreateFeishu :slug="domainInfo.slug" v-model:value="feiShuVisible" />
     <WeixinService v-model:value="weixinService" :domainSlug="domainInfo.slug" />
     <EmPower v-model:value="tiktokService" :domainSlug="botSlug" />
@@ -579,21 +383,6 @@ onMounted(() => {
       v-model:value="drawerAccountVisible"
       :orgId="userInfo.org.id"
       @handleRestartAccount="handleRestartAccount"
-    />
-    <CreateApplet
-      v-model:value="createAppletVisible"
-      :defaultAppletcStatus="defaultAppletcStatus"
-      :domainId="domainInfo.id"
-      @handleView="drawerAppletVisible = true"
-    />
-    <DrawerApplet
-      v-model:value="drawerAppletVisible"
-      :domainId="domainInfo.id"
-      @handleRetry="createAppletVisible = true"
-    />
-    <VerificationTxt
-      v-model:value="domainVerificationVisible"
-      :chatAPI="chatReleaseURL.chatWebPage"
     />
   </div>
 </template>

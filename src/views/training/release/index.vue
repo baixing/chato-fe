@@ -15,10 +15,12 @@
 <script setup lang="ts">
 import ContentLayout from '@/layout/ContentLayout.vue'
 import { RoutesMap } from '@/router'
-import ReleaseView from './components/releaseView/index.vue'
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import Settings from './components/settings/index.vue'
+import ReleaseAPI from './components/releaseAPI/index.vue'
+import Settings from './components/releaseSetting/index.vue'
+import ReleaseView from './components/releaseView/index.vue'
+import ReleaseWebAPP from './components/releaseWebAPP/index.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -26,13 +28,17 @@ const router = useRouter()
 const activeTab = computed(() => (route.params?.type as string) || 'medium')
 
 const tabs = [
-  { key: 'medium', title: '发布媒介' },
+  { key: 'webapp', title: 'WebAPP' },
+  { key: 'medium', title: '第三方平台' },
+  { key: 'api', title: 'API接口' },
   { key: 'settings', title: '发布设置' }
 ]
 
 const tabComponents = {
+  webapp: ReleaseWebAPP,
   medium: ReleaseView,
-  settings: Settings
+  settings: Settings,
+  api: ReleaseAPI
 }
 
 const onClickTab = (v) => {

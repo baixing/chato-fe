@@ -124,6 +124,7 @@
 .chato-card-tab {
   --el-border-color-light: #e4e7ed;
   --el-text-color-primary: #596780;
+  --el-tabs-header-height: 34px !important;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -133,15 +134,20 @@
     margin-bottom: 32px;
 
     .el-tabs__nav {
-      border-radius: 4px !important;
-      border-bottom: 1px solid var(--el-border-color-light) !important;
+      border-radius: 12px !important;
+      border: none !important;
+      background-color: #f2f3f5;
+      padding: 4px;
     }
 
     .el-tabs__item {
       font-weight: 400;
+      border-left: none !important;
 
       &.is-active {
         font-weight: 500;
+        background-color: #fff;
+        border-radius: 8px;
       }
     }
   }

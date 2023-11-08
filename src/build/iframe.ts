@@ -127,6 +127,8 @@ window.onload = () => {
       let offsetY = 0
       let lastX = 0
       let lastY = 0
+      let newX = 0
+      let newY = 0
 
       tip_chato?.addEventListener('mousedown', startDrag)
       document.addEventListener('mousemove', drag)
@@ -161,21 +163,31 @@ window.onload = () => {
       }
 
       function smoothMove(x: number, y: number, deltaX: number, deltaY: number) {
-        const newX = x + deltaX
-        const newY = y + deltaY
+        newX = x + deltaX
+        newY = y + deltaY
         tip_chato.style.left = `${newX}px`
         tip_chato.style.top = `${newY}px`
-
-        const containerEl = document.getElementById('inframe_container')
-        const maxWidth = window.innerWidth - containerEl.clientWidth - 44
-        const maxHeight = window.innerHeight - containerEl.clientHeight - 44
-        inframe_container.style.left = `${Math.min(newX, maxWidth)}px`
-        inframe_container.style.top = `${Math.min(newY, maxHeight)}px`
       }
+
+      function updateContainerPosition() {
+        const containerEl = document.getElementById('inframe_container')
+        if (containerEl) {
+          // 在每次需要更新位置时获取元素尺寸
+          const maxWidth = window.innerWidth - containerEl.clientWidth - 44
+          const maxHeight = window.innerHeight - containerEl.clientHeight - 44
+          inframe_container.style.left = `${Math.min(newX, maxWidth)}px`
+          inframe_container.style.top = `${Math.min(newY, maxHeight)}px`
+        }
+      }
+
+      window.addEventListener('DOMContentLoaded', updateContainerPosition)
 
       function visibleChato(tipV = 'none', inframeV = 'block') {
         tip_chato && (tip_chato.style.display = tipV)
         inframe_container.style.display = inframeV
+        if (inframeV === 'block') {
+          updateContainerPosition()
+        }
       }
 
       let intervaler = null
