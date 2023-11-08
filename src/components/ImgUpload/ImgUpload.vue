@@ -118,12 +118,12 @@
 <script setup lang="ts">
 import DefaultAvatar from '@/assets/img/avatar.png'
 import Modal from '@/components/Modal/index.vue'
-import { VueCropper } from 'vue-cropper'
 import type { IUploadOptions } from '@/interface/uploadOptions'
 import { cosServe } from '@/utils/cos'
 import type { UploadFile, UploadFiles, UploadRawFile, UploadUserFile } from 'element-plus'
 import { isArray } from 'lodash'
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
+import { VueCropper } from 'vue-cropper'
 import 'vue-cropper/dist/index.css'
 
 const cropper = ref()
@@ -179,8 +179,16 @@ const listType = computed(() => {
   }
   return ''
 })
+const getFileList = () =>
+  isArray(imgUrl.value) ? imgUrl.value.map((item) => ({ name: 'item', url: item })) : []
+
+onMounted(() => {
+  console.log(props.disabled)
+  fileList.value = getFileList()
+})
 
 watch(fileList, async (value: UploadFiles, oldValue: UploadFiles) => {
+  if (props.disabled) return
   if (value.length > oldValue.length) {
     const res = await cosServe(value.at(-1).raw)
     fileList.value.at(-1).url = res
