@@ -27,14 +27,14 @@
         </template>
       </Topbar>
       <div class="bot-create-center-padding mb-16 flex-1 overflow-y-auto bot-create-block">
-        <div class="flex justify-center py-8">
+        <!-- <div class="flex justify-center py-8">
           <ImgUpload
             :fixed="true"
             v-model:img-url="formState.avatar"
             :is-initial-img="true"
             styleClass="h-[72px] w-[72px]"
           />
-        </div>
+        </div> -->
         <div class="create-input-label">
           <SLTitle>{{ t('角色名称') }}</SLTitle>
           <div class="flex">
@@ -192,7 +192,6 @@ import { deleteFile, getFilesByDomainId } from '@/api/file'
 import AIGenerateBtn from '@/components/AIGenerateBtn/index.vue'
 import EnterDoc from '@/components/EnterAnswer/EnterDoc.vue'
 import EnterQa from '@/components/EnterAnswer/EnterQa.vue'
-import ImgUpload from '@/components/ImgUpload/ImgUpload.vue'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
 import SLTitle from '@/components/Title/SLTitle.vue'
 import Topbar from '@/components/Topbar/index.vue'
