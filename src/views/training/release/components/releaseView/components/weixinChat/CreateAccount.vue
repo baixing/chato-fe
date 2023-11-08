@@ -21,20 +21,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
-import CreateAccountForm from './components/CreateAccountForm.vue'
-import CreateAccountFailed from './components/CreateAccountFailed.vue'
-import CreateAccountSuccess from './components/CreateAccountSuccess.vue'
-import { EAccountCreateStatus, EQrCodeHookType, EAccountSettingStatus } from '@/enum/release'
 import {
-  getAccountQrCode,
+  createGroupVerificationCodeAPI,
   getAccountBindingStatus,
-  createGroupVerificationCodeAPI
+  getAccountQrCode
 } from '@/api/release'
+import { EAccountCreateStatus, EAccountSettingStatus, EQrCodeHookType } from '@/enum/release'
 import type { ICreateAccountRes } from '@/interface/release'
-import { ElNotification as Notification, ElLoading } from 'element-plus'
 import { $notnull } from '@/utils/help'
+import { ElLoading, ElNotification as Notification } from 'element-plus'
+import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import CreateAccountFailed from './components/CreateAccountFailed.vue'
+import CreateAccountForm from './components/CreateAccountForm.vue'
+import CreateAccountSuccess from './components/CreateAccountSuccess.vue'
 
 const props = defineProps<{
   value: boolean
@@ -108,7 +108,6 @@ const pollingEmpowerStatus = () => {
 
     if (res.data.is_expired) {
       clearInterval(timer)
-      init()
       return
     }
 
