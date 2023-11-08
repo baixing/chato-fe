@@ -44,7 +44,7 @@
         :menus="menus"
         @select="onMenuSelect"
         :height="54"
-        class="!absolute -translate-x-1/2 left-1/2"
+        class="!absolute -translate-x-1/2 left-1/2 h-14"
       />
     </template>
   </Topbar>

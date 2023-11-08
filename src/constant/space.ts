@@ -34,3 +34,5 @@ export const SpaceCommercialTypeMapper = {
   [ESpaceCommercialType.customVip3]: '高级定制版',
   [ESpaceCommercialType.ka]: '专享版'
 }
+
+export const FreeCommercialTypeExperienceDay = 3

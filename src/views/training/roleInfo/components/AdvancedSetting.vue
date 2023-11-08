@@ -133,9 +133,15 @@
         />
       </div>
     </div>
-    <div class="chato-form-item relative">
-      <div class="chato-form-label">{{ $t('问题推荐') }}</div>
-      <div class="flex items-center justify-between">
+    <div class="chato-form-item">
+      <div class="chato-form-label flex gap-[6px] items-center">
+        {{ $t('问题推荐') }}
+        <SpaceRightsFreeExpUpgrate
+          v-if="currentRights.type === ESpaceCommercialType.free"
+          :rights-type="ESpaceRightsType.brand"
+        />
+      </div>
+      <div class="flex items-center justify-between relative">
         <span class="space-x-3">
           <span class="text-[#596780] text-sm leading-5">
             {{ $t('机器人回答问题后，会展示推荐的问题，用户可点击后快速提问') }}
@@ -149,8 +155,8 @@
           open-msg="开启"
           close-msg="关闭"
         />
+        <SpaceRightsMask :visible="maskVisible" />
       </div>
-      <SpaceRightsMask :visible="maskVisible" :rightsType="ESpaceRightsType.brand" />
     </div>
     <div class="chato-form-item">
       <div class="chato-form-label flex justify-between items-center">
@@ -293,6 +299,7 @@
 import { getSystemPromptLimit } from '@/api/domain'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
 import Modal from '@/components/Modal/index.vue'
+import SpaceRightsFreeExpUpgrate from '@/components/Space/SpaceRightsFreeExpUpgrate.vue'
 import SpaceRightsMask from '@/components/Space/SpaceRightsMask.vue'
 import SwitchWithStateMsg from '@/components/SwitchWithStateMsg/index.vue'
 import SLTitle from '@/components/Title/SLTitle.vue'
@@ -306,10 +313,13 @@ import {
   DomainReplyParagraph,
   DomainReplyToneOfVoice
 } from '@/constant/domain'
+import { FreeCommercialTypeExperienceDay } from '@/constant/space'
 import { ESpaceCommercialType, ESpaceRightsType } from '@/enum/space'
 import type { IDomainInfo, IDomainLLMConfig } from '@/interface/domain'
+import { useBase } from '@/stores/base'
 import { useSpaceStore } from '@/stores/space'
 import { getStringWidth } from '@/utils/string'
+import { getSpecifiedDateSinceNowDay } from '@/utils/timeRange'
 import { debouncedWatch } from '@vueuse/core'
 import { ElInput, ElNotification } from 'element-plus'
 import { storeToRefs } from 'pinia'
@@ -345,7 +355,15 @@ const exampleVisible = ref(false)
 
 const spaceStoreI = useSpaceStore()
 const { currentRights } = storeToRefs(spaceStoreI)
-const maskVisible = computed(() => currentRights.value.type === ESpaceCommercialType.free)
+
+const baseStoreI = useBase()
+const { orgInfo } = storeToRefs(baseStoreI)
+const specifiedBetweenDay = getSpecifiedDateSinceNowDay(orgInfo.value.created)
+const maskVisible = computed(
+  () =>
+    currentRights.value.type === ESpaceCommercialType.free &&
+    specifiedBetweenDay > FreeCommercialTypeExperienceDay
+)
 
 const internalReplyTone = computed({
   get: () => (currentDomain.reply_tone ? currentDomain.reply_tone.split(',') : null),

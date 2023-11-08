@@ -162,12 +162,15 @@
         </div>
       </div>
     </div>
-    <div class="chato-form-item relative">
-      <div class="chato-form-label flex items-center justify-between">
+    <div class="chato-form-item">
+      <div class="chato-form-label flex items-center gap-[6px]">
         <SLTitle>{{ t('品牌 & logo') }}</SLTitle>
-        <SwitchWithStateMsg v-model:value="currentDomain.brand_show" />
+        <SpaceRightsFreeExpUpgrate
+          v-if="currentRights.type === ESpaceCommercialType.free"
+          :rights-type="ESpaceRightsType.brand"
+        />
       </div>
-      <div class="flex items-center justify-between gap-4 w-full">
+      <div class="flex items-center justify-between gap-4 w-full relative">
         <ImgUpload
           :fixed="true"
           v-model:img-url="currentDomain.brand_logo"
@@ -179,8 +182,9 @@
           :limit="currentDomainHansLimit.brandName"
           class="w-full"
         />
+        <SwitchWithStateMsg v-model:value="currentDomain.brand_show" />
+        <SpaceRightsMask :visible="maskVisible" />
       </div>
-      <SpaceRightsMask :visible="maskVisible" :rightsType="ESpaceRightsType.brand" />
     </div>
     <div class="chato-form-item">
       <div class="chato-form-label">{{ t('菜单栏') }}</div>
@@ -246,6 +250,7 @@ import TimbreItem from '@/components/BotSetting/TimbreItem.vue'
 import ImgUpload from '@/components/ImgUpload/ImgUpload.vue'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
 import Modal from '@/components/Modal/index.vue'
+import SpaceRightsFreeExpUpgrate from '@/components/Space/SpaceRightsFreeExpUpgrate.vue'
 import SpaceRightsMask from '@/components/Space/SpaceRightsMask.vue'
 import SwitchWithStateMsg from '@/components/SwitchWithStateMsg/index.vue'
 import SLTitle from '@/components/Title/SLTitle.vue'
@@ -257,13 +262,16 @@ import {
   DomainEditSymbol,
   DomainHansLimitSymbol
 } from '@/constant/domain'
+import { FreeCommercialTypeExperienceDay } from '@/constant/space'
 import { EDomainConversationMode } from '@/enum/domain'
 import { EReleaseSettingExampleType } from '@/enum/release'
-import { ESpaceRightsType } from '@/enum/space'
+import { ESpaceCommercialType, ESpaceRightsType } from '@/enum/space'
 import type { IDomainInfo } from '@/interface/domain'
 import type { ITimbreOptions } from '@/interface/tts'
+import { useBase } from '@/stores/base'
 import { useSpaceStore } from '@/stores/space'
 import { copyPaste } from '@/utils/help'
+import { getSpecifiedDateSinceNowDay } from '@/utils/timeRange'
 import { ElMessageBox, ElNotification } from 'element-plus'
 import { storeToRefs } from 'pinia'
 import { computed, inject, onMounted, reactive, ref } from 'vue'
@@ -298,9 +306,14 @@ const onShowExample = (type: EReleaseSettingExampleType) => {
   }
 }
 
+const baseStoreI = useBase()
 const spaceStoreI = useSpaceStore()
 const { currentRights } = storeToRefs(spaceStoreI)
-const maskVisible = computed(() => !currentRights.value.brand)
+const { orgInfo } = storeToRefs(baseStoreI)
+const specifiedBetweenDay = getSpecifiedDateSinceNowDay(orgInfo.value.created)
+const maskVisible = computed(
+  () => !currentRights.value.brand && specifiedBetweenDay > FreeCommercialTypeExperienceDay
+)
 //----- 音色部分 ----
 const timbreList = ref<ITimbreOptions[]>()
 const timbreDialogVisible = ref<boolean>(false)

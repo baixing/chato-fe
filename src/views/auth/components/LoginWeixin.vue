@@ -5,7 +5,7 @@
     <ABTestRender :case-num="4">
       <template #viewA> </template>
       <template #viewB>
-        <p class="text-sm">{{ $t('（免费使用一年 赠送300电力值）') }}</p>
+        <p class="text-sm">（{{ $t('免费使用一年 赠送100电力值') }}）</p>
       </template>
     </ABTestRender>
     <div class="relative w-[208px] h-[208px] rounded-lg mt-10 mb-4" v-loading="loading">

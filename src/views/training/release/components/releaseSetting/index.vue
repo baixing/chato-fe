@@ -125,52 +125,56 @@
         </div>
       </el-card>
     </el-form-item>
-    <div class="relative">
-      <el-form-item>
-        <template #label>
+    <el-form-item>
+      <template #label>
+        <div class="flex gap-[6px] items-center">
           <SLTitle tips="广告将按照以下频率和文案展示给用户；广告不计入电力值。">
             {{ t('对话广告') }}
           </SLTitle>
-        </template>
-        <div class="w-full">
-          <div
-            class="flex justify-between items-center gap-5 mb-5 lg:flex-col lg:gap-3 lg:items-start"
-          >
-            <div class="text-sm text-[#3D3D3D] font-normal leading-4 flex items-center gap-3">
-              {{ $t('每个用户每隔') }}
-              <el-input-number
-                v-model="currentDomain.ad_frequency"
-                :min="1"
-                controls-position="right"
-                class="!w-20 mx-2"
-              />
-              {{ $t('条，展示一次广告') }}
-            </div>
-            <div class="flex items-center gap-3 lg:justify-between lg:w-full">
-              <el-button size="small" type="primary" link @click="() => (exampleVisible = true)">
-                {{ $t('查看示例') }}
-              </el-button>
-              <SwitchWithStateMsg
-                v-model:value="currentDomain.ad_show"
-                close-msg="关闭"
-                open-msg="开启"
-              />
-            </div>
-          </div>
-          <div v-show="currentDomain.ad_show">
-            <HansInputLimit
-              v-model:value="currentDomain.ad_content"
-              type="textarea"
-              :rows="3"
-              :limit="HansLimit.adText"
-              class="w-full mb-4"
+          <SpaceRightsFreeExpUpgrate
+            v-if="currentRights.type === ESpaceCommercialType.free"
+            :rights-type="ESpaceRightsType.brand"
+          />
+        </div>
+      </template>
+      <div class="w-full relative">
+        <div
+          class="flex justify-between items-center gap-5 mb-5 lg:flex-col lg:gap-3 lg:items-start"
+        >
+          <div class="text-sm text-[#3D3D3D] font-normal leading-4 flex items-center gap-3">
+            {{ $t('每个用户每隔') }}
+            <el-input-number
+              v-model="currentDomain.ad_frequency"
+              :min="1"
+              controls-position="right"
+              class="!w-20 mx-2"
             />
-            <CollectFormConfig ref="collectFormConfigRef" />
+            {{ $t('条，展示一次广告') }}
+          </div>
+          <div class="flex items-center gap-3 lg:justify-between lg:w-full">
+            <el-button size="small" type="primary" link @click="() => (exampleVisible = true)">
+              {{ $t('查看示例') }}
+            </el-button>
+            <SwitchWithStateMsg
+              v-model:value="currentDomain.ad_show"
+              close-msg="关闭"
+              open-msg="开启"
+            />
           </div>
         </div>
-      </el-form-item>
-      <SpaceRightsMask :visible="maskVisible" :rightsType="ESpaceRightsType.brand" />
-    </div>
+        <div v-show="currentDomain.ad_show">
+          <HansInputLimit
+            v-model:value="currentDomain.ad_content"
+            type="textarea"
+            :rows="3"
+            :limit="HansLimit.adText"
+            class="w-full mb-4"
+          />
+          <CollectFormConfig ref="collectFormConfigRef" />
+        </div>
+        <SpaceRightsMask :visible="maskVisible" :rightsType="ESpaceRightsType.brand" />
+      </div>
+    </el-form-item>
     <el-form-item>
       <el-button type="primary" @click="onSave">{{ $t('保存设定') }}</el-button>
     </el-form-item>
@@ -194,15 +198,19 @@ import { updateDomain } from '@/api/domain'
 import { getMobileLimitAPI } from '@/api/release'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
 import Modal from '@/components/Modal/index.vue'
+import SpaceRightsFreeExpUpgrate from '@/components/Space/SpaceRightsFreeExpUpgrate.vue'
 import SpaceRightsMask from '@/components/Space/SpaceRightsMask.vue'
 import SwitchWithStateMsg from '@/components/SwitchWithStateMsg/index.vue'
 import SLTitle from '@/components/Title/SLTitle.vue'
 import useImagePath from '@/composables/useImagePath'
-import { ESpaceRightsType } from '@/enum/space'
+import { FreeCommercialTypeExperienceDay } from '@/constant/space'
+import { ESpaceCommercialType, ESpaceRightsType } from '@/enum/space'
 import type { IDomainInfo } from '@/interface/domain'
+import { useBase } from '@/stores/base'
 import { useDomainStore } from '@/stores/domain'
 import { useSpaceStore } from '@/stores/space'
 import { getStringWidth } from '@/utils/string'
+import { getSpecifiedDateSinceNowDay } from '@/utils/timeRange'
 import { ElLoading, ElMessage, ElMessageBox, ElNotification } from 'element-plus'
 import { cloneDeep, isEmpty, isEqual } from 'lodash-es'
 import { storeToRefs } from 'pinia'
@@ -280,7 +288,12 @@ const frequencyUnitList = [
   }
 ]
 
-const maskVisible = computed(() => !currentRights.value.ad)
+const baseStoreI = useBase()
+const { orgInfo } = storeToRefs(baseStoreI)
+const specifiedBetweenDay = getSpecifiedDateSinceNowDay(orgInfo.value.created)
+const maskVisible = computed(
+  () => !currentRights.value.ad && specifiedBetweenDay > FreeCommercialTypeExperienceDay
+)
 
 const beforeSaveCheck = () => {
   let msg = ''

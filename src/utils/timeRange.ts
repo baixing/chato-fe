@@ -30,6 +30,10 @@ export function getDateRangeParamsByType(type) {
   }
 }
 
+export function getSpecifiedDateSinceNowDay(specifiedDate: string) {
+  return dayjs().endOf('day').diff(dayjs(specifiedDate).startOf('day'), 'day')
+}
+
 function _getBeforeNDayStr(n) {
   if (n === 0) return dayjs().format('YYYY-MM-DD')
   return dayjs()
