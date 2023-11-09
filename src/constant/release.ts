@@ -17,7 +17,7 @@ export const EWeixinConfigText = {
 export const RUseTipAddTip = [
   'a.使用企业微信扫码后添加机器人为好友，将机器人拉入企业微信创建的群中，使用激活码激活',
   'b.若机器人已是好友、已在群中，任意用户在群内发送激活码即可激活',
-  'c.激活机器人后，在群内@机器人提问'
+  "c.激活机器人后，在群内{'@'}机器人提问"
 ]
 
 export const RUseTipCreateTip = [

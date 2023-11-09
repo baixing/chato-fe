@@ -457,17 +457,20 @@ watch(transferVisible, (v) => {
 
 watch(activeNames, (v: number) => {
   if (v) {
-    const result = props.groupList.filter((item) => v === item.id && item.is_system_robot)
-    const onlineList = result.filter((item) => item.status === EAccountStatus.online)
+    const result = props.groupList.filter((item) => v === item.id)
+    const onlineList = result.filter(
+      (item) => item.status === EAccountStatus.online && item.is_system_robot
+    )
 
     if (result.length) {
-      initTimeBroadcast(result[0].room_id)
+      const roomId = result[0].room_id
+      initTimeBroadcast(roomId)
+      curRoomId.value = roomId
     }
 
     if (onlineList.length) {
       const roomId = onlineList[0].room_id
       url.value = onlineList[0].group_qr_code_data
-      curRoomId.value = roomId
       getGroupQrCode(roomId)
     }
   }

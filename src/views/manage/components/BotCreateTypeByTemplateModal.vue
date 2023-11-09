@@ -3,6 +3,7 @@
     v-model:visible="internalVisible"
     :show-close="false"
     width="764px"
+    class="md:max-h-[70%]"
     :footer-attrs="{ submitId: 'Chato_tranning_create_domain_by_template', submitting }"
     @submit="onSubmit"
   >
@@ -20,7 +21,11 @@
       </div>
     </div>
 
-    <el-row justify="start" :gutter="16" class="gap-y-4 max-h-[364px] overflow-y-auto">
+    <el-row
+      justify="start"
+      :gutter="16"
+      class="gap-y-4 max-h-[364px] md:max-h-[224px] overflow-y-auto"
+    >
       <el-col
         v-for="item in templateWithDomains[activeTemplateType]"
         :key="item.id"
