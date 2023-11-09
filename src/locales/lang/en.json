@@ -1375,5 +1375,8 @@
   "填充示例公众号": "Fill in the sample official account",
   "填充示例文本": "Populate sample text",
   "填充示例网址": "Populate sample URL",
-  "上传示例文档": "Upload sample document"
+  "上传示例文档": "Upload sample document",
+  "气泡颜色": "Bubble color",
+  "外层": "Outer",
+  "内层": "Inner"
 }

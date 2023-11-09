@@ -57,6 +57,18 @@
           </div>
         </el-form-item>
       </template>
+      <el-form-item :label="$t('气泡颜色')">
+        <div class="flex justify-start items-center text-xs">
+          <div class="flex flex-col items-center justify-between w-full mr-10">
+            <el-color-picker v-model="inputCreateSiteForm.suspend_style" />
+            <span class="mt-2">{{ $t('外层') }}</span>
+          </div>
+          <div class="flex flex-col items-center justify-between w-full">
+            <el-color-picker class="mb-2" v-model="inputCreateSiteForm.suspend_style_color" />
+            <span class="mt-1">{{ $t('内层') }}</span>
+          </div>
+        </div>
+      </el-form-item>
     </template>
   </el-form>
   <slot :submit="inputCreateSiteForm" :ruleFormCreateSiteRef="ruleFormCreateSiteRef"></slot>
@@ -80,13 +92,17 @@ const props = withDefaults(
     showLocation: ESiteShowLocationType
     showBubble?: number
     visible?: boolean
+    suspend_style?: string
+    suspend_style_color?: string
   }>(),
   {
     source: '',
     popupFrequency: 0,
     popup: ESitePopupType.passive,
     showLocation: ESiteShowLocationType.lower_right,
-    showBubble: 1
+    showBubble: 1,
+    suspend_style: '#4C83F3',
+    suspend_style_color: '#FFFFFF'
   }
 )
 const ShowLocationList = [
@@ -122,7 +138,9 @@ const inputCreateSiteForm = reactive({
   show_location: ESiteShowLocationType.lower_right,
   show_bubble: 1,
   popup: ESitePopupType.passive,
-  popup_frequency: 10
+  popup_frequency: 10,
+  suspend_style: '#4C83F3',
+  suspend_style_color: '#FFFFFF'
 })
 
 watch(
@@ -134,6 +152,8 @@ watch(
       inputCreateSiteForm.show_bubble = v.showBubble
       inputCreateSiteForm.popup = v.popup || ESitePopupType.passive
       inputCreateSiteForm.popup_frequency = v.popupFrequency
+      inputCreateSiteForm.suspend_style = v.suspend_style
+      inputCreateSiteForm.suspend_style_color = v.suspend_style_color
     }
   },
   { deep: true, immediate: true }

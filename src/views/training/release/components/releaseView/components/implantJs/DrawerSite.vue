@@ -18,6 +18,8 @@
             :popup="item.popup"
             :showLocation="item.show_location"
             :showBubble="item.show_bubble"
+            :suspend_style="item.suspend_style"
+            :suspend_style_color="item.suspend_style_color"
             :visible="visible"
           >
             <div class="text-xs">
