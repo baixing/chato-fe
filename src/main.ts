@@ -5,6 +5,7 @@ import 'wow.js/css/libs/animate.css'
 //
 import useSensors from '@/composables/useSensors'
 import useSentry from '@/composables/useSentry'
+import { useBase } from '@/stores/base'
 import elementIcon from '@/utils/elementIcon'
 import { globalComponents } from '@/utils/globalComponents'
 import { copyPaste } from '@/utils/help'
@@ -27,6 +28,11 @@ app.use(i18n)
 
 app.use(asyncRegisterGlobalComponents, globalComponents)
 app.use(elementIcon)
+
+const base = useBase()
+try {
+  await base.getABTestConfig()
+} catch (e) {}
 
 useSensors(app)
 
