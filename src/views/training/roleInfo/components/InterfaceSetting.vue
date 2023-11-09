@@ -312,7 +312,10 @@ const { currentRights } = storeToRefs(spaceStoreI)
 const { orgInfo } = storeToRefs(baseStoreI)
 const specifiedBetweenDay = getSpecifiedDateSinceNowDay(orgInfo.value.created)
 const maskVisible = computed(
-  () => !currentRights.value.brand && specifiedBetweenDay > FreeCommercialTypeExperienceDay
+  () =>
+    !currentRights.value.brand ||
+    (currentRights.value.type === ESpaceCommercialType.free &&
+      specifiedBetweenDay > FreeCommercialTypeExperienceDay)
 )
 //----- 音色部分 ----
 const timbreList = ref<ITimbreOptions[]>()

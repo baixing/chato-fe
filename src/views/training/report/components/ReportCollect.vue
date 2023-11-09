@@ -57,6 +57,7 @@
             <ul class="expand-ul">
               <li>{{ $t('序号') }}：{{ row.id }}</li>
               <li>{{ $t('填写时间') }}：{{ toSimpleDateTime(row.created) }}</li>
+              <li>{{ $t('渠道') }}：{{ row.channel }}</li>
               <li>{{ $t('用户ID') }}：{{ row.sender_uid }}</li>
               <li v-for="item in curSelectInfo.fields" :key="item.id" :label="item.name">
                 {{ item.name }}：{{ row[item.field_id] }}
@@ -71,6 +72,13 @@
             {{ toSimpleDateTime(row.created) }}
           </template>
         </el-table-column>
+        <el-table-column
+          v-if="!isMobile"
+          prop="channel"
+          :label="$t(`渠道`)"
+          align="left"
+          width="100"
+        />
         <el-table-column :label="$t(`用户ID`)" prop="sender_uid" />
         <el-table-column v-for="item in curSelectInfo.fields" :key="item.id" :label="item.name">
           <template #default="{ row }">
@@ -98,6 +106,7 @@ import {
   getFormCollectSelect
 } from '@/api/report'
 import SearchInput from '@/components/Input/SearchInput.vue'
+import UpgrateVersion from '@/components/Upgrade/UpgrateVersion.vue'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import useSpaceRights from '@/composables/useSpaceRights'
 import { ESpaceCommercialType } from '@/enum/space'
@@ -112,7 +121,6 @@ import { storeToRefs } from 'pinia'
 import { computed, nextTick, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
-import UpgrateVersion from '@/components/Upgrade/UpgrateVersion.vue'
 
 const { t } = useI18n()
 const route = useRoute()

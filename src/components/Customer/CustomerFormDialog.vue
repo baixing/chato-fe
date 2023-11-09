@@ -6,7 +6,6 @@
 
 <script setup lang="ts">
 import Modal from '@/components/Modal/index.vue'
-import { useBasicLayout } from '@/composables/useBasicLayout'
 import { computed } from 'vue'
 import CustomerForm from './CustomerForm.vue'
 
@@ -25,8 +24,6 @@ const internalVisible = computed({
 
 const internalFormId = computed(() => props.formId)
 const internalUid = computed(() => props.uid)
-
-const { isMobile } = useBasicLayout()
 
 const onClose = () => {
   internalVisible.value = false

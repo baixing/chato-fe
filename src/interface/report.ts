@@ -25,4 +25,5 @@ export interface IFormCollectDetailList {
   id: number
   modified: string
   sender_uid: string
+  channel: string
 }

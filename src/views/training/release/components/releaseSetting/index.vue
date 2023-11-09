@@ -172,7 +172,7 @@
           />
           <CollectFormConfig ref="collectFormConfigRef" />
         </div>
-        <SpaceRightsMask :visible="maskVisible" :rightsType="ESpaceRightsType.brand" />
+        <SpaceRightsMask :visible="maskVisible" />
       </div>
     </el-form-item>
     <el-form-item>
@@ -292,7 +292,10 @@ const baseStoreI = useBase()
 const { orgInfo } = storeToRefs(baseStoreI)
 const specifiedBetweenDay = getSpecifiedDateSinceNowDay(orgInfo.value.created)
 const maskVisible = computed(
-  () => !currentRights.value.ad && specifiedBetweenDay > FreeCommercialTypeExperienceDay
+  () =>
+    !currentRights.value.ad ||
+    (currentRights.value.type === ESpaceCommercialType.free &&
+      specifiedBetweenDay > FreeCommercialTypeExperienceDay)
 )
 
 const beforeSaveCheck = () => {

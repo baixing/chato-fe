@@ -38,6 +38,7 @@
 
 <script setup lang="ts">
 import { getCustomerFormConfig, saveCustomerForm } from '@/api/customerForm'
+import useChannel from '@/composables/useChannel'
 import type { ICustomerFormConfig } from '@/interface/customerForm'
 import Ajv from 'ajv'
 import AjvErrors from 'ajv-errors'
@@ -79,6 +80,8 @@ const resetFormState = () => {
   formRef.value.clearValidate()
 }
 
+const { shareChannel } = useChannel()
+
 const onSubmit = async () => {
   const schema = { ...formConfig.value.schema, errorMessage: { required: {}, properties: {} } }
   const { required, properties } = schema
@@ -109,6 +112,7 @@ const onSubmit = async () => {
       const saveParams = {
         form: internalId.value,
         sender_uid: route.query.uid || props.uid,
+        channel: shareChannel.value,
         ...(formState as object)
       }
       await saveCustomerForm(saveParams)
