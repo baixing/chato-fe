@@ -55,6 +55,9 @@ export const RoutesMap = {
     management: 'namespacePersonalManagement',
     summary: 'namespaceSummary'
   },
+  vip: {
+    center: 'vipCenter'
+  },
   inviteMember: 'inviteMember',
   guide: {
     first: 'guideFirst'
@@ -339,6 +342,21 @@ const spaceManager = [
   }
 ]
 
+// vip
+const vipManager = [
+  {
+    path: 'vip',
+    component: RouterView,
+    children: [
+      {
+        name: RoutesMap.vip.center,
+        path: 'center',
+        component: () => import('@/views/vip/center.vue')
+      }
+    ]
+  }
+]
+
 // 邀请用户
 const inviteMember = [
   {
@@ -376,6 +394,7 @@ const loginedRoutes = [
       ...managerRoutes, // 管理机器人
       ...resourceSquareRoutes, // 资源广场
       ...spaceManager,
+      ...vipManager,
       ...guideRoutes // 引导
     ]
   }
@@ -401,7 +420,6 @@ const router = createRouter({
 })
 
 router.beforeEach((to) => {
-  console.log(to)
   const { drawerVisible } = useSidebar()
   drawerVisible.value = false
 

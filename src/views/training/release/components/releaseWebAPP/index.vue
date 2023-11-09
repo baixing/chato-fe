@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import SpaceRightsFreeExpUpgrate from '@/components/Space/SpaceRightsFreeExpUpgrate.vue'
+import SpaceRightsMask from '@/components/Space/SpaceRightsMask.vue'
 import useGlobalProperties from '@/composables/useGlobalProperties'
 import useSpaceRights from '@/composables/useSpaceRights'
 import { currentEnvConfig } from '@/config'
@@ -299,6 +301,7 @@ onMounted(() => {
             :svgName="item.icon"
             :title="item.title"
             :desc="item.desc"
+            class="relative"
           >
             <div
               class="icon-set-container text-[#b5bed0] cursor-pointer gap-2 text-xs flex items-center justify-center mr-[16px] md:mr-[6px] md:mb-2"
@@ -311,6 +314,11 @@ onMounted(() => {
               </el-icon>
               {{ ic.label }}
             </div>
+            <SpaceRightsMask
+              :visible="currentRights.type === ESpaceCommercialType.free && item.icon !== 'wangye'"
+            >
+              <SpaceRightsFreeExpUpgrate upgrade-link upgrade-text="该功能为付费权益" />
+            </SpaceRightsMask>
           </ReleaseBox>
         </div>
       </div>

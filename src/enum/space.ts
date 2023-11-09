@@ -14,9 +14,12 @@ export const enum ESpaceRightsType {
 
 export const enum ESpaceCommercialType {
   free = 'Free',
+  freeFirstExp = 'FreeFirstExp',
+  selfStandard = 'SelfStandard',
   standard = 'Standard',
   brand = 'Brand',
   professional = 'Professional',
+  selfProfessional = 'SelfProfessional',
   customVip1 = 'Custom-VIP1',
   customVip2 = 'Custom-VIP2',
   customVip3 = 'Custom-VIP3',

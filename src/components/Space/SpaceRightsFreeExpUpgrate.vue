@@ -4,7 +4,7 @@
     class="flex items-center gap-1 text-xs"
   >
     <img :src="SVip" class="w-[29px] h-3 object-cover shrink-0" />
-    <span class="text-[#9DA3AF]">{{ $t('该功能为付费权益，试用已结束') }}</span>
+    <span class="text-[#9DA3AF]">{{ $t(props.upgradeText) }}</span>
     <el-button
       type="primary"
       size="small"
@@ -27,14 +27,25 @@
 import SVip from '@/assets/img/vip-s.png'
 import useSpaceRights from '@/composables/useSpaceRights'
 import { FreeCommercialTypeExperienceDay } from '@/constant/space'
-import type { ESpaceRightsType } from '@/enum/space'
+import { ESpaceRightsType } from '@/enum/space'
 import { useBase } from '@/stores/base'
 import { getSpecifiedDateSinceNowDay } from '@/utils/timeRange'
 import { storeToRefs } from 'pinia'
 
-const props = defineProps<{
-  rightsType: ESpaceRightsType
-}>()
+const props = withDefaults(
+  defineProps<{
+    rightsType?: ESpaceRightsType
+    upgradeText?: string
+    upgradeLink?: boolean
+  }>(),
+  {
+    rightsType: ESpaceRightsType.default,
+    upgradeText: '该功能为付费权益，试用已结束',
+    upgradeLink: false
+  }
+)
+
+const emit = defineEmits(['upgrade'])
 
 const { checkRightsTypeNeedUpgrade } = useSpaceRights()
 const baseStoreI = useBase()
