@@ -103,7 +103,7 @@ window.onload = () => {
     `
       )
 
-      inframe_container.innerHTML = `<div id="close_chato" style="position: absolute; right: 16px; top: 20px; cursor: pointer;">
+      inframe_container.innerHTML = `<div id="close_chato" style="position: absolute; left: 16px; top: 20px; cursor: pointer;">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none">
           <defs>
             <clipPath id="a">
