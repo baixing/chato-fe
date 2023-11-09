@@ -15,7 +15,12 @@
         <div class="account-detail">
           <p>
             {{ $t('头像') }}：
-            <img :src="item.avatar" class="w-[32px] h-[32px] rounded-full" alt="" />
+            <Avatar
+              :avatar="item.avatar"
+              :size="32"
+              :name="item.name.slice(0, 2)"
+              class="w-[32px] h-[32px] rounded-full"
+            />
           </p>
           <p>
             {{ $t('名称') }}： <span class="">{{ item.name }}</span>
@@ -62,13 +67,13 @@
   </el-drawer>
 </template>
 <script lang="ts" setup>
+import { postAccountOfflineAPI, postAccountRestartAPI, serachAccountListAPI } from '@/api/release'
 import { useBasicLayout } from '@/composables/useBasicLayout'
+import { EAccountStatus } from '@/enum/release'
+import type { IAccountList } from '@/interface/release'
+import { ElLoading, ElMessageBox, ElNotification as Notification } from 'element-plus'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { ElMessageBox, ElLoading, ElNotification as Notification } from 'element-plus'
-import { serachAccountListAPI, postAccountRestartAPI, postAccountOfflineAPI } from '@/api/release'
-import type { IAccountList } from '@/interface/release'
-import { EAccountStatus } from '@/enum/release'
 
 const props = defineProps<{
   value: boolean

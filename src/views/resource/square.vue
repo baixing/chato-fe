@@ -30,9 +30,10 @@
             :key="c.id"
             @click="onAddSessionChat(c)"
           >
-            <img
-              :src="c.avatar || DefaultAvatar"
-              alt="logo"
+            <Avatar
+              :avatar="c.avatar || DefaultAvatar"
+              :size="48"
+              :name="c.name.slice(0, 2)"
               class="w-12 h-12 object-cover overflow-hidden shrink-0 rounded-full"
             />
             <div class="tracking-[0.13px] overflow-hidden lg:text-center">
@@ -55,14 +56,14 @@ import { addChatSessionB, addChatSessionC } from '@/api/chatList'
 import { getResourceB, getResourceC } from '@/api/resource'
 import DefaultAvatar from '@/assets/img/avatar.png'
 import ContentLayout from '@/layout/ContentLayout.vue'
+import { useAuthStore } from '@/stores/auth'
 import { useChatStore } from '@/stores/chat'
+import { useStorage } from '@vueuse/core'
 import { ElLoading } from 'element-plus'
 import { storeToRefs } from 'pinia'
-import { ref, computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
-import { useStorage } from '@vueuse/core'
 import SquareHeader from './components/SquareHeader.vue'
 
 const props = withDefaults(

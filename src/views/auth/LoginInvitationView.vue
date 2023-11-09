@@ -11,8 +11,14 @@
         class="box-border w-[360px] md:w-full relative rounded-lg px-3 pb-4 pt-[50px] mb-10"
         style="border: 1px solid #e4e7ed"
       >
-        <img
+        <!-- <img
           :src="robotDetail.avatar || avatar"
+          class="absolute top-0 left-[50%] translate-y-[-50%] translate-x-[-50%] w-[79px] h-[79px] rounded-full z-[999]"
+        /> -->
+        <Avatar
+          :avatar="robotDetail.avatar || avatar"
+          :size="79"
+          :name="robotDetail.name.slice(0, 2)"
           class="absolute top-0 left-[50%] translate-y-[-50%] translate-x-[-50%] w-[79px] h-[79px] rounded-full z-[999]"
         />
         <h1 class="mb-3">{{ robotDetail.name }}</h1>
@@ -33,20 +39,20 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import LoginMobile from './components/LoginMobile.vue'
-import useGlobalProperties from '@/composables/useGlobalProperties'
-import avatar from '@/assets/img/avatar.png'
-import { getDomainDetailPublic } from '@/api/domain'
-import type { IDomainInfo } from '@/interface/domain'
-import { useI18n } from 'vue-i18n'
-import dayjs from 'dayjs'
-import { ElLoading, ElNotification as Notification } from 'element-plus'
 import { postCheckLoginCAPI, postLoginCAPI } from '@/api/auth'
+import { getDomainDetailPublic } from '@/api/domain'
+import avatar from '@/assets/img/avatar.png'
+import useGlobalProperties from '@/composables/useGlobalProperties'
+import type { IDomainInfo } from '@/interface/domain'
 import { RoutesMap } from '@/router'
 import { useAuthStore } from '@/stores/auth'
+import dayjs from 'dayjs'
+import { ElLoading, ElNotification as Notification } from 'element-plus'
 import { storeToRefs } from 'pinia'
+import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useRoute, useRouter } from 'vue-router'
+import LoginMobile from './components/LoginMobile.vue'
 
 const { t } = useI18n()
 const { $sensors } = useGlobalProperties()

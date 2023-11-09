@@ -5,10 +5,11 @@
       class="flex items-center justify-center h-14 bg-white mb-0 text-sm font-medium gap-2 shrink-0"
       style="border-bottom: 1px solid #eee"
     >
-      <img
-        :src="detail.avatar || DefaultAvatar"
+      <Avatar
+        :avatar="detail.avatar ?? DefaultAvatar"
+        :size="28"
+        :name="detail.name.slice(0, 2)"
         class="w-7 h-7 rounded-full shrink-0 overflow-hidden"
-        alt=""
       />
       <span>{{ detail.name || '...' }}</span>
       <span

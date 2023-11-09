@@ -10,12 +10,11 @@
       <div class="cursor-pointer w-full rounded-lg border border-solid border-[#394457] px-2 py-3">
         <div class="flex items-center gap-2 text-[#B5BED0] mb-4">
           <Avatar
-            :avatar="userInfo.org.avatar"
+            :avatar="userInfo.org.avatar ?? 'avatar://color=#c0c4cc'"
             :name="$t('空间')"
             :commercial-type="userCommercialType"
             :size="36"
             with-rights
-            show-all-name
           />
           <p class="truncate text-xs leading-[18px] pl-2 flex-1">{{ orgInfo.name }}</p>
           <svg-icon name="arrow-expand" svg-class="w-4 h-4 shrink-0" />
