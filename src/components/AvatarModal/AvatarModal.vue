@@ -14,9 +14,9 @@
         :size="56"
         :name="name"
       />
-      <div class="pt-1 text-[#9DA3AF]">预览头像</div>
+      <div class="pt-1 text-[#9DA3AF]">{{ t('预览头像') }}</div>
     </div>
-    <div class="font-medium leading-6 text-[#303133] pb-5">自定义头像颜色</div>
+    <div class="font-medium leading-6 text-[#303133] pb-5">{{ t('自定义头像颜色') }}</div>
     <div
       class="grid grid-cols-6 justify-items-center justify-between items-center"
       :class="{ '!grid-cols-3 !gap-y-4': isMobile }"
@@ -73,6 +73,7 @@ import { cosServe } from '@/utils/cos'
 import type { UploadRawFile } from 'element-plus'
 import { computed, ref } from 'vue'
 import { VueCropper } from 'vue-cropper'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{
   imgUrl: string
@@ -96,6 +97,7 @@ const visible = ref(false)
 const imgUploadDialogVisible = ref(false)
 const cropper = ref()
 const cropImgUrl = ref<string>()
+const { t } = useI18n()
 const vueCropperOptions = {
   autoCrop: true,
   fixed: true,
