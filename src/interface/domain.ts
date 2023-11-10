@@ -87,7 +87,7 @@ export interface IDomainInfo {
   show_recommend_question: number // 问题推荐
   conversation_mode_meta?: string
   conversation_arouse_mode?: EDomainConversationModeArousalMethod
-  toc_privacy_buttton: number
+  toc_privacy: number
 }
 
 export interface IDomainShortcut {

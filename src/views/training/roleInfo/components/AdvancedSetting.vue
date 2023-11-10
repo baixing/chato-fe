@@ -223,13 +223,13 @@
 
     <div class="chato-form-label flex justify-between items-center">
       <SLTitle
-        tips="允许机器人概率被分享到c端场景，例如百度索引，灵境矩阵等。"
+        tips="开放你的机器人被互联网用户访问 ( 如百度索引、文心一言等平台）"
         class="chato-form-label"
       >
-        {{ $t('C端权限开关') }}
+        {{ $t('公开访问权限开关') }}
       </SLTitle>
       <SwitchWithStateMsg
-        v-model:value="currentDomain.toc_privacy_buttton"
+        v-model:value="currentDomain.toc_privacy"
         open-msg="开启"
         close-msg="关闭"
       />
