@@ -85,7 +85,7 @@ window.onload = () => {
       z-index: 999999;
       width: 85vw;
       max-width: 375px;
-      height: 48vh;
+      height: 70vh;
       max-height: 667px;
       right: 12px;
       bottom: 12px;

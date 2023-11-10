@@ -150,7 +150,6 @@ const onSave = async () => {
       text: t('保存中'),
       background: 'rgba(0, 0, 0, 0.7)'
     })
-
     await updateDomain(currentDomain.id, currentDomain)
     await domainStoreI.initDomainList(route)
     syncOriginalFormState()

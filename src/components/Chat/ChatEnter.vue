@@ -245,7 +245,7 @@ const onRecording = (_: MouseEvent, str?: string) => {
 }
 
 const onKeydownEnter = (e: KeyboardEvent) => {
-  if (!e.shiftKey && e.keyCode === 13 && !isMobile.value) {
+  if (!e.shiftKey && e.keyCode === 13) {
     e.cancelBubble = true
     e.stopPropagation()
     e.preventDefault()

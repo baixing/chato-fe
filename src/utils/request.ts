@@ -6,12 +6,7 @@ import i18n from '@/locales'
 import router from '@/router'
 import { useAuthStore } from '@/stores/auth'
 import { useLocalStorage } from '@vueuse/core'
-import axios, {
-  AxiosError,
-  type AxiosRequestConfig,
-  type AxiosResponse,
-  type InternalAxiosRequestConfig
-} from 'axios'
+import axios, { AxiosError, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios'
 import { handleRequestError } from './help'
 let tokenAbnormal = false
 

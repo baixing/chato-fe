@@ -220,6 +220,20 @@
         </div>
       </div>
     </div>
+
+    <div class="chato-form-label flex justify-between items-center">
+      <SLTitle
+        tips="允许机器人概率被分享到c端场景，例如百度索引，灵境矩阵等。"
+        class="chato-form-label"
+      >
+        {{ $t('C端权限开关') }}
+      </SLTitle>
+      <SwitchWithStateMsg
+        v-model:value="currentDomain.toc_privacy_buttton"
+        open-msg="开启"
+        close-msg="关闭"
+      />
+    </div>
     <div class="chato-form-item">
       <SLTitle tips="基于知识库无法回复时，机器人回答内容" class="chato-form-label">
         {{ $t('超纲问题回复') }}
