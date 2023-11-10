@@ -27,14 +27,13 @@
         </template>
       </Topbar>
       <div class="bot-create-center-padding mb-16 flex-1 overflow-y-auto bot-create-block">
-        <!-- <div class="flex justify-center py-8">
-          <ImgUpload
-            :fixed="true"
+        <div class="flex justify-center py-8">
+          <AvatarModal
+            class="h-[72px] w-[72px]"
             v-model:img-url="formState.avatar"
-            :is-initial-img="true"
-            styleClass="h-[72px] w-[72px]"
+            :name="formState.name.slice(0, 2)"
           />
-        </div> -->
+        </div>
         <div class="create-input-label">
           <SLTitle>{{ t('角色名称') }}</SLTitle>
           <div class="flex">
@@ -241,6 +240,14 @@ const onLinkBots = () => {
   router.push({ name: RoutesMap.manager.center })
 }
 
+const getRandomColor = () =>
+  [
+    'avatar://?color=#409EFF',
+    'avatar://?color=#7C5CFC',
+    'avatar://?color=#FDCF63',
+    'avatar://?color=#56DB79'
+  ][Math.floor(Math.random() * 4)]
+
 const HansLimit = {
   name: 20,
   system_prompt: 900,
@@ -250,7 +257,7 @@ const HansLimit = {
 const defaultFormState: Partial<IDomainInfo> = {
   id: 0,
   slug: '',
-  avatar: '',
+  avatar: getRandomColor(),
   name: '',
   desc: '',
   system_prompt: '',
