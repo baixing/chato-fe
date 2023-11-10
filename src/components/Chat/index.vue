@@ -6,7 +6,7 @@
       style="border-bottom: 1px solid #eee"
     >
       <Avatar
-        :avatar="detail.avatar ?? DefaultAvatar"
+        :avatar="detail.avatar || DefaultAvatar"
         :size="28"
         :name="detail.name.slice(0, 2)"
         class="w-7 h-7 rounded-full shrink-0 overflow-hidden"

@@ -1,6 +1,6 @@
 <template>
   <Avatar
-    :avatar="imgUrl ?? DefaultAvatar"
+    :avatar="imgUrl || DefaultAvatar"
     @click="onSetAvatar"
     :size="48"
     :name="name"
@@ -9,7 +9,7 @@
   <Modal v-model:visible="visible" title="选择头像" @submit="onSubmit" width="484px">
     <div class="flex flex-col items-center pb-5">
       <Avatar
-        :avatar="imgByModal ?? DefaultAvatar"
+        :avatar="imgByModal || DefaultAvatar"
         class="w-14 h-14 cursor-pointer"
         :size="56"
         :name="name"

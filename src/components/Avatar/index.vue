@@ -6,11 +6,12 @@
         v-if="avatar.isUrl === false"
         :class="[
           'text-sm w-full h-full overflow-hidden truncate',
-          showAllName ? 'text-xs scale-90' : ``
+          showAllName && 'text-xs scale-90'
         ]"
         :style="{ lineHeight: `${size}px`, background: `${avatar.background}` }"
       >
-        {{ name ?? '头像' }}
+        {{ name || '头像' }}
+        <!-- {{ avatar.background }} -->
       </span>
     </el-avatar>
     <SpaceRightsIcon

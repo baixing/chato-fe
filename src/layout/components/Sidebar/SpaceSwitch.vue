@@ -10,7 +10,7 @@
       <div class="cursor-pointer w-full rounded-lg border border-solid border-[#394457] px-2 py-3">
         <div class="flex items-center gap-2 text-[#B5BED0] mb-4">
           <Avatar
-            :avatar="userInfo.org.avatar ?? 'avatar://color=#c0c4cc'"
+            :avatar="userInfo.org.avatar || 'avatar://color=#c0c4cc'"
             :name="$t('空间')"
             :commercial-type="userCommercialType"
             :size="36"

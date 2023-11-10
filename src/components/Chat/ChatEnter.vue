@@ -241,7 +241,7 @@ const { startRecording, stopRecording, resetAsr, isRecording } = useRecognizer({
 
 // 触发录音
 const onRecording = (_: MouseEvent, str?: string) => {
-  internalValue.value = str ?? ''
+  internalValue.value = str || ''
   chatRecordingEnterVisible.value = true
   isRecording.value ? stopRecording() : startRecording(internalValue.value)
 }

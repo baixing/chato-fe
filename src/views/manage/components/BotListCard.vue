@@ -6,7 +6,7 @@
     <div class="flex justify-between items-center">
       <div class="flex items-center gap-3">
         <Avatar
-          :avatar="internalBot.avatar ?? DefaultAvatar"
+          :avatar="internalBot.avatar || DefaultAvatar"
           class="w-11 h-11 rounded-full overflow-hidden shrink-0 lg:w-9 lg:h-9"
           :size="44"
           :name="internalBot.name.slice(0, 2)"

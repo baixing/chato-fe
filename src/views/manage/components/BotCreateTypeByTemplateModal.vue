@@ -40,7 +40,7 @@
           ]"
         >
           <Avatar
-            :avatar="item.avatar ?? DefaultAvatar"
+            :avatar="item.avatar || DefaultAvatar"
             :size="32"
             :name="item.name.slice(0, 2)"
             class="w-8 h-8 rounded-full shrink-0"
