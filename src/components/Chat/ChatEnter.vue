@@ -92,8 +92,9 @@
           :disabled="!internalValue"
           @click="onClearRecorder"
           v-if="
+            domainDetail.conversation_mode !== EDomainConversationMode.audio ||
             domainDetail?.conversation_arouse_mode !==
-            EDomainConversationModeArousalMethod.AutomaticSpeechRecognition
+              EDomainConversationModeArousalMethod.AutomaticSpeechRecognition
           "
         >
           {{ t('清空') }}
@@ -110,8 +111,9 @@
           :disabled="!internalValue"
           @click="onSendRecorder"
           v-if="
+            domainDetail.conversation_mode !== EDomainConversationMode.audio ||
             domainDetail?.conversation_arouse_mode !==
-            EDomainConversationModeArousalMethod.AutomaticSpeechRecognition
+              EDomainConversationModeArousalMethod.AutomaticSpeechRecognition
           "
         >
           {{ t('发送') }}
