@@ -23,6 +23,7 @@
           action="#"
           :before-upload="beforeUpload"
           class="flex rounded-full items-center justify-center"
+          accept="image/png, image/jpeg"
         >
           <div
             class="bg-[#F2F3F5] w-14 h-14 flex rounded-full items-center justify-center cursor-pointer"

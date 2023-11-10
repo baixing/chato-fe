@@ -6,7 +6,7 @@ import { useAuthStore } from '@/stores/auth'
 import Sensors from '@/utils/sensors'
 import { locationComToCn } from '@/utils/url'
 import { nextTick } from 'vue'
-import { createRouter, createWebHistory, RouterView } from 'vue-router'
+import { RouterView, createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 
 export const RoutesMap = {
   home: {
@@ -380,7 +380,7 @@ const router = createRouter({
     ...inviteMember,
     ...namespaceSwitch,
     ...finalRoutes
-  ] as any
+  ] as RouteRecordRaw[]
 })
 
 router.beforeEach((to) => {
