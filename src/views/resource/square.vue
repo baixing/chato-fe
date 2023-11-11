@@ -23,28 +23,49 @@
             class="w-[18px] h-[18px] object-cover"
           />
         </p>
-        <div class="flex items-center flex-wrap gap-4">
+        <div class="grid grid-cols-4 items-center flex-wrap gap-4 sm:grid-cols-2">
           <div
-            class="box-border rounded-lg bg-white p-4 flex gap-[10px] items-center cursor-pointer hover:shadow-lg relative lg:flex-col resource-card"
+            class="bg-white rounded-lg line-clamp-2 cursor-pointer hover:shadow-lg hover:-translate-y-2 lg:space-y-3 lg:hover:-translate-y-0 transition-all"
             v-for="c in item.data"
             :key="c.id"
             @click="onAddSessionChat(c)"
           >
-            <Avatar
-              :avatar="c.avatar || DefaultAvatar"
-              :size="48"
-              :name="c.name.slice(0, 2)"
-              class="w-12 h-12 object-cover overflow-hidden shrink-0 rounded-full"
-            />
-            <div class="tracking-[0.13px] overflow-hidden lg:text-center">
-              <div class="text-[#596780] text-sm font-medium mb-2 truncate pr-6 lg:pr-0">
-                {{ c.name }}
+            <div class="p-5 pb-0">
+              <div class="flex items-center mb-5">
+                <Avatar
+                  :avatar="c.avatar || DefaultAvatar"
+                  :size="44"
+                  :name="c.name.slice(0, 2)"
+                  class="w-[44px] h-[44px] object-cover overflow-hidden shrink-0 rounded-full"
+                />
+                <div class="text-[#3D3D3D] text-sm font-medium truncate pl-3">
+                  {{ c.name }}
+                </div>
               </div>
-              <p class="text-[#9DA3AF] text-xs line-clamp-2 h-8" style="word-break: break-all">
+              <div
+                class="text-[#9DA3AF] text-xs line-clamp-2 h-8 mb-6"
+                style="word-break: break-all"
+              >
                 {{ c.desc }}
-              </p>
+              </div>
             </div>
-            <el-icon class="enter-icon text-[#596780]"><SortUp /></el-icon>
+            <div
+              class="border-t border-0 border-solid text-[#596780] border-[#E4E7ED] flex justify-between h-11 items-center"
+            >
+              <div
+                class="basis-3/5 text-center border-0 h-full leading-[44px] border-r border-solid border-[#E4E7ED] text-sm flex items-center justify-center hover:!text-[#7C5CFC]"
+                @click.stop="onGoCreate"
+              >
+                <el-icon class="text-[#9DA3AF] mr-1 !text-base"><Plus /></el-icon>
+                <div>{{ t('创建同款') }}</div>
+              </div>
+              <div
+                class="basis-2/5 text-center flex items-center justify-center hover:!text-[#7C5CFC]"
+              >
+                <el-icon class="text-[#9DA3AF] mr-1 !text-base"><ChatDotRound /></el-icon>
+                <div>{{ t('对话') }}</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -56,6 +77,7 @@ import { addChatSessionB, addChatSessionC } from '@/api/chatList'
 import { getResourceB, getResourceC } from '@/api/resource'
 import DefaultAvatar from '@/assets/img/avatar.png'
 import ContentLayout from '@/layout/ContentLayout.vue'
+import { RoutesMap } from '@/router'
 import { useAuthStore } from '@/stores/auth'
 import { useChatStore } from '@/stores/chat'
 import { useStorage } from '@vueuse/core'
@@ -114,6 +136,10 @@ async function onAddSessionChat(item) {
 }
 
 const initing = ref(false)
+
+const onGoCreate = () => {
+  router.push({ name: RoutesMap.manager.create })
+}
 
 const init = async () => {
   try {
