@@ -145,27 +145,23 @@ const onSave = async () => {
     if (!beforeSaveCheck()) {
       return
     }
-    if (currentDomain.toc_privacy == 0) {
+    if (currentDomain.toc_privacy == 0 && localStorage.getItem('toc_privacy') === null) {
       // 如果值为 0，弹出一个对话框
       await ElMessageBox({
         title: t('温馨提示'),
         message:
-          t('是否开放你的机器人被互联网用户访问?') +
+          t('是否开放机器人被互联网用户访问?') +
           '<br>' +
           t('可前往高级设置->公开访问权限开关手动修改'),
         confirmButtonText: t('开启权限'),
-        cancelButtonText: t('保持关闭'),
         dangerouslyUseHTMLString: true, // 允许message中的HTML
-        showCancelButton: true,
         type: 'warning'
       })
-        .then((action) => {
-          if (action === 'confirm') {
-            currentDomain.toc_privacy = 1
-          } else if (action === 'cancel') {
-          }
+        .then(() => {
+          currentDomain.toc_privacy = 1
         })
         .catch(() => {})
+      localStorage.setItem('toc_privacy', 'true')
     }
     loading.value = ElLoading.service({
       lock: true,
