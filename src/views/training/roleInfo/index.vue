@@ -145,7 +145,7 @@ const onSave = async () => {
     if (!beforeSaveCheck()) {
       return
     }
-    if (currentDomain.toc_privacy == 0 && localStorage.getItem('toc_privacy') === null) {
+    if (currentDomain.toc_privacy == 0 && localStorage.getItem(currentDomain.slug) === null) {
       // 如果值为 0，弹出一个对话框
       await ElMessageBox({
         title: t('温馨提示'),
@@ -161,7 +161,7 @@ const onSave = async () => {
           currentDomain.toc_privacy = 1
         })
         .catch(() => {})
-      localStorage.setItem('toc_privacy', 'true')
+      localStorage.setItem(currentDomain.slug, 'true')
     }
     loading.value = ElLoading.service({
       lock: true,
