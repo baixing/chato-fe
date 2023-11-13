@@ -68,7 +68,7 @@ const route = useRoute()
 const downloadPlugin = () => {
   // Implement the logic to download the plugin file
   const link = document.createElement('a')
-  link.href = 'https://afu-1255830993.cos.ap-shanghai.myqcloud.com/dist/dist/dist.zip'
+  link.href = 'https://afu-1255830993.cos.ap-shanghai.myqcloud.com/chato-xhs.zip'
   link.download = 'dist.zip' // Optional: you can set the default filename for the download
   document.body.appendChild(link)
   link.click()
