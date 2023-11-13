@@ -1,7 +1,21 @@
 <template>
   <div class="overflow-hidden w-full h-[calc(100%-74px)] mt-[74px] flex bg-white">
-    <ChatSidebar v-show="!isMobile" prefix="" style="border-right: 1px solid rgb(228, 231, 237)" />
-    <div class="relative w-full" v-loading="loading">
+    <ChatSidebar
+      v-show="!isMobile"
+      prefix=""
+      style="border-right: 1px solid rgb(228, 231, 237)"
+      @to_square="handleToSquare"
+      @hide_square="handleHiddenSquare"
+    />
+    <Square
+      class="mt-12"
+      v-if="square"
+      prefix=""
+      :requiredTopbar="false"
+      :existMenuMore="false"
+      @hidden_square="handleHiddenSquare"
+    />
+    <div v-else class="relative w-full" v-loading="loading">
       <span
         v-show="isMobile"
         @click="drawerVisible = true"
@@ -36,9 +50,10 @@ import { useBasicLayout } from '@/composables/useBasicLayout'
 import useGlobalProperties from '@/composables/useGlobalProperties'
 import ChatSidebar from '@/layout/components/Sidebar/ChatSidebar.vue'
 import dayjs from 'dayjs'
-import { ref } from 'vue'
+import { ref, defineEmits } from 'vue'
 import { useI18n } from 'vue-i18n'
 import homeChatItem from './components/homeChatItem.vue'
+import Square from '../resource/square.vue'
 
 const { isMobile } = useBasicLayout()
 const loading = ref(false)
@@ -46,6 +61,7 @@ const drawerVisible = ref<boolean>(false)
 const link = window.location.href
 const { $sensors, $copyText } = useGlobalProperties()
 const { t } = useI18n()
+const square = ref<boolean>(true)
 
 const copyText = (str: string) => {
   scanCodeSuccessRBI()
@@ -60,5 +76,13 @@ const scanCodeSuccessRBI = () => {
       time: dayjs().format('YYYY-MM-DD HH:mm:ss')
     }
   })
+}
+
+const handleHiddenSquare = (message) => {
+  square.value = false
+}
+
+const handleToSquare = (message) => {
+  square.value = true
 }
 </script>

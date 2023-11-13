@@ -1,6 +1,6 @@
 <template>
   <Modal
-    mobile-width="100%"
+    mobile-width="95%"
     v-model:visible="internalVisible"
     :title="$t(`创建站点`)"
     :footer="false"
@@ -27,12 +27,12 @@
 <script lang="ts" setup>
 import { createDeleteEditSites } from '@/api/iframe'
 import Modal from '@/components/Modal/index.vue'
+import { ESiteStatus } from '@/enum/release'
+import type { ISetSiteFormType } from '@/interface/release'
 import { ElLoading, ElNotification as Notification } from 'element-plus'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import SitePublic from './SitePublic.vue'
-import type { ISetSiteFormType } from '@/interface/release'
-import { ESiteStatus } from '@/enum/release'
 
 const props = defineProps<{
   value: boolean

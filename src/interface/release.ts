@@ -56,6 +56,8 @@ export interface ICreateSitesChannelsRes {
   popup: ESitePopupType
   codeIframeHtml?: string
   codeContent?: string
+  suspend_style?: string
+  suspend_style_color?: string
 }
 
 export interface ICreateSitesRes {

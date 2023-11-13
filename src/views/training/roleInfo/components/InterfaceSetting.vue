@@ -203,10 +203,6 @@
           <span class="interface-desc">{{ $t('对话气泡') }}</span>
           <el-color-picker v-model="currentDomain.message_style" />
         </div>
-        <div class="flex items-center gap-4">
-          <span class="interface-desc">{{ $t('悬浮气泡') }}</span>
-          <el-color-picker v-model="currentDomain.suspend_style" />
-        </div>
       </div>
     </div>
   </div>

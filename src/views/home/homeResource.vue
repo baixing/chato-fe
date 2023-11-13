@@ -1,6 +1,6 @@
 <template>
   <div class="overflow-hidden mt-12 md:mt-4">
-    <Square prefix="" :requiredTopbar="false" :existMenuMore="false" />
+    <Square prefix="" :requiredTopbar="true" :existMenuMore="false" />
   </div>
 </template>
 

@@ -1,7 +1,7 @@
 <template>
   <div class="overflow-y-auto h-full">
     <Topbar v-if="requiredTopbar" title="" class="h-0 md:!h-16" />
-    <SquareHeader :requiredTopbar="requiredTopbar" />
+    <SquareHeader :requiredTopbar="requiredTopbar" v-if="requiredTopbar" />
     <ContentLayout
       class="!overflow-hidden !h-auto"
       v-loading="initing"
@@ -58,7 +58,7 @@ import ContentLayout from '@/layout/ContentLayout.vue'
 import { useChatStore } from '@/stores/chat'
 import { ElLoading } from 'element-plus'
 import { storeToRefs } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref, computed, defineEmits } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
@@ -87,8 +87,10 @@ const chatStoreI = useChatStore()
 const { authToken } = storeToRefs(authStoreI)
 const { chatList } = storeToRefs(chatStoreI)
 const isLoggedIn = computed(() => !!authToken.value)
+const emit = defineEmits(['hidden_square'])
 
 async function onAddSessionChat(item) {
+  emit('hidden_square', 'hide')
   if (chatList.value.filter((i) => i.slug === item.slug).length)
     return router.replace(`${props.prefix}/bot/${item.slug}`)
   const loading = ElLoading.service({
