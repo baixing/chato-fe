@@ -2,16 +2,17 @@
 import useGlobalProperties from '@/composables/useGlobalProperties'
 import useSpaceRights from '@/composables/useSpaceRights'
 import { currentEnvConfig } from '@/config'
-import { EAccountSettingStatus, EAppletcStatus } from '@/enum/release'
+import { EAppletcStatus } from '@/enum/release'
 import { ESpaceCommercialType, ESpaceRightsType } from '@/enum/space'
 import { useBase } from '@/stores/base'
 import { useDomainStore } from '@/stores/domain'
 import { useSpaceStore } from '@/stores/space'
 import { copyPaste } from '@/utils/help'
 import {
-  Document,
+  ChatDotRound,
   CirclePlus,
   CopyDocument,
+  Document,
   FolderChecked,
   FullScreen,
   UploadFilled,
@@ -61,6 +62,7 @@ const DrawerApplet = defineAsyncComponent(
 const VerificationTxt = defineAsyncComponent(
   () => import('../releaseView/components/applet/VerificationTxt.vue')
 )
+const ExperienceApplet = defineAsyncComponent(() => import('./components/ExperienceApplet.vue'))
 
 const route = useRoute()
 const { t } = useI18n()
@@ -81,7 +83,6 @@ const chatReleaseURL = computed(() => {
 })
 const chatScript = `${currentEnvConfig.scriptURL}/assets/iframe.min.js`
 const appletConfigDocs = 'https://baixingwang.feishu.cn/docx/C2shd2MHfo7aPfxkUl8cJVJMnGf'
-const accountCreateStatus = ref<EAccountSettingStatus>(EAccountSettingStatus.creating)
 const defaultAppletcStatus = ref<EAppletcStatus>()
 const releaseChannel = useSessionStorage('releaseChannel', '')
 
@@ -93,7 +94,8 @@ const features = reactive({
   createPoster: false, // 海报
   createAppletVisible: false, // 小程序-扫码授权
   drawerAppletVisible: false, // 小程序-查看授权结果
-  domainVerificationVisible: false // 小程序-域名校验
+  domainVerificationVisible: false, // 小程序-域名校验
+  experienceAppletVisible: false // 小程序-小程序体验
 })
 
 const {
@@ -101,11 +103,11 @@ const {
   siteListVisible,
   createSiteVisible,
   brandDomainVisible,
-  createAccountVisible,
   createAppletVisible,
   createPoster,
   drawerAppletVisible,
-  domainVerificationVisible
+  domainVerificationVisible,
+  experienceAppletVisible
 } = toRefs(features)
 
 const { checkRightsTypeNeedUpgrade } = useSpaceRights()
@@ -232,6 +234,12 @@ const releaseList = [
         label: t('域名校验'),
         scriptId: 'Chato-applet-domain',
         click: () => commonVisible(domainVerificationVisible)
+      },
+      {
+        icon: ChatDotRound,
+        label: t('小程序体验'),
+        scriptId: 'Chato-applet-experience',
+        click: () => commonVisible(experienceAppletVisible)
       }
     ]
   }
@@ -253,10 +261,6 @@ watch(
   },
   { immediate: true }
 )
-
-watch(createAccountVisible, (v) => {
-  !v && (accountCreateStatus.value = EAccountSettingStatus.creating)
-})
 
 onMounted(() => {
   const observer = new MutationObserver((mutationsList) => {
@@ -297,7 +301,7 @@ onMounted(() => {
             :desc="item.desc"
           >
             <div
-              class="icon-set-container text-[#b5bed0] cursor-pointer gap-2 text-xs flex items-center justify-center mr-[16px] md:mr-[6px]"
+              class="icon-set-container text-[#b5bed0] cursor-pointer gap-2 text-xs flex items-center justify-center mr-[16px] md:mr-[6px] md:mb-2"
               @click="ic.click"
               v-for="ic in item.setList"
               :key="ic.label"
@@ -349,6 +353,7 @@ onMounted(() => {
       v-model:value="domainVerificationVisible"
       :chatAPI="chatReleaseURL.chatWebPage"
     />
+    <ExperienceApplet v-model:value="experienceAppletVisible" :slug="botSlug" />
   </div>
 </template>
 
