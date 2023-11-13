@@ -639,6 +639,7 @@ const init = async () => {
     await initDomainDetail()
   } else if (route.params.botSlug) {
     await initDomainDetailBySlug()
+    onNewDraft()
   } else {
     onNewDraft()
   }
