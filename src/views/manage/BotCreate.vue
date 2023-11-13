@@ -474,6 +474,8 @@ const initDomainDetail = async () => {
   } catch (err) {
   } finally {
     initing.value = false
+    await initDomainDetailBySlug()
+    onNewDraft()
   }
 }
 
