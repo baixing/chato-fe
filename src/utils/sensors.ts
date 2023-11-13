@@ -101,7 +101,8 @@ export default class Sensors {
     sa.registerPage({
       dvid,
       tag: isMobile.value ? 'Wap' : 'PC',
-      source: shareChannel.value
+      source: shareChannel.value,
+      userAgent: window.navigator.userAgent
     })
 
     this.saInstance = sa

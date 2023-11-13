@@ -70,6 +70,7 @@
           <div
             v-for="(item, index) in recommendQuestions"
             data-sensors-click
+            id="Chato_chat_recommend_question_click"
             :data-sensors-recommend-base-question="recommendBaseQuestion"
             :data-sensors-recommend-click-question="item.question"
             :key="`rq_${index}`"
@@ -237,7 +238,6 @@ import Watermark from 'watermark-plus'
 import xss from 'xss'
 import ChatFooter from './ChatFooter.vue'
 import ChatMessageMore from './ChatMessageMore.vue'
-import useSensors from '@/composables/useSensors'
 
 interface Props {
   internalProps?: boolean
