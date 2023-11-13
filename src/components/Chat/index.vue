@@ -237,7 +237,6 @@ import Watermark from 'watermark-plus'
 import xss from 'xss'
 import ChatFooter from './ChatFooter.vue'
 import ChatMessageMore from './ChatMessageMore.vue'
-import useSensors from '@/composables/useSensors'
 
 interface Props {
   internalProps?: boolean

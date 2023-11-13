@@ -54,7 +54,7 @@
             >
               <div
                 class="basis-3/5 text-center border-0 h-full leading-[44px] border-r border-solid border-[#E4E7ED] text-sm flex items-center justify-center hover:!text-[#7C5CFC]"
-                @click.stop="onGoCreate"
+                @click.stop="onGoCreate(c.slug)"
               >
                 <el-icon class="text-[#9DA3AF] mr-1 !text-base"><Plus /></el-icon>
                 <div>{{ t('创建同款') }}</div>
@@ -137,8 +137,8 @@ async function onAddSessionChat(item) {
 
 const initing = ref(false)
 
-const onGoCreate = () => {
-  router.push({ name: RoutesMap.manager.create })
+const onGoCreate = (slug: string) => {
+  router.push({ name: RoutesMap.manager.create, params: { botSlug: slug } })
 }
 
 const init = async () => {

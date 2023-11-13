@@ -186,7 +186,12 @@
 </template>
 
 <script setup lang="ts">
-import { createDraftDomain, getDomainDetail, updateDomain } from '@/api/domain'
+import {
+  createDraftDomain,
+  getDomainDetail,
+  getDomainDetailPublic,
+  updateDomain
+} from '@/api/domain'
 import { deleteFile, getFilesByDomainId } from '@/api/file'
 import AIGenerateBtn from '@/components/AIGenerateBtn/index.vue'
 import EnterDoc from '@/components/EnterAnswer/EnterDoc.vue'
@@ -334,9 +339,6 @@ const onAITypeModalDone = () => {
   AIGenerateInputDisabled = Object.assign(AIGenerateInputDisabled, defaultAIGenerateInputDisabled)
 }
 
-const onImgChange = (value: string) => {
-  formState.avatar = value || ''
-}
 // --------------
 
 const baseStoreI = useBase()
@@ -467,6 +469,22 @@ const initDomainDetail = async () => {
 
     formState = Object.assign(formState, data)
     await initFilesList()
+    syncOriginalFormState()
+  } catch (err) {
+  } finally {
+    initing.value = false
+  }
+}
+
+const initDomainDetailBySlug = async () => {
+  try {
+    initing.value = true
+
+    const {
+      data: { data }
+    } = await getDomainDetailPublic(route.params.botSlug)
+    const { name, system_prompt, avatar } = data
+    formState = Object.assign(formState, { name, system_prompt, avatar })
     syncOriginalFormState()
   } catch (err) {
   } finally {
@@ -619,6 +637,8 @@ onBeforeRouteLeave(async (to, from, next) => {
 const init = async () => {
   if (route.params.botId) {
     await initDomainDetail()
+  } else if (route.params.botSlug) {
+    await initDomainDetailBySlug()
   } else {
     onNewDraft()
   }
