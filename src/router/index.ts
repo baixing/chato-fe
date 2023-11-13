@@ -277,7 +277,7 @@ const managerRoutes = [
       },
       {
         name: RoutesMap.manager.create,
-        path: 'create/:botId?/:opt?',
+        path: 'create/:botId?/:opt?/:botSlug?',
         component: () => import('@/views/manage/BotCreate.vue')
       },
       {
