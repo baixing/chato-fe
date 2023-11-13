@@ -64,7 +64,7 @@ const allMenuList = [
   { title: t('训练中心'), icon: 'robot-filled', routeName: RoutesMap.manager.center },
   { title: t('我的对话'), icon: 'chat-filled', routeName: RoutesMap.chat.c },
   { title: t('资源广场'), icon: 'cube-filled', routeName: RoutesMap.resource },
-  { title: t('AI插件库'), icon: 'cube-filled', routeName: RoutesMap.aiPlugin }
+  { title: t('AI插件库'), icon: 'cube-filled', routeName: RoutesMap.aiPlugin.index }
 ]
 
 const secondarySidebar = {
