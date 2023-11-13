@@ -4,7 +4,7 @@
     <ContentLayout class="!overflow-hidden !h-auto pt-8 lg:pt-0">
       <el-card class="box-card flex flex-col">
         <div class="flex items-start p-4 border-b">
-          <img src="logo.png" alt="Logo" class="h-12 w-12 mr-4" />
+          <img src="@/assets/img/wxh/chato.png" alt="Logo" class="h-12 w-12 mr-4" />
           <div class="flex flex-col justify-between">
             <h3 class="font-semibold text-lg">小红书智能评论插件</h3>
             <p class="text-sm text-gray-600 mt-2">3234人使用</p>
