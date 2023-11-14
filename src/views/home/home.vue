@@ -3,7 +3,7 @@
     <h2
       class="font-medium text-[50px] leading-[72px] mt-[125px] text-[#303133] text-center tracking-[4px] lg:text-3xl lg:leading-[40px] lg:mt-32"
     >
-      {{ $t(titleABTest) }}
+      {{ $t('基于AI轻松定制') }}
     </h2>
     <div class="flex justify-center items-center mt-1 mb-[35px] h-24 lg:mb-4 lg:mt-1 lg:h-12">
       <span
@@ -533,7 +533,6 @@
 </template>
 
 <script setup lang="ts">
-import useABTest from '@/composables/useABTest'
 import useImagePath from '@/composables/useImagePath'
 import { ELangKey } from '@/enum/locales'
 import { useLocales } from '@/stores/locales'
@@ -569,20 +568,7 @@ const ScheduleCallback = defineAsyncComponent(
   () => import('./components/Schedule/ScheduleCallback.vue')
 )
 
-const list = [
-  t('助理机器人'),
-  t('翻译助理机器人'),
-  t('信息调研机器人'),
-  t('客服助理机器人'),
-  t('销售助理机器人'),
-  t('营销助理机器人'),
-  t('短视频编导机器人'),
-  t('活动策划机器人'),
-  t('设计助理机器人'),
-  t('育儿专家机器人')
-]
-
-const list2 = [t('个人问答机器人'), t('个人问答机器人'), t('企业专属机器人'), t('企业专属机器人')]
+const list = [t('个人问答机器人'), t('个人问答机器人'), t('企业专属机器人'), t('企业专属机器人')]
 
 const serviceCardList = [
   {
@@ -626,7 +612,7 @@ function clearTimer() {
 }
 
 function clock() {
-  if (title.value.length == listABTest[index.value].length || direction.value) {
+  if (title.value.length == list[index.value].length || direction.value) {
     if (!direction.value) {
       direction.value = true
       clearTimer()
@@ -641,13 +627,13 @@ function clock() {
       delay.value = false
     } else {
       delay.value = true
-      title.value = listABTest[index.value].substring(0, title.value.length + 1)
+      title.value = list[index.value].substring(0, title.value.length + 1)
     }
   }
 
   if (title.value.length == 0) {
     direction.value = false
-    index.value = (index.value + 1) % listABTest.length
+    index.value = (index.value + 1) % list.length
   }
 }
 
@@ -661,26 +647,6 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   clearTimer()
-})
-
-const { executeABTestFn: executeABTestFn6 } = useABTest(6)
-
-const titleABTest: string = executeABTestFn6({
-  viewA: () => {
-    return '基于知识库轻松定制'
-  },
-  viewB: () => {
-    return '基于AI轻松定制'
-  }
-})
-
-const listABTest: string[] = executeABTestFn6({
-  viewA: () => {
-    return list
-  },
-  viewB: () => {
-    return list2
-  }
 })
 </script>
 
