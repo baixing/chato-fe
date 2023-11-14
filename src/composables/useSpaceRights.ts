@@ -1,16 +1,20 @@
 import { getGroupListAPI, serachAccountListAPI } from '@/api/release'
 import { checkSpaceRightsTypeCanShow } from '@/api/space'
 import { ESpaceCommercialType, ESpaceRightsType } from '@/enum/space'
+import { RoutesMap } from '@/router'
 import { useBase } from '@/stores/base'
 import { useDomainStore } from '@/stores/domain'
 import { useSpaceStore } from '@/stores/space'
 import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
 export default function useSpaceRights() {
   const spaceStoreI = useSpaceStore()
   const domainStoreI = useDomainStore()
   const baseStoreI = useBase()
+  const router = useRouter()
+  const route = useRoute()
 
   const { upgradeRightsVisible, upgradeRightsType, currentRights, spaceMembers } =
     storeToRefs(spaceStoreI)
@@ -73,6 +77,27 @@ export default function useSpaceRights() {
     ESpaceRightsType.paintQuota
   ]
 
+  const onOpenUpgradeRightsModal = (type: ESpaceRightsType) => {
+    if (
+      route.name !== RoutesMap.vip.center &&
+      [ESpaceCommercialType.free, ESpaceCommercialType.freeFirstExp].includes(
+        currentRights.value.type
+      ) &&
+      [
+        ESpaceRightsType.default,
+        ESpaceRightsType.brand,
+        ESpaceRightsType.bot,
+        ESpaceRightsType.createAccount,
+        ESpaceRightsType.space,
+        ESpaceRightsType.usage
+      ].includes(type)
+    ) {
+      router.push({ name: RoutesMap.vip.center })
+    } else {
+      upgradeRightsVisible.value = true
+    }
+  }
+
   const checkRightsTypeNeedUpgrade = async (type: ESpaceRightsType) => {
     try {
       // 针对群聊权益不同类型
@@ -87,7 +112,8 @@ export default function useSpaceRights() {
 
       // 升级无固定类型权益弹框展示
       if (ShowDirectlyRightsType.includes(type)) {
-        upgradeRightsVisible.value = true
+        // upgradeRightsVisible.value = true
+        onOpenUpgradeRightsModal(type)
         return true
       }
 
@@ -104,14 +130,16 @@ export default function useSpaceRights() {
         } = await checkSpaceRightsTypeCanShow(type)
 
         if (data) {
-          upgradeRightsVisible.value = true
+          // upgradeRightsVisible.value = true
+          onOpenUpgradeRightsModal(type)
           return true
         } else {
           return false
         }
       }
 
-      upgradeRightsVisible.value = true
+      onOpenUpgradeRightsModal(type)
+      // upgradeRightsVisible.value = true
       return true
     } catch (err) {
       return false

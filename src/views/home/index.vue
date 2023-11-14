@@ -69,7 +69,7 @@
           id="Chato_login_click"
           @click="onEnter()"
         >
-          {{ authToken ? $t('进入') : $t(signABTest) }}
+          {{ authToken ? $t('登录') : $t('免费使用') }}
         </el-button>
       </div>
     </el-header>
@@ -192,7 +192,6 @@
   <JoinDemoModal v-model:visible="joinMask" />
 </template>
 <script setup lang="ts">
-import useABTest from '@/composables/useABTest'
 import baixingAI from '@/assets/img/home/baixing-ai.png'
 import homeInvestJoin from '@/assets/img/home/home-invest-join.jpg'
 import nashCrcode from '@/assets/img/nash-crcode.jpeg'
@@ -279,7 +278,7 @@ const onEnter = (type?: string) => {
     return
   }
   if (type === 'Chato_top_resource_click') {
-    router.push({ name: RoutesMap.home.homeResource })
+    router.push({ name: RoutesMap.home.homeChat, params: { botSlug: 'square' } })
     return
   }
 
@@ -431,17 +430,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
   const iframeContainerEl = document.getElementById('inframe_container')
   iframeContainerEl?.remove()
-})
-
-const { executeABTestFn: executeABTestFn5 } = useABTest(5)
-
-const signABTest: string = executeABTestFn5({
-  viewA: () => {
-    return '免费使用'
-  },
-  viewB: () => {
-    return '注册'
-  }
 })
 </script>
 <style lang="scss" scoped>

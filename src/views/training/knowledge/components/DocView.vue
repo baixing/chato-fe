@@ -50,6 +50,8 @@
         v-model:pagination="pagination"
         @remove-doc="onRemoveDoc"
         @edit-preview-doc="onEditPreviewDoc"
+        @generateQA="onGenerateQA"
+        @generateQARouter="onGenerateQARouter"
       />
     </div>
     <EnterDoc
@@ -66,10 +68,11 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { deleteRetryFileMate, getFilesByDomainId, getWXPublicLearnCount } from '@/api/file'
+import { deleteRetryFileMate, getFilesByDomainId, postGenerateDocAPI } from '@/api/file'
 import EnterDoc from '@/components/EnterAnswer/EnterDoc.vue'
 import SearchInput from '@/components/Input/SearchInput.vue'
 import useImagePath from '@/composables/useImagePath'
+import useSpaceRights from '@/composables/useSpaceRights'
 import { currentEnvConfig } from '@/config'
 import { USER_ROLES } from '@/constant/common'
 import { KnowledgeLearningFinalStatus } from '@/constant/knowledge'
@@ -79,8 +82,10 @@ import {
   EKnowledgeBusinessType,
   LearningStatesPerformanceType
 } from '@/enum/knowledge'
+import { ESpaceRightsType } from '@/enum/space'
 import type { IPage } from '@/interface/common'
 import type { GetFilesByDomainIdType, IDocumentForm, IDocumentList } from '@/interface/knowledge'
+import { RoutesMap } from '@/router'
 import { useBase } from '@/stores/base'
 import { useDomainStore } from '@/stores/domain'
 import * as url from '@/utils/url'
@@ -89,15 +94,17 @@ import { ElLoading, ElMessageBox, ElNotification } from 'element-plus'
 import { storeToRefs } from 'pinia'
 import { computed, onUnmounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import DocLearnTable from './DocLearnTable.vue'
 
 const { t } = useI18n()
 const { ImagePath: emptydocImg } = useImagePath('empty-doc')
+const { checkRightsTypeNeedUpgrade } = useSpaceRights()
 
 let timer = null
 const base = useBase()
 const route = useRoute()
+const router = useRouter()
 const domainStoreI = useDomainStore()
 const { domainInfo } = storeToRefs(domainStoreI)
 const domainId = computed(() => domainInfo.value.id || (route.params.botId as string))
@@ -235,6 +242,23 @@ const handleBatchRemove = () => {
     .catch(() => {})
 }
 
+const onGenerateQA = async (id: number) => {
+  const res = await postGenerateDocAPI(id)
+  loading.value = false
+  if (!res.data.data) {
+    return checkRightsTypeNeedUpgrade(ESpaceRightsType.default)
+  }
+  ElNotification.success(t('问答生成成功'))
+  initDocList()
+}
+
+const onGenerateQARouter = (id: number) => {
+  router.push({
+    name: RoutesMap.tranning.knowledgeGenerate,
+    query: { docId: id }
+  })
+}
+
 debouncedWatch(searchInput, () => initDocList(), { debounce: 300 })
 
 watch(
@@ -245,10 +269,12 @@ watch(
       return
     }
 
-    const startTag = tableData.value.some(
+    const startTagStudy = tableData.value.some(
       (item) => !KnowledgeLearningFinalStatus.includes(item.status)
     )
-    if (startTag) {
+
+    const startTagStudyConvert = tableData.value.some((item) => item.qa_status === 1)
+    if (startTagStudy || startTagStudyConvert) {
       if (!timer) {
         timer = setInterval(() => {
           initDocList()

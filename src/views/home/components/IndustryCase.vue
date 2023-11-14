@@ -10,7 +10,9 @@
         {{ $t('案例') }}
       </strong>
     </h3>
-    <IndustryCaseCard v-if="isMobile" :item="caseList[activeIndex]" />
+    <div v-if="isMobile" @click="onClickCase">
+      <IndustryCaseCard :item="caseList[activeIndex]" />
+    </div>
     <div v-else class="mt-[70px] pl-[22px]">
       <IndustryCaseCard
         v-for="(item, index) in caseList"
@@ -18,7 +20,7 @@
         :item="item"
         :index="index"
         :active="activeIndex === index"
-        @select="onSelectCase"
+        @select="onClickCase"
       />
     </div>
     <div>
@@ -46,14 +48,18 @@
         <el-carousel-item v-for="(item, index) in caseList" :key="`case_m_${index}`">
           <el-image :src="item.caseImg" fit="contain" class="w-full h-fit" />
         </el-carousel-item>
-        <el-image
-          :src="caseList[activeIndex].caseImg"
-          fit="contain"
-          lazy
-          class="w-full h-fit opacity-0"
-        />
+        <div @click="onClickCase">
+          <el-image
+            :src="caseList[activeIndex].caseImg"
+            fit="contain"
+            lazy
+            class="w-full h-fit opacity-0"
+          />
+        </div>
       </el-carousel>
-      <el-image v-else class="w-[355px]" :src="caseList[activeIndex].caseImg" lazy fit="contain" />
+      <div v-else @click="onClickCase">
+        <el-image class="w-[355px]" :src="caseList[activeIndex].caseImg" lazy fit="contain" />
+      </div>
     </div>
 
     <span
@@ -99,6 +105,7 @@ import useImagePath from '@/composables/useImagePath'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import IndustryCaseCard from './IndustryCaseCard.vue'
+import router, { RoutesMap } from '@/router'
 
 // 获取home/caseImg目录下的图片路径
 const { ImagePath: CaseChatoPath } = useImagePath('chato', 'home/caseImg')
@@ -164,10 +171,14 @@ let timer
 const activeIndex = ref(0)
 const { isMobile } = useBasicLayout()
 
-const onSelectCase = (index: number) => {
-  activeIndex.value = index
-  clearTimeout(timer)
-  onTimerListener()
+// const onSelectCase = (index: number) => {
+//   activeIndex.value = index
+//   clearTimeout(timer)
+//   onTimerListener()
+// }
+
+const onClickCase = (index: number) => {
+  router.push({ name: RoutesMap.auth.login })
 }
 
 const onTimerListener = () => {

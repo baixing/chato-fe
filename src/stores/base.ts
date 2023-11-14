@@ -2,7 +2,7 @@ import { getTestConfig } from '@/api/abtest'
 import { getOrgUserList } from '@/api/user'
 import useLocationDvid from '@/composables/useLocationDvid'
 import { ESpaceCommercialType } from '@/enum/space'
-import type { IUserInfo } from '@/interface/user'
+import type { IOrg, IUserInfo } from '@/interface/user'
 import * as Sentry from '@sentry/vue'
 import { useStorage } from '@vueuse/core'
 import { defineStore } from 'pinia'
@@ -11,7 +11,7 @@ interface State {
   authToken: any
   userInfo: Partial<IUserInfo> // 当前空间用户
   collectConfig: any
-  orgInfo: any
+  orgInfo: Partial<IOrg>
   orgInfoList: Partial<IUserInfo[]>
   userCommercialType: ESpaceCommercialType
   abTestConfig: Record<string, string>

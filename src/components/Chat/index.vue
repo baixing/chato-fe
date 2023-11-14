@@ -238,6 +238,7 @@ import Watermark from 'watermark-plus'
 import xss from 'xss'
 import ChatFooter from './ChatFooter.vue'
 import ChatMessageMore from './ChatMessageMore.vue'
+import useABTest from '@/composables/useABTest'
 
 interface Props {
   internalProps?: boolean
@@ -738,7 +739,7 @@ function doRequest(message) {
 }
 
 const { SSETextToAudio } = useSSEAudio()
-
+const { abTestConfig } = useABTest(7)
 async function sendMsgRequest(message) {
   const params = {
     ...message,
@@ -748,7 +749,10 @@ async function sendMsgRequest(message) {
     navit_msg_id: isMidJourneyDomain.value ? random(1000000, 9999999) : undefined,
     fake_domain: debugDomain || undefined
   }
-
+  console.log('abTestConfig.value:', abTestConfig.value[7], typeof abTestConfig.value[7])
+  if (params.source === 'chato_home' && abTestConfig.value[7] === '0') {
+    params.type = 'flow'
+  }
   sseStore.$patch({ sseMsgId: message.msg_id })
   try {
     let sseUrl = '/chato/sse'

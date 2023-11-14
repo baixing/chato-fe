@@ -45,7 +45,7 @@ import UserSetting from './UserSetting.vue'
 const baseStoreI = useBase()
 const router = useRouter()
 
-const { userInfo } = storeToRefs(baseStoreI)
+const { userInfo, orgInfo } = storeToRefs(baseStoreI)
 const { drawerVisible } = useSidebar()
 const { checkRightsTypeNeedUpgrade } = useSpaceRights()
 

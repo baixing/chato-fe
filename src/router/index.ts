@@ -37,6 +37,7 @@ export const RoutesMap = {
     bot: 'tranningBot',
     roleInfo: 'tranningRoleInfo',
     knowledge: 'tranningKnowledge',
+    knowledgeGenerate: 'tranningKnowledgeGenerate',
     release: 'tranningRelease',
     report: 'tranningReport',
     reportContext: 'tranningReportContext',
@@ -53,6 +54,9 @@ export const RoutesMap = {
     personalSetting: 'namespacePersonalSetting',
     management: 'namespacePersonalManagement',
     summary: 'namespaceSummary'
+  },
+  vip: {
+    center: 'vipCenter'
   },
   inviteMember: 'inviteMember',
   guide: {
@@ -243,9 +247,20 @@ const trainningRoutes = [
             component: () => import('@/views/training/roleInfo/index.vue')
           },
           {
-            name: RoutesMap.tranning.knowledge,
-            path: 'knowledge/:type?',
-            component: () => import('@/views/training/knowledge/index.vue')
+            path: 'knowledge',
+            component: () => import('@/views/training/knowledge/layout.vue'),
+            children: [
+              {
+                name: RoutesMap.tranning.knowledgeGenerate,
+                path: 'generate',
+                component: () => import('@/views/training/knowledge/GenerateQA.vue')
+              },
+              {
+                name: RoutesMap.tranning.knowledge,
+                path: ':type?',
+                component: () => import('@/views/training/knowledge/index.vue')
+              }
+            ]
           },
           {
             name: RoutesMap.tranning.release,
@@ -327,6 +342,21 @@ const spaceManager = [
   }
 ]
 
+// vip
+const vipManager = [
+  {
+    path: 'vip',
+    component: RouterView,
+    children: [
+      {
+        name: RoutesMap.vip.center,
+        path: 'center',
+        component: () => import('@/views/vip/center.vue')
+      }
+    ]
+  }
+]
+
 // 邀请用户
 const inviteMember = [
   {
@@ -364,6 +394,7 @@ const loginedRoutes = [
       ...managerRoutes, // 管理机器人
       ...resourceSquareRoutes, // 资源广场
       ...spaceManager,
+      ...vipManager,
       ...guideRoutes // 引导
     ]
   }
@@ -389,7 +420,6 @@ const router = createRouter({
 })
 
 router.beforeEach((to) => {
-  console.log(to)
   const { drawerVisible } = useSidebar()
   drawerVisible.value = false
 
