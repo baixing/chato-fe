@@ -4,12 +4,14 @@ import SpaceRightsMask from '@/components/Space/SpaceRightsMask.vue'
 import useGlobalProperties from '@/composables/useGlobalProperties'
 import useSpaceRights from '@/composables/useSpaceRights'
 import { currentEnvConfig } from '@/config'
+import { FreeCommercialTypeExperienceDay } from '@/constant/space'
 import { EAppletcStatus } from '@/enum/release'
 import { ESpaceCommercialType, ESpaceRightsType } from '@/enum/space'
 import { useBase } from '@/stores/base'
 import { useDomainStore } from '@/stores/domain'
 import { useSpaceStore } from '@/stores/space'
 import { copyPaste } from '@/utils/help'
+import { getSpecifiedDateSinceNowDay } from '@/utils/timeRange'
 import {
   ChatDotRound,
   CirclePlus,
@@ -87,6 +89,13 @@ const chatScript = `${currentEnvConfig.scriptURL}/assets/iframe.min.js`
 const appletConfigDocs = 'https://baixingwang.feishu.cn/docx/C2shd2MHfo7aPfxkUl8cJVJMnGf'
 const defaultAppletcStatus = ref<EAppletcStatus>()
 const releaseChannel = useSessionStorage('releaseChannel', '')
+
+const specifiedBetweenDay = getSpecifiedDateSinceNowDay(orgInfo.value.created)
+const rightsMaskVisible = computed(
+  () =>
+    currentRights.value.type === ESpaceCommercialType.free &&
+    specifiedBetweenDay > FreeCommercialTypeExperienceDay
+)
 
 const features = reactive({
   showCopyLinkVisbile: false, // 网页-复制链接
@@ -314,9 +323,7 @@ onMounted(() => {
               </el-icon>
               {{ ic.label }}
             </div>
-            <SpaceRightsMask
-              :visible="currentRights.type === ESpaceCommercialType.free && item.icon !== 'wangye'"
-            >
+            <SpaceRightsMask :visible="rightsMaskVisible && item.icon !== 'wangye'">
               <SpaceRightsFreeExpUpgrate upgrade-link upgrade-text="该功能为付费权益" />
             </SpaceRightsMask>
           </ReleaseBox>

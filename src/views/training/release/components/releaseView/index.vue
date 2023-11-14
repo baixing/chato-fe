@@ -3,7 +3,7 @@ import SpaceRightsFreeExpUpgrate from '@/components/Space/SpaceRightsFreeExpUpgr
 import SpaceRightsMask from '@/components/Space/SpaceRightsMask.vue'
 import useSpaceRights from '@/composables/useSpaceRights'
 import { currentEnvConfig } from '@/config'
-import { PaidCommercialTypes } from '@/constant/space'
+import { FreeCommercialTypeExperienceDay, PaidCommercialTypes } from '@/constant/space'
 import { EAccountSettingStatus } from '@/enum/release'
 import { ESpaceCommercialType, ESpaceRightsType } from '@/enum/space'
 import type { ICreateAccountRes } from '@/interface/release'
@@ -11,6 +11,7 @@ import { useBase } from '@/stores/base'
 import { useDomainStore } from '@/stores/domain'
 import { useSpaceStore } from '@/stores/space'
 import { copyPaste } from '@/utils/help'
+import { getSpecifiedDateSinceNowDay } from '@/utils/timeRange'
 import { ChatDotRound, Document, FullScreen, Tools, View } from '@element-plus/icons-vue'
 import { storeToRefs } from 'pinia'
 import {
@@ -70,6 +71,13 @@ const weixinServiceDocs = 'https://baixingwang.feishu.cn/docx/CXyTdSKF6oPCiLxAQT
 
 const accountQrCode = ref<ICreateAccountRes>()
 const accountCreateStatus = ref<EAccountSettingStatus>(EAccountSettingStatus.creating)
+
+const specifiedBetweenDay = getSpecifiedDateSinceNowDay(orgInfo.value.created)
+const rightsMaskVisible = computed(
+  () =>
+    currentRights.value.type === ESpaceCommercialType.free &&
+    specifiedBetweenDay > FreeCommercialTypeExperienceDay
+)
 
 const features = reactive({
   showDrawerChatVisible: false, // 查看群聊
@@ -334,7 +342,7 @@ onMounted(() => {
               </el-icon>
               {{ ic.label }}
             </div>
-            <SpaceRightsMask :visible="currentRights.type === ESpaceCommercialType.free">
+            <SpaceRightsMask :visible="rightsMaskVisible">
               <SpaceRightsFreeExpUpgrate upgrade-link upgrade-text="该功能为付费权益" />
             </SpaceRightsMask>
           </ReleaseBox>
