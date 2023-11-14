@@ -1,7 +1,9 @@
 import qs from 'query-string'
 import { ref } from 'vue'
 import type { IPromotionParams, IResponseData } from '@/interface/bytedanceSEM'
+
 import customRequest from '@/utils/request'
+
 
 export default function useByteDancePromotion() {
   const BYTEDANCE_PROMOTION_CLICKID_KEY = 'chato-bytedance-clickid'
@@ -30,7 +32,7 @@ export default function useByteDancePromotion() {
 }
 
 export async function postBytedancePromotion(clickid: string, event_type: string): Promise<void> {
-  console.log(1232131)
+
   const params: IPromotionParams = {
     event_type: event_type,
     context: {
@@ -43,6 +45,7 @@ export async function postBytedancePromotion(clickid: string, event_type: string
   console.log(params)
 
   await customRequest<IResponseData>({
+
     method: 'POST',
     url: 'https://analytics.oceanengine.com/api/v2/conversion',
     data: params

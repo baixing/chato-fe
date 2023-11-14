@@ -58,6 +58,7 @@
             class="w-full"
           />
         </el-form-item>
+
         <el-form-item>
           <div
             v-if="sourcesData.length"
@@ -114,7 +115,9 @@
       <svg-icon name="generate-empty" svgClass="w-[128px] h-[128px]"></svg-icon>
       <p class="mt-6 text-[#9DA3AF] text-sm">{{ $t('暂无审核内容') }}</p>
     </div>
+
     <GenerateQADrawer v-model:visible="drawerVisible" :sourcesData="sourcesData" />
+
   </div>
 </template>
 
@@ -126,7 +129,9 @@ import {
 } from '@/api/file'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import { EDocConvertOrDisuse } from '@/enum/knowledge'
+
 import type { IQuestionConvertQAList, IQuestionConvertQASource } from '@/interface/knowledge'
+
 import { RoutesMap } from '@/router'
 import { useDomainStore } from '@/stores/domain'
 import { ElMessageBox, ElNotification } from 'element-plus'
@@ -134,7 +139,9 @@ import { storeToRefs } from 'pinia'
 import { computed, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
+
 import GenerateQADrawer from './components/GenerateQADrawer.vue'
+
 
 const { t } = useI18n()
 const router = useRouter()
@@ -155,8 +162,10 @@ const generateForm = reactive({
 const auditedGenerateList = ref<IQuestionConvertQAList[]>([])
 const next = ref(0)
 const loading = ref(false)
+
 const drawerVisible = ref(false)
 const sourcesData = ref<IQuestionConvertQASource[]>([])
+
 
 const auditedLen = ref(0) // 已审核
 
@@ -248,7 +257,9 @@ const onUpdateGenerateForm = () => {
   const currentGenerate = auditedGenerateList.value[next.value]
   generateForm.question = currentGenerate.question
   generateForm.answer = currentGenerate.answer
+
   sourcesData.value = currentGenerate.ref_source
+
 }
 
 const onRefreshList = () => {
