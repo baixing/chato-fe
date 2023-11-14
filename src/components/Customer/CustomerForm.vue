@@ -109,7 +109,6 @@ const onSubmit = async () => {
   const valid = validate(formState)
 
   try {
-    console.log('0000')
     submitting.value = true
     if (valid) {
       const saveParams = {
@@ -119,11 +118,7 @@ const onSubmit = async () => {
         ...(formState as object)
       }
       await saveCustomerForm(saveParams)
-      console.log('11111')
-      if (bytedancePromotionClickid.value) {
-        console.log('2222')
-        await postBytedancePromotion(bytedancePromotionClickid.value, 'form')
-      }
+      handlePostBytedancePromotion()
       emit('success')
       ElNotification.success('提交成功')
       resetFormState()
@@ -137,6 +132,15 @@ const onSubmit = async () => {
   }
 }
 
+const handlePostBytedancePromotion = async () => {
+  if (bytedancePromotionClickid.value) {
+    try {
+      await postBytedancePromotion(bytedancePromotionClickid.value, 'form')
+    } catch (err) {
+      console.log('Error in postBytedancePromotion:', err)
+    }
+  }
+}
 const onCancel = () => {
   emit('cancel')
   resetFormState()

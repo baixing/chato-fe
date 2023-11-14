@@ -34,6 +34,7 @@ export async function postBytedancePromotion(
   clickid: string,
   event_type: string
 ): Promise<IResponseData> {
+  console.log(1232131)
   const params: IPromotionParams = {
     event_type: event_type,
     context: {
