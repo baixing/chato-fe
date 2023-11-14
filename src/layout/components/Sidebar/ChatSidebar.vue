@@ -37,7 +37,7 @@
         class="h-12 px-3 flex items-center gap-[6px] rounded-lg cursor-pointer mb-2 text-sm leading-[22px] hover:bg-[#f2f3f5] transition-colors"
       >
         <svg-icon name="square_1" svg-class="w-5 h-5 mr-2" style="font-size: 22px" />
-        {{ $t('资源广场') }}
+        {{ $t('探索机器人') }}
       </div>
     </div>
   </div>

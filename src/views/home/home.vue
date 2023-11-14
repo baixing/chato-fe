@@ -41,7 +41,7 @@
         class="w-[228px] !h-[60px] !text-lg font-medium tracking-[0.08em] !rounded-lg mt-7 !ml-0 hover:!scale-105 lg:!text-sm lg:w-[153px] lg:!h-[45px] !border-[#7C5CFC] lg:mt-5 !bg-[#F2F2F5] !text-[#7C5CFC] shadow-lg"
         @click="onEnter('Chato_top_resource_click')"
       >
-        {{ $t('进入资源广场') }}
+        {{ $t('对话Chato') }}
       </el-button>
     </div>
     <IndustryCase />

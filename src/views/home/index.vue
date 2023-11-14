@@ -279,7 +279,7 @@ const onEnter = (type?: string) => {
     return
   }
   if (type === 'Chato_top_resource_click') {
-    router.push({ name: RoutesMap.home.homeResource })
+    router.push({ name: RoutesMap.home.homeChat, params: { botSlug: 'square' } })
     return
   }
 

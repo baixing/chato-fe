@@ -51,10 +51,10 @@
               </div>
             </div>
             <div
-              class="border-t border-0 border-solid !text-sm text-[#596780] border-[#E4E7ED] flex justify-between h-10 items-center"
+              class="border-t border-0 border-solid !text-sm text-[#596780] border-[#E4E7ED] flex justify-between h-11 items-center"
             >
               <div
-                class="basis-1/2 text-center border-0 h-full leading-[40px] border-r border-solid border-[#E4E7ED] flex items-center justify-center hover:!text-[#7C5CFC]"
+                class="basis-1/2 text-center border-0 h-full leading-[44px] border-r border-solid border-[#E4E7ED] flex items-center justify-center hover:!text-[#7C5CFC]"
                 @click.stop="onGoCreate(c.slug)"
               >
                 <el-icon class="mr-1 !text-base lg:!hidden"

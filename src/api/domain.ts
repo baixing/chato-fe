@@ -140,3 +140,15 @@ export function getDemonstration(type: string) {
     url: `/chato/api/document_management/demonstration?domain_type=${type}`
   })
 }
+
+export function getAppletLink(slug: string) {
+  return request({
+    url: `/chato/api/v1/publish_channels/wechat/mini_prog/${slug}}/link`
+  })
+}
+
+export function getAppletQRCode(slug: string) {
+  return request({
+    url: `/chato/api/v1/publish_channels/wechat/mini_prog/${slug}}/QRCode`
+  })
+}
