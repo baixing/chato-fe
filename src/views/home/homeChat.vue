@@ -1,7 +1,13 @@
 <template>
   <div class="overflow-hidden w-full h-[calc(100%-74px)] mt-[74px] flex bg-white">
     <ChatSidebar v-show="!isMobile" prefix="" style="border-right: 1px solid rgb(228, 231, 237)" />
-    <Square class="mt-12" v-if="square" prefix="" :requiredTopbar="true" :existMenuMore="false" />
+    <Square
+      class="bg-[#f2f3f5]"
+      v-if="square"
+      prefix=""
+      :requiredTopbar="true"
+      :existMenuMore="false"
+    />
     <div v-else class="relative w-full" v-loading="loading">
       <span
         v-show="isMobile"
@@ -37,11 +43,11 @@ import { useBasicLayout } from '@/composables/useBasicLayout'
 import useGlobalProperties from '@/composables/useGlobalProperties'
 import ChatSidebar from '@/layout/components/Sidebar/ChatSidebar.vue'
 import dayjs from 'dayjs'
-import { ref, defineEmits, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import homeChatItem from './components/homeChatItem.vue'
+import { useRoute } from 'vue-router'
 import Square from '../resource/square.vue'
-import { useRoute, useRouter } from 'vue-router'
+import homeChatItem from './components/homeChatItem.vue'
 
 const { isMobile } = useBasicLayout()
 const loading = ref(false)

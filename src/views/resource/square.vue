@@ -50,17 +50,17 @@
               </div>
             </div>
             <div
-              class="border-t border-0 border-solid text-[#596780] border-[#E4E7ED] flex justify-between h-11 items-center"
+              class="border-t border-0 border-solid !text-sm text-[#596780] border-[#E4E7ED] flex justify-between h-11 items-center"
             >
               <div
-                class="basis-3/5 text-center border-0 h-full leading-[44px] border-r border-solid border-[#E4E7ED] text-sm flex items-center justify-center hover:!text-[#7C5CFC]"
+                class="basis-1/2 text-center border-0 h-full leading-[44px] border-r border-solid border-[#E4E7ED] flex items-center justify-center hover:!text-[#7C5CFC]"
                 @click.stop="onGoCreate(c.slug)"
               >
                 <el-icon class="text-[#9DA3AF] mr-1 !text-base"><Plus /></el-icon>
                 <div>{{ t('创建同款') }}</div>
               </div>
               <div
-                class="basis-2/5 text-center flex items-center justify-center hover:!text-[#7C5CFC]"
+                class="basis-1/2 text-center flex items-center justify-center hover:!text-[#7C5CFC]"
               >
                 <el-icon class="text-[#9DA3AF] mr-1 !text-base"><ChatDotRound /></el-icon>
                 <div>{{ t('对话') }}</div>
@@ -83,7 +83,7 @@ import { useChatStore } from '@/stores/chat'
 import { useStorage } from '@vueuse/core'
 import { ElLoading } from 'element-plus'
 import { storeToRefs } from 'pinia'
-import { ref, computed, defineEmits } from 'vue'
+import { computed, defineEmits, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import SquareHeader from './components/SquareHeader.vue'
