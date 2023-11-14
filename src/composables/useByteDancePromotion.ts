@@ -1,8 +1,7 @@
 import qs from 'query-string'
 import { ref } from 'vue'
 import type { IPromotionParams, IResponseData } from '@/interface/bytedanceSEM'
-import request from '@/utils/request'
-import type { IResponse } from '@/interface/common'
+import customRequest from '@/utils/request'
 
 export default function useByteDancePromotion() {
   const BYTEDANCE_PROMOTION_CLICKID_KEY = 'chato-bytedance-clickid'
@@ -43,11 +42,9 @@ export async function postBytedancePromotion(clickid: string, event_type: string
   }
   console.log(params)
 
-  await request<IResponseData>({
+  await customRequest<IResponseData>({
     method: 'POST',
     url: 'https://analytics.oceanengine.com/api/v2/conversion',
     data: params
   })
-
-  // return response.data.data // 这里返回响应体中的 `data` 属性
 }
