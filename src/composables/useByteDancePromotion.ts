@@ -39,7 +39,6 @@ export async function postBytedancePromotion(clickid: string, event_type: string
     },
     timestamp: Date.now()
   }
-  console.log(params)
 
   await customRequest<IResponseData>({
     method: 'POST',
