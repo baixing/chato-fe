@@ -30,10 +30,7 @@ export default function useByteDancePromotion() {
   }
 }
 
-export async function postBytedancePromotion(
-  clickid: string,
-  event_type: string
-): Promise<IResponseData> {
+export async function postBytedancePromotion(clickid: string, event_type: string): Promise<void> {
   console.log(1232131)
   const params: IPromotionParams = {
     event_type: event_type,
@@ -46,11 +43,11 @@ export async function postBytedancePromotion(
   }
   console.log(params)
 
-  const response = await request<IResponseData>({
+  await request<IResponseData>({
     method: 'POST',
     url: 'https://analytics.oceanengine.com/api/v2/conversion',
     data: params
   })
 
-  return response.data.data // 这里返回响应体中的 `data` 属性
+  // return response.data.data // 这里返回响应体中的 `data` 属性
 }
