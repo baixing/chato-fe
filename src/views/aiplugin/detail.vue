@@ -4,64 +4,100 @@
     <ContentLayout class="!overflow-hidden !h-auto pt-8 lg:pt-0">
       <div class="p-4 max-w-7xl mx-auto">
         <h1 v-if="!isLogin">请先安装插件，并且网页登陆小红书</h1>
-        <div v-if="isLogin">
-          <img :src="accountInfo.avatar" />
-          <h2>{{ accountInfo.title }}</h2>
-        </div>
-        <el-select v-model="selectedDomainSlug" class="m-2" placeholder="Select" size="large">
-          <el-option
-            v-for="item in domainList"
-            :key="item.id"
-            :label="item.name"
-            :value="item.slug"
-          />
-        </el-select>
-        <div class="flex flex-row">
-          <el-input
-            v-model="searchQuery"
-            placeholder="搜索..."
-            class="mb-4 w-full lg:w-1/3"
-            @input="handleSearch"
-          />
-          <el-button class="ml-2" type="primary" @click="handleCommentButtonClick">评论</el-button>
+
+        <div class="flex justify-between">
+          <div v-if="isLogin" class="flex flex-col items-center">
+            <div class="flex items-center space-x-4">
+              <img :src="accountInfo.avatar" class="w-10 h-10 rounded-full" />
+              <h2 class="text-xl font-semibold">{{ accountInfo.title }}</h2>
+            </div>
+          </div>
+
+          <div class="flex space-x-4 justify-center items-center">
+            <h1
+              :class="{ 'bg-blue-500 text-white': selectedMenu === 'posts' }"
+              @click="selectMenu('posts')"
+              class="cursor-pointer px-4 py-2 rounded hover:bg-blue-500 hover:text-white transition-colors"
+            >
+              帖子列表
+            </h1>
+            <h1
+              :class="{ 'bg-blue-500 text-white': selectedMenu === 'history' }"
+              @click="selectMenu('history')"
+              class="cursor-pointer px-4 py-2 rounded hover:bg-blue-500 hover:text-white transition-colors"
+            >
+              评论列表
+            </h1>
+          </div>
         </div>
 
-        <div class="flex flex-wrap gap-2 mb-4">
-          <button
-            v-for="tag in tags"
-            :key="tag"
-            :class="[
-              'px-4 py-2 text-sm font-medium rounded-full transition-colors duration-150',
-              selectedTag === tag
-                ? 'bg-blue-500 text-white'
-                : 'text-blue-500 bg-white hover:bg-blue-100'
-            ]"
-            @click="handleTagSelection(tag)"
-          >
-            {{ tag }}
-          </button>
-        </div>
-        <div class="flex flex-wrap -mx-2 overflow-hidden">
-          <div v-for="card in cards" :key="card.id" class="my-2 px-2 w-1/2 overflow-hidden">
-            <div class="relative">
-              <div
-                v-if="card.selected"
-                class="absolute inset-0 bg-black bg-opacity-25 z-10"
-                @click="toggleSelection(card)"
-              ></div>
-              <img
-                :src="proxyImageUrl(card.image)"
-                alt="Card image"
-                class="w-full h-48 object-cover cursor-pointer"
-                @click="toggleSelection(card)"
-              />
+        <div v-if="selectedMenu == 'history'" class="mt-4">
+          <div v-for="h in history" :key="h.domain_slug" class="mb-4 p-4 border rounded shadow-sm">
+            <div class="flex items-center space-x-2 mb-2">
+              <img :src="h.avatar" class="w-6 h-6 rounded-full" />
+              <p class="font-semibold">{{ h.name }}</p>
             </div>
-            <div class="p-4">
-              <div class="flex items-center mb-2">
-                <img :src="card.avatar" alt="Avatar" class="w-10 h-10 rounded-full mr-2" />
-                <div>
-                  <h3 class="text-lg font-semibold">{{ card.title }}</h3>
-                  <p class="text-gray-500 text-sm">{{ card.accountName }}</p>
+            <p class="text-gray-600 text-sm">{{ h.comment }}</p>
+          </div>
+        </div>
+        <div v-if="selectedMenu == 'posts'">
+          <el-select v-model="selectedDomainSlug" class="m-2" placeholder="Select" size="large">
+            <el-option
+              v-for="item in domainList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.slug"
+            />
+          </el-select>
+          <div class="flex flex-row">
+            <el-input
+              v-model="searchQuery"
+              placeholder="搜索..."
+              class="mb-4 w-full lg:w-1/3"
+              @input="handleSearch"
+            />
+            <el-button class="ml-2" type="primary" @click="handleCommentButtonClick"
+              >评论</el-button
+            >
+          </div>
+
+          <div class="flex flex-wrap gap-2 mb-4">
+            <button
+              v-for="tag in tags"
+              :key="tag"
+              :class="[
+                'px-4 py-2 text-sm font-medium rounded-full transition-colors duration-150',
+                selectedTag === tag
+                  ? 'bg-blue-500 text-white'
+                  : 'text-blue-500 bg-white hover:bg-blue-100'
+              ]"
+              @click="handleTagSelection(tag)"
+            >
+              {{ tag }}
+            </button>
+          </div>
+          <div class="flex flex-wrap -mx-2 overflow-hidden">
+            <div v-for="card in cards" :key="card.id" class="my-2 px-2 w-1/2 overflow-hidden">
+              <div class="relative">
+                <div
+                  v-if="card.selected"
+                  class="absolute inset-0 bg-black bg-opacity-25 z-10"
+                  @click="toggleSelection(card)"
+                ></div>
+                <img
+                  :src="proxyImageUrl(card.image)"
+                  alt="Card image"
+                  class="w-full h-48 object-cover cursor-pointer"
+                  @click="toggleSelection(card)"
+                />
+              </div>
+              <div class="p-4">
+                <div class="flex items-center mb-2">
+                  <img :src="card.avatar" alt="Avatar" class="w-10 h-10 rounded-full mr-2" />
+                  <div>
+                    <h3 class="text-lg font-semibold">{{ card.title }}</h3>
+                    <p class="text-gray-500 text-sm">{{ card.accountName }}</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -88,10 +124,20 @@ const searchQuery = ref('')
 const selectedTag = ref('推荐')
 const selectedDomainSlug = ref('')
 const isLogin = ref(false)
+const selectedMenu = ref('history')
 const accountInfo = ref({
   avatar: '',
   title: ''
 })
+const history = ref([
+  {
+    name: '',
+    domain_slug: '',
+    org_id: '',
+    comment: '',
+    avatar: ''
+  }
+])
 const { domainList } = storeToRefs(domainStoreI)
 
 const tags = ['推荐', '美食', '穿搭', '彩妆', '影视', '职场', '家装', '游戏', '旅游']
@@ -100,6 +146,10 @@ const cards = ref([])
 
 function toggleSelection(card) {
   card.selected = !card.selected
+}
+
+function selectMenu(typ: string) {
+  selectedMenu.value = typ
 }
 
 async function getNoteByKeyword(keyword: string) {
@@ -182,11 +232,16 @@ async function init() {
     method: 'GET'
   })
   isLogin.value = res.data.data.is_login
+  res = await request({
+    url: '/chato/api/v1/xhs/history',
+    method: 'GET'
+  })
+  history.value = res.data.data.history
   if (isLogin.value) {
     res = await request({
-      url: '/chato/api/v1/xhs/get_self_info'
+      url: '/chato/api/v1/xhs/get_self_info',
+      method: 'GET'
     })
-    console.log(111, res.data)
     let avatar = res.data.basic_info.imageb
     let title = res.data.basic_info.nickname
     accountInfo.value = {
