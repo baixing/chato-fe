@@ -1,7 +1,7 @@
-import qs from 'query-string'
-import { ref } from 'vue'
 import type { IPromotionParams, IResponseData } from '@/interface/bytedanceSEM'
 import customRequest from '@/utils/request'
+import qs from 'query-string'
+import { ref } from 'vue'
 
 export default function useByteDancePromotion() {
   const BYTEDANCE_PROMOTION_CLICKID_KEY = 'chato-bytedance-clickid'
@@ -39,6 +39,7 @@ export async function postBytedancePromotion(clickid: string, event_type: string
     },
     timestamp: Date.now()
   }
+  console.log(params)
 
   await customRequest<IResponseData>({
     method: 'POST',

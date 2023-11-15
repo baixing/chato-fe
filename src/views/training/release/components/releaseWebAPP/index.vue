@@ -323,7 +323,9 @@ onMounted(() => {
               </el-icon>
               {{ ic.label }}
             </div>
-            <SpaceRightsMask :visible="rightsMaskVisible && item.icon !== 'wangye'">
+            <SpaceRightsMask
+              :visible="currentRights.type === ESpaceCommercialType.free && item.icon !== 'wangye'"
+            >
               <SpaceRightsFreeExpUpgrate upgrade-link upgrade-text="该功能为付费权益" />
             </SpaceRightsMask>
           </ReleaseBox>

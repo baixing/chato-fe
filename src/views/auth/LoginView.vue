@@ -3,7 +3,7 @@
     <div>
       <LoginHeader />
       <div
-        class="p-3 mt-10 md:mt-3 m-auto border border-solid border-[#E4E7ED] md:border-none rounded-lg"
+        class="p-3 mt-14 md:mt-7 m-auto border border-solid border-[#E4E7ED] md:border-none rounded-lg"
       >
         <BindingMobile
           v-if="isbindingMobile"
