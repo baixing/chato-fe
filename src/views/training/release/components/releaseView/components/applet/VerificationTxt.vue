@@ -21,8 +21,8 @@
     <div class="flex flex-col justify-start items-start text-sm leading-6 md:text-xs">
       <span class="text-[#3D3D3D] font-medium mr-3">{{ $t('域名地址') }}:</span>
       <div class="flex items-center">
-        {{ chatAPI }}
-        <el-button link type="primary" class="ml-3" @click="$copyText(chatAPI)">
+        {{ domianURL }}
+        <el-button link type="primary" class="ml-3" @click="$copyText(domianURL)">
           {{ $t('复制') }}
         </el-button>
       </div>
@@ -31,6 +31,7 @@
 </template>
 
 <script setup lang="ts">
+import { CHATO_SOURCE_APPLET } from '@/constant/common'
 import { cosServe } from '@/utils/cos'
 import type { UploadFiles, UploadUserFile } from 'element-plus'
 import { computed, ref, watch } from 'vue'
@@ -49,6 +50,7 @@ const visible = computed({
 })
 
 const domainDocumentsUrl = 'https://baixingwang.feishu.cn/docx/HCyHdcon9o3627xcKhBcN5VinVf'
+const domianURL = computed(() => `${props.chatAPI}?source=${CHATO_SOURCE_APPLET}`)
 
 watch(uploadDomain, async (value: UploadFiles, oldValue: UploadFiles) => {
   if (value.length > oldValue.length) {
