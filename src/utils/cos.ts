@@ -78,7 +78,7 @@ export const cosServe = async (
   const dateTime =
     '' + date.getFullYear() + (date.getMonth() > 10 ? date.getMonth() : '0' + date.getMonth()) + '/'
   const suffix = needSuffix ? dateTime : ''
-  const imgName = url + '/' + suffix + name + '.txt'
+  const imgName = url + '/' + suffix + name
   const files = new File([file], imgName, { type: type })
   const cos = getCos(imgName, headers)
   return await getUploadResult(cos, files, onProgress)
