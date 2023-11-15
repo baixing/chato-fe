@@ -10,8 +10,8 @@ import { createRouter, createWebHistory, RouterView } from 'vue-router'
 
 export const RoutesMap = {
   aiPlugin: {
-    index: 'aiPluginIndex',
-    detail: 'aiPluginDetail'
+    center: 'aipluginCenter',
+    detail: 'aipluginDetail'
   },
   home: {
     homeName: 'home',
@@ -226,17 +226,21 @@ const resourceSquareRoutes = [
 // AI插件库
 const aiPluginSquareRoutes = [
   {
-    name: RoutesMap.aiPlugin.index,
     path: 'aiplugin',
     meta: {
+      name: 'aiplugin',
       requiresAuth: true
     },
-    component: () => import('@/views/aiplugin/index.vue'),
+    component: RouterView,
     children: [
+      {
+        name: RoutesMap.aiPlugin.center,
+        path: 'center',
+        component: () => import('@/views/aiplugin/index.vue')
+      },
       {
         name: RoutesMap.aiPlugin.detail,
         path: 'detail/:name',
-        meta: { requiresAuth: true },
         component: () => import('@/views/aiplugin/detail.vue')
       }
     ]

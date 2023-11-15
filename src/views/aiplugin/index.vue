@@ -1,5 +1,5 @@
 <template>
-  <div class="overflow-y-auto h-full" v-if="!deatilVisible">
+  <div class="overflow-y-auto h-full">
     <Topbar :title="t('插件库')" class="!mb-0 lg:!mb-4" />
     <ContentLayout class="!overflow-hidden !h-auto pt-8 lg:pt-0">
       <el-card class="box-card flex flex-col">
@@ -32,7 +32,6 @@
       </div>
     </el-dialog>
   </div>
-  <router-view />
 </template>
 
 <style>
@@ -63,7 +62,6 @@ const { t } = useI18n()
 const router = useRouter()
 
 const installDialogVisible = ref(false)
-const deatilVisible = ref(false)
 const route = useRoute()
 const downloadPlugin = () => {
   // Implement the logic to download the plugin file
@@ -96,7 +94,6 @@ const steps = ref([
 ])
 
 function navigateToNextPage() {
-  deatilVisible.value = true
   router.replace({ name: RoutesMap.aiPlugin.detail, params: { name: 'xhs' } })
   // router.push('/aiplugin/detail/xhs')
 }

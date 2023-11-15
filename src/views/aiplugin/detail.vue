@@ -46,7 +46,7 @@
                 @click="toggleSelection(card)"
               ></div>
               <img
-                :src="card.image"
+                :src="proxyImageUrl(card.image)"
                 alt="Card image"
                 class="w-full h-48 object-cover cursor-pointer"
                 @click="toggleSelection(card)"
@@ -69,6 +69,7 @@
 </template>
 
 <script setup lang="ts">
+import { currentEnvConfig } from '@/config'
 import { useDomainStore } from '@/stores/domain'
 import { storeToRefs } from 'pinia'
 import { onMounted, ref } from 'vue'
@@ -171,6 +172,7 @@ async function getHomeFeed() {
     console.error('There was a problem with the fetch operation:', error)
   }
 }
+
 async function init() {
   getHomeFeed()
   const res = await request({
@@ -180,6 +182,11 @@ async function init() {
   console.log(res)
   isLogin.value = res.data.data.is_login
 }
+
+function proxyImageUrl(originalUrl) {
+  return `${currentEnvConfig.baseURL}/chato/api/v1/xhs/image-proxy?url=${originalUrl}`
+}
+
 onMounted(() => {
   init()
 })
