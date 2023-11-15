@@ -163,7 +163,12 @@
       v-if="showFooterContactVisible"
       class="home-contact-btn py-5 px-[7px] md:py-4 md:px-[10px] text-base absolute right-7 md:right-1 flex flex-col gap-[14px]"
     >
-      <div class="fixed-btn" id="Chato_right_service_click" data-sensors-click @click="onContactUs">
+      <div
+        class="fixed-btn"
+        id="Chato_right_service_click"
+        data-sensors-click
+        @click="onContactUs()"
+      >
         <svg-icon class="text-xl mb-[4px]" svg-class="w-5 h-5" name="wechat" />
         <span v-if="!isMobile" class="scale-90">{{ $t('咨询客服') }}</span>
       </div>
@@ -214,7 +219,7 @@ import { ArrowDown } from '@element-plus/icons-vue'
 import { useDebounceFn, useStorage } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import type { Ref } from 'vue'
-import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import WOW from 'wow.js'
@@ -298,9 +303,9 @@ const onEnter = (type?: string) => {
   }
 }
 
-const onContactUs = () => {
+const onContactUs = (display = 'block') => {
   const containerEl = document.getElementById('inframe_container')
-  containerEl && (containerEl.style.display = 'block')
+  containerEl && (containerEl.style.display = display)
 }
 
 const onFormModal = (showRef: Ref) => {
@@ -370,7 +375,6 @@ const onLinkRoute = (key: string) => {
       })
       break
     default:
-      console.log(key)
       router.push({
         name: key,
         params: {
@@ -400,6 +404,8 @@ const init = async () => {
   res?.id && $sensors?.login(res.id.toString())
 }
 
+let contactTimer = null
+
 const onRegisterContactUS = () => {
   window.ChatoBotConfig = {
     baseURL: 'https://api.chato.cn',
@@ -408,9 +414,11 @@ const onRegisterContactUS = () => {
     id: 835
   }
   chatoIframe()
-  setTimeout(() => {
-    onContactUs()
-  }, 5000)
+  if (route.name !== RoutesMap.home.homeChat) {
+    contactTimer = setTimeout(() => {
+      onContactUs()
+    }, 5000)
+  }
 }
 
 onMounted(() => {
@@ -431,6 +439,21 @@ onBeforeUnmount(() => {
   const iframeContainerEl = document.getElementById('inframe_container')
   iframeContainerEl?.remove()
 })
+
+watch(
+  () => route.name,
+  () => {
+    if (route.name === RoutesMap.home.homeChat) {
+      onContactUs('none')
+    } else {
+      if (!contactTimer) {
+        contactTimer = setTimeout(() => {
+          onContactUs()
+        }, 5000)
+      }
+    }
+  }
+)
 </script>
 <style lang="scss" scoped>
 .home-contact-btn {

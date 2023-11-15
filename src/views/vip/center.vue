@@ -160,6 +160,18 @@
         </span>
         <span> {{ t('即可获得 {days} 天会员权益', { days: payModalPackage.days }) }} </span>
       </div>
+      <p class="text-xs text-[#B5BED0] mt-2 flex items-center justify-center">
+        {{ t('开通前请阅读') }}
+        <el-link
+          :underline="false"
+          target="_blank"
+          type="primary"
+          class="!text-[13px] !font-normal"
+          @click="openPreviewUrl(kUserPaymentLinkUrl)"
+        >
+          {{ $t('《用户付费协议》 ') }}
+        </el-link>
+      </p>
     </div>
   </Modal>
   <Modal v-model:visible="reserveVisible" :footer="false" :title="t(`预约训练`)">
@@ -186,12 +198,14 @@ import { useBasicLayout } from '@/composables/useBasicLayout'
 import useSpaceRights from '@/composables/useSpaceRights'
 import { OrderPaymentStatus } from '@/constant/order'
 import { SpaceCommercialTypeMapper } from '@/constant/space'
+import { kUserPaymentLinkUrl } from '@/constant/terms'
 import { EOrderPaymentStatus } from '@/enum/order'
 import { ESpaceCommercialType, ESpaceRightsType } from '@/enum/space'
 import type { IOrderPackage } from '@/interface/order'
 import ContentLayout from '@/layout/ContentLayout.vue'
 import router, { RoutesMap } from '@/router'
 import { useSpaceStore } from '@/stores/space'
+import { openPreviewUrl } from '@/utils/help'
 import { ElNotification } from 'element-plus'
 import { storeToRefs } from 'pinia'
 import { onBeforeUnmount, onMounted, ref } from 'vue'
