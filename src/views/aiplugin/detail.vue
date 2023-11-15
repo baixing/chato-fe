@@ -3,7 +3,11 @@
     <Topbar :title="t('小红书')" class="!mb-0 lg:!mb-4" />
     <ContentLayout class="!overflow-hidden !h-auto pt-8 lg:pt-0">
       <div class="p-4 max-w-7xl mx-auto">
-        <h1 v-if="!isLogin">请先登陆小红书，然后用插件同步数据</h1>
+        <h1 v-if="!isLogin">请先安装插件，并且网页登陆小红书</h1>
+        <div v-if="isLogin">
+          <img :src="accountInfo.avatar" />
+          <h2>{{ accountInfo.title }}</h2>
+        </div>
         <el-select v-model="selectedDomainSlug" class="m-2" placeholder="Select" size="large">
           <el-option
             v-for="item in domainList"
@@ -84,6 +88,10 @@ const searchQuery = ref('')
 const selectedTag = ref('推荐')
 const selectedDomainSlug = ref('')
 const isLogin = ref(false)
+const accountInfo = ref({
+  avatar: '',
+  title: ''
+})
 const { domainList } = storeToRefs(domainStoreI)
 
 const tags = ['推荐', '美食', '穿搭', '彩妆', '影视', '职场', '家装', '游戏', '旅游']
@@ -99,7 +107,6 @@ async function getNoteByKeyword(keyword: string) {
     url: `/chato/api/v1/xhs/get_note_by_keyword?keyword=${keyword}`,
     method: 'GET'
   })
-  console.log(res)
   return res.data
 }
 
@@ -119,9 +126,6 @@ async function _handleSearch(keyword: string) {
 }
 
 async function handleSearch() {
-  if (searchQuery.value == '') {
-    searchQuery.value = '美女'
-  }
   await _handleSearch(searchQuery.value)
 }
 
@@ -134,14 +138,13 @@ async function handleCommentButtonClick() {
   if (selectedDomainSlug.value == '') {
     return
   }
-  console.log(selectedDomainSlug)
   const ids = cards.value
     .filter((card) => card.selected)
     .map((card) => {
       card.selected = !card.selected
       return card.id
     })
-  const res = await request({
+  await request({
     url: '/chato/api/v1/xhs/comment_notes',
     method: 'POST',
     data: {
@@ -149,7 +152,6 @@ async function handleCommentButtonClick() {
       domain_slug: selectedDomainSlug.value
     }
   })
-  console.log(res)
 }
 
 async function getHomeFeed() {
@@ -175,12 +177,23 @@ async function getHomeFeed() {
 
 async function init() {
   getHomeFeed()
-  const res = await request({
+  let res = await request({
     url: '/chato/api/v1/xhs/is_login',
     method: 'GET'
   })
-  console.log(res)
   isLogin.value = res.data.data.is_login
+  if (isLogin.value) {
+    res = await request({
+      url: '/chato/api/v1/xhs/get_self_info'
+    })
+    console.log(111, res.data)
+    let avatar = res.data.basic_info.imageb
+    let title = res.data.basic_info.nickname
+    accountInfo.value = {
+      avatar,
+      title
+    }
+  }
 }
 
 function proxyImageUrl(originalUrl) {
