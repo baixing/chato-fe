@@ -472,10 +472,10 @@ const initDomainDetail = async () => {
     await initFilesList()
     syncOriginalFormState()
   } catch (err) {
-  } finally {
-    initing.value = false
     await initDomainDetailBySlug()
     onNewDraft()
+  } finally {
+    initing.value = false
   }
 }
 
