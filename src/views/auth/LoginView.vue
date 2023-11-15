@@ -12,7 +12,7 @@
           @handleRescanCode="handleRescanCode"
         />
         <template v-else>
-          <div class="flex justify-end items-center">
+          <div v-if="!isMobile" class="flex justify-end items-center">
             <div
               class="login-tip relative w-[110px] text-[#596780] text-center py-2 bg-[#F2F3F5] rounded-md mr-[9px]"
             >
