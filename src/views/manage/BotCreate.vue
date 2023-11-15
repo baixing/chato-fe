@@ -472,10 +472,10 @@ const initDomainDetail = async () => {
     await initFilesList()
     syncOriginalFormState()
   } catch (err) {
-  } finally {
-    initing.value = false
     await initDomainDetailBySlug()
     onNewDraft()
+  } finally {
+    initing.value = false
   }
 }
 
@@ -639,8 +639,10 @@ onBeforeRouteLeave(async (to, from, next) => {
 
 const init = async () => {
   if (route.params.botId) {
+    console.log(1234)
     await initDomainDetail()
   } else if (route.params.botSlug) {
+    console.log(456)
     await initDomainDetailBySlug()
     onNewDraft()
   } else {
