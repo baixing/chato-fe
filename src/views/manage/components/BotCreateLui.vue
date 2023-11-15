@@ -78,21 +78,23 @@
         <ChatoDomainAvatar />
         <div class="left-bubble">
           <div class="title">
-            <!-- <img src="@/assets/img/emoji/yeah.png" class="w-5" /> -->
             {{ $t('😁 你的机器人诞生了！') }}
           </div>
           <p>
-            {{ $t(`你创建的机器人「`) + formState.name + '」' }}
+            {{ $t(`你创建的机器人「${formState.name}」`) }}
           </p>
           <p>
-            {{ $t(`生日：`) + nowDay }}
+            {{ $t(`生日：${nowDay}`) }}
           </p>
-          <p>
-            {{ $t('基于AI大模型的TA有很多常识，现在就可以马上体验') }}
+          <p v-if="isMobile">
+            {{ $t('基于AI大模型的TA有很多常识，现在就可以') }}
+            <span class="text-[#7C5CFC] cursor-pointer" @click="onClickTab('preview')">{{
+              $t('马上体验')
+            }}</span>
           </p>
-          <!-- <el-button type="primary" round>
-            {{ $t('快去看看') }}
-          </el-button> -->
+          <p v-else>
+            {{ $t('基于AI大模型的TA有很多常识，现在就可以右侧输入体验') }}
+          </p>
         </div>
       </div>
     </Transition>
@@ -101,21 +103,17 @@
         <ChatoDomainAvatar />
         <div class="left-bubble">
           <div class="title">
-            <!-- <img src="@/assets/img/emoji/yeah.png" class="w-5" /> -->
-            {{ $t('😁 你的机器人诞生了！') }}
+            {{ $t('💪 让TA更加强大的方式') }}
           </div>
           <p>
-            {{ $t(`你创建的机器人「${formState.name}」`) }}
+            {{ $t(`☞ TA的信息完整度12%，`) }}
           </p>
           <p>
-            {{ $t(`生日：${nowDay}`) }}
+            {{ $t(`☞ TA目前只有大模型知识，`) }}
           </p>
           <p>
-            {{ $t('基于AI大模型的TA有很多常识，现在就可以马上体验') }}
+            {{ $t('☞ 让大家都来向TA提问，') }}
           </p>
-          <!-- <el-button type="primary" round>
-            {{ $t('快去看看') }}
-          </el-button> -->
         </div>
       </div>
     </Transition>
@@ -124,21 +122,17 @@
         <ChatoDomainAvatar />
         <div class="left-bubble">
           <div class="title">
-            <!-- <img src="@/assets/img/emoji/yeah.png" class="w-5" /> -->
-            {{ $t('😁 你的机器人诞生了！') }}
+            {{ $t('✨ 欢迎把TA分享给任何人') }}
           </div>
           <p>
-            {{ $t(`你创建的机器人「${formState.name}」`) }}
+            {{ $t(`☞  网页访问，`) }}
           </p>
           <p>
-            {{ $t(`生日：${nowDay}`) }}
+            {{ $t(`☞  小程序访问，`) }}
           </p>
           <p>
-            {{ $t('基于AI大模型的TA有很多常识，现在就可以马上体验') }}
+            {{ $t('☞  微信抖音等第三方') }}
           </p>
-          <!-- <el-button type="primary" round>
-            {{ $t('快去看看') }}
-          </el-button> -->
         </div>
       </div>
     </Transition>
@@ -147,7 +141,6 @@
         <ChatoDomainAvatar />
         <div class="left-bubble">
           <div class="title">
-            <!-- <img src="@/assets/img/emoji/yeah.png" class="w-5" /> -->
             {{ $t('😁 你的机器人诞生了！') }}
           </div>
           <p>
@@ -159,9 +152,6 @@
           <p>
             {{ $t('基于AI大模型的TA有很多常识，现在就可以马上体验') }}
           </p>
-          <!-- <el-button type="primary" round>
-            {{ $t('快去看看') }}
-          </el-button> -->
         </div>
       </div>
     </Transition>
@@ -170,15 +160,20 @@
 
 <script setup lang="ts">
 import { getFirstGuideInterestDomains } from '@/api/industry'
+import { useBasicLayout } from '@/composables/useBasicLayout'
 import { DomainCreateSymbol } from '@/constant/domain'
 import type { IDomainInfo } from '@/interface/domain'
 import dayjs from 'dayjs'
 import { inject, ref } from 'vue'
 
+defineProps<{
+  onClickTab: (value) => void
+}>()
 const currentStep = ref(0)
 const loading = ref(false)
 const interestDomains = ref<IDomainInfo[]>([])
 const formState = inject(DomainCreateSymbol)
+const { isMobile } = useBasicLayout()
 const increaseStep = () => {
   currentStep.value += 1
 }
@@ -199,9 +194,9 @@ const onSelectInterest = (item: IDomainInfo) => {
   console.log(item, formState)
   setObjByObj(formState, item, ['org', 'id'])
   // console.log(formState)
-  delayIncreaseStep(500)
   delayIncreaseStep(1000)
-  delayIncreaseStep(1500)
+  delayIncreaseStep(2000)
+  delayIncreaseStep(3000)
 }
 const nowDay = dayjs()
   .format('YYYY-MM-DD')
