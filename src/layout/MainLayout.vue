@@ -72,14 +72,13 @@ const init = async () => {
     await baseStoreI.getAuthToken()
     const userInfoRes = await baseStoreI.getUserInfo()
     $sensors?.login(userInfoRes.id.toString())
-
     // 新用户跳转对话引导页
     if (userInfoRes.id === userInfoRes.org.owner_id && !userInfoRes.org.additions && !cookieToken) {
       if (route.name !== RoutesMap.guide.first) {
-        router.replace({ name: RoutesMap.guide.first })
+        router.replace({ name: RoutesMap.manager.create })
       }
     } else if (route.name === RoutesMap.guide.first) {
-      router.replace({ name: RoutesMap.manager.center })
+      router.replace({ name: RoutesMap.manager.create })
     }
 
     await Promise.all([

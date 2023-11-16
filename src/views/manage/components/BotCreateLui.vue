@@ -68,13 +68,40 @@
         </div>
       </div>
     </Transition>
+
     <Transition name="right">
       <div v-show="currentStep > 3 && formState.name" class="flex justify-end">
         <div class="right-bubble">{{ formState.name }}</div>
       </div>
     </Transition>
-    <Transition name="left">
+    <Transition name="left" v-if="!orgInfo.additions">
       <div v-show="currentStep > 4">
+        <ChatoDomainAvatar />
+        <div class="left-bubble">
+          <div class="title">
+            <img src="@/assets/img/emoji/tip.png" class="w-5" />
+            {{ $t('请选择你会将机器人应用在什么场景？') }}
+          </div>
+          <div class="flex flex-wrap gap-3">
+            <span
+              v-for="item in ScenesList"
+              :key="item.value"
+              @click="onSelectScenes(item)"
+              class="select-tag"
+            >
+              {{ $t(item.label) }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </Transition>
+    <Transition name="right" v-if="!orgInfo.additions">
+      <div v-show="currentStep > 4 && formOrgState.organization_type_name" class="flex justify-end">
+        <div class="right-bubble">{{ formOrgState.organization_type_name }}</div>
+      </div>
+    </Transition>
+    <Transition name="left">
+      <div v-show="currentStep > 5">
         <ChatoDomainAvatar />
         <div class="left-bubble">
           <div class="title">
@@ -106,7 +133,7 @@
       </div>
     </Transition>
     <Transition name="left">
-      <div v-show="currentStep > 5">
+      <div v-show="currentStep > 6">
         <ChatoDomainAvatar />
         <div class="left-bubble">
           <div class="title">
@@ -206,15 +233,20 @@
 
 <script setup lang="ts">
 import { getAppletLink } from '@/api/domain'
-import { getFirstGuideInterestDomains } from '@/api/industry'
+import { getFirstGuideInterestDomains, saveFirstGuideAdditions } from '@/api/industry'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import useGlobalProperties from '@/composables/useGlobalProperties'
 import { DomainCreateSymbol } from '@/constant/domain'
+import { EUserOriganizationRole } from '@/enum/userInformation'
 import type { IDomainInfo } from '@/interface/domain'
 import type { IDocumentList } from '@/interface/knowledge'
+import type { IUserIdentity } from '@/interface/user'
+import { useBase } from '@/stores/base'
 import QrCode from '@/views/training/release/components/releaseWebAPP/components/webPage/QrCode.vue'
 import dayjs from 'dayjs'
-import { computed, inject, nextTick, ref, watch, type StyleValue } from 'vue'
+import { storeToRefs } from 'pinia'
+import { computed, inject, nextTick, reactive, ref, watch, type StyleValue } from 'vue'
+import { useRouter } from 'vue-router'
 
 type ITransitionItem =
   | {
@@ -234,17 +266,39 @@ defineProps<{
   onSetDOCModalVisible: (value: boolean, cd?: Function) => void
 }>()
 
+const ScenesList = [
+  { label: '企业降本增效', value: EUserOriganizationRole.company },
+  { label: '个人工作学习提效', value: EUserOriganizationRole.person }
+] as const
+
 const currentStep = ref(0)
 const loading = ref(false)
+const router = useRouter()
 const interestDomains = ref<IDomainInfo[]>([])
 const transitionList = ref<ITransitionItem[]>([])
 const formState = inject(DomainCreateSymbol)
 const { isMobile } = useBasicLayout()
 const { $copyText } = useGlobalProperties()
+const baseStoreI = useBase()
+const { orgInfo } = storeToRefs(baseStoreI)
+
+const userRoute = `/t/bot/${formState.id}/release`
 const link = computed(() => `${window.location.origin}/b/${formState.slug}`)
 const increaseStep = () => {
   currentStep.value += 1
 }
+
+const formOrgState = reactive<{
+  interests: string
+  organization_type: EUserOriganizationRole
+  organization_type_name: string
+}>({
+  interests: '',
+  organization_type: null,
+  organization_type_name: ''
+})
+
+const routerPush = () => router.push({ path: userRoute })
 
 const pushDOCItem = (data: IDocumentList[]) => {
   if (data.length === 0) return
@@ -277,7 +331,6 @@ const onBotTocPrivacy = () => {
 const delayIncreaseStep = (time = 300, item?: ITransitionItem) => {
   setTimeout(() => {
     item ? transitionList.value.push(item) : increaseStep()
-    console.log(transitionList.value)
   }, time)
 }
 
@@ -294,12 +347,30 @@ const setObjByObj = <T extends object>(obj1: T, obj2: T, pick?: (keyof T)[]) => 
   })
 }
 
-const onSelectInterest = (item: IDomainInfo) => {
-  console.log(item, formState)
-  setObjByObj(formState, item, ['org', 'id'])
-  // console.log(formState)
+const onSelectScenes = async (item: (typeof ScenesList)[number]) => {
+  if (formOrgState.organization_type) {
+    return
+  }
+  formOrgState.organization_type = item.value
+  formOrgState.organization_type_name = item.label
+  delayIncreaseStep()
+  await saveFirstGuideAdditions({
+    interests: [formOrgState.interests],
+    organization_type: formOrgState.organization_type
+  })
   delayIncreaseStep(1000)
   delayIncreaseStep(2000)
+}
+
+const onSelectInterest = (item: IDomainInfo) => {
+  setObjByObj(formState, item, ['org', 'id'])
+  if (!orgInfo.value.additions) {
+    delayIncreaseStep(1000)
+  } else {
+    delayIncreaseStep(1000)
+    delayIncreaseStep(2000)
+    delayIncreaseStep(3000)
+  }
 }
 const getLinkByWX = async () => {
   const res = await getAppletLink(formState.slug)
@@ -321,7 +392,12 @@ const init = async () => {
     delayIncreaseStep(1000)
     delayIncreaseStep(1500)
     interestDomains.value = data
-    console.log(interestDomains.value)
+    if (orgInfo.value.additions) {
+      const additions = JSON.parse(orgInfo.value.additions ?? '') as IUserIdentity
+      formOrgState.interests = additions.company
+      formOrgState.organization_type = additions.organization_type
+      formOrgState.organization_type_name = additions.surname
+    }
   } catch (e) {
   } finally {
     loading.value = false

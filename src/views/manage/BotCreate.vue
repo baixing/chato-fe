@@ -86,6 +86,7 @@ import {
   updateDomain
 } from '@/api/domain'
 import { getFilesByDomainId } from '@/api/file'
+import EnterDoc from '@/components/EnterAnswer/EnterDoc.vue'
 import Topbar from '@/components/Topbar/index.vue'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import { currentEnvConfig } from '@/config'
@@ -133,6 +134,7 @@ const DOCFormState = ref<IDocumentForm>({})
 const baseStoreI = useBase()
 const DOCModalVisible = ref(false)
 const isBeforeRoute = ref(false)
+
 const qtyLimit = baseStoreI.userInfo.role === USER_ROLES.SUPERMAN ? 1000 : 20
 let cdFn: Function
 // const onLinkBots = () => {
@@ -237,7 +239,6 @@ const canSave = computed(
 )
 
 const syncOriginalFormState = () => {
-  console.log(1234)
   originalFormState = toRaw(formState)
 }
 
@@ -470,7 +471,6 @@ onBeforeRouteLeave(async (to, from, next) => {
     isBeforeRoute.value = true
   } catch (e) {
   } finally {
-    console.log('initBeforeRouteLeave', beforeRouteLeave)
     if (!beforeRouteLeave) next()
   }
 })
