@@ -87,14 +87,14 @@
 
         <!-- Posts -->
         <div v-if="selectedMenu == 'posts'">
-          <el-select v-model="selectedDomainSlug" class="m-2" placeholder="Select" size="large">
+          <!-- <el-select v-model="selectedDomainSlug" class="m-2" placeholder="Select" size="large">
             <el-option
               v-for="item in domainList"
               :key="item.id"
               :label="item.name"
               :value="item.slug"
             />
-          </el-select>
+          </el-select> -->
           <div class="flex flex-row">
             <el-input
               v-model="searchQuery"
