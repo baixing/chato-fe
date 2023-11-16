@@ -44,7 +44,7 @@
         class="menu-select"
         @change="(v) => onLinkRoute(v)"
         style="--el-select-input-focus-border-color: transparent"
-        :style="{ width: activeMenuRouteName === RoutesMap.home.index ? '72px' : '100px' }"
+        :style="{ width: activeMenuRouteName === RoutesMap.home.index ? '72px' : '110px' }"
       >
         <el-option
           v-for="item in menuRouteList"
@@ -56,7 +56,7 @@
       <div class="button-container">
         <el-button
           link
-          class="!text-[#303133] !font-normal"
+          :class="['!text-[#606266] !font-normal', 'mr-1', isMobile ? 'w-[22px]' : '']"
           @click="toggleButton(locale === ELangKey.en ? ELangKey.zh_cn : ELangKey.en)"
         >
           {{ checkbutton[locale] }}
