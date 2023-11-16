@@ -14,7 +14,7 @@
             {{ $t('Hi，欢迎进入 Chato 世界！') }}
           </div>
           <p>
-            {{ $t('我可以基于AI大模型，帮你 10 秒快速定制') }}
+            {{ $t('基于多种AI大模型，帮你 10 秒快速定制') }}
           </p>
         </div>
       </div>
@@ -28,7 +28,7 @@
             {{ $t('🤖 训练机器人非常简单') }}
           </div>
           <p>
-            {{ $t('AI会帮你生成一切，包括形象和个性，以及学习知识') }}
+            {{ $t('AI可包办一切，包括初始化设置和自我学习升级') }}
           </p>
         </div>
       </div>
@@ -247,6 +247,7 @@ const increaseStep = () => {
 }
 
 const pushDOCItem = (data: IDocumentList[]) => {
+  if (data.length === 0) return
   delayIncreaseStep(500, {
     type: 'doc',
     name: 'right',

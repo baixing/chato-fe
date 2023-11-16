@@ -98,6 +98,79 @@
       </p>
     </div>
     <div class="chato-form-item">
+      <div class="chato-form-label flex items-center justify-between">
+        <SLTitle tips="基于机器人当前名字和角色设定生成">{{ $t('角色简介') }}</SLTitle>
+        <AIGenerateBtn
+          v-model:generateStr="formState.desc"
+          :role="formState.name"
+          :system-prompt="formState.system_prompt"
+          :type="EDomainAIGenerateType.intro"
+          :link="true"
+          :disabled="!formState.system_prompt || !formState.name || AIGenerateInputDisabled.desc"
+          disabled-tip="请填写名字和角色设定后生成"
+          @start="AIGenerateInputDisabled.desc = true"
+          @end="AIGenerateInputDisabled.desc = false"
+        />
+      </div>
+      <HansInputLimit
+        v-model:value="formState.desc"
+        type="textarea"
+        :rows="6"
+        size="large"
+        :limit="HansLimit.desc"
+        :disabled="AIGenerateInputDisabled.desc"
+        class="w-full"
+      />
+    </div>
+    <div class="chato-form-item">
+      <div class="chato-form-label flex items-center justify-between">
+        <SLTitle tips="基于机器人当前名字和角色设定生成">{{ t('欢迎语') }}</SLTitle>
+        <AIGenerateBtn
+          v-model:generateStr="formState.welcome"
+          :role="formState.name"
+          :system-prompt="formState.system_prompt"
+          :type="EDomainAIGenerateType.welcome"
+          :link="true"
+          :disabled="!formState.system_prompt || !formState.name || AIGenerateInputDisabled.welcome"
+          disabled-tip="请填写名字和角色设定后生成"
+          @start="AIGenerateInputDisabled.welcome = true"
+          @end="AIGenerateInputDisabled.welcome = false"
+        />
+      </div>
+      <HansInputLimit
+        v-model:value="formState.welcome"
+        type="textarea"
+        :rows="6"
+        size="large"
+        :limit="HansLimit.welcome"
+        :disabled="AIGenerateInputDisabled.welcome"
+        class="w-full"
+      />
+      <p class="text-[#9DA3AF] text-xs mt-4">
+        {{
+          $t(
+            '打开聊天窗口后会主动发送，添加双井号可添加提问示例，例如：#帮我写一则关于xxx的文案#，此类消息不消耗额度。'
+          )
+        }}
+      </p>
+    </div>
+  </div>
+  <div class="bot-create-center-padding cursor-pointer pb-4">
+    <div
+      @click="isAdvancedSettings = !isAdvancedSettings"
+      class="bg-[#F2F3F5] rounded-lg h-14 p-3 text-sm flex justify-between items-center"
+    >
+      <div class="font-medium text-base">{{ $t('高级设置') }}</div>
+      <div class="flex items-center text-[#596780]">
+        {{ $t(!isAdvancedSettings ? '展开' : '收起') }}
+        <el-icon class="ml-1 mr-1">
+          <ArrowRight v-if="!isAdvancedSettings" /> <ArrowDown v-else
+        /></el-icon>
+      </div>
+    </div>
+  </div>
+  <div class="chato-form bot-create-center-padding pb-4" v-if="isAdvancedSettings">
+    <div class="chato-form-item">
       <SLTitle class="chato-form-label">
         <template #tips>
           <dl>
@@ -149,6 +222,14 @@
               </div>
             </el-option>
           </el-select>
+          <el-select v-model="formState.top_k" class="w-32">
+            <el-option
+              v-for="item in DomainReplyParagraph"
+              :key="item.value"
+              :label="$t(item.label)"
+              :value="item.value"
+            />
+          </el-select>
         </div>
         <p class="text-[#596780] text-xs leading-4">
           {{ $t('所选模型和段落数不同，将影响背景设定的可用字符数，目前可用') }}
@@ -157,302 +238,235 @@
         </p>
       </div>
     </div>
+    <div class="flex gap-10 lg:flex-col lg:gap-0">
+      <div class="chato-form-item">
+        <div class="chato-form-label">{{ $t(`回复长度`) }}</div>
+        <el-select
+          v-model="formState.reply_length"
+          class="w-24"
+          :placeholder="$t(`未指定`)"
+          clearable
+        >
+          <el-option
+            v-for="(item, index) in DomainReplyLength"
+            :key="`len_${index}`"
+            :label="$t(item.label)"
+            :value="item.value"
+          />
+        </el-select>
+      </div>
+      <div class="chato-form-item">
+        <div class="chato-form-label">{{ $t(`回复语种`) }}</div>
+        <el-select v-model="formState.lang" class="w-24" :placeholder="$t(`未指定`)" clearable>
+          <el-option
+            v-for="(item, index) in DomainReplyLanguage"
+            :key="`lang_${index}`"
+            :label="$t(item.label)"
+            :value="item.value"
+          />
+        </el-select>
+      </div>
+      <div class="chato-form-item">
+        <div class="chato-form-label">{{ $t(`回复语气`) }}</div>
+        <el-select
+          v-model="internalReplyTone"
+          multiple
+          filterable
+          allow-create
+          clearable
+          default-first-option
+          :placeholder="$t(`未指定`)"
+          :reserve-keyword="false"
+          class="flex-1 max-w-[160px]"
+        >
+          <el-option
+            v-for="(item, index) in DomainReplyToneOfVoice"
+            :key="`tone_${index}`"
+            :label="$t(item)"
+            :value="item"
+          />
+        </el-select>
+      </div>
+    </div>
     <div class="chato-form-item">
-      <div class="chato-form-label flex items-center justify-between">
-        <SLTitle tips="基于机器人当前名字和角色设定生成">{{ $t('角色简介') }}</SLTitle>
-        <AIGenerateBtn
-          v-model:generateStr="formState.desc"
-          :role="formState.name"
-          :system-prompt="formState.system_prompt"
-          :type="EDomainAIGenerateType.intro"
-          :disabled="!formState.system_prompt || !formState.name || AIGenerateInputDisabled.desc"
-          disabled-tip="请填写名字和角色设定后生成"
-          @start="AIGenerateInputDisabled.desc = true"
-          @end="AIGenerateInputDisabled.desc = false"
+      <div class="chato-form-label">
+        {{ $t('对话上下文') }}
+      </div>
+      <div class="flex items-center justify-between">
+        <span class="text-[#596780] text-sm leading-5">
+          {{ $t('根据上下文的信息进行语义理解、识别指代对象并生成连贯的回答') }}
+        </span>
+        <SwitchWithStateMsg
+          v-model:value="formState.is_session_effective"
+          open-msg="开启"
+          close-msg="关闭"
         />
       </div>
+    </div>
+    <div class="chato-form-item">
+      <div class="chato-form-label flex gap-[6px] items-center">
+        {{ $t('问题推荐') }}
+        <SpaceRightsFreeExpUpgrate
+          v-if="currentRights.type === ESpaceCommercialType.free"
+          :rights-type="ESpaceRightsType.brand"
+        />
+      </div>
+      <div class="flex items-center justify-between relative">
+        <span class="space-x-3">
+          <span class="text-[#596780] text-sm leading-5">
+            {{ $t('机器人回答问题后，会展示推荐的问题，用户可点击后快速提问') }}
+          </span>
+          <el-button size="small" type="primary" link @click="() => (exampleVisible = true)">
+            {{ $t('查看示例') }}
+          </el-button>
+        </span>
+        <SwitchWithStateMsg
+          v-model:value="formState.show_recommend_question"
+          open-msg="开启"
+          close-msg="关闭"
+        />
+        <SpaceRightsMask :visible="maskVisible" />
+      </div>
+    </div>
+    <div class="chato-form-item">
+      <div class="chato-form-label flex justify-between items-center">
+        <SLTitle
+          tips="最多可添加 100 个词，每个词最长不超过 20 个字符，如不填写指定回复内容将默认不回复消息"
+        >
+          {{ $t('关键词回复') }}
+        </SLTitle>
+        <SwitchWithStateMsg
+          v-model:value="formState.keyword_block_show"
+          open-msg="开启"
+          close-msg="关闭"
+        />
+      </div>
+      <div v-show="formState.keyword_block_show" class="w-full">
+        <div class="flex items-center flex-wrap gap-3">
+          <HansInputLimit
+            v-if="keywordInputVisible"
+            ref="keywordHansInputRef"
+            v-model:value="keywordInput"
+            type="text"
+            size="default"
+            :placeholder="$t(`请输入 20 以内的字符关键词`)"
+            :limit="HansLimit.keyword"
+            class="w-60 lg:w-full"
+            @keyupEnter="onKeywordInputConfirm"
+            @blurInput="onKeywordInputConfirm"
+          />
+          <el-tag
+            v-for="(item, index) in formState.keyword_block"
+            :key="item"
+            class="!text-[#303133] !border-none"
+            size="large"
+            color="#F2F3F5"
+            closable
+            :disable-transitions="false"
+            @close="onDelKeyword(index)"
+          >
+            {{ item }}
+          </el-tag>
+          <el-button
+            v-if="!keywordInputVisible && formState.keyword_block?.length <= 100"
+            size="small"
+            type="primary"
+            link
+            @click="onShowKeywordInput"
+          >
+            {{ $t('添加关键词') }}
+          </el-button>
+        </div>
+        <div class="mt-4">
+          <p class="text-[#596780] text-xs leading-4 mb-3">{{ $t('触发时默认回复') }}</p>
+          <HansInputLimit
+            v-model:value="formState.keyword_block_reply"
+            type="textarea"
+            :autosize="{ minRows: 3, maxRows: 18 }"
+            size="large"
+            :limit="HansLimit.keywordReply"
+            class="w-full"
+          />
+        </div>
+      </div>
+    </div>
+    <div class="chato-form-label flex justify-between items-center">
+      <SLTitle
+        tips="是否开放机器人被互联网用户访问 (如百度索引、文心一言等平台）"
+        class="chato-form-label"
+      >
+        {{ $t('公开访问权限') }}
+      </SLTitle>
+      <SwitchWithStateMsg v-model:value="formState.toc_privacy" open-msg="开启" close-msg="关闭" />
+    </div>
+    <div class="chato-form-item">
+      <SLTitle tips="基于知识库无法回复时，机器人回答内容" class="chato-form-label">
+        {{ $t('超纲问题回复') }}
+      </SLTitle>
+      <div class="exceed-radio flex items-center text-sm mb-4">
+        <el-radio-group v-model="formState.not_embedding_return_enabled">
+          <el-radio :label="0" size="large">{{ $t('回复使用大模型知识') }}</el-radio>
+          <el-radio :label="1" size="large">{{ $t('自定义回复') }}</el-radio>
+        </el-radio-group>
+      </div>
       <HansInputLimit
-        v-model:value="formState.desc"
+        v-if="Number(formState.not_embedding_return_enabled) === 1"
+        v-model:value="formState.not_embedding_return_content"
         type="textarea"
-        :rows="6"
+        :rows="3"
         size="large"
-        :limit="HansLimit.desc"
-        :disabled="AIGenerateInputDisabled.desc"
+        :placeholder="$t(`请输入自定义回复内容`)"
+        :limit="500"
         class="w-full"
       />
     </div>
     <div class="chato-form-item">
-      <div class="chato-form-label flex items-center justify-between">
-        <SLTitle tips="基于机器人当前名字和角色设定生成">{{ t('欢迎语') }}</SLTitle>
-        <AIGenerateBtn
-          v-model:generateStr="formState.welcome"
-          :role="formState.name"
-          :system-prompt="formState.system_prompt"
-          :type="EDomainAIGenerateType.welcome"
-          :disabled="!formState.system_prompt || !formState.name || AIGenerateInputDisabled.welcome"
-          disabled-tip="请填写名字和角色设定后生成"
-          @start="AIGenerateInputDisabled.welcome = true"
-          @end="AIGenerateInputDisabled.welcome = false"
-        />
-      </div>
-      <HansInputLimit
-        v-model:value="formState.welcome"
-        type="textarea"
-        :rows="6"
-        size="large"
-        :limit="HansLimit.welcome"
-        :disabled="AIGenerateInputDisabled.welcome"
+      <SLTitle tips="数值越高所匹配的QA知识越精准，但知识数量可能变少" class="chato-form-label">
+        {{ $t('QA相关性') }}
+      </SLTitle>
+      <el-slider
+        v-model="formState.qa_threshold"
+        :step="5"
+        :max="85"
+        :min="40"
+        show-stops
         class="w-full"
       />
-      <p class="text-[#9DA3AF] text-xs mt-4">
-        {{
-          $t(
-            '打开聊天窗口后会主动发送，添加双井号可添加提问示例，例如：#帮我写一则关于xxx的文案#，此类消息不消耗额度。'
-          )
-        }}
-      </p>
+    </div>
+    <div class="chato-form-item">
+      <SLTitle
+        tips="数值越高所匹配的文档知识越精准，但来源文档数量可能变少"
+        class="chato-form-label"
+      >
+        {{ $t('文档相关性') }}
+      </SLTitle>
+      <el-slider
+        v-model="formState.doc_threshold"
+        :step="5"
+        :max="85"
+        :min="40"
+        show-stops
+        class="w-full"
+      />
+    </div>
+    <div class="chato-form-item">
+      <SLTitle
+        tips="值为 0 时同一个问题的回复相对固定，值越大回复内容越随机多样具有创造性"
+        class="chato-form-label"
+      >
+        {{ $t('回复多样性') }}
+      </SLTitle>
+      <el-slider
+        v-model="formState.temperature"
+        :step="2.5"
+        :max="10"
+        :min="0"
+        show-stops
+        :format-tooltip="(v) => diverstyToolTip[v]"
+        class="w-full"
+      />
     </div>
   </div>
-  <el-collapse>
-    <el-collapse-item>
-      <template #title>
-        <div class="chato-form bot-create-center-padding">高级设置</div>
-      </template>
-      <div class="chato-form bot-create-center-padding">
-        <div class="chato-form-item">
-          <SLTitle
-            tips="数值越高所匹配的文档知识越精准，但来源文档数量可能变少"
-            class="chato-form-label"
-          >
-            {{ $t('文档相关性') }}
-          </SLTitle>
-          <el-slider
-            v-model="formState.doc_threshold"
-            :step="5"
-            :max="85"
-            :min="40"
-            show-stops
-            class="w-full"
-          />
-        </div>
-        <div class="flex gap-10 lg:flex-col lg:gap-0">
-          <div class="chato-form-item">
-            <div class="chato-form-label">{{ $t(`回复长度`) }}</div>
-            <el-select
-              v-model="formState.reply_length"
-              class="w-24"
-              :placeholder="$t(`未指定`)"
-              clearable
-            >
-              <el-option
-                v-for="(item, index) in DomainReplyLength"
-                :key="`len_${index}`"
-                :label="$t(item.label)"
-                :value="item.value"
-              />
-            </el-select>
-          </div>
-          <div class="chato-form-item">
-            <div class="chato-form-label">{{ $t(`回复语种`) }}</div>
-            <el-select v-model="formState.lang" class="w-24" :placeholder="$t(`未指定`)" clearable>
-              <el-option
-                v-for="(item, index) in DomainReplyLanguage"
-                :key="`lang_${index}`"
-                :label="$t(item.label)"
-                :value="item.value"
-              />
-            </el-select>
-          </div>
-          <div class="chato-form-item">
-            <div class="chato-form-label">{{ $t(`回复语气`) }}</div>
-            <el-select
-              v-model="internalReplyTone"
-              multiple
-              filterable
-              allow-create
-              clearable
-              default-first-option
-              :placeholder="$t(`未指定`)"
-              :reserve-keyword="false"
-              class="flex-1 max-w-[160px]"
-            >
-              <el-option
-                v-for="(item, index) in DomainReplyToneOfVoice"
-                :key="`tone_${index}`"
-                :label="$t(item)"
-                :value="item"
-              />
-            </el-select>
-          </div>
-        </div>
-        <div class="chato-form-item">
-          <div class="chato-form-label">
-            {{ $t('对话上下文') }}
-          </div>
-          <div class="flex items-center justify-between">
-            <span class="text-[#596780] text-sm leading-5">
-              {{ $t('根据上下文的信息进行语义理解、识别指代对象并生成连贯的回答') }}
-            </span>
-            <SwitchWithStateMsg
-              v-model:value="formState.is_session_effective"
-              open-msg="开启"
-              close-msg="关闭"
-            />
-          </div>
-        </div>
-        <div class="chato-form-item">
-          <div class="chato-form-label flex gap-[6px] items-center">
-            {{ $t('问题推荐') }}
-            <SpaceRightsFreeExpUpgrate
-              v-if="currentRights.type === ESpaceCommercialType.free"
-              :rights-type="ESpaceRightsType.brand"
-            />
-          </div>
-          <div class="flex items-center justify-between relative">
-            <span class="space-x-3">
-              <span class="text-[#596780] text-sm leading-5">
-                {{ $t('机器人回答问题后，会展示推荐的问题，用户可点击后快速提问') }}
-              </span>
-              <el-button size="small" type="primary" link @click="() => (exampleVisible = true)">
-                {{ $t('查看示例') }}
-              </el-button>
-            </span>
-            <SwitchWithStateMsg
-              v-model:value="formState.show_recommend_question"
-              open-msg="开启"
-              close-msg="关闭"
-            />
-            <SpaceRightsMask :visible="maskVisible" />
-          </div>
-        </div>
-        <div class="chato-form-item">
-          <div class="chato-form-label flex justify-between items-center">
-            <SLTitle
-              tips="最多可添加 100 个词，每个词最长不超过 20 个字符，如不填写指定回复内容将默认不回复消息"
-            >
-              {{ $t('关键词回复') }}
-            </SLTitle>
-            <SwitchWithStateMsg
-              v-model:value="formState.keyword_block_show"
-              open-msg="开启"
-              close-msg="关闭"
-            />
-          </div>
-          <div v-show="formState.keyword_block_show" class="w-full">
-            <div class="flex items-center flex-wrap gap-3">
-              <HansInputLimit
-                v-if="keywordInputVisible"
-                ref="keywordHansInputRef"
-                v-model:value="keywordInput"
-                type="text"
-                size="default"
-                :placeholder="$t(`请输入 20 以内的字符关键词`)"
-                :limit="HansLimit.keyword"
-                class="w-60 lg:w-full"
-                @keyupEnter="onKeywordInputConfirm"
-                @blurInput="onKeywordInputConfirm"
-              />
-              <el-tag
-                v-for="(item, index) in formState.keyword_block"
-                :key="item"
-                class="!text-[#303133] !border-none"
-                size="large"
-                color="#F2F3F5"
-                closable
-                :disable-transitions="false"
-                @close="onDelKeyword(index)"
-              >
-                {{ item }}
-              </el-tag>
-              <el-button
-                v-if="!keywordInputVisible && formState.keyword_block?.length <= 100"
-                size="small"
-                type="primary"
-                link
-                @click="onShowKeywordInput"
-              >
-                {{ $t('添加关键词') }}
-              </el-button>
-            </div>
-            <div class="mt-4">
-              <p class="text-[#596780] text-xs leading-4 mb-3">{{ $t('触发时默认回复') }}</p>
-              <HansInputLimit
-                v-model:value="formState.keyword_block_reply"
-                type="textarea"
-                :autosize="{ minRows: 3, maxRows: 18 }"
-                size="large"
-                :limit="HansLimit.keywordReply"
-                class="w-full"
-              />
-            </div>
-          </div>
-        </div>
-        <div class="chato-form-label flex justify-between items-center">
-          <SLTitle
-            tips="是否开放机器人被互联网用户访问 (如百度索引、文心一言等平台）"
-            class="chato-form-label"
-          >
-            {{ $t('公开访问权限') }}
-          </SLTitle>
-          <SwitchWithStateMsg
-            v-model:value="formState.toc_privacy"
-            open-msg="开启"
-            close-msg="关闭"
-          />
-        </div>
-        <div class="chato-form-item">
-          <SLTitle tips="基于知识库无法回复时，机器人回答内容" class="chato-form-label">
-            {{ $t('超纲问题回复') }}
-          </SLTitle>
-          <div class="exceed-radio flex items-center text-sm mb-4">
-            <el-radio-group v-model="formState.not_embedding_return_enabled">
-              <el-radio :label="0" size="large">{{ $t('回复使用大模型知识') }}</el-radio>
-              <el-radio :label="1" size="large">{{ $t('自定义回复') }}</el-radio>
-            </el-radio-group>
-          </div>
-          <HansInputLimit
-            v-if="Number(formState.not_embedding_return_enabled) === 1"
-            v-model:value="formState.not_embedding_return_content"
-            type="textarea"
-            :rows="3"
-            size="large"
-            :placeholder="$t(`请输入自定义回复内容`)"
-            :limit="500"
-            class="w-full"
-          />
-        </div>
-        <div class="chato-form-item">
-          <SLTitle tips="数值越高所匹配的QA知识越精准，但知识数量可能变少" class="chato-form-label">
-            {{ $t('QA相关性') }}
-          </SLTitle>
-          <el-slider
-            v-model="formState.qa_threshold"
-            :step="5"
-            :max="85"
-            :min="40"
-            show-stops
-            class="w-full"
-          />
-        </div>
-        <div class="chato-form-item">
-          <SLTitle
-            tips="数值越高所匹配的文档知识越精准，但来源文档数量可能变少"
-            class="chato-form-label"
-          >
-            {{ $t('文档相关性') }}
-          </SLTitle>
-          <el-slider
-            v-model="formState.doc_threshold"
-            :step="5"
-            :max="85"
-            :min="40"
-            show-stops
-            class="w-full"
-          />
-        </div>
-      </div>
-    </el-collapse-item>
-  </el-collapse>
   <BotCreateTypeByTemplateModal
     v-model:visible="templateModalVisible"
     @submit="onTemplateTypeModalSubmit"
@@ -481,7 +495,7 @@
 </template>
 
 <script setup lang="ts">
-import { domainLLMConfigAPI } from '@/api/domain'
+import { domainLLMConfigAPI, getSystemPromptLimit } from '@/api/domain'
 import { deleteFile, getFilesByDomainId } from '@/api/file'
 import EnterQa from '@/components/EnterAnswer/EnterQa.vue'
 import useImagePath from '@/composables/useImagePath'
@@ -492,6 +506,7 @@ import {
   DomainCreateSymbol,
   DomainReplyLanguage,
   DomainReplyLength,
+  DomainReplyParagraph,
   DomainReplyToneOfVoice
 } from '@/constant/domain'
 import { FreeCommercialTypeExperienceDay } from '@/constant/space'
@@ -507,12 +522,15 @@ import { openPreviewUrl } from '@/utils/help'
 import { getStringWidth } from '@/utils/string'
 import { getSpecifiedDateSinceNowDay } from '@/utils/timeRange'
 import { Close } from '@element-plus/icons-vue'
+import { debouncedWatch } from '@vueuse/core'
 import { ElInput, ElMessageBox, ElNotification } from 'element-plus'
 import { storeToRefs } from 'pinia'
 import { computed, inject, nextTick, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import BotCreateTypeByAIModal from './BotCreateTypeByAIModal.vue'
 import BotCreateTypeByTemplateModal from './BotCreateTypeByTemplateModal.vue'
+
+const { t } = useI18n()
 
 const HansLimit = reactive({
   name: 20,
@@ -523,6 +541,14 @@ const HansLimit = reactive({
   brandName: 40,
   keywordReply: 200
 })
+
+const diverstyToolTip = {
+  0: t('最准确'),
+  2.5: t('较准确'),
+  5: t('平衡'),
+  7.5: t('强创造力'),
+  10: t('天马行空')
+} as const
 
 const createTypeSelectList = [
   { icon: 'top-right', name: '选择模版创建', desc: '从模版中选择' },
@@ -550,11 +576,11 @@ defineProps<{
 const { ImagePath: RecommendQuestionImg } = useImagePath('recommend-question', 'example')
 const baseStoreI = useBase()
 const qtyLimit = baseStoreI.userInfo.role === USER_ROLES.SUPERMAN ? 1000 : 20
-const { t } = useI18n()
 const uploadFilesListLoading = ref(false)
 const templateModalVisible = ref(false)
 const AIModalVisible = ref(false)
 const QAModalVisible = ref(false)
+const isAdvancedSettings = ref(false)
 const keywordInputVisible = ref(false)
 const keywordInput = ref('')
 const DOCModalVisible = ref(false)
@@ -719,6 +745,21 @@ const initLLMConfigOption = async () => {
     formState.llm = domainLLMList[0].type
   }
 }
+
+const initSystemPromptLimit = async () => {
+  const {
+    data: { data }
+  } = await getSystemPromptLimit({ llm: formState.llm, top_k: formState.top_k })
+  HansLimit.system_prompt = data.system_prompt_max_token
+}
+
+debouncedWatch(
+  [() => formState.llm, () => formState.top_k],
+  ([llm, topK]) => {
+    llm && topK && initSystemPromptLimit()
+  },
+  { immediate: true, debounce: 300 }
+)
 </script>
 <style lang="scss" scoped>
 .bot-create-center-padding {

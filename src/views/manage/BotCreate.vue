@@ -46,24 +46,9 @@
             :is="item.component"
             :onClickTab="onClickTab"
             :onSetDOCModalVisible="onSetDOCModalVisible"
+            :avatar_show="false"
+            class="w-full h-full"
           />
-          <el-drawer
-            v-else
-            v-model="chatMobileModalVisible"
-            :with-header="false"
-            size="100%"
-            append-to-body
-            class="chat-mobile-chat-drawer relative"
-          >
-            <el-icon
-              :size="24"
-              class="!absolute top-4 left-4 z-[51] !text-[#4F4F4F] cursor-pointer hover:opacity-80"
-              @click="chatMobileModalVisible = false"
-            >
-              <Close />
-            </el-icon>
-            <BotCreateChat class="!w-full !h-full" />
-          </el-drawer>
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -80,23 +65,13 @@
     @setSuccess="onCloseEnterModal"
     @closeDialogVisble="onCloseEnterModal"
   />
-  <el-drawer
-    v-if="isMobile"
-    v-model="chatMobileModalVisible"
-    :with-header="false"
-    size="100%"
-    append-to-body
-    class="chat-mobile-chat-drawer relative"
-  >
-    <el-icon
-      :size="24"
-      class="!absolute top-4 left-4 z-[51] !text-[#4F4F4F] cursor-pointer hover:opacity-80"
-      @click="closeVisible"
-    >
-      <Close />
-    </el-icon>
-    <BotCreateChat class="!w-full !h-full" />
-  </el-drawer>
+  <Modal v-model:visible="isBeforeRoute">
+    <template name="footer">
+      <el-button plain @click="onBeforeRoute(onSave, 'draft')">{{ t('不保存') }}</el-button>
+      <el-button plain>{{ t('仅存为草稿') }}</el-button>
+      <el-button type="primary">{{ t('确认保存') }} </el-button>
+    </template>
+  </Modal>
 </template>
 
 <script setup lang="ts">
@@ -134,7 +109,7 @@ import {
   watch
 } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
+import { onBeforeRouteLeave, useRoute, useRouter, type NavigationGuardNext } from 'vue-router'
 import BotCreateChat from './components/BotCreateChat.vue'
 import BotCreateConfiguration from './components/BotCreateConfiguration.vue'
 import BotCreateLui from './components/BotCreateLui.vue'
@@ -153,6 +128,7 @@ const activeTab = ref<string>('lui')
 const DOCFormState = ref<IDocumentForm>({})
 const baseStoreI = useBase()
 const DOCModalVisible = ref(false)
+const isBeforeRoute = ref(false)
 const qtyLimit = baseStoreI.userInfo.role === USER_ROLES.SUPERMAN ? 1000 : 20
 let cdFn: Function
 // const onLinkBots = () => {
@@ -171,7 +147,9 @@ const tabComponents = computed(() => {
     { key: 'lui', title: '创建', component: BotCreateLui },
     { key: 'gui', title: '配置', component: BotCreateConfiguration }
   ]
-  return !isMobile.value ? list : [...list, { key: 'preview', title: '预览', component: undefined }]
+  return !isMobile.value
+    ? list
+    : [...list, { key: 'preview', title: '预览', component: BotCreateChat }]
 })
 const currentStep = ref(0)
 
@@ -193,15 +171,7 @@ watch(currentStep, () => {
   onScrollBottom()
 })
 
-const closeVisible = () => {
-  chatMobileModalVisible.value = false
-  activeTab.value = 'lui'
-}
-
-const onClickTab = (key) => {
-  if (key === 'preview') chatMobileModalVisible.value = true
-  activeTab.value = key
-}
+const onClickTab = (key) => (activeTab.value = key)
 
 const onSetDOCModalVisible = (value: boolean, fn?: Function) => {
   cdFn = fn
@@ -237,7 +207,8 @@ const defaultFormState: Partial<IDomainInfo> = {
   welcome: '',
   avatar_show: true,
   name_show: true,
-  desc_show: 0
+  desc_show: 0,
+  name_and_avatar_show: 0
 }
 let originalFormState = { ...defaultFormState }
 let originalTemplateFormState = {}
@@ -245,7 +216,6 @@ let formState = reactive<Partial<IDomainInfo>>({ ...defaultFormState })
 let AIGenerateInputDisabled = reactive({ ...defaultAIGenerateInputDisabled })
 provide(DomainCreateSymbol, formState)
 const { t } = useI18n()
-const chatMobileModalVisible = ref(false)
 
 // 是否修改过
 const isModified = () => !isEqual(formState, originalFormState)
@@ -485,23 +455,30 @@ watch(
     v && initFilesList()
   }
 )
-
+let beforeRouteLeave: NavigationGuardNext
 onBeforeRouteLeave(async (to, from, next) => {
   try {
     if (!isModified() || !canSave.value) {
       return
     }
-    await ElMessageBox.confirm(t('您还未完成机器人创建，是否先存为草稿？'), t('存为草稿'), {
-      confirmButtonText: t('确认'),
-      cancelButtonText: t('取消'),
-      type: 'warning'
-    })
-    await onSave('draft')
+    // await ElMessageBox.confirm(t('您还未完成机器人创建，是否先存为草稿？'), t('存为草稿'), {
+    //   confirmButtonText: t('确认'),
+    //   cancelButtonText: t('取消'),
+    //   type: 'warning'
+    // })
+    beforeRouteLeave = next
+    isBeforeRoute.value = true
+    // await onSave('draft')
   } catch (e) {
   } finally {
-    next()
+    // next()
   }
 })
+
+const onBeforeRoute = async (cd?: (data: any) => Promise<void>, type?: any) => {
+  await cd(type)
+  if (beforeRouteLeave) beforeRouteLeave()
+}
 
 const init = async () => {
   if (route.params.botId) {
@@ -540,5 +517,8 @@ onBeforeUnmount(() => {
 }
 :deep(.el-tabs__header) {
   margin: 16px auto;
+}
+:deep(.el-tabs__content) {
+  flex-grow: 1;
 }
 </style>
