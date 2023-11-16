@@ -102,9 +102,14 @@
 </template>
 
 <script lang="ts" setup>
-import { postSendSmsCodeAPI, getCheckChannelAPI } from '@/api/auth'
+import { getCheckChannelAPI, postSendSmsCodeAPI } from '@/api/auth'
+import { useIsMobile } from '@/composables/useBasicLayout'
 import useChannel from '@/composables/useChannel'
 import useGlobalProperties from '@/composables/useGlobalProperties'
+import useRSA from '@/composables/useRSA'
+import useSpaceRights from '@/composables/useSpaceRights'
+import { LoginCodeTip } from '@/constant/auth'
+import { ESpaceRightsType } from '@/enum/space'
 import { validateCode, validateMobile } from '@/utils/validate'
 import {
   ElNotification as Notification,
@@ -112,12 +117,8 @@ import {
   type FormInstance,
   type FormRules
 } from 'element-plus'
-import { computed, reactive, ref, defineAsyncComponent, onMounted, nextTick } from 'vue'
+import { computed, defineAsyncComponent, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import useRSA from '@/composables/useRSA'
-import { LoginCodeTip } from '@/constant/auth'
-import { ESpaceRightsType } from '@/enum/space'
-import useSpaceRights from '@/composables/useSpaceRights'
 
 const UpgradeRightsModal = defineAsyncComponent(
   () => import('@/components/Upgrade/UpgradeRightsModal.vue')
@@ -152,7 +153,8 @@ const refInputCode = ref(null)
 const refInputMobile = ref(null)
 const refBtnSend = ref(null)
 const codeTipVisible = ref(false)
-const showSmsCodeInput = ref(false)
+const isMobile = useIsMobile()
+const showSmsCodeInput = ref(!isMobile)
 
 let smsCodeTrackerTag = false
 const inputChannel = [t('邀请码'), t('其他')]
