@@ -5,7 +5,47 @@
       <div class="p-4 max-w-7xl mx-auto">
         <h1 v-if="!isLogin">请先安装插件，并且网页登陆小红书</h1>
 
-        <div class="flex justify-between">
+        <div
+          class="grid grid-cols-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 gap-4"
+        >
+          <div
+            data-script="Chato-createBot"
+            class="bg-white rounded-lg min-h-[200px] leading-5 flex flex-col items-center justify-center gap-4 transition cursor-pointer h-full hover:shadow-lg hover:-translate-y-2 lg:p-4 lg:gap-3 lg:h-auto lg:hover:-translate-y-0"
+            @click="openCreateDialog"
+          >
+            <div
+              class="w-12 h-12 flex items-center justify-center rounded-full overflow-hidden shrink-0 bg-[#F2F3F5] lg:w-10 lg:h-10"
+            >
+              <el-icon :size="20" class="text-[#596780]">
+                <Plus />
+              </el-icon>
+            </div>
+            <p class="font-medium text-sm text-[#7C5CFC]">{{ t('添加评论机器人') }}</p>
+          </div>
+
+          <div
+            class="bg-white rounded-lg min-h-[200px] leading-5 flex flex-col items-center justify-center gap-4 transition cursor-pointer h-full hover:shadow-lg hover:-translate-y-2 lg:p-4 lg:gap-3 lg:h-auto lg:hover:-translate-y-0"
+            v-for="rb in robots"
+            :key="rb.slug"
+            @click="selectRobot(rb.slug)"
+            :class="{ highlight: selectedDomainSlug === rb.slug }"
+          >
+            <img :src="rb.avatar" alt="Robot Avatar" class="w-24 h-24 rounded-full" />
+            <div class="font-bold">{{ rb.name }}</div>
+            <div>{{ rb.system_prompt }}</div>
+            <div class="flex items-center">
+              <p
+                @click="editRobot(rb.slug)"
+                class="text-blue-500 hover:text-blue-700 focus:outline-none"
+              >
+                编辑
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Menu -->
+        <div class="flex justify-between mt-5">
           <div v-if="isLogin" class="flex flex-col items-center">
             <div class="flex items-center space-x-4">
               <img :src="accountInfo.avatar || DefaultAvatar" class="w-10 h-10 rounded-full" />
@@ -31,6 +71,7 @@
           </div>
         </div>
 
+        <!-- History -->
         <div v-if="selectedMenu == 'history'" class="mt-4">
           <div v-for="h in history" :key="h.domain_slug" class="mb-4 p-4 border rounded shadow-sm">
             <div class="flex items-center space-x-2 mb-2">
@@ -38,8 +79,13 @@
               <p class="font-semibold">{{ h.name }}</p>
             </div>
             <p class="text-gray-600 text-sm">{{ h.comment }}</p>
+            <p class="text-gray-500 text-xs mt-4">
+              {{ formatDate(h.created) }}
+            </p>
           </div>
         </div>
+
+        <!-- Posts -->
         <div v-if="selectedMenu == 'posts'">
           <el-select v-model="selectedDomainSlug" class="m-2" placeholder="Select" size="large">
             <el-option
@@ -105,6 +151,22 @@
         </div>
       </div>
     </ContentLayout>
+    <el-dialog v-model="showDialog" title="评论机器人">
+      <el-form>
+        <el-form-item label="机器人名字">
+          <el-input v-model="robotInfo.name"></el-input>
+        </el-form-item>
+        <el-form-item label="角色设定">
+          <el-input type="textarea" v-model="robotInfo.system_prompt"></el-input>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="cancleDialog">取消</el-button>
+          <el-button type="primary" @click="confirmDialog"> 确认 </el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -125,7 +187,22 @@ const searchQuery = ref('')
 const selectedTag = ref('推荐')
 const selectedDomainSlug = ref('')
 const isLogin = ref(false)
+const showDialog = ref(false)
 const selectedMenu = ref('history')
+const isUpdateRobot = ref(false)
+
+const robots = ref([
+  {
+    name: '',
+    system_prompt: '',
+    avatar: '',
+    slug: ''
+  }
+])
+const robotInfo = ref({
+  name: '',
+  system_prompt: ''
+})
 const accountInfo = ref({
   avatar: '',
   title: ''
@@ -136,7 +213,8 @@ const history = ref([
     domain_slug: '',
     org_id: '',
     comment: '',
-    avatar: ''
+    avatar: '',
+    created: ''
   }
 ])
 const { domainList } = storeToRefs(domainStoreI)
@@ -145,6 +223,22 @@ const tags = ['推荐', '美食', '穿搭', '彩妆', '影视', '职场', '家�
 
 const cards = ref([])
 
+function selectRobot(slug) {
+  selectedDomainSlug.value = slug
+}
+
+function editRobot(slug) {
+  selectedDomainSlug.value = slug
+  let r = robots.value.find((r) => r.slug == slug)
+  if (!r) return
+  robotInfo.value = {
+    name: r.name,
+    system_prompt: r.system_prompt
+  }
+  isUpdateRobot.value = true
+  showDialog.value = true
+}
+
 function toggleSelection(card) {
   card.selected = !card.selected
 }
@@ -152,8 +246,42 @@ function toggleSelection(card) {
 function selectMenu(typ: string) {
   selectedMenu.value = typ
   if (typ === 'history') {
-    setHistory()
+    getHistory()
   }
+}
+
+function cancleDialog() {
+  showDialog.value = false
+  isUpdateRobot.value = true
+}
+
+function openCreateDialog() {
+  showDialog.value = true
+  isUpdateRobot.value = false
+  robotInfo.value = {
+    name: '',
+    system_prompt: ''
+  }
+}
+
+async function confirmDialog() {
+  console.log(isUpdateRobot.value)
+  if (isUpdateRobot.value) {
+    await request({
+      url: `/chato/api/v1/domains/update_xhs_bot/${selectedDomainSlug.value}`,
+      method: 'PATCH',
+      data: robotInfo.value
+    })
+  } else {
+    await request({
+      url: '/chato/api/v1/domains/create_xhs_bot',
+      method: 'POST',
+      data: robotInfo.value
+    })
+  }
+  getRobots()
+  showDialog.value = false
+  isUpdateRobot.value = false
 }
 
 async function getNoteByKeyword(keyword: string) {
@@ -229,12 +357,20 @@ async function getHomeFeed() {
   }
 }
 
-async function setHistory() {
+async function getHistory() {
   let res = await request({
     url: '/chato/api/v1/xhs/history',
     method: 'GET'
   })
   history.value = res.data.data.history
+}
+
+async function getRobots() {
+  let res = await request({
+    url: '/chato/api/v1/domains/xhs_bots',
+    method: 'GET'
+  })
+  robots.value = res.data.data
 }
 
 async function init() {
@@ -244,7 +380,8 @@ async function init() {
     method: 'GET'
   })
   isLogin.value = res.data.data.is_login
-  setHistory()
+  getHistory()
+  getRobots()
   if (isLogin.value) {
     res = await request({
       url: '/chato/api/v1/xhs/get_self_info',
@@ -259,6 +396,17 @@ async function init() {
   }
 }
 
+function formatDate(dateString) {
+  const date = new Date(dateString)
+  const year = date.getFullYear()
+  const month = (date.getMonth() + 1).toString().padStart(2, '0')
+  const day = date.getDate().toString().padStart(2, '0')
+  const hours = date.getHours().toString().padStart(2, '0')
+  const minutes = date.getMinutes().toString().padStart(2, '0')
+  const seconds = date.getSeconds().toString().padStart(2, '0')
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
+}
+
 function proxyImageUrl(originalUrl) {
   return `${currentEnvConfig.baseURL}/chato/api/v1/xhs/image-proxy?url=${originalUrl}`
 }
@@ -268,4 +416,8 @@ onMounted(() => {
 })
 </script>
 
-<style scoped></style>
+<style scoped>
+.highlight {
+  border: 2px solid #f00; /* Change this to your preferred highlight color */
+}
+</style>
