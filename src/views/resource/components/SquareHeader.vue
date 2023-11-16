@@ -1,5 +1,5 @@
 <template>
-  <div :class="['mt-14 mb-14 md:mb-7 text-center text-[#3D3D3D]', requiredTopbar ? 'md:mt-0' : '']">
+  <div :class="['mt-14 md:mt-7 mb-14 md:mb-7 text-center text-[#3D3D3D]']">
     <p class="text-3xl md:text-xl font-medium">
       {{ $t('Chato，好用的AI工具，让你快人一步！') }}
     </p>
@@ -24,7 +24,7 @@
 import { RoutesMap } from '@/router'
 import { useChatStore } from '@/stores/chat'
 import { storeToRefs } from 'pinia'
-import { useRouter, useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 defineProps<{
   requiredTopbar: boolean

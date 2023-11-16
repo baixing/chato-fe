@@ -1,11 +1,5 @@
 <template>
   <div class="overflow-y-auto h-full w-full">
-    <Topbar
-      v-if="requiredTopbar"
-      title=""
-      class="h-0 md:!h-16"
-      :existMenuMore="route.path.indexOf('c') === -1"
-    />
     <SquareHeader :requiredTopbar="requiredTopbar" v-if="requiredTopbar" />
     <ContentLayout
       class="!overflow-hidden !h-auto"
