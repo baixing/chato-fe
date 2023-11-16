@@ -8,7 +8,7 @@
         <div class="flex justify-between">
           <div v-if="isLogin" class="flex flex-col items-center">
             <div class="flex items-center space-x-4">
-              <img :src="accountInfo.avatar" class="w-10 h-10 rounded-full" />
+              <img :src="accountInfo.avatar || DefaultAvatar" class="w-10 h-10 rounded-full" />
               <h2 class="text-xl font-semibold">{{ accountInfo.title }}</h2>
             </div>
           </div>
@@ -34,7 +34,7 @@
         <div v-if="selectedMenu == 'history'" class="mt-4">
           <div v-for="h in history" :key="h.domain_slug" class="mb-4 p-4 border rounded shadow-sm">
             <div class="flex items-center space-x-2 mb-2">
-              <img :src="h.avatar" class="w-6 h-6 rounded-full" />
+              <img :src="h.avatar || DefaultAvatar" class="w-6 h-6 rounded-full" />
               <p class="font-semibold">{{ h.name }}</p>
             </div>
             <p class="text-gray-600 text-sm">{{ h.comment }}</p>
@@ -109,6 +109,7 @@
 </template>
 
 <script setup lang="ts">
+import DefaultAvatar from '@/assets/img/avatar.png'
 import { currentEnvConfig } from '@/config'
 import { useDomainStore } from '@/stores/domain'
 import { storeToRefs } from 'pinia'
@@ -150,6 +151,9 @@ function toggleSelection(card) {
 
 function selectMenu(typ: string) {
   selectedMenu.value = typ
+  if (typ === 'history') {
+    setHistory()
+  }
 }
 
 async function getNoteByKeyword(keyword: string) {
@@ -225,6 +229,14 @@ async function getHomeFeed() {
   }
 }
 
+async function setHistory() {
+  let res = await request({
+    url: '/chato/api/v1/xhs/history',
+    method: 'GET'
+  })
+  history.value = res.data.data.history
+}
+
 async function init() {
   getHomeFeed()
   let res = await request({
@@ -232,11 +244,7 @@ async function init() {
     method: 'GET'
   })
   isLogin.value = res.data.data.is_login
-  res = await request({
-    url: '/chato/api/v1/xhs/history',
-    method: 'GET'
-  })
-  history.value = res.data.data.history
+  setHistory()
   if (isLogin.value) {
     res = await request({
       url: '/chato/api/v1/xhs/get_self_info',
