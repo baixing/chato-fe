@@ -144,7 +144,10 @@ const formatDisplayFileName = (rowData: IDocumentList) => {
 }
 
 const checkDocTypeQuestionConvert = (rowData: IDocumentList) => {
-  return UPLOAD_FILE_VIDEO_AUDIO_TYPES.includes(`.${rowData.type}`)
+  return (
+    UPLOAD_FILE_VIDEO_AUDIO_TYPES.includes(`.${rowData.type}`) ||
+    LearningStatesPerformanceType.pending === rowData.status
+  )
 }
 
 const formatDisplayFileType = (rowData: IDocumentList) => {

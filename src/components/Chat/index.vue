@@ -1,7 +1,7 @@
 <template>
   <div class="container-preview-page bg-white relative">
     <div
-      v-if="detail.name_and_avatar_show"
+      v-if="detail.name_and_avatar_show && !isInApplet"
       class="flex items-center justify-center h-14 bg-white mb-0 text-sm font-medium gap-2 shrink-0"
       style="border-bottom: 1px solid #eee"
     >
@@ -175,6 +175,7 @@ import AudioPlayer from '@/components/AudioPlayer/index.vue'
 import ChatEnter from '@/components/Chat/ChatEnter.vue'
 import MessageItem from '@/components/Chat/ChatMessageItem.vue'
 import CustomerFormDialog from '@/components/Customer/CustomerFormDialog.vue'
+import useABTest from '@/composables/useABTest'
 import useAudioPlayer from '@/composables/useAudioPlayer'
 import useGlobalProperties from '@/composables/useGlobalProperties'
 import useSSEAudio from '@/composables/useSSEAudio'
@@ -187,6 +188,7 @@ import {
   SymChatDomainDetail,
   SymChatToken
 } from '@/constant/chat'
+import { CHATO_SOURCE_APPLET } from '@/constant/common'
 import { DebugDomainSymbol, MidJourneyDomainSlug } from '@/constant/domain'
 import { PaidCommercialTypes } from '@/constant/space'
 import { XSSOptions } from '@/constant/xss'
@@ -238,7 +240,6 @@ import Watermark from 'watermark-plus'
 import xss from 'xss'
 import ChatFooter from './ChatFooter.vue'
 import ChatMessageMore from './ChatMessageMore.vue'
-import useABTest from '@/composables/useABTest'
 
 interface Props {
   internalProps?: boolean
@@ -306,6 +307,7 @@ const watermark = ref<Watermark>()
 const showPreview = ref(false)
 const previewImageUrl = ref('')
 const sensorsQuestionId = computed(() => history.value?.[history.value.length - 1]?.questionId)
+const isInApplet = computed(() => source.value === CHATO_SOURCE_APPLET) // 判断是否在小程序环境
 
 const DefaultChatHistoryPage = {
   total: 0,
