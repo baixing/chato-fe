@@ -65,11 +65,15 @@
     @setSuccess="onCloseEnterModal"
     @closeDialogVisble="onCloseEnterModal"
   />
-  <Modal v-model:visible="isBeforeRoute">
-    <template name="footer">
-      <el-button plain @click="onBeforeRoute(onSave, 'draft')">{{ t('不保存') }}</el-button>
-      <el-button plain>{{ t('仅存为草稿') }}</el-button>
-      <el-button type="primary">{{ t('确认保存') }} </el-button>
+  <Modal v-model:visible="isBeforeRoute" :footer="true" :show-close="true" title="保存信息">
+    <div class="flex">
+      <el-icon class="mr-1"><WarningFilled /></el-icon>
+      <div class="text-[#606266]">你配置的机器人信息还未保存，是否保存？</div>
+    </div>
+    <template #footer>
+      <el-button plain @click="onBeforeRoute()">{{ t('不保存') }}</el-button>
+      <el-button plain @click="onBeforeRoute(onSave, 'draft')">{{ t('仅存为草稿') }}</el-button>
+      <el-button type="primary" @click="onBeforeRoute(onSave)">{{ t('确认保存') }} </el-button>
     </template>
   </Modal>
 </template>
@@ -109,7 +113,7 @@ import {
   watch
 } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { onBeforeRouteLeave, useRoute, useRouter, type NavigationGuardNext } from 'vue-router'
+import { onBeforeRouteLeave, useRoute, useRouter, type RouteLocationNormalized } from 'vue-router'
 import BotCreateChat from './components/BotCreateChat.vue'
 import BotCreateConfiguration from './components/BotCreateConfiguration.vue'
 import BotCreateLui from './components/BotCreateLui.vue'
@@ -233,6 +237,7 @@ const canSave = computed(
 )
 
 const syncOriginalFormState = () => {
+  console.log(1234)
   originalFormState = toRaw(formState)
 }
 
@@ -455,29 +460,31 @@ watch(
     v && initFilesList()
   }
 )
-let beforeRouteLeave: NavigationGuardNext
+let beforeRouteLeave: RouteLocationNormalized
 onBeforeRouteLeave(async (to, from, next) => {
   try {
     if (!isModified() || !canSave.value) {
       return
     }
-    // await ElMessageBox.confirm(t('您还未完成机器人创建，是否先存为草稿？'), t('存为草稿'), {
-    //   confirmButtonText: t('确认'),
-    //   cancelButtonText: t('取消'),
-    //   type: 'warning'
-    // })
-    beforeRouteLeave = next
+    beforeRouteLeave = to
     isBeforeRoute.value = true
-    // await onSave('draft')
   } catch (e) {
   } finally {
-    // next()
+    console.log('initBeforeRouteLeave', beforeRouteLeave)
+    if (!beforeRouteLeave) next()
   }
 })
 
 const onBeforeRoute = async (cd?: (data: any) => Promise<void>, type?: any) => {
-  await cd(type)
-  if (beforeRouteLeave) beforeRouteLeave()
+  try {
+    if (cd) await cd(type)
+  } catch (error) {
+  } finally {
+    const initBeforeRouteLeave = beforeRouteLeave
+    beforeRouteLeave = null
+    syncOriginalFormState()
+    router.push(initBeforeRouteLeave)
+  }
 }
 
 const init = async () => {
