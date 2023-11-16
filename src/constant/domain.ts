@@ -65,7 +65,7 @@ export const DomainReplyParagraph = [
   { label: '二段', value: 2 },
   { label: '三段', value: 3 },
   { label: '四段', value: 4 }
-]
+] as const
 
 export const DomainConversationModeOptions = [
   { label: '文字', value: EDomainConversationMode.text },

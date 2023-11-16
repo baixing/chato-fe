@@ -20,7 +20,9 @@
         class="py-4 box-border flex justify-end items-center gap-4 information-padding"
         style="border-top: 1px solid #e4e7ed"
       >
-        <el-button type="primary" @click="onSave()">{{ $t('保存') }}</el-button>
+        <el-button :disabled="!canSave" type="primary" @click="onSave()">{{
+          $t('保存')
+        }}</el-button>
       </div>
     </template>
   </Topbar>
@@ -30,7 +32,7 @@
         type="card"
         :model-value="activeTab"
         @tab-click="({ paneName }) => onClickTab(paneName)"
-        class="chato-card-tab w-full info-tab bot-create-center-padding center"
+        class="chato-card-tab w-full info-tab center"
       >
         <el-tab-pane
           v-for="item in tabComponents"
@@ -39,7 +41,12 @@
           :label="$t(item.title)"
           class="h-full overflow-y-auto information-padding"
         >
-          <component v-if="item.component" :is="item.component" :onClickTab="onClickTab" />
+          <component
+            v-if="item.component"
+            :is="item.component"
+            :onClickTab="onClickTab"
+            :onSetDOCModalVisible="onSetDOCModalVisible"
+          />
           <el-drawer
             v-else
             v-model="chatMobileModalVisible"
@@ -62,7 +69,17 @@
     </div>
     <BotCreateChat v-if="!isMobile" />
   </div>
-
+  <EnterDoc
+    :domain-id="(formState.id as unknown as string)"
+    :domain-name="formState.name"
+    :defaultForm="DOCFormState"
+    :sizeLimit="30"
+    :qtyLimit="qtyLimit"
+    :apiUpload="apiUploadPath.doc"
+    :dialogVisible="DOCModalVisible"
+    @setSuccess="onCloseEnterModal"
+    @closeDialogVisble="onCloseEnterModal"
+  />
   <el-drawer
     v-if="isMobile"
     v-model="chatMobileModalVisible"
@@ -92,12 +109,15 @@ import {
 import { getFilesByDomainId } from '@/api/file'
 import Topbar from '@/components/Topbar/index.vue'
 import { useBasicLayout } from '@/composables/useBasicLayout'
+import { currentEnvConfig } from '@/config'
+import { USER_ROLES } from '@/constant/common'
 import { DebugDomainSymbol, DomainCreateSymbol } from '@/constant/domain'
 import { KnowledgeLearningFinalStatus } from '@/constant/knowledge'
 import { EDomainAIGenerateType, EDomainStatus } from '@/enum/domain'
 import type { IDomainInfo } from '@/interface/domain'
-import type { IDocumentList } from '@/interface/knowledge'
+import type { IDocumentForm, IDocumentList } from '@/interface/knowledge'
 import { RoutesMap } from '@/router'
+import { useBase } from '@/stores/base'
 import SSE from '@/utils/sse'
 import { getStringWidth } from '@/utils/string'
 import { ElLoading, ElMessage, ElMessageBox, ElNotification } from 'element-plus'
@@ -130,10 +150,21 @@ const route = useRoute()
 const router = useRouter()
 const { isMobile } = useBasicLayout()
 const activeTab = ref<string>('lui')
-
+const DOCFormState = ref<IDocumentForm>({})
+const baseStoreI = useBase()
+const DOCModalVisible = ref(false)
+const qtyLimit = baseStoreI.userInfo.role === USER_ROLES.SUPERMAN ? 1000 : 20
+let cdFn: Function
 // const onLinkBots = () => {
 //   router.push({ name: RoutesMap.manager.center })
 // }
+const apiUploadPath = computed(() => {
+  const uri = `${currentEnvConfig.uploadBaseURL}/chato/api/domains/${formState.id}/files/upload`
+  return {
+    qa: `${uri}/qa`,
+    doc: `${uri}/document`
+  }
+})
 
 const tabComponents = computed(() => {
   const list = [
@@ -170,6 +201,16 @@ const closeVisible = () => {
 const onClickTab = (key) => {
   if (key === 'preview') chatMobileModalVisible.value = true
   activeTab.value = key
+}
+
+const onSetDOCModalVisible = (value: boolean, fn?: Function) => {
+  cdFn = fn
+  DOCModalVisible.value = value
+}
+
+const onCloseEnterModal = () => {
+  DOCModalVisible.value = false
+  initFilesList()
 }
 
 const getRandomColor = () =>
@@ -235,6 +276,10 @@ const initFilesList = async () => {
       data: { data }
     } = await getFilesByDomainId(formState.id.toString(), { page: 1, page_size: 1000 })
     uploadFilesList.value = data
+    if (cdFn) {
+      cdFn(data)
+      cdFn = undefined
+    }
   } catch (e) {
   } finally {
     uploadFilesListLoading.value = false

@@ -3,7 +3,7 @@
     ref="scrollContainerRef"
     v-loading="loading"
     element-loading-background="rgba(255, 255, 255, 0.08)"
-    class="h-full overflow-y-auto lg:px-4 xl:px-[18%] 2xl:px-[24%] pt-3 pb-8 space-y-4 scroll-smooth"
+    class="bot-create-center-padding h-full overflow-y-auto lg:px-4 xl:px-[18%] 2xl:px-[24%] pt-3 pb-8 space-y-4 scroll-smooth"
   >
     <Transition name="left">
       <div v-show="currentStep > 0">
@@ -95,6 +95,13 @@
           <p v-else>
             {{ $t('基于AI大模型的TA有很多常识，现在就可以右侧输入体验') }}
           </p>
+          <p>
+            {{ $t(` 当然，互联网用户也可以来访问你的机器人了，如果需要你也可以`)
+            }}<span class="text-[#7C5CFC] cursor-pointer" @click="onBotTocPrivacy"
+              >{{ $t('关闭') }}
+            </span>
+            {{ $t('该权限') }}
+          </p>
         </div>
       </div>
     </Transition>
@@ -107,81 +114,177 @@
           </div>
           <p>
             {{ $t(`☞ TA的信息完整度12%，`) }}
+            <span class="text-[#7C5CFC] cursor-pointer" @click="onClickTab('gui')">
+              {{ $t('完善资料') }}
+            </span>
           </p>
           <p>
             {{ $t(`☞ TA目前只有大模型知识，`) }}
+            <span
+              class="text-[#7C5CFC] cursor-pointer"
+              @click="onSetDOCModalVisible(true, pushDOCItem)"
+              >{{ $t('灌输知识') }}</span
+            >
           </p>
           <p>
             {{ $t('☞ 让大家都来向TA提问，') }}
+            <span
+              class="text-[#7C5CFC] cursor-pointer"
+              @click="
+                delayIncreaseStep(500, {
+                  name: 'left',
+                  type: 'share'
+                })
+              "
+            >
+              {{ $t('分享发布') }}
+            </span>
           </p>
         </div>
       </div>
     </Transition>
-    <Transition name="left">
-      <div v-show="currentStep > 6">
-        <ChatoDomainAvatar />
-        <div class="left-bubble">
-          <div class="title">
-            {{ $t('✨ 欢迎把TA分享给任何人') }}
+    <div v-for="(item, index) in transitionList" :key="index">
+      <Transition :name="item.name">
+        <div :style="{ 'text-align': `-webkit-${item.name}`  } as unknown as StyleValue">
+          <ChatoDomainAvatar v-if="item.name === 'left'" />
+          <div :class="`${item.name}-bubble`" v-if="item.type === 'share'">
+            <div class="title">
+              {{ $t('✨ 欢迎把TA分享给任何人') }}
+            </div>
+            <p class="flex items-center">
+              {{ $t(`☞  网页访问，`) }}
+              <span
+                class="text-[#7C5CFC] cursor-pointer mr-1"
+                @click="$copyText(link, '链接已复制成功，快分享给你的好友吧！')"
+                >{{ $t('复制链接') }}</span
+              >
+              <QrCode
+                :value="link"
+                :bordered="false"
+                errorLevel="M"
+                :isImg="false"
+                title="下载码"
+              />
+            </p>
+            <p>
+              {{ $t(`☞  小程序访问，`) }}
+              <span class="text-[#7C5CFC] cursor-pointer mr-1" @click="copyText">{{
+                $t('复制链接')
+              }}</span>
+            </p>
+            <p>
+              {{ $t('☞  微信抖音等第三方') }}
+            </p>
           </div>
-          <p>
-            {{ $t(`☞  网页访问，`) }}
-          </p>
-          <p>
-            {{ $t(`☞  小程序访问，`) }}
-          </p>
-          <p>
-            {{ $t('☞  微信抖音等第三方') }}
-          </p>
-        </div>
-      </div>
-    </Transition>
-    <Transition name="left">
-      <div v-show="currentStep > 7">
-        <ChatoDomainAvatar />
-        <div class="left-bubble">
-          <div class="title">
-            {{ $t('😁 你的机器人诞生了！') }}
+          <div :class="`${item.name}-bubble`" v-if="item.type === 'doc'">
+            <p
+              v-for="file in item.filesList"
+              :key="file.id"
+              class="flex text-[#fff] text-sm items-center gap-2"
+            >
+              <svg-icon name="document" svg-class="w-4 h-4" />
+              <span class="flex-1 truncate transition-colors cursor-pointer">
+                {{ file.title }}
+              </span>
+              <!-- <span class="text-[#7C5CFC]">{{ $t(getFileStatusName(item.status)) }}</span>
+              <el-button link :icon="Close" @click="onDeleteFile(item.id)" /> -->
+            </p>
           </div>
-          <p>
-            {{ $t(`你创建的机器人「${formState.name}」`) }}
-          </p>
-          <p>
-            {{ $t(`生日：${nowDay}`) }}
-          </p>
-          <p>
-            {{ $t('基于AI大模型的TA有很多常识，现在就可以马上体验') }}
-          </p>
+          <div :class="`${item.name}-bubble`" v-else>
+            <div class="title" v-if="item.title">
+              {{ $t(item.title) }}
+            </div>
+            <p v-if="item.data">
+              {{ $t(item.data) }}
+            </p>
+          </div>
         </div>
-      </div>
-    </Transition>
+      </Transition>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { getAppletLink } from '@/api/domain'
 import { getFirstGuideInterestDomains } from '@/api/industry'
 import { useBasicLayout } from '@/composables/useBasicLayout'
+import useGlobalProperties from '@/composables/useGlobalProperties'
 import { DomainCreateSymbol } from '@/constant/domain'
 import type { IDomainInfo } from '@/interface/domain'
+import type { IDocumentList } from '@/interface/knowledge'
+import QrCode from '@/views/training/release/components/releaseView/components/webPage/QrCode.vue'
 import dayjs from 'dayjs'
-import { inject, ref } from 'vue'
+import { computed, inject, nextTick, ref, watch, type StyleValue } from 'vue'
+
+type ITransitionItem =
+  | {
+      name: 'left' | 'right'
+      type: 'share' | 'text'
+      title?: string
+      data?: string
+    }
+  | {
+      name: 'left' | 'right'
+      type: 'doc'
+      filesList: IDocumentList[]
+    }
 
 defineProps<{
   onClickTab: (value) => void
+  onSetDOCModalVisible: (value: boolean, cd?: Function) => void
 }>()
+
 const currentStep = ref(0)
 const loading = ref(false)
 const interestDomains = ref<IDomainInfo[]>([])
+const transitionList = ref<ITransitionItem[]>([])
 const formState = inject(DomainCreateSymbol)
 const { isMobile } = useBasicLayout()
+const { $copyText } = useGlobalProperties()
+const link = computed(() => `${window.location.origin}/b/${formState.slug}`)
 const increaseStep = () => {
   currentStep.value += 1
 }
-const delayIncreaseStep = (time = 300) => {
+
+const pushDOCItem = (data: IDocumentList[]) => {
+  delayIncreaseStep(500, {
+    type: 'doc',
+    name: 'right',
+    filesList: data
+  })
+  delayIncreaseStep(1000, {
+    type: 'text',
+    name: 'left',
+    data: '文档只需几分钟学习完'
+  })
+}
+
+const onBotTocPrivacy = () => {
+  formState.toc_privacy = 0
+  delayIncreaseStep(0, {
+    type: 'text',
+    name: 'right',
+    data: '关闭公开访问权限'
+  })
+  delayIncreaseStep(500, {
+    type: 'text',
+    name: 'left',
+    data: '已关闭'
+  })
+}
+
+const delayIncreaseStep = (time = 300, item?: ITransitionItem) => {
   setTimeout(() => {
-    increaseStep()
+    item ? transitionList.value.push(item) : increaseStep()
+    console.log(transitionList.value)
   }, time)
 }
+
+const copyText = async () => {
+  const link = await getLinkByWX()
+  $copyText(link, '链接已复制成功，快分享给你的好友吧！')
+}
+
 const setObjByObj = <T extends object>(obj1: T, obj2: T, pick?: (keyof T)[]) => {
   Object.keys(obj2).forEach((key) => {
     const _key = key as keyof T
@@ -196,8 +299,12 @@ const onSelectInterest = (item: IDomainInfo) => {
   // console.log(formState)
   delayIncreaseStep(1000)
   delayIncreaseStep(2000)
-  delayIncreaseStep(3000)
 }
+const getLinkByWX = async () => {
+  const res = await getAppletLink(formState.slug)
+  return res.data.data.url_link
+}
+
 const nowDay = dayjs()
   .format('YYYY-MM-DD')
   .split('-')
@@ -220,8 +327,34 @@ const init = async () => {
   }
 }
 init()
+const scrollContainerRef = ref()
+let latestScrollHeight = 0
+const onScrollBottom = () => {
+  nextTick(() => {
+    const { scrollHeight, scrollTop } = scrollContainerRef.value
+
+    if (latestScrollHeight !== scrollHeight && scrollHeight > scrollTop) {
+      latestScrollHeight = scrollHeight
+      scrollContainerRef.value.scrollTo({
+        top: scrollHeight,
+        behavior: 'smooth'
+      })
+    }
+  })
+}
+
+watch(currentStep, () => {
+  onScrollBottom()
+})
+
+watch(transitionList, () => {
+  onScrollBottom()
+})
 </script>
 <style lang="scss">
+.bot-create-center-padding {
+  @apply px-16 lg:px-4;
+}
 .left-bubble {
   @apply w-fit mt-2 mr-3 bg-[#F8F8F8] rounded-2xl rounded-tl-[2px] overflow-hidden py-3 px-4 text-[15px] tracking-[0.13px] text-[#596780] break-words leading-6;
 
