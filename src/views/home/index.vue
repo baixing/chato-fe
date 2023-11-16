@@ -288,7 +288,7 @@ const onEnter = (type?: string) => {
   }
 
   if (type === 'Chato_bottom_conact_click' || type === 'Chato_case_bottom_wechat_click') {
-    checkRightsTypeNeedUpgrade(ESpaceRightsType.default)
+    checkRightsTypeNeedUpgrade(ESpaceRightsType.default, false)
     return
   }
 

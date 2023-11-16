@@ -77,9 +77,10 @@ export default function useSpaceRights() {
     ESpaceRightsType.paintQuota
   ]
 
-  const onOpenUpgradeRightsModal = (type: ESpaceRightsType) => {
+  const onOpenUpgradeRightsModal = (type: ESpaceRightsType, toVip: boolean) => {
     if (
       route.name !== RoutesMap.vip.center &&
+      currentRights.value &&
       [ESpaceCommercialType.free, ESpaceCommercialType.freeFirstExp].includes(
         currentRights.value.type
       ) &&
@@ -90,7 +91,8 @@ export default function useSpaceRights() {
         ESpaceRightsType.createAccount,
         ESpaceRightsType.space,
         ESpaceRightsType.usage
-      ].includes(type)
+      ].includes(type) &&
+      toVip
     ) {
       router.push({ name: RoutesMap.vip.center })
     } else {
@@ -98,7 +100,7 @@ export default function useSpaceRights() {
     }
   }
 
-  const checkRightsTypeNeedUpgrade = async (type: ESpaceRightsType) => {
+  const checkRightsTypeNeedUpgrade = async (type: ESpaceRightsType, toVip = true) => {
     try {
       // 针对群聊权益不同类型
       let rightsType = type
@@ -113,7 +115,7 @@ export default function useSpaceRights() {
       // 升级无固定类型权益弹框展示
       if (ShowDirectlyRightsType.includes(type)) {
         // upgradeRightsVisible.value = true
-        onOpenUpgradeRightsModal(type)
+        onOpenUpgradeRightsModal(type, toVip)
         return true
       }
 
@@ -131,14 +133,14 @@ export default function useSpaceRights() {
 
         if (data) {
           // upgradeRightsVisible.value = true
-          onOpenUpgradeRightsModal(type)
+          onOpenUpgradeRightsModal(type, toVip)
           return true
         } else {
           return false
         }
       }
 
-      onOpenUpgradeRightsModal(type)
+      onOpenUpgradeRightsModal(type, toVip)
       // upgradeRightsVisible.value = true
       return true
     } catch (err) {
