@@ -1,4 +1,6 @@
 import { EDomainConversationMode, EDomainConversationModeArousalMethod } from '@/enum/domain'
+import type { IDomainInfo } from '@/interface/domain'
+import type { InjectionKey } from 'vue'
 
 export const DomainCategoryOptions = [
   {
@@ -63,7 +65,7 @@ export const DomainReplyParagraph = [
   { label: '二段', value: 2 },
   { label: '三段', value: 3 },
   { label: '四段', value: 4 }
-]
+] as const
 
 export const DomainConversationModeOptions = [
   { label: '文字', value: EDomainConversationMode.text },
@@ -78,3 +80,4 @@ export const DomainConversationModeArousalMethodOptions = [
 export const DebugDomainSymbol = Symbol('temporary-debug-domain')
 export const DomainEditSymbol = Symbol('domain-edit')
 export const DomainHansLimitSymbol = Symbol('domain-hans-limit')
+export const DomainCreateSymbol = Symbol('domain-create') as InjectionKey<Partial<IDomainInfo>>

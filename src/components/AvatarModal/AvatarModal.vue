@@ -2,9 +2,10 @@
   <Avatar
     :avatar="imgUrl || DefaultAvatar"
     @click="onSetAvatar"
-    :size="48"
+    :size="size || 48"
     :name="name"
     class="w-12 h-12 cursor-pointer"
+    :class="[size ? `w-[${size}px] h-[${size}px]` : '']"
   />
   <Modal v-model:visible="visible" title="选择头像" @submit="onSubmit" width="484px">
     <div class="flex flex-col items-center pb-5">
@@ -78,6 +79,7 @@ import { useI18n } from 'vue-i18n'
 const props = defineProps<{
   imgUrl: string
   name: string
+  size?: number
 }>()
 const name = computed(() => props.name.slice(0, 2))
 const emit = defineEmits(['update:imgUrl', 'submit'])
