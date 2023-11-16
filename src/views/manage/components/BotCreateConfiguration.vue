@@ -155,7 +155,10 @@
       </p>
     </div>
   </div>
-  <div class="bot-create-center-padding cursor-pointer pb-4">
+  <div
+    class="bot-create-center-padding cursor-pointer pb-4"
+    :class="[!isAdvancedSettings ? '!pb-[60px]' : '']"
+  >
     <div
       @click="isAdvancedSettings = !isAdvancedSettings"
       class="bg-[#F2F3F5] rounded-lg h-14 p-3 text-sm flex justify-between items-center"
