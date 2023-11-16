@@ -5,6 +5,7 @@
     element-loading-background="rgba(255, 255, 255, 0.08)"
     class="bot-create-center-padding h-full overflow-y-auto lg:px-4 xl:px-[18%] 2xl:px-[24%] pt-3 pb-8 space-y-4 scroll-smooth"
   >
+    {{ formState.id }}
     <Transition name="left">
       <div v-show="currentStep > 0">
         <ChatoDomainAvatar />
@@ -199,6 +200,9 @@
             </p>
             <p>
               {{ $t('☞  微信抖音等第三方') }}
+              <span class="text-[#7C5CFC] cursor-pointer mr-1" @click="routerPush">{{
+                $t('前往分享')
+              }}</span>
             </p>
           </div>
           <div :class="`${item.name}-bubble`" v-if="item.type === 'doc'">
@@ -280,7 +284,7 @@ const { $copyText } = useGlobalProperties()
 const baseStoreI = useBase()
 const { orgInfo } = storeToRefs(baseStoreI)
 
-const userRoute = `/t/bot/${formState.id}/release`
+const userRoute = computed(() => `/t/bot/${formState.id}/release`)
 const link = computed(() => `${window.location.origin}/b/${formState.slug}`)
 const increaseStep = () => {
   currentStep.value += 1
@@ -296,7 +300,7 @@ const formOrgState = reactive<{
   organization_type_name: ''
 })
 
-const routerPush = () => router.push({ path: userRoute })
+const routerPush = () => router.push({ path: userRoute.value })
 
 const pushDOCItem = (data: IDocumentList[]) => {
   if (data.length === 0) return
