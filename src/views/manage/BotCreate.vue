@@ -248,7 +248,7 @@ const { t } = useI18n()
 const chatMobileModalVisible = ref(false)
 
 // 是否修改过
-const isModified = computed(() => !isEqual(formState, originalFormState))
+const isModified = () => !isEqual(formState, originalFormState)
 // 选择模板创建，模板回填的字段是否和填写字段完全一致，一致触发「继续优化」逻辑
 const isFormStateSameTemplate = computed(() => {
   const { name, system_prompt, desc, welcome } = formState
@@ -488,7 +488,7 @@ watch(
 
 onBeforeRouteLeave(async (to, from, next) => {
   try {
-    if (!isModified.value || !canSave.value) {
+    if (!isModified() || !canSave.value) {
       return
     }
     await ElMessageBox.confirm(t('您还未完成机器人创建，是否先存为草稿？'), t('存为草稿'), {
@@ -522,7 +522,7 @@ onMounted(() => {
   init()
 
   window.onbeforeunload = () => {
-    if (isModified.value) {
+    if (isModified()) {
       return true
     }
   }
