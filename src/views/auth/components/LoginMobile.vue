@@ -37,16 +37,9 @@
       type="primary"
       size="large"
       :disabled="!isBtnSubmitEnabled"
-      @click="
-        submitForm(
-          slotProps.refBtnSend,
-          slotProps.ref,
-          slotProps.modelForm,
-          slotProps.isInputChannel
-        )
-      "
+      @click="submitFormOrSendSms(slotProps)"
     >
-      {{ $t(submitBtnText) }}
+      {{ $t(slotProps.showSmsCodeInput ? submitBtnText : '获取验证码') }}
     </el-button>
   </MobileForm>
 </template>
@@ -108,5 +101,14 @@ const submitForm = (
       refBtnSend.ref.blur()
     }
   })
+}
+
+function submitFormOrSendSms(slotProps) {
+  if (slotProps.showSmsCodeInput) {
+    submitForm(slotProps.refBtnSend, slotProps.ref, slotProps.modelForm, slotProps.isInputChannel)
+  } else {
+    slotProps.sendSmsCode(slotProps.ref)
+    console.log(slotProps.showSmsCodeInput)
+  }
 }
 </script>
