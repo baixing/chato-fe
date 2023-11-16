@@ -347,9 +347,12 @@ watch(currentStep, () => {
   onScrollBottom()
 })
 
-watch(transitionList, () => {
-  onScrollBottom()
-})
+watch(
+  () => transitionList.value.length,
+  () => {
+    onScrollBottom()
+  }
+)
 </script>
 <style lang="scss">
 .bot-create-center-padding {
