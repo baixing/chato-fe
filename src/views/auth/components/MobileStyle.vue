@@ -81,7 +81,7 @@
       <transition name="fade">
         <div>
           <div v-show="showSmsCodeInput" class="mt-0 font-medium text-lg text-center w-full mb-4">
-            输入验证码
+            {{ $t('请输入验证码') }}
           </div>
           <VerificationInput
             v-if="isMobile"
