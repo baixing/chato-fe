@@ -186,7 +186,7 @@
       >
         {{ t('联系训练师') }}
       </el-link>
-      <img v-else class="w-[200px] h-[200px] mt-4 mx-auto" src="@/assets/img/lock-crcode.png" />
+      <img v-else class="w-[400px] mt-6 mx-auto" src="@/assets/img/lock-crcode.png" />
     </div>
   </Modal>
 </template>

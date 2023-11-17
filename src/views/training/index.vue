@@ -18,7 +18,7 @@
           <Avatar
             :avatar="domainInfo.avatar || DefaultAvatar"
             :size="28"
-            :name="domainInfo.name.slice(0, 2)"
+            :name="domainInfo.name?.slice(0, 2)"
           />
           <p class="max-w-[120px] truncate text-sm font-medium">
             {{ domainInfo.name }}

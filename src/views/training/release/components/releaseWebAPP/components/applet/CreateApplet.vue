@@ -1,34 +1,28 @@
 <template>
-  <Modal width="40%" mbile-width="95%" v-model:visible="visible" title="配置小程序" :footer="false">
-    <component
-      :is="appletComponet[currentEmpowerStatus]"
-      @handleEmpower="handleEmpower"
-      @handleView="handleView"
-    />
-  </Modal>
+  <component
+    :is="appletComponet[currentEmpowerStatus]"
+    @handleEmpower="handleEmpower"
+    @handleView="handleView"
+  />
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { postMiniAppAuthUrlAPI } from '@/api/release'
+import { EAppletcStatus } from '@/enum/release'
+import { ElMessageBox } from 'element-plus'
+import { ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import Empower from './components/Empower.vue'
 import EmpowerResult from './components/EmpowerResult.vue'
-import { EAppletcStatus } from '@/enum/release'
-import { postMiniAppAuthUrlAPI } from '@/api/release'
-import { ElMessageBox } from 'element-plus'
-import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{
-  value: boolean
+  visible: boolean
   domainId: number | string
   defaultAppletcStatus: EAppletcStatus
 }>()
 const emit = defineEmits(['update:value', 'handleView'])
 
 const { t } = useI18n()
-const visible = computed({
-  set: (val) => emit('update:value', val),
-  get: () => props.value
-})
 const currentEmpowerStatus = ref(EAppletcStatus.empower)
 const appletComponet = {
   [EAppletcStatus.empower]: Empower,
@@ -53,7 +47,6 @@ const handleEmpower = async () => {
 }
 
 const handleView = () => {
-  visible.value = false
   emit('handleView')
 }
 
@@ -65,9 +58,12 @@ watch(
   { immediate: true }
 )
 
-watch(visible, (v) => {
-  !v && (currentEmpowerStatus.value = EAppletcStatus.empower)
-})
+watch(
+  () => props.visible,
+  (v) => {
+    !v && (currentEmpowerStatus.value = EAppletcStatus.empower)
+  }
+)
 </script>
 
 <style scoped></style>

@@ -102,11 +102,11 @@ const onSubmit = async () => {
     await formRef.value.validate()
     SSEPromptRes = ''
     emit('submit', formState.role, formState.role_requirement)
-    const res = await onSSE(EDomainAIGenerateType.role)
-    const allPromises = [EDomainAIGenerateType.intro, EDomainAIGenerateType.welcome].map((item) =>
-      onSSE(item, SSEPromptRes)
-    )
-    await Promise.all(allPromises)
+    await onSSE(EDomainAIGenerateType.role)
+    // const allPromises = [EDomainAIGenerateType.intro, EDomainAIGenerateType.welcome].map((item) =>
+    //   onSSE(item, SSEPromptRes)
+    // )
+    // await Promise.all(allPromises)
   } catch (e) {
   } finally {
     emit('done')

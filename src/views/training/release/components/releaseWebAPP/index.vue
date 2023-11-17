@@ -13,12 +13,10 @@ import { useSpaceStore } from '@/stores/space'
 import { copyPaste } from '@/utils/help'
 import { getSpecifiedDateSinceNowDay } from '@/utils/timeRange'
 import {
-  ChatDotRound,
   CirclePlus,
   CopyDocument,
   Document,
-  FolderChecked,
-  FullScreen,
+  Tools,
   UploadFilled,
   View
 } from '@element-plus/icons-vue'
@@ -43,31 +41,14 @@ const ApplicationForm = defineAsyncComponent(
   () => import('../releaseView/components/application/ApplicationForm.vue')
 )
 const BrandDomain = defineAsyncComponent(
-  () => import('../releaseView/components/brandDomain/BrandDomainIndex.vue')
+  () => import('./components/brandDomain/BrandDomainIndex.vue')
 )
-const DrawerSite = defineAsyncComponent(
-  () => import('../releaseView/components/implantJs/DrawerSite.vue')
-)
-const SetEffectSite = defineAsyncComponent(
-  () => import('../releaseView/components/implantJs/SetEffectSite.vue')
-)
-const Copylink = defineAsyncComponent(
-  () => import('../releaseView/components/webPage/Copylink.vue')
-)
-const CreatePoster = defineAsyncComponent(
-  () => import('../releaseView/components/gzhPoster/SharePoster.vue')
-)
-const CreateApplet = defineAsyncComponent(
-  () => import('../releaseView/components/applet/CreateApplet.vue')
-)
-const DrawerApplet = defineAsyncComponent(
-  () => import('../releaseView/components/applet/DrawerApplet.vue')
-)
-const VerificationTxt = defineAsyncComponent(
-  () => import('../releaseView/components/applet/VerificationTxt.vue')
-)
-const ExperienceApplet = defineAsyncComponent(() => import('./components/ExperienceApplet.vue'))
-
+const DrawerSite = defineAsyncComponent(() => import('./components/implantJs/DrawerSite.vue'))
+const SetEffectSite = defineAsyncComponent(() => import('./components/implantJs/SetEffectSite.vue'))
+const Copylink = defineAsyncComponent(() => import('./components/webPage/Copylink.vue'))
+const CreatePoster = defineAsyncComponent(() => import('./components/gzhPoster/SharePoster.vue'))
+const DrawerApplet = defineAsyncComponent(() => import('./components/applet/DrawerApplet.vue'))
+const SettingApplet = defineAsyncComponent(() => import('./components/applet/SettingApplet.vue'))
 const route = useRoute()
 const { t } = useI18n()
 const base = useBase()
@@ -105,8 +86,7 @@ const features = reactive({
   createPoster: false, // 海报
   createAppletVisible: false, // 小程序-扫码授权
   drawerAppletVisible: false, // 小程序-查看授权结果
-  domainVerificationVisible: false, // 小程序-域名校验
-  experienceAppletVisible: false // 小程序-小程序体验
+  settingAppletVisible: false // 小程序-配置小程序
 })
 
 const {
@@ -117,8 +97,7 @@ const {
   createAppletVisible,
   createPoster,
   drawerAppletVisible,
-  domainVerificationVisible,
-  experienceAppletVisible
+  settingAppletVisible
 } = toRefs(features)
 
 const { checkRightsTypeNeedUpgrade } = useSpaceRights()
@@ -223,10 +202,10 @@ const releaseList = [
     desc: t('支持企业授权绑定小程序，提供机器人服务'),
     setList: [
       {
-        icon: FullScreen,
-        label: t('扫码授权'),
+        icon: Tools,
+        label: t('配置小程序'),
         scriptId: 'Chato-applet-set',
-        click: () => commonVisible(createAppletVisible)
+        click: () => commonVisible(settingAppletVisible)
       },
       {
         icon: View,
@@ -239,18 +218,6 @@ const releaseList = [
         label: t('配置文档'),
         scriptId: 'Chato-applet-document',
         click: () => handlePreview(appletConfigDocs)
-      },
-      {
-        icon: FolderChecked,
-        label: t('域名校验'),
-        scriptId: 'Chato-applet-domain',
-        click: () => commonVisible(domainVerificationVisible)
-      },
-      {
-        icon: ChatDotRound,
-        label: t('小程序体验'),
-        scriptId: 'Chato-applet-experience',
-        click: () => commonVisible(experienceAppletVisible)
       }
     ]
   }
@@ -353,22 +320,19 @@ onMounted(() => {
     />
     <Copylink v-model:value="showCopyLinkVisbile" :chatWebPage="chatReleaseURL.chatWebPage" />
     <CreatePoster v-model:value="createPoster" :domainId="botId" />
-    <CreateApplet
-      v-model:value="createAppletVisible"
-      :defaultAppletcStatus="defaultAppletcStatus"
-      :domainId="domainInfo.id"
-      @handleView="drawerAppletVisible = true"
-    />
     <DrawerApplet
       v-model:value="drawerAppletVisible"
       :domainId="domainInfo.id"
       @handleRetry="createAppletVisible = true"
     />
-    <VerificationTxt
-      v-model:value="domainVerificationVisible"
+    <SettingApplet
+      v-model:value="settingAppletVisible"
+      :defaultAppletcStatus="defaultAppletcStatus"
+      :domainId="domainInfo.id"
+      :slug="domainInfo.slug"
       :chatAPI="chatReleaseURL.chatWebPage"
+      @handleView="drawerAppletVisible = true"
     />
-    <ExperienceApplet v-model:value="experienceAppletVisible" :slug="botSlug" />
   </div>
 </template>
 
