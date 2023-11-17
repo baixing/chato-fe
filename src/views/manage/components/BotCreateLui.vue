@@ -343,8 +343,7 @@ const copyText = async () => {
 const setObjByObj = <T extends object>(obj1: T, obj2: T, pick?: (keyof T)[]) => {
   Object.keys(obj2).forEach((key) => {
     const _key = key as keyof T
-    if (pick.includes(_key)) return
-    obj1[_key] = obj2[_key] ?? obj1[_key]
+    if (pick.includes(_key)) obj1[_key] = obj2[_key] ?? obj1[_key]
   })
 }
 
@@ -364,7 +363,22 @@ const onSelectScenes = async (item: (typeof ScenesList)[number]) => {
 }
 
 const onSelectInterest = (item: IDomainInfo) => {
-  setObjByObj(formState, item, ['org', 'id'])
+  setObjByObj(formState, item, [
+    'avatar',
+    'system_prompt',
+    'welcome',
+    'message_style',
+    'suspend_style',
+    'desc',
+    'llm',
+    'name',
+    'top_k',
+    'lang',
+    'reply_tone',
+    'qa_threshold',
+    'doc_threshold',
+    'temperature'
+  ])
   if (!orgInfo.value.additions) {
     delayIncreaseStep(1000)
   } else {
