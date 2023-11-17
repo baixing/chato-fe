@@ -7,7 +7,7 @@
       type="create"
       @correctAnswer="onCorrectAnswer"
       @showDrawer="onOpenDrawer"
-      :avatar_show="avatar_show"
+      :avatarShow="avatarShow"
       chatClassName="chat-debug"
     />
     <div
@@ -56,7 +56,7 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 const base = useBase()
 defineProps<{
-  avatar_show?: boolean
+  avatarShow?: boolean
 }>()
 const debugDomain = inject<IDomainInfo>(DebugDomainSymbol)
 const domainId = computed(() => debugDomain?.id?.toString() || '')

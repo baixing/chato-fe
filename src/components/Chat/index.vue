@@ -1,7 +1,7 @@
 <template>
   <div class="container-preview-page bg-white relative">
     <div
-      v-if="detail.name_and_avatar_show && avatar_show"
+      v-if="detail.name_and_avatar_show && avatarShow"
       class="flex items-center justify-center h-14 bg-white mb-0 text-sm font-medium gap-2 shrink-0"
       style="border-bottom: 1px solid #eee"
     >
@@ -250,7 +250,7 @@ interface Props {
   chatByAudio?: boolean
   type?: 'create'
   authLogin?: boolean
-  avatar_show?: boolean
+  avatarShow?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -258,7 +258,7 @@ const props = withDefaults(defineProps<Props>(), {
   bSlug: '',
   isChatingPractice: false,
   isreadRouteParam: false,
-  avatar_show: true
+  avatarShow: true
 })
 
 const debugDomain = inject<IDomainInfo>(DebugDomainSymbol, null)

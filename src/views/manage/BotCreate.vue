@@ -46,7 +46,7 @@
             :is="item.component"
             :onClickTab="onClickTab"
             :onSetDOCModalVisible="onSetDOCModalVisible"
-            :avatar_show="false"
+            :avatarShow="false"
             class="w-full h-full"
           />
         </el-tab-pane>

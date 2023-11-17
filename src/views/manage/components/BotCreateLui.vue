@@ -5,7 +5,6 @@
     element-loading-background="rgba(255, 255, 255, 0.08)"
     class="bot-create-center-padding h-full overflow-y-auto lg:px-4 xl:px-[18%] 2xl:px-[24%] pt-3 pb-8 space-y-4 scroll-smooth"
   >
-    {{ formState.id }}
     <Transition name="left">
       <div v-show="currentStep > 0">
         <ChatoDomainAvatar />
