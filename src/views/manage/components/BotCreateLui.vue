@@ -115,23 +115,17 @@
           </p>
           <p v-if="isMobile">
             {{ $t('基于AI大模型的TA有很多常识，现在就可以') }}
-            <el-button
-              class="text-[#7C5CFC] cursor-pointer"
-              @click="onClickTab('preview')"
-              type="primary"
-              >{{ $t('马上体验') }}
-            </el-button>
           </p>
           <p v-else>
             {{ $t('基于AI大模型的TA有很多常识，现在就可以右侧输入体验') }}
           </p>
-          <p>
-            {{ $t(` 当然，互联网用户也可以来访问你的机器人了，如果需要你也可以`)
-            }}<span class="text-[#7C5CFC] cursor-pointer" @click="onBotTocPrivacy">
-              {{ $t('关闭') }}
-            </span>
-            {{ $t('该权限') }}
-          </p>
+          <el-button
+            v-if="isMobile"
+            class="!text-[#7C5CFC] !text-xs cursor-pointer mt-[10px] !rounded-lg !border-[#7C5CFC]"
+            @click="onClickTab('preview')"
+            plain
+            >{{ $t('马上体验') }}
+          </el-button>
         </div>
       </div>
     </Transition>
@@ -164,6 +158,13 @@
             >
               {{ $t('分享发布') }}
             </span>
+          </p>
+          <p>
+            {{ $t(`☞ 当然，互联网用户也可以来访问你的机器人了，如果需要你也可以`)
+            }}<span class="text-[#7C5CFC] cursor-pointer" @click="onBotTocPrivacy">
+              {{ $t('关闭') }}
+            </span>
+            {{ $t('该权限') }}
           </p>
         </div>
       </div>
