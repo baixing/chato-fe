@@ -294,7 +294,7 @@ const onEnter = (type?: string) => {
 
   if (authToken.value) {
     if (EAllRole.member === userInfo.value?.role) {
-      router.push({ name: RoutesMap.resource })
+      router.push({ name: RoutesMap.home.homeResource })
     } else {
       router.push({ name: RoutesMap.manager.center })
     }

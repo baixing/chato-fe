@@ -6,7 +6,7 @@
       class="h-0 md:!h-16"
       :existMenuMore="route.path.indexOf('c') === -1"
     />
-    <SquareHeader :requiredTopbar="requiredTopbar" v-if="requiredTopbar" />
+    <SquareHeader />
     <ContentLayout
       class="!overflow-hidden !h-auto"
       v-loading="initing"
@@ -15,7 +15,7 @@
       <div
         v-for="(item, index) in resourceList"
         :key="item.type"
-        :class="[index === resourceList.length - 1 ? 'mb-0' : 'mb-8 lg:mb-4']"
+        :class="['w-full', index === resourceList.length - 1 ? 'mb-0' : 'mb-8 lg:mb-4']"
       >
         <p
           class="text-base font-medium tracking-[0.13px] text-[#3D3D3D] mb-6 flex items-center gap-[10px] lg:mb-4"
@@ -27,21 +27,27 @@
             class="bg-white rounded-lg line-clamp-2 cursor-pointer hover:shadow-lg hover:-translate-y-2 lg:space-y-3 lg:hover:-translate-y-0 transition-all"
             v-for="c in item.data"
             :key="c.id"
-            @click="onAddSessionChat(c)"
           >
             <div class="p-5 pb-0">
-              <div class="flex items-center mb-5 lg:flex-col lg:!mb-2">
-                <Avatar
-                  :avatar="c.avatar || DefaultAvatar"
-                  :size="44"
-                  :name="c.name.slice(0, 2)"
-                  class="w-[44px] h-[44px] object-cover overflow-hidden shrink-0 rounded-full"
-                />
-                <div
-                  class="text-[#3D3D3D] text-sm font-medium truncate pl-3 lg:text-center lg:pl-0 lg:mt-2"
-                >
-                  {{ c.name }}
+              <div class="flex items-center justify-between mb-5 lg:flex-col lg:!mb-2">
+                <div class="flex items-center lg:flex-col">
+                  <Avatar
+                    :avatar="c.avatar || DefaultAvatar"
+                    :size="44"
+                    :name="c.name.slice(0, 2)"
+                    class="w-[44px] h-[44px] object-cover overflow-hidden shrink-0 rounded-full"
+                  />
+                  <div
+                    class="text-[#3D3D3D] text-sm font-medium truncate pl-3 lg:text-center lg:pl-0 lg:mt-2"
+                  >
+                    {{ c.name }}
+                  </div>
                 </div>
+                <svg-icon
+                  @click="onPreviewQRCode(c)"
+                  name="qr-code"
+                  svg-class="w-[30px] h-[30px] lg:mt-2"
+                />
               </div>
               <div
                 class="text-[#9DA3AF] text-xs line-clamp-2 h-8 mb-5 lg:!mb-2"
@@ -57,24 +63,25 @@
                 class="basis-1/2 text-center border-0 h-full leading-[44px] border-r border-solid border-[#E4E7ED] flex items-center justify-center hover:!text-[#7C5CFC]"
                 @click.stop="onGoCreate(c.slug)"
               >
-                <el-icon class="mr-1 !text-base lg:!hidden"
-                  ><Plus class="text-[#9DA3AF]"
-                /></el-icon>
+                <el-icon class="mr-1 !text-base lg:!hidden">
+                  <Plus class="text-[#9DA3AF]" />
+                </el-icon>
                 <div class="text-xs">{{ t('创建同款') }}</div>
               </div>
               <div
                 class="basis-1/2 text-center flex items-center justify-center hover:!text-[#7C5CFC]"
               >
-                <el-icon class="mr-1 !text-base lg:!hidden"
-                  ><ChatDotRound class="text-[#9DA3AF]"
-                /></el-icon>
-                <div class="text-xs">{{ t('对话') }}</div>
+                <el-icon class="mr-1 !text-base lg:!hidden">
+                  <ChatDotRound class="text-[#9DA3AF]" />
+                </el-icon>
+                <div class="text-xs" @click="onAddSessionChat(c)">{{ t('对话') }}</div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </ContentLayout>
+    <QrCodeRobot v-model:value="visibleQRCode" :slug="currentSlug" />
   </div>
 </template>
 <script lang="ts" setup>
@@ -91,6 +98,7 @@ import { storeToRefs } from 'pinia'
 import { computed, defineEmits, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
+import QrCodeRobot from './components/QrCodeRobot.vue'
 import SquareHeader from './components/SquareHeader.vue'
 
 const props = withDefaults(
@@ -146,6 +154,14 @@ const initing = ref(false)
 
 const onGoCreate = (slug: string) => {
   router.push({ name: RoutesMap.manager.create, params: { botSlug: slug } })
+}
+
+const visibleQRCode = ref(false)
+const currentSlug = ref('')
+
+const onPreviewQRCode = (item) => {
+  currentSlug.value = item.slug
+  visibleQRCode.value = true
 }
 
 const init = async () => {

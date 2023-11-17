@@ -2,10 +2,10 @@
   <div class="overflow-hidden w-full h-[calc(100%-74px)] mt-[74px] flex bg-white">
     <ChatSidebar v-show="!isMobile" prefix="" style="border-right: 1px solid rgb(228, 231, 237)" />
     <Square
-      class="bg-[#f2f3f5]"
+      class="bg-[#f2f3f5] w-full"
       v-if="square"
       prefix=""
-      :requiredTopbar="true"
+      :requiredTopbar="false"
       :existMenuMore="false"
     />
     <div v-else class="relative w-full" v-loading="loading">
@@ -14,7 +14,7 @@
         @click="drawerVisible = true"
         class="inline-block w-fit cursor-pointer rounded-full absolute z-[999]"
       >
-        <svg-icon name="menu-more" svg-class="w-10 h-10 text-[#303133] mt-1" />
+        <svg-icon name="menu-more" svg-class="w-12 h-12 text-[#303133] mt-1" />
       </span>
       <homeChatItem />
       <span

@@ -94,7 +94,6 @@ const activeSideMenu = computed(() => {
   if (
     route.name === RoutesMap.chat.c ||
     route.name === RoutesMap.home.homeResource ||
-    route.name === RoutesMap.resource ||
     route.name === RoutesMap.aiPlugin.center
   ) {
     return route.name

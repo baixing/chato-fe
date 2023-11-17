@@ -81,7 +81,7 @@ const onJoin = async () => {
         token.value = orgInfo.token
       }
       router.push({
-        name: props.type === 'member' ? RoutesMap.resource : RoutesMap.manager.center
+        name: props.type === 'member' ? RoutesMap.home.homeResource : RoutesMap.manager.center
       })
     } catch (e) {
     } finally {
