@@ -130,10 +130,15 @@ export const paramsSerializer = (params) => {
 }
 
 export const downloadFile = (data: any) => {
-  const blob = new Blob([data as ArrayBuffer], {
-    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8'
-  })
-  const url = URL.createObjectURL(blob)
+  let url = ''
+  if (data instanceof ArrayBuffer) {
+    const blob = new Blob([data as ArrayBuffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8'
+    })
+    url = URL.createObjectURL(blob)
+  } else if (typeof data === 'string') {
+    url = data
+  }
   const a = document.createElement('a')
   a.href = url
   a.download = '表单收集明细.xlsx' // 设置要保存的文件名

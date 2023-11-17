@@ -1,5 +1,6 @@
 import type {
   GetFilesByDomainIdType,
+  IDocmentToQAParams,
   IDocumentList,
   IKnowledgeShared,
   IQuestionConvertQAForm,
@@ -172,6 +173,15 @@ export function patchGenerateQASaveAPI(QaId: number, data: { question: string; a
   return request({
     method: 'patch',
     url: `/chato/api/document_management/qa/${QaId}`,
+    data
+  })
+}
+
+// 文档转 QA
+export function docToQA(domain_id: number | string, data: IDocmentToQAParams) {
+  return request({
+    method: 'post',
+    url: `chato/api/document_management/${domain_id}/file_convert_to_qa`,
     data
   })
 }
