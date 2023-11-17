@@ -42,5 +42,11 @@ app.mount('#app')
 
 useSentry(app, router)
 
+// const url = window.location.pathname
+// if (!url.startsWith('/sample_chat')) {
+//   const seoDiv = document.getElementById('seo')
+//   seoDiv.style.display = 'none'
+// }
+
 // 删除语音缓存，运行一段时候后删除
 localStorage.removeItem('localAudioUrl')

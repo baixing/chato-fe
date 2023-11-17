@@ -63,12 +63,13 @@ const { t } = useI18n()
 const allMenuList = [
   { title: t('训练中心'), icon: 'robot-filled', routeName: RoutesMap.manager.center },
   { title: t('我的对话'), icon: 'chat-filled', routeName: RoutesMap.chat.c },
-  { title: t('资源广场'), icon: 'cube-filled', routeName: RoutesMap.resource },
+  // { title: t('资源广场'), icon: 'cube-filled', routeName: RoutesMap.resource }
   { title: t('AI插件库'), icon: 'cube-filled', routeName: RoutesMap.aiPlugin.center }
 ]
 
 const secondarySidebar = {
-  [RoutesMap.chat.c]: ChatSidebar
+  [RoutesMap.chat.c]: ChatSidebar,
+  [RoutesMap.home.homeResource]: ChatSidebar
 }
 
 const route = useRoute()
@@ -92,6 +93,7 @@ const sideMenuList = computed(() => {
 const activeSideMenu = computed(() => {
   if (
     route.name === RoutesMap.chat.c ||
+    route.name === RoutesMap.home.homeResource ||
     route.name === RoutesMap.resource ||
     route.name === RoutesMap.aiPlugin.center
   ) {

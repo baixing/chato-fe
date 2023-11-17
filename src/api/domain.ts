@@ -1,4 +1,4 @@
-import type { IDomainInfo, IDomainLLMConfig } from '@/interface/domain'
+import type { IDemonstration, IDomainInfo, IDomainLLMConfig } from '@/interface/domain'
 import type { ITTSListApi, ITimbreAuditionApi } from '@/interface/tts'
 import request from '@/utils/request'
 
@@ -131,5 +131,24 @@ export function getDomainCategoryList() {
   return request<string[]>({
     method: 'get',
     url: `/chato/api/v1/config/category`
+  })
+}
+
+export function getDemonstration(type: string) {
+  return request<IDemonstration>({
+    method: 'get',
+    url: `/chato/api/document_management/demonstration?domain_type=${type}`
+  })
+}
+
+export function getAppletLink(slug: string) {
+  return request({
+    url: `/chato/api/v1/publish_channels/wechat/mini_prog/${slug}}/link`
+  })
+}
+
+export function getAppletQRCode(slug: string) {
+  return request({
+    url: `/chato/api/v1/publish_channels/wechat/mini_prog/${slug}}/QRCode`
   })
 }

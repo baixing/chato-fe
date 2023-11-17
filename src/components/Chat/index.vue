@@ -1,14 +1,15 @@
 <template>
   <div class="container-preview-page bg-white relative">
     <div
-      v-if="detail.name_and_avatar_show"
+      v-if="detail.name_and_avatar_show && !isInApplet"
       class="flex items-center justify-center h-14 bg-white mb-0 text-sm font-medium gap-2 shrink-0"
       style="border-bottom: 1px solid #eee"
     >
-      <img
-        :src="detail.avatar || DefaultAvatar"
+      <Avatar
+        :avatar="detail.avatar || DefaultAvatar"
+        :size="28"
+        :name="detail.name.slice(0, 2)"
         class="w-7 h-7 rounded-full shrink-0 overflow-hidden"
-        alt=""
       />
       <span>{{ detail.name || '...' }}</span>
       <span
@@ -69,6 +70,7 @@
           <div
             v-for="(item, index) in recommendQuestions"
             data-sensors-click
+            id="Chato_chat_recommend_question_click"
             :data-sensors-recommend-base-question="recommendBaseQuestion"
             :data-sensors-recommend-click-question="item.question"
             :key="`rq_${index}`"
@@ -173,6 +175,7 @@ import AudioPlayer from '@/components/AudioPlayer/index.vue'
 import ChatEnter from '@/components/Chat/ChatEnter.vue'
 import MessageItem from '@/components/Chat/ChatMessageItem.vue'
 import CustomerFormDialog from '@/components/Customer/CustomerFormDialog.vue'
+import useABTest from '@/composables/useABTest'
 import useAudioPlayer from '@/composables/useAudioPlayer'
 import useGlobalProperties from '@/composables/useGlobalProperties'
 import useSSEAudio from '@/composables/useSSEAudio'
@@ -185,6 +188,7 @@ import {
   SymChatDomainDetail,
   SymChatToken
 } from '@/constant/chat'
+import { CHATO_SOURCE_APPLET } from '@/constant/common'
 import { DebugDomainSymbol, MidJourneyDomainSlug } from '@/constant/domain'
 import { PaidCommercialTypes } from '@/constant/space'
 import { XSSOptions } from '@/constant/xss'
@@ -303,6 +307,7 @@ const watermark = ref<Watermark>()
 const showPreview = ref(false)
 const previewImageUrl = ref('')
 const sensorsQuestionId = computed(() => history.value?.[history.value.length - 1]?.questionId)
+const isInApplet = computed(() => source.value === CHATO_SOURCE_APPLET) // 判断是否在小程序环境
 
 const DefaultChatHistoryPage = {
   total: 0,
@@ -577,7 +582,15 @@ const onPlayAudio = async (text: string, playerId: string) => {
 const beforeSubmit = async () => {
   // 未登录状态资源广场对话数限制
   if (props.authLogin && !isInternal && history.value.length >= 6) {
-    router.replace({ name: RoutesMap.auth.login })
+    ElMessage.warning(t('对话次数已用完，请登录后继续'))
+    $sensors?.track('square_chat_login', {
+      name: t('资源广场跳转登录'),
+      type: 'square_chat_login',
+      data: {
+        time: dayjs().format('YYYY-MM-DD HH:mm:ss')
+      }
+    })
+    router.replace({ name: RoutesMap.auth.login, query: { redirect: `/bot/${botSlug.value}` } })
     return false
   }
   // C 端对话额度限制，B 端对话额度限制走流式
@@ -728,7 +741,7 @@ function doRequest(message) {
 }
 
 const { SSETextToAudio } = useSSEAudio()
-
+const { abTestConfig } = useABTest(7)
 async function sendMsgRequest(message) {
   const params = {
     ...message,
@@ -738,7 +751,10 @@ async function sendMsgRequest(message) {
     navit_msg_id: isMidJourneyDomain.value ? random(1000000, 9999999) : undefined,
     fake_domain: debugDomain || undefined
   }
-
+  console.log('abTestConfig.value:', abTestConfig.value[7], typeof abTestConfig.value[7])
+  if (params.source === 'chato_home' && abTestConfig.value[7] === '0') {
+    params.type = 'flow'
+  }
   sseStore.$patch({ sseMsgId: message.msg_id })
   try {
     let sseUrl = '/chato/sse'
@@ -1166,6 +1182,7 @@ onBeforeUnmount(() => {
 watch(
   botSlug,
   (v) => {
+    if (botSlug.value === 'square') return
     recommendQuestions.value = []
     if (v) {
       init()

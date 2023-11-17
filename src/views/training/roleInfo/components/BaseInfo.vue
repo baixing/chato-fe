@@ -1,7 +1,7 @@
 <template>
   <div class="chato-form">
     <div class="chato-form-item flex gap-4 items-center w-full">
-      <ImgUpload :fixed="true" v-model:img-url="currentDomain.avatar" :is-initial-img="true" />
+      <AvatarModal v-model:img-url="currentDomain.avatar" :name="currentDomain.name" />
       <HansInputLimit
         v-model:value="currentDomain.name"
         type="text"
@@ -143,6 +143,7 @@
   />
   <EnterDoc
     :domain-id="(currentDomain.id as unknown as string)"
+    :domain-name="currentDomain.name"
     :defaultForm="DOCFormState"
     :sizeLimit="30"
     :qtyLimit="qtyLimit"
@@ -158,7 +159,6 @@ import { deleteFile, getFilesByDomainId } from '@/api/file'
 import AIGenerateBtn from '@/components/AIGenerateBtn/index.vue'
 import EnterDoc from '@/components/EnterAnswer/EnterDoc.vue'
 import EnterQa from '@/components/EnterAnswer/EnterQa.vue'
-import ImgUpload from '@/components/ImgUpload/ImgUpload.vue'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
 import SLTitle from '@/components/Title/SLTitle.vue'
 import { currentEnvConfig } from '@/config'

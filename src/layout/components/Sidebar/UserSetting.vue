@@ -16,7 +16,7 @@
       </li>
     </template>
     <div class="flex items-center gap-2 font-medium text-[#3d3d3d] text-sm mt-5 mx-5 min-w-[160px]">
-      <Avatar :avatar="userInfo.avatar" :name="userInfo.nickname" :size="32" />
+      <Avatar :avatar="userInfo.avatar" :name="userInfo.nickname.slice(0, 2)" :size="32" />
       <div class="overflow-hidden">
         <p class="truncate break-all max-w-[138px]">{{ userInfo.nickname }}</p>
         <p class="text-[#9DA3AF] text-xs font-normal mt-[3px]">ID:{{ userInfo.id }}</p>

@@ -2,6 +2,7 @@ import type {
   GetFilesByDomainIdType,
   IDocumentList,
   IKnowledgeShared,
+  IQuestionConvertQAForm,
   IWXPublic,
   RetryFileMateType
 } from '@/interface/knowledge'
@@ -135,5 +136,42 @@ export function getWXPublicLearnCount(domain_id: number) {
   }>({
     method: 'post',
     url: `/chato/api/document_management/${domain_id}/get_wx_public_article_spider_process`
+  })
+}
+
+// 生成问答
+export function postGenerateDocAPI(fileId: number) {
+  return request<boolean>({
+    method: 'post',
+    url: `/chato/api/document_management/${fileId}/qa`
+  })
+}
+
+// 生成问答-问答列表
+export function getGenerateDocListAPI(
+  fileId: string,
+  params: { page: number; size: number; is_handle: boolean }
+) {
+  return request({
+    url: `/chato/api/document_management/${fileId}/qa`,
+    params
+  })
+}
+
+// 生成问答-转存/废弃
+export function postGenerateQAUnloadingAPI(fileId: string, data: IQuestionConvertQAForm) {
+  return request({
+    method: 'patch',
+    url: `/chato/api/document_management/${fileId}/qa`,
+    data
+  })
+}
+
+// // 生成问答-存储
+export function patchGenerateQASaveAPI(QaId: number, data: { question: string; answer: string }) {
+  return request({
+    method: 'patch',
+    url: `/chato/api/document_management/qa/${QaId}`,
+    data
   })
 }

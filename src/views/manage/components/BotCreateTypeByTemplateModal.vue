@@ -39,7 +39,12 @@
             item.id === formTemplateId && '!border-[#7C5CFC]'
           ]"
         >
-          <img :src="item.avatar || DefaultAvatar" alt="" class="w-8 h-8 rounded-full shrink-0" />
+          <Avatar
+            :avatar="item.avatar || DefaultAvatar"
+            :size="32"
+            :name="item.name.slice(0, 2)"
+            class="w-8 h-8 rounded-full shrink-0"
+          />
           <p class="truncate flex-1">{{ item.name }}</p>
         </div>
       </el-col>

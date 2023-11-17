@@ -5,11 +5,11 @@
   >
     <div class="flex justify-between items-center">
       <div class="flex items-center gap-3">
-        <el-image
-          lazy
-          fit="cover"
-          :src="internalBot.avatar || DefaultAvatar"
+        <Avatar
+          :avatar="internalBot.avatar || DefaultAvatar"
           class="w-11 h-11 rounded-full overflow-hidden shrink-0 lg:w-9 lg:h-9"
+          :size="isMobile ? 36 : 44"
+          :name="internalBot.name.slice(0, 2)"
         />
         <span class="inline-block truncate font-medium text-[#3D3D3D]">
           {{ internalBot.name }}
@@ -129,6 +129,7 @@
 import { addChatSessionB } from '@/api/chatList'
 import DefaultAvatar from '@/assets/img/avatar.png'
 import IconBtn from '@/components/IconBtn/index.vue'
+import { useBasicLayout } from '@/composables/useBasicLayout'
 import { EDomainStatus } from '@/enum/domain'
 import type { IDomainInfo } from '@/interface/domain'
 import { RoutesMap } from '@/router'
@@ -165,6 +166,7 @@ const domainStoreI = useDomainStore()
 const chatStoreI = useChatStore()
 const baseStoreI = useBase()
 const { userInfo } = storeToRefs(baseStoreI)
+const { isMobile } = useBasicLayout()
 
 const internalBot = computed(() => props.bot)
 const isPrivilege = computed(() => userInfo.value.mobile === PrivilegeUser)

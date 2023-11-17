@@ -1,13 +1,17 @@
 <script setup lang="ts">
+import SpaceRightsFreeExpUpgrate from '@/components/Space/SpaceRightsFreeExpUpgrate.vue'
+import SpaceRightsMask from '@/components/Space/SpaceRightsMask.vue'
 import useSpaceRights from '@/composables/useSpaceRights'
 import { currentEnvConfig } from '@/config'
-import { PaidCommercialTypes } from '@/constant/space'
+import { FreeCommercialTypeExperienceDay, PaidCommercialTypes } from '@/constant/space'
 import { EAccountSettingStatus } from '@/enum/release'
 import { ESpaceCommercialType, ESpaceRightsType } from '@/enum/space'
 import type { ICreateAccountRes } from '@/interface/release'
 import { useBase } from '@/stores/base'
 import { useDomainStore } from '@/stores/domain'
+import { useSpaceStore } from '@/stores/space'
 import { copyPaste } from '@/utils/help'
+import { getSpecifiedDateSinceNowDay } from '@/utils/timeRange'
 import { ChatDotRound, Document, FullScreen, Tools, View } from '@element-plus/icons-vue'
 import { storeToRefs } from 'pinia'
 import {
@@ -50,8 +54,10 @@ const DrawerAccount = defineAsyncComponent(
 const { t } = useI18n()
 const base = useBase()
 const domainStoreI = useDomainStore()
+const spaceStoreI = useSpaceStore()
 const { userInfo, orgInfo, userCommercialType } = storeToRefs(base)
 const { domainInfo } = storeToRefs(domainStoreI)
+const { currentRights } = storeToRefs(spaceStoreI)
 const userRoute = `/t/bot/${domainInfo.value.id}/roleInfo`
 const botSlug = computed(() => domainInfo.value.slug)
 const chatWebPageBaseURL = `${currentEnvConfig.baseURL}`
@@ -62,10 +68,16 @@ const chatReleaseURL = computed(() => {
   }
 })
 const weixinServiceDocs = 'https://baixingwang.feishu.cn/docx/CXyTdSKF6oPCiLxAQTacrHvUnfe'
-const appletConfigDocs = 'https://baixingwang.feishu.cn/docx/C2shd2MHfo7aPfxkUl8cJVJMnGf'
 
 const accountQrCode = ref<ICreateAccountRes>()
 const accountCreateStatus = ref<EAccountSettingStatus>(EAccountSettingStatus.creating)
+
+const specifiedBetweenDay = getSpecifiedDateSinceNowDay(orgInfo.value.created)
+const rightsMaskVisible = computed(
+  () =>
+    currentRights.value.type === ESpaceCommercialType.free &&
+    specifiedBetweenDay > FreeCommercialTypeExperienceDay
+)
 
 const features = reactive({
   showDrawerChatVisible: false, // 查看群聊
@@ -96,10 +108,7 @@ const {
   tiktokService,
   dingDingVisible,
   createAccountVisible,
-  drawerAccountVisible,
-  createAppletVisible,
-  drawerAppletVisible,
-  domainVerificationVisible
+  drawerAccountVisible
 } = toRefs(features)
 
 const { checkRightsTypeNeedUpgrade, isAllowedCommercialType } = useSpaceRights()
@@ -320,6 +329,7 @@ onMounted(() => {
             :svgName="item.icon"
             :title="item.title"
             :desc="item.desc"
+            class="relative"
           >
             <div
               class="icon-set-container text-[#b5bed0] cursor-pointer gap-2 text-xs flex items-center justify-center mr-[16px] md:mr-[6px]"
@@ -332,6 +342,9 @@ onMounted(() => {
               </el-icon>
               {{ ic.label }}
             </div>
+            <SpaceRightsMask :visible="rightsMaskVisible">
+              <SpaceRightsFreeExpUpgrate upgrade-link upgrade-text="该功能为付费权益" />
+            </SpaceRightsMask>
           </ReleaseBox>
         </div>
       </div>

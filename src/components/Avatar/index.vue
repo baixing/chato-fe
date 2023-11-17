@@ -1,16 +1,17 @@
 <template>
   <div class="relative shrink-0" :style="{ height: `${size}px` }">
     <el-avatar :size="size" :style="{ '--el-avatar-bg-color': avatar ? 'transparent' : undefined }">
-      <img v-if="avatar" :src="avatar" class="w-full h-full object-cover" />
+      <img v-if="avatar.isUrl" :src="avatar.url" class="w-full h-full object-cover" />
       <span
-        v-else-if="name"
+        v-if="avatar.isUrl === false"
         :class="[
           'text-sm w-full h-full overflow-hidden truncate',
-          showAllName ? 'text-xs scale-90' : 'bg-[#7C5CFC]'
+          showAllName && 'text-xs scale-90'
         ]"
-        :style="{ lineHeight: `${size}px` }"
+        :style="{ lineHeight: `${size}px`, background: `${avatar.background}` }"
       >
-        {{ showAllName ? name : name[0] }}
+        {{ name || '头像' }}
+        <!-- {{ avatar.background }} -->
       </span>
     </el-avatar>
     <SpaceRightsIcon
@@ -25,8 +26,9 @@
 import SpaceRightsIcon from '@/components/Space/SpaceRightsIcon.vue'
 import type { ESpaceCommercialType } from '@/enum/space'
 import type { IUserInfo } from '@/interface/user'
+import { computed } from 'vue'
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     size?: number
     avatar?: IUserInfo['avatar']
@@ -37,7 +39,14 @@ withDefaults(
   }>(),
   {
     limit: 20,
-    size: 40
+    size: 40,
+    showAllName: false
   }
+)
+
+const avatar = computed<{ isUrl: true; url: string } | { isUrl: false; background: string }>(() =>
+  props.avatar?.split('://')[0] === 'avatar'
+    ? { isUrl: false, background: props.avatar.split('color=')[1] }
+    : { isUrl: true, url: props.avatar }
 )
 </script>

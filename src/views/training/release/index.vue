@@ -25,7 +25,7 @@ import ReleaseWebAPP from './components/releaseWebAPP/index.vue'
 const route = useRoute()
 const router = useRouter()
 
-const activeTab = computed(() => (route.params?.type as string) || 'medium')
+const activeTab = computed(() => (route.params?.type as string) || 'webapp')
 
 const tabs = [
   { key: 'webapp', title: 'WebAPP' },

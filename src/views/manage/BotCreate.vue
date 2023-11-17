@@ -27,14 +27,13 @@
         </template>
       </Topbar>
       <div class="bot-create-center-padding mb-16 flex-1 overflow-y-auto bot-create-block">
-        <!-- <div class="flex justify-center py-8">
-          <ImgUpload
-            :fixed="true"
+        <div class="flex justify-center py-8">
+          <AvatarModal
+            class="h-[72px] w-[72px]"
             v-model:img-url="formState.avatar"
-            :is-initial-img="true"
-            styleClass="h-[72px] w-[72px]"
+            :name="formState.name.slice(0, 2)"
           />
-        </div> -->
+        </div>
         <div class="create-input-label">
           <SLTitle>{{ t('角色名称') }}</SLTitle>
           <div class="flex">
@@ -159,6 +158,7 @@
   />
   <EnterDoc
     :domain-id="(formState.id as unknown as string)"
+    :domain-name="formState.name"
     :defaultForm="DOCFormState"
     :sizeLimit="30"
     :qtyLimit="qtyLimit"
@@ -187,7 +187,12 @@
 </template>
 
 <script setup lang="ts">
-import { createDraftDomain, getDomainDetail, updateDomain } from '@/api/domain'
+import {
+  createDraftDomain,
+  getDomainDetail,
+  getDomainDetailPublic,
+  updateDomain
+} from '@/api/domain'
 import { deleteFile, getFilesByDomainId } from '@/api/file'
 import AIGenerateBtn from '@/components/AIGenerateBtn/index.vue'
 import EnterDoc from '@/components/EnterAnswer/EnterDoc.vue'
@@ -241,6 +246,14 @@ const onLinkBots = () => {
   router.push({ name: RoutesMap.manager.center })
 }
 
+const getRandomColor = () =>
+  [
+    'avatar://?color=#409EFF',
+    'avatar://?color=#7C5CFC',
+    'avatar://?color=#FDCF63',
+    'avatar://?color=#56DB79'
+  ][Math.floor(Math.random() * 4)]
+
 const HansLimit = {
   name: 20,
   system_prompt: 900,
@@ -250,7 +263,7 @@ const HansLimit = {
 const defaultFormState: Partial<IDomainInfo> = {
   id: 0,
   slug: '',
-  avatar: '',
+  avatar: getRandomColor(),
   name: '',
   desc: '',
   system_prompt: '',
@@ -327,9 +340,6 @@ const onAITypeModalDone = () => {
   AIGenerateInputDisabled = Object.assign(AIGenerateInputDisabled, defaultAIGenerateInputDisabled)
 }
 
-const onImgChange = (value: string) => {
-  formState.avatar = value || ''
-}
 // --------------
 
 const baseStoreI = useBase()
@@ -460,6 +470,24 @@ const initDomainDetail = async () => {
 
     formState = Object.assign(formState, data)
     await initFilesList()
+    syncOriginalFormState()
+  } catch (err) {
+    await initDomainDetailBySlug()
+    onNewDraft()
+  } finally {
+    initing.value = false
+  }
+}
+
+const initDomainDetailBySlug = async () => {
+  try {
+    initing.value = true
+
+    const {
+      data: { data }
+    } = await getDomainDetailPublic(route.params.botSlug)
+    const { name, system_prompt, avatar } = data
+    formState = Object.assign(formState, { name, system_prompt, avatar })
     syncOriginalFormState()
   } catch (err) {
   } finally {
@@ -612,6 +640,9 @@ onBeforeRouteLeave(async (to, from, next) => {
 const init = async () => {
   if (route.params.botId) {
     await initDomainDetail()
+  } else if (route.params.botSlug) {
+    await initDomainDetailBySlug()
+    onNewDraft()
   } else {
     onNewDraft()
   }

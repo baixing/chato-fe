@@ -44,7 +44,7 @@
         class="menu-select"
         @change="(v) => onLinkRoute(v)"
         style="--el-select-input-focus-border-color: transparent"
-        :style="{ width: activeMenuRouteName === RoutesMap.home.index ? '72px' : '100px' }"
+        :style="{ width: activeMenuRouteName === RoutesMap.home.index ? '72px' : '110px' }"
       >
         <el-option
           v-for="item in menuRouteList"
@@ -56,7 +56,7 @@
       <div class="button-container">
         <el-button
           link
-          class="!text-[#303133] !font-normal"
+          :class="['!text-[#606266] !font-normal', 'mr-1', isMobile ? 'w-[22px]' : '']"
           @click="toggleButton(locale === ELangKey.en ? ELangKey.zh_cn : ELangKey.en)"
         >
           {{ checkbutton[locale] }}
@@ -69,7 +69,7 @@
           id="Chato_login_click"
           @click="onEnter()"
         >
-          {{ authToken ? $t('进入') : $t(signABTest) }}
+          {{ authToken ? $t('登录') : $t('免费使用') }}
         </el-button>
       </div>
     </el-header>
@@ -163,7 +163,12 @@
       v-if="showFooterContactVisible"
       class="home-contact-btn py-5 px-[7px] md:py-4 md:px-[10px] text-base absolute right-7 md:right-1 flex flex-col gap-[14px]"
     >
-      <div class="fixed-btn" id="Chato_right_service_click" data-sensors-click @click="onContactUs">
+      <div
+        class="fixed-btn"
+        id="Chato_right_service_click"
+        data-sensors-click
+        @click="onContactUs()"
+      >
         <svg-icon class="text-xl mb-[4px]" svg-class="w-5 h-5" name="wechat" />
         <span v-if="!isMobile" class="scale-90">{{ $t('咨询客服') }}</span>
       </div>
@@ -192,7 +197,6 @@
   <JoinDemoModal v-model:visible="joinMask" />
 </template>
 <script setup lang="ts">
-import useABTest from '@/composables/useABTest'
 import baixingAI from '@/assets/img/home/baixing-ai.png'
 import homeInvestJoin from '@/assets/img/home/home-invest-join.jpg'
 import nashCrcode from '@/assets/img/nash-crcode.jpeg'
@@ -215,7 +219,7 @@ import { ArrowDown } from '@element-plus/icons-vue'
 import { useDebounceFn, useStorage } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import type { Ref } from 'vue'
-import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import WOW from 'wow.js'
@@ -279,12 +283,12 @@ const onEnter = (type?: string) => {
     return
   }
   if (type === 'Chato_top_resource_click') {
-    router.push({ name: RoutesMap.home.homeResource })
+    router.push({ name: RoutesMap.home.homeChat, params: { botSlug: 'square' } })
     return
   }
 
   if (type === 'Chato_bottom_conact_click' || type === 'Chato_case_bottom_wechat_click') {
-    checkRightsTypeNeedUpgrade(ESpaceRightsType.default)
+    checkRightsTypeNeedUpgrade(ESpaceRightsType.default, false)
     return
   }
 
@@ -299,9 +303,9 @@ const onEnter = (type?: string) => {
   }
 }
 
-const onContactUs = () => {
+const onContactUs = (display = 'block') => {
   const containerEl = document.getElementById('inframe_container')
-  containerEl && (containerEl.style.display = 'block')
+  containerEl && (containerEl.style.display = display)
 }
 
 const onFormModal = (showRef: Ref) => {
@@ -324,8 +328,8 @@ const menuRouteList = [
   { title: t('联系我们'), key: 'menu_schedule' },
   { title: t('渠道合作'), key: 'menu_join' },
   { title: t('用户社区'), key: 'menu_community' },
-  { title: t('资源广场'), key: RoutesMap.home.homeResource },
-  { title: t('我的对话'), key: RoutesMap.home.homeChat }
+  // { title: t('资源广场'), key: RoutesMap.home.homeResource },
+  { title: t('对话Chato'), key: RoutesMap.home.homeChat }
 ]
 
 const footerQrCode = [
@@ -361,6 +365,15 @@ const onLinkRoute = (key: string) => {
     case 'menu_community':
       window.open(userCommunityLink)
       break
+    case 'homeChat':
+      router.push({
+        name: key,
+        params: {
+          ...route.params,
+          botSlug: 'square'
+        }
+      })
+      break
     default:
       router.push({
         name: key,
@@ -391,6 +404,8 @@ const init = async () => {
   res?.id && $sensors?.login(res.id.toString())
 }
 
+let contactTimer = null
+
 const onRegisterContactUS = () => {
   window.ChatoBotConfig = {
     baseURL: 'https://api.chato.cn',
@@ -399,9 +414,11 @@ const onRegisterContactUS = () => {
     id: 835
   }
   chatoIframe()
-  setTimeout(() => {
-    onContactUs()
-  }, 5000)
+  if (route.name !== RoutesMap.home.homeChat) {
+    contactTimer = setTimeout(() => {
+      onContactUs()
+    }, 5000)
+  }
 }
 
 onMounted(() => {
@@ -423,16 +440,20 @@ onBeforeUnmount(() => {
   iframeContainerEl?.remove()
 })
 
-const { executeABTestFn: executeABTestFn5 } = useABTest(5)
-
-const signABTest: string = executeABTestFn5({
-  viewA: () => {
-    return '免费使用'
-  },
-  viewB: () => {
-    return '注册'
+watch(
+  () => route.name,
+  () => {
+    if (route.name === RoutesMap.home.homeChat) {
+      onContactUs('none')
+    } else {
+      if (!contactTimer) {
+        contactTimer = setTimeout(() => {
+          onContactUs()
+        }, 5000)
+      }
+    }
   }
-})
+)
 </script>
 <style lang="scss" scoped>
 .home-contact-btn {

@@ -1,5 +1,5 @@
 <template>
-  <div :class="['mt-14 mb-14 md:mb-7 text-center text-[#3D3D3D]', requiredTopbar ? 'md:mt-0' : '']">
+  <div :class="['mt-14 md:mt-7 mb-14 md:mb-7 text-center text-[#3D3D3D]']">
     <p class="text-3xl md:text-xl font-medium">
       {{ $t('Chato，好用的AI工具，让你快人一步！') }}
     </p>
@@ -7,7 +7,7 @@
       {{ $t('也可以上传素材资料，创建与众不同的专属助理机器人') }}
     </p>
     <el-button type="primary" size="large" class="mr-4" @click="handleGoChat">
-      {{ $t('与Chato对话') }}
+      {{ $t('立即对话') }}
     </el-button>
     <el-button type="primary" class="relative" size="large" @click="handeGoCreate">
       <span
@@ -24,7 +24,7 @@
 import { RoutesMap } from '@/router'
 import { useChatStore } from '@/stores/chat'
 import { storeToRefs } from 'pinia'
-import { useRouter, useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 defineProps<{
   requiredTopbar: boolean
@@ -36,8 +36,8 @@ const chatStoreI = useChatStore()
 const { chatList } = storeToRefs(chatStoreI)
 
 const handleGoChat = () => {
-  const name =
-    route.name === RoutesMap.home.homeResource ? RoutesMap.home.homeChat : RoutesMap.chat.c
+  const name = route.name === RoutesMap.home.homeChat ? RoutesMap.home.homeChat : RoutesMap.chat.c
+
   router.push({
     name,
     params: {

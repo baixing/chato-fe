@@ -1,5 +1,7 @@
 import type {
   DeleteRetryFileMateStatusType,
+  EDocConvertCheckStatus,
+  EDocConvertOrDisuse,
   EDocumentOperateType,
   EKnowledgeBusinessType,
   LearningStatesPerformanceType
@@ -33,6 +35,7 @@ export interface IDocumentList {
   template: string
   image: string
   images?: string[]
+  qa_status?: 0 | 1
 }
 
 export interface IQAForm {
@@ -77,4 +80,27 @@ export interface IWXPublic {
   round_head_img: string
   service_type: number
   signature: string
+}
+
+export interface IQuestionConvertQAForm {
+  qa_id: number
+  is_all: boolean
+  status: EDocConvertOrDisuse
+  domain_slug: string
+}
+
+export interface IQuestionConvertQASource {
+  id: string
+  score: number
+  document_name: string
+  content: string
+}
+
+export interface IQuestionConvertQAList {
+  id: number
+  question: string
+  answer: string
+  file_id: number
+  status: EDocConvertCheckStatus
+  ref_source: IQuestionConvertQASource[]
 }

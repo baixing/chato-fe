@@ -220,6 +220,20 @@
         </div>
       </div>
     </div>
+
+    <div class="chato-form-label flex justify-between items-center">
+      <SLTitle
+        tips="是否开放机器人被互联网用户访问 (如百度索引、文心一言等平台）"
+        class="chato-form-label"
+      >
+        {{ $t('公开访问权限') }}
+      </SLTitle>
+      <SwitchWithStateMsg
+        v-model:value="currentDomain.toc_privacy"
+        open-msg="开启"
+        close-msg="关闭"
+      />
+    </div>
     <div class="chato-form-item">
       <SLTitle tips="基于知识库无法回复时，机器人回答内容" class="chato-form-label">
         {{ $t('超纲问题回复') }}

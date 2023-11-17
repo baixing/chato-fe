@@ -6,5 +6,13 @@ export const globalComponents = [
   {
     key: 'Modal',
     component: () => import('@/components/Modal/index.vue')
+  },
+  {
+    key: 'Avatar',
+    component: () => import('@/components/Avatar/index.vue')
+  },
+  {
+    key: 'AvatarModal',
+    component: () => import('@/components/AvatarModal/AvatarModal.vue')
   }
 ] as const

@@ -1,4 +1,3 @@
-import useCheckDomain from '@/composables/useCheckDomain'
 import usePageTitle from '@/composables/usePageTitle'
 import useRoleCheck from '@/composables/useRoleCheck'
 import useSidebar from '@/composables/useSidebar'
@@ -6,7 +5,7 @@ import { useAuthStore } from '@/stores/auth'
 import Sensors from '@/utils/sensors'
 import { locationComToCn } from '@/utils/url'
 import { nextTick } from 'vue'
-import { createRouter, createWebHistory, RouterView } from 'vue-router'
+import { RouterView, createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 
 export const RoutesMap = {
   aiPlugin: {
@@ -34,13 +33,15 @@ export const RoutesMap = {
     chatName: 'chat',
     release: 'chatRelease',
     c: 'chatC',
-    homeC: 'chatHomeC'
+    homeC: 'chatHomeC',
+    resource: 'resource'
   },
   resource: 'resource',
   tranning: {
     bot: 'tranningBot',
     roleInfo: 'tranningRoleInfo',
     knowledge: 'tranningKnowledge',
+    knowledgeGenerate: 'tranningKnowledgeGenerate',
     release: 'tranningRelease',
     report: 'tranningReport',
     reportContext: 'tranningReportContext',
@@ -57,6 +58,9 @@ export const RoutesMap = {
     personalSetting: 'namespacePersonalSetting',
     management: 'namespacePersonalManagement',
     summary: 'namespaceSummary'
+  },
+  vip: {
+    center: 'vipCenter'
   },
   inviteMember: 'inviteMember',
   guide: {
@@ -201,6 +205,11 @@ const chatRoutes = [
     },
     children: [
       {
+        name: RoutesMap.home.homeResource,
+        path: 'bot/square',
+        component: () => import('@/views/resource/square.vue')
+      },
+      {
         name: RoutesMap.chat.c,
         path: 'bot/:botSlug',
         // meta: { title: '聊天' },
@@ -266,9 +275,20 @@ const trainningRoutes = [
             component: () => import('@/views/training/roleInfo/index.vue')
           },
           {
-            name: RoutesMap.tranning.knowledge,
-            path: 'knowledge/:type?',
-            component: () => import('@/views/training/knowledge/index.vue')
+            path: 'knowledge',
+            component: () => import('@/views/training/knowledge/layout.vue'),
+            children: [
+              {
+                name: RoutesMap.tranning.knowledgeGenerate,
+                path: 'generate',
+                component: () => import('@/views/training/knowledge/GenerateQA.vue')
+              },
+              {
+                name: RoutesMap.tranning.knowledge,
+                path: ':type?',
+                component: () => import('@/views/training/knowledge/index.vue')
+              }
+            ]
           },
           {
             name: RoutesMap.tranning.release,
@@ -305,7 +325,7 @@ const managerRoutes = [
       },
       {
         name: RoutesMap.manager.create,
-        path: 'create/:botId?/:opt?',
+        path: 'create/:botId?/:opt?/:botSlug?',
         component: () => import('@/views/manage/BotCreate.vue')
       },
       {
@@ -350,6 +370,21 @@ const spaceManager = [
   }
 ]
 
+// vip
+const vipManager = [
+  {
+    path: 'vip',
+    component: RouterView,
+    children: [
+      {
+        name: RoutesMap.vip.center,
+        path: 'center',
+        component: () => import('@/views/vip/center.vue')
+      }
+    ]
+  }
+]
+
 // 邀请用户
 const inviteMember = [
   {
@@ -388,6 +423,7 @@ const loginedRoutes = [
       ...resourceSquareRoutes, // 资源广场
       ...aiPluginSquareRoutes, // AI插件库
       ...spaceManager,
+      ...vipManager,
       ...guideRoutes // 引导
     ]
   }
@@ -409,7 +445,7 @@ const router = createRouter({
     ...inviteMember,
     ...namespaceSwitch,
     ...finalRoutes
-  ] as any
+  ] as RouteRecordRaw[]
 })
 
 router.beforeEach((to) => {
@@ -419,7 +455,7 @@ router.beforeEach((to) => {
   locationComToCn()
   useRoleCheck(to)
   usePageTitle(to.meta?.title)
-  useCheckDomain(to)
+  // useCheckDomain(to)
   const authStoreI = useAuthStore()
   if (to.meta.requiresAuth && !authStoreI.authToken) {
     let query

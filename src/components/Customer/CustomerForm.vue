@@ -45,6 +45,7 @@ import AjvErrors from 'ajv-errors'
 import { ElMessage, ElNotification } from 'element-plus'
 import { computed, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import useByteDancePromotion, { postBytedancePromotion } from '@/composables/useByteDancePromotion'
 
 const props = defineProps<{
   id?: number | string
@@ -59,6 +60,7 @@ const route = useRoute()
 const formRef = ref()
 const loading = ref(false)
 const submitting = ref(false)
+const { bytedancePromotionClickid } = useByteDancePromotion()
 const internalId = computed(
   () => props.id || (route.query.form_id as string) || (route.params.formId as string)
 )
@@ -116,6 +118,7 @@ const onSubmit = async () => {
         ...(formState as object)
       }
       await saveCustomerForm(saveParams)
+      handlePostBytedancePromotion()
       emit('success')
       ElNotification.success('提交成功')
       resetFormState()
@@ -129,6 +132,15 @@ const onSubmit = async () => {
   }
 }
 
+const handlePostBytedancePromotion = async () => {
+  if (bytedancePromotionClickid.value) {
+    try {
+      await postBytedancePromotion(bytedancePromotionClickid.value, 'form')
+    } catch (err) {
+      console.log('Error in postBytedancePromotion:', err)
+    }
+  }
+}
 const onCancel = () => {
   emit('cancel')
   resetFormState()

@@ -26,6 +26,9 @@ export const PaidCommercialTypes = [
 
 export const SpaceCommercialTypeMapper = {
   [ESpaceCommercialType.free]: '免费版',
+  [ESpaceCommercialType.freeFirstExp]: '首购体验版',
+  [ESpaceCommercialType.selfStandard]: '年套餐',
+  [ESpaceCommercialType.selfProfessional]: '年套餐',
   [ESpaceCommercialType.standard]: '标准版',
   [ESpaceCommercialType.brand]: '品牌版',
   [ESpaceCommercialType.professional]: '旗舰版',

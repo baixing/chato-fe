@@ -5,6 +5,7 @@ export const CHATO_SOURCE_SHARE = 'Chato_share_web' // 网页分享
 export const CHATO_SOURCE_SHAKEDOWN = 'Chato_shakedown_web' // 调试页面
 export const CHATO_SOURCE_JS = 'Chato_share_js' // js嵌入
 export const CHATO_SOURCE_PUBLIC = 'mp_menu' // 微信公众号
+export const CHATO_SOURCE_APPLET = 'wx_mini_prog' // 微信小程序
 
 export const UPLOAD_FILE_VIDEO_AUDIO_TYPES = [
   '.mp3',

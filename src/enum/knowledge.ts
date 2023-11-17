@@ -37,3 +37,13 @@ export enum DeleteRetryFileMateStatusType {
   deleted = 'deleted',
   pending = 'pending'
 }
+
+export enum EDocConvertOrDisuse {
+  convert = 'convert',
+  disuse = 'disuse'
+}
+
+export enum EDocConvertCheckStatus {
+  pending = 'pending',
+  done = 'done'
+}

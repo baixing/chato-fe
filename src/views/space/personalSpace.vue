@@ -3,14 +3,7 @@
     <div class="p-s-header">
       <div class="header-left w-full">
         <div class="img-upload-container">
-          <div class="default-avatar" v-if="!userInfo?.org?.avatar && !isRemove">
-            <el-avatar :size="48">{{ $t('空间') }}</el-avatar>
-          </div>
-          <div
-            :class="[!userInfo.org.avatar && !isRemove ? 'hidden-img-upload' : 'show-img-upload']"
-          >
-            <ImgUpload :fixed="true" v-model:img-url="avatar" />
-          </div>
+          <AvatarModal v-model:img-url="avatar" :name="name" @submit="blurInput" />
         </div>
         <span class="mx-4 text-sm" v-if="!isEdit">{{ name }}</span>
         <HansInputLimit
@@ -123,7 +116,6 @@ import { removeSpaceMember, updateOrgSpaceInfo, updateSpaceMemberRole } from '@/
 import UserAvatar from '@/components/Avatar/UserAvatar.vue'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
 import useSpace from '@/composables/useSpace'
-import ImgUpload from '@/components/ImgUpload/ImgUpload.vue'
 import useSpaceRights from '@/composables/useSpaceRights'
 import type { ESettingSpaceRole } from '@/enum/space'
 import { ESpaceRightsType } from '@/enum/space'
@@ -145,12 +137,11 @@ const base = useBase()
 const spaceStoreI = useSpaceStore()
 const { userInfo, orgInfoList } = storeToRefs(base)
 const { spaceMembers } = storeToRefs(spaceStoreI)
-const isRemove = ref<boolean>(false)
 const loading = ref<boolean>(false)
 const isEdit = ref<boolean>(false)
 const addMemberVisible = ref<boolean>(false)
 const name = ref(userInfo.value?.org?.name || '')
-const avatar = ref(userInfo.value?.org?.avatar || '')
+const avatar = ref(userInfo.value?.org?.avatar || 'avatar://color=#409EFF')
 const { switchSpace } = useSpace()
 
 const roleList = [

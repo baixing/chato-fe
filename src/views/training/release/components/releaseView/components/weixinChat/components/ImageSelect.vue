@@ -6,10 +6,11 @@
       >
         <div class="w-full h-full flex items-center">
           <template v-if="$notnull(currentSelect)">
-            <img
-              :src="currentSelect.avatar"
+            <Avatar
+              :avatar="currentSelect.avatar"
+              :size="32"
+              :name="currentSelect.name.slice(0, 2)"
               class="w-[32px] h-[32px] mr-[8px] rounded-full"
-              alt=""
             />
             <span>{{ currentSelect.name }}</span>
           </template>
@@ -26,7 +27,12 @@
             v-for="item in list"
             :key="item.name"
           >
-            <img :src="item.avatar" class="w-[32px] h-[32px] mr-[8px] rounded-full" alt="" />
+            <Avatar
+              :avatar="item.avatar"
+              :size="32"
+              :name="item.name.slice(0, 2)"
+              class="w-[32px] h-[32px] mr-[8px] rounded-full"
+            />
             <span>{{ item.name }}</span>
           </el-dropdown-item>
         </el-dropdown-menu>
@@ -36,9 +42,9 @@
 </template>
 
 <script setup lang="ts">
+import type { IDomainInfo } from '@/interface/domain'
 import { $notnull } from '@/utils/help'
 import { computed } from 'vue'
-import type { IDomainInfo } from '@/interface/domain'
 
 const emit = defineEmits(['update:value'])
 const props = withDefaults(

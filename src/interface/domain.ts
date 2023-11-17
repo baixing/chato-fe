@@ -87,6 +87,7 @@ export interface IDomainInfo {
   show_recommend_question: number // 问题推荐
   conversation_mode_meta?: string
   conversation_arouse_mode?: EDomainConversationModeArousalMethod
+  toc_privacy: number
 }
 
 export interface IDomainShortcut {
@@ -130,4 +131,11 @@ export interface IDomainLLMConfig {
   type: string
   consume_quota: number
   need_vip: boolean
+}
+
+export interface IDemonstration {
+  file_url: string
+  text: string
+  web_url: string
+  wx_public_url: string
 }

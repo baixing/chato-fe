@@ -29,6 +29,24 @@ body {
   display: none;
 }
 
+// .saas-scrollbar::-webkit-scrollbar {
+//   width: 14px;
+//   height: 18px;
+// }
+
+// .saas-scrollbar::-webkit-scrollbar-thumb {
+//   display: none;
+//   height: 6px;
+//   border: 5px solid transparent;
+//   background-clip: padding-box;
+//   border-radius: 30px;
+//   background-color: #e1e1ef;
+// }
+
+// .saas-scrollbar::-webkit-scrollbar-track {
+//   display: none;
+// }
+
 ::-webkit-scrollbar-track {
   background: transparent;
   border-radius: 8px;

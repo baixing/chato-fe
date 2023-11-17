@@ -89,7 +89,7 @@ export const copyPaste = (text: string, successMessage?: string) => {
     document.body.removeChild(input)
   }
 
-  ElNotification.success(successMessage ?? '复制成功')
+  ElNotification.success(successMessage || '复制成功')
 }
 
 export const downloadImg = async (fileUrl: string) => {

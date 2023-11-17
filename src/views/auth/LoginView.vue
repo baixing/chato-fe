@@ -2,7 +2,9 @@
   <div class="w-full h-full overflow-hidden bg-white flex justify-center items-center">
     <div>
       <LoginHeader />
-      <div class="p-3 mt-14 m-auto border border-solid border-[#E4E7ED] md:border-none rounded-lg">
+      <div
+        class="p-3 mt-10 md:mt-3 m-auto border border-solid border-[#E4E7ED] md:border-none rounded-lg"
+      >
         <BindingMobile
           v-if="isbindingMobile"
           :userId="userId"
@@ -39,29 +41,29 @@
 </template>
 
 <script lang="ts" setup>
+import { getLoginQRCodeAPI, getLoginQREmpowerStatusAPI, postLoginAPI } from '@/api/auth'
+import { addSpaceMember } from '@/api/space'
+import { useIsMobile } from '@/composables/useBasicLayout'
+import useChannel from '@/composables/useChannel'
+import useGlobalProperties from '@/composables/useGlobalProperties'
+import useInvite from '@/composables/useInvite'
+import { LoginWayConfig } from '@/constant/auth'
+import { ELoginEmpowerStatus, ELoginWay } from '@/enum/auth'
+import type { ILoginQRCodeEmpowerResult, ILoginQRCodeResult } from '@/interface/auth'
 import { useAuthStore } from '@/stores/auth'
+import { useBase } from '@/stores/base'
+import { $notnull } from '@/utils/help'
+import { useStorage } from '@vueuse/core'
+import dayjs from 'dayjs'
+import { ElLoading, ElNotification as Notification } from 'element-plus'
 import { storeToRefs } from 'pinia'
 import { computed, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
+import BindingMobile from './components/BindingMobile.vue'
 import LoginHeader from './components/LoginHeader.vue'
 import LoginMobile from './components/LoginMobile.vue'
 import LoginWeixin from './components/LoginWeixin.vue'
-import BindingMobile from './components/BindingMobile.vue'
-import { ELoginWay, ELoginEmpowerStatus } from '@/enum/auth'
-import { LoginWayConfig } from '@/constant/auth'
-import { useIsMobile } from '@/composables/useBasicLayout'
-import { getLoginQRCodeAPI, getLoginQREmpowerStatusAPI, postLoginAPI } from '@/api/auth'
-import type { ILoginQRCodeResult, ILoginQRCodeEmpowerResult } from '@/interface/auth'
-import { $notnull } from '@/utils/help'
-import useInvite from '@/composables/useInvite'
-import { addSpaceMember } from '@/api/space'
-import { useStorage } from '@vueuse/core'
-import { useBase } from '@/stores/base'
-import useGlobalProperties from '@/composables/useGlobalProperties'
-import useChannel from '@/composables/useChannel'
-import { useI18n } from 'vue-i18n'
-import dayjs from 'dayjs'
-import { ElLoading, ElNotification as Notification } from 'element-plus'
 
 const { t } = useI18n()
 const stateToken = useStorage('auth_token', '')

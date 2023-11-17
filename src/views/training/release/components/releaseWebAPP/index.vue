@@ -1,19 +1,22 @@
 <script setup lang="ts">
+import SpaceRightsFreeExpUpgrate from '@/components/Space/SpaceRightsFreeExpUpgrate.vue'
+import SpaceRightsMask from '@/components/Space/SpaceRightsMask.vue'
 import useGlobalProperties from '@/composables/useGlobalProperties'
 import useSpaceRights from '@/composables/useSpaceRights'
 import { currentEnvConfig } from '@/config'
-import { EAccountSettingStatus, EAppletcStatus } from '@/enum/release'
+import { FreeCommercialTypeExperienceDay } from '@/constant/space'
+import { EAppletcStatus } from '@/enum/release'
 import { ESpaceCommercialType, ESpaceRightsType } from '@/enum/space'
 import { useBase } from '@/stores/base'
 import { useDomainStore } from '@/stores/domain'
 import { useSpaceStore } from '@/stores/space'
 import { copyPaste } from '@/utils/help'
+import { getSpecifiedDateSinceNowDay } from '@/utils/timeRange'
 import {
-  Document,
   CirclePlus,
   CopyDocument,
-  FolderChecked,
-  FullScreen,
+  Document,
+  Tools,
   UploadFilled,
   View
 } from '@element-plus/icons-vue'
@@ -38,30 +41,14 @@ const ApplicationForm = defineAsyncComponent(
   () => import('../releaseView/components/application/ApplicationForm.vue')
 )
 const BrandDomain = defineAsyncComponent(
-  () => import('../releaseView/components/brandDomain/BrandDomainIndex.vue')
+  () => import('./components/brandDomain/BrandDomainIndex.vue')
 )
-const DrawerSite = defineAsyncComponent(
-  () => import('../releaseView/components/implantJs/DrawerSite.vue')
-)
-const SetEffectSite = defineAsyncComponent(
-  () => import('../releaseView/components/implantJs/SetEffectSite.vue')
-)
-const Copylink = defineAsyncComponent(
-  () => import('../releaseView/components/webPage/Copylink.vue')
-)
-const CreatePoster = defineAsyncComponent(
-  () => import('../releaseView/components/gzhPoster/SharePoster.vue')
-)
-const CreateApplet = defineAsyncComponent(
-  () => import('../releaseView/components/applet/CreateApplet.vue')
-)
-const DrawerApplet = defineAsyncComponent(
-  () => import('../releaseView/components/applet/DrawerApplet.vue')
-)
-const VerificationTxt = defineAsyncComponent(
-  () => import('../releaseView/components/applet/VerificationTxt.vue')
-)
-
+const DrawerSite = defineAsyncComponent(() => import('./components/implantJs/DrawerSite.vue'))
+const SetEffectSite = defineAsyncComponent(() => import('./components/implantJs/SetEffectSite.vue'))
+const Copylink = defineAsyncComponent(() => import('./components/webPage/Copylink.vue'))
+const CreatePoster = defineAsyncComponent(() => import('./components/gzhPoster/SharePoster.vue'))
+const DrawerApplet = defineAsyncComponent(() => import('./components/applet/DrawerApplet.vue'))
+const SettingApplet = defineAsyncComponent(() => import('./components/applet/SettingApplet.vue'))
 const route = useRoute()
 const { t } = useI18n()
 const base = useBase()
@@ -81,9 +68,15 @@ const chatReleaseURL = computed(() => {
 })
 const chatScript = `${currentEnvConfig.scriptURL}/assets/iframe.min.js`
 const appletConfigDocs = 'https://baixingwang.feishu.cn/docx/C2shd2MHfo7aPfxkUl8cJVJMnGf'
-const accountCreateStatus = ref<EAccountSettingStatus>(EAccountSettingStatus.creating)
 const defaultAppletcStatus = ref<EAppletcStatus>()
 const releaseChannel = useSessionStorage('releaseChannel', '')
+
+const specifiedBetweenDay = getSpecifiedDateSinceNowDay(orgInfo.value.created)
+const rightsMaskVisible = computed(
+  () =>
+    currentRights.value.type === ESpaceCommercialType.free &&
+    specifiedBetweenDay > FreeCommercialTypeExperienceDay
+)
 
 const features = reactive({
   showCopyLinkVisbile: false, // 网页-复制链接
@@ -93,7 +86,7 @@ const features = reactive({
   createPoster: false, // 海报
   createAppletVisible: false, // 小程序-扫码授权
   drawerAppletVisible: false, // 小程序-查看授权结果
-  domainVerificationVisible: false // 小程序-域名校验
+  settingAppletVisible: false // 小程序-配置小程序
 })
 
 const {
@@ -101,11 +94,10 @@ const {
   siteListVisible,
   createSiteVisible,
   brandDomainVisible,
-  createAccountVisible,
   createAppletVisible,
   createPoster,
   drawerAppletVisible,
-  domainVerificationVisible
+  settingAppletVisible
 } = toRefs(features)
 
 const { checkRightsTypeNeedUpgrade } = useSpaceRights()
@@ -210,10 +202,10 @@ const releaseList = [
     desc: t('支持企业授权绑定小程序，提供机器人服务'),
     setList: [
       {
-        icon: FullScreen,
-        label: t('扫码授权'),
+        icon: Tools,
+        label: t('配置小程序'),
         scriptId: 'Chato-applet-set',
-        click: () => commonVisible(createAppletVisible)
+        click: () => commonVisible(settingAppletVisible)
       },
       {
         icon: View,
@@ -226,12 +218,6 @@ const releaseList = [
         label: t('配置文档'),
         scriptId: 'Chato-applet-document',
         click: () => handlePreview(appletConfigDocs)
-      },
-      {
-        icon: FolderChecked,
-        label: t('域名校验'),
-        scriptId: 'Chato-applet-domain',
-        click: () => commonVisible(domainVerificationVisible)
       }
     ]
   }
@@ -253,10 +239,6 @@ watch(
   },
   { immediate: true }
 )
-
-watch(createAccountVisible, (v) => {
-  !v && (accountCreateStatus.value = EAccountSettingStatus.creating)
-})
 
 onMounted(() => {
   const observer = new MutationObserver((mutationsList) => {
@@ -295,9 +277,10 @@ onMounted(() => {
             :svgName="item.icon"
             :title="item.title"
             :desc="item.desc"
+            class="relative"
           >
             <div
-              class="icon-set-container text-[#b5bed0] cursor-pointer gap-2 text-xs flex items-center justify-center mr-[16px] md:mr-[6px]"
+              class="icon-set-container text-[#b5bed0] cursor-pointer gap-2 text-xs flex items-center justify-center mr-[16px] md:mr-[6px] md:mb-2"
               @click="ic.click"
               v-for="ic in item.setList"
               :key="ic.label"
@@ -307,6 +290,9 @@ onMounted(() => {
               </el-icon>
               {{ ic.label }}
             </div>
+            <SpaceRightsMask :visible="rightsMaskVisible && item.icon !== 'wangye'">
+              <SpaceRightsFreeExpUpgrate upgrade-link upgrade-text="该功能为付费权益" />
+            </SpaceRightsMask>
           </ReleaseBox>
         </div>
       </div>
@@ -334,20 +320,18 @@ onMounted(() => {
     />
     <Copylink v-model:value="showCopyLinkVisbile" :chatWebPage="chatReleaseURL.chatWebPage" />
     <CreatePoster v-model:value="createPoster" :domainId="botId" />
-    <CreateApplet
-      v-model:value="createAppletVisible"
-      :defaultAppletcStatus="defaultAppletcStatus"
-      :domainId="domainInfo.id"
-      @handleView="drawerAppletVisible = true"
-    />
     <DrawerApplet
       v-model:value="drawerAppletVisible"
       :domainId="domainInfo.id"
       @handleRetry="createAppletVisible = true"
     />
-    <VerificationTxt
-      v-model:value="domainVerificationVisible"
+    <SettingApplet
+      v-model:value="settingAppletVisible"
+      :defaultAppletcStatus="defaultAppletcStatus"
+      :domainId="domainInfo.id"
+      :slug="domainInfo.slug"
       :chatAPI="chatReleaseURL.chatWebPage"
+      @handleView="drawerAppletVisible = true"
     />
   </div>
 </template>
