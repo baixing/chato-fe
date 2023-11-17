@@ -160,11 +160,10 @@
             </span>
           </p>
           <p>
-            {{ $t(`☞ 当然，互联网用户也可以来访问你的机器人了，如果需要你也可以`)
+            {{ $t(`☞ 互联网用户目前可以访问你的机器人，如不需要可`)
             }}<span class="text-[#7C5CFC] cursor-pointer" @click="onBotTocPrivacy">
               {{ $t('关闭') }}
             </span>
-            {{ $t('该权限') }}
           </p>
         </div>
       </div>
