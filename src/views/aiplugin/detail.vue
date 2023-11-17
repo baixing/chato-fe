@@ -159,6 +159,9 @@
         <el-form-item label="角色设定">
           <el-input type="textarea" v-model="robotInfo.system_prompt"></el-input>
         </el-form-item>
+        <el-form-item label="置入品牌">
+          <el-input type="textarea" v-model="robotInfo.brand_name"></el-input>
+        </el-form-item>
       </el-form>
       <template #footer>
         <span class="dialog-footer">
@@ -196,12 +199,14 @@ const robots = ref([
     name: '',
     system_prompt: '',
     avatar: '',
-    slug: ''
+    slug: '',
+    brand_name: ''
   }
 ])
 const robotInfo = ref({
   name: '',
-  system_prompt: ''
+  system_prompt: '',
+  brand_name: ''
 })
 const accountInfo = ref({
   avatar: '',
@@ -214,7 +219,8 @@ const history = ref([
     org_id: '',
     comment: '',
     avatar: '',
-    created: ''
+    created: '',
+    brand_name: ''
   }
 ])
 const { domainList } = storeToRefs(domainStoreI)
@@ -231,9 +237,11 @@ function editRobot(slug) {
   selectedDomainSlug.value = slug
   let r = robots.value.find((r) => r.slug == slug)
   if (!r) return
+  console.log(r)
   robotInfo.value = {
     name: r.name,
-    system_prompt: r.system_prompt
+    system_prompt: r.system_prompt,
+    brand_name: r.brand_name
   }
   isUpdateRobot.value = true
   showDialog.value = true
@@ -260,7 +268,8 @@ function openCreateDialog() {
   isUpdateRobot.value = false
   robotInfo.value = {
     name: '',
-    system_prompt: ''
+    system_prompt: '',
+    brand_name: ''
   }
 }
 
