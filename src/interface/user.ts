@@ -17,7 +17,7 @@ export interface IOrg {
   owner_id: number
   space_max_capacity: number
   space_real_capacity: number
-  additions: boolean | null
+  additions: string | null
 }
 
 export interface IUserInfo {

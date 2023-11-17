@@ -8,7 +8,11 @@
           'text-sm w-full h-full overflow-hidden truncate',
           showAllName && 'text-xs scale-90'
         ]"
-        :style="{ lineHeight: `${size}px`, background: `${avatar.background}` }"
+        :style="{
+          lineHeight: `${size}px`,
+          background: `${avatar.background}`,
+          fontSize: `${fontSize}`
+        }"
       >
         {{ name || '头像' }}
         <!-- {{ avatar.background }} -->
@@ -36,11 +40,13 @@ const props = withDefaults(
     commercialType?: ESpaceCommercialType
     withRights?: boolean
     showAllName?: boolean
+    fontSize?: string
   }>(),
   {
     limit: 20,
     size: 40,
-    showAllName: false
+    showAllName: false,
+    fontSize: '14px'
   }
 )
 

@@ -367,13 +367,13 @@ const inviteMember = [
 ]
 
 // 引导
-const guideRoutes = [
-  {
-    name: RoutesMap.guide.first,
-    path: '/guide/first',
-    component: () => import('@/views/guide/firstGuide.vue')
-  }
-]
+// const guideRoutes = [
+//   {
+//     name: RoutesMap.guide.first,
+//     path: '/guide/first',
+//     component: () => import('@/views/guide/firstGuide.vue')
+//   }
+// ]
 
 const namespaceSwitch = [
   {
@@ -394,8 +394,8 @@ const loginedRoutes = [
       ...managerRoutes, // 管理机器人
       ...resourceSquareRoutes, // 资源广场
       ...spaceManager,
-      ...vipManager,
-      ...guideRoutes // 引导
+      ...vipManager
+      // ...guideRoutes // 引导
     ]
   }
 ]
