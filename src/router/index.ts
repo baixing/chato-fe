@@ -8,6 +8,10 @@ import { nextTick } from 'vue'
 import { RouterView, createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 
 export const RoutesMap = {
+  aiPlugin: {
+    center: 'aipluginCenter',
+    detail: 'aipluginDetail'
+  },
   home: {
     homeName: 'home',
     index: 'homeIndex',
@@ -228,6 +232,30 @@ const resourceSquareRoutes = [
   }
 ]
 
+// AI插件库
+const aiPluginSquareRoutes = [
+  {
+    path: 'aiplugin',
+    meta: {
+      name: 'aiplugin',
+      requiresAuth: true
+    },
+    component: RouterView,
+    children: [
+      {
+        name: RoutesMap.aiPlugin.center,
+        path: 'center',
+        component: () => import('@/views/aiplugin/index.vue')
+      },
+      {
+        name: RoutesMap.aiPlugin.detail,
+        path: 'detail/:name',
+        component: () => import('@/views/aiplugin/detail.vue')
+      }
+    ]
+  }
+]
+
 // 训练机器人
 const trainningRoutes = [
   {
@@ -393,6 +421,7 @@ const loginedRoutes = [
       ...trainningRoutes, // 训练中心
       ...managerRoutes, // 管理机器人
       ...resourceSquareRoutes, // 资源广场
+      ...aiPluginSquareRoutes, // AI插件库
       ...spaceManager,
       ...vipManager
       // ...guideRoutes // 引导
