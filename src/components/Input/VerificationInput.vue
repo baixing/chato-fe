@@ -150,8 +150,8 @@ function handleArrayRight(index: number) {
 
     &:hover,
     &:focus {
-      border: 1px solid #7c5cfc;
-      background-color: #ffffff;
+      // border: 1px solid #7c5cfc;
+      // background-color: #ffffff;
     }
 
     &[disabled] {

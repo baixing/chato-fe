@@ -2,13 +2,13 @@
   <div>
     <div v-show="!showSmsCodeInput">
       <header class="flex justify-center items-center">
-        <svg-icon name="chato-logo" svg-class="w-69 h-57" />
+        <img src="@/assets/img/chato-logo.png" class="w-[165px] h-[153px]" />
       </header>
 
       <div class="text-center text-[#303133] text-base">
-        <p class="text-[16px]">
+        <p class="text-[16px] font-medium">
           {{ $t('完成手机号注册, 创建你的') }}
-          <span class="text-[#7c5cfc] font-semibold"> {{ $t('专属AI') }} </span>
+          <span class="text-[#7c5cfc]"> {{ $t('专属AI') }} </span>
         </p>
         <p class="mt-[20px] text-[13px] text-[#596780]">
           {{ $t('限时') }}
@@ -31,8 +31,8 @@
             @keyup.enter="sendSmsCode(refForm)"
           >
             <template #prefix>
-              <span class="text-black">+86 </span>
-              <span class="pl-1">|</span>
+              <span class="text-black font-sans">+86 </span>
+              <span class="pl-3 pb-1 font-thin text-xl text-start text-[#b5beb0]">|</span>
             </template>
           </el-input>
 
@@ -48,7 +48,7 @@
               <ArrowRight class="w-4 h-4 inline-block" />
             </el-button>
           </el-form-item>
-          <div class="text-[#707070] flex items-center mb-2 text-xs mt-5">
+          <div class="text-[#B5BEB0] flex items-center mb-2 text-xs mt-5">
             <el-checkbox
               v-model="isBtnSubmitEnabled"
               label=""
@@ -92,14 +92,23 @@
                 }
               }
             "
-          ></VerificationInput>
-          <el-button v-show="false" type="primary" class="text-xs mt-32 w-full text-center" link
-            >{{ $t('重新获取') }}
+          >
+          </VerificationInput>
+          <el-button
+            :disabled="isBtnSendDisabled"
+            v-show="true"
+            type="primary"
+            size="small"
+            class="text-xs mt-40 w-full text-center"
+            link
+            @click="sendSmsCode(refForm)"
+          >
+            {{ codetText }}
           </el-button>
           <div class="form">
             <el-button
               v-show="showSmsCodeInput"
-              class="w-full mt-32"
+              class="w-full mt-[28px]"
               type="primary"
               size="large"
               :disabled="!isBtnSubmitEnabled"
@@ -116,18 +125,21 @@
 </template>
 
 <script setup lang="ts">
-import { ArrowRight } from '@element-plus/icons-vue'
 import { postSendSmsCodeAPI } from '@/api/auth'
-import { useIsMobile } from '@/composables/useBasicLayout'
-import useGlobalProperties from '@/composables/useGlobalProperties'
-import useRSA from '@/composables/useRSA'
-import { validateCode, validateMobile } from '@/utils/validate'
-import { ElNotification as Notification, dayjs, type FormInstance, ElMessage } from 'element-plus'
-import { onMounted, reactive, ref } from 'vue'
-import { useI18n } from 'vue-i18n'
 import useBaiduPromotion from '@/composables/useBaiduPromotion'
+import { useIsMobile } from '@/composables/useBasicLayout'
 import useByteDancePromotion from '@/composables/useByteDancePromotion'
 import useChannel from '@/composables/useChannel'
+import useGlobalProperties from '@/composables/useGlobalProperties'
+import useRSA from '@/composables/useRSA'
+import { kPrivacyLinkUrl, kUserAgreementLinkUrl } from '@/constant/terms'
+import { openPreviewUrl } from '@/utils/help'
+import { validateMobile } from '@/utils/validate'
+import { ArrowRight } from '@element-plus/icons-vue'
+import { ElMessage, ElNotification as Notification, dayjs, type FormInstance } from 'element-plus'
+import { onMounted, reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+
 withDefaults(
   defineProps<{
     labelPosition: 'top' | 'right' | 'left'
@@ -149,12 +161,10 @@ const { encryption } = useRSA()
 const { t } = useI18n()
 
 const { $sensors } = useGlobalProperties()
-const isBtnSendDisabled = ref(false)
-const codetText = ref(t('获取验证码'))
+const isBtnSendDisabled = ref(true)
+const codetText = ref(t('重新获取'))
 const refForm = ref<FormInstance>(null)
-const refInputCode = ref(null)
 const refInputMobile = ref(null)
-const refBtnSend = ref(null)
 const isMobile = useIsMobile()
 const showSmsCodeInput = ref(!isMobile)
 const isBtnSubmitEnabled = ref(true)
@@ -187,7 +197,7 @@ const sendSmsCode = (refForm: FormInstance) => {
   if (!refForm) return
   refForm.validateField('mobile', async (message) => {
     if (!message) {
-      return refBtnSend.value.ref.blur()
+      return
     }
     isBtnSendDisabled.value = true
     const encryptMobile = encryption(modelForm.mobile)
@@ -198,16 +208,14 @@ const sendSmsCode = (refForm: FormInstance) => {
       let count = 60
       let timer = setInterval(() => {
         count--
-        codetText.value = count + 's'
+        codetText.value = '重新获取(' + count + 's)'
         if (count < 0) {
-          codetText.value = t('获取验证码')
+          codetText.value = t('重新获取')
           clearInterval(timer)
           isBtnSendDisabled.value = false
         }
       }, 1000)
       showSmsCodeInput.value = true
-      console.log(showSmsCodeInput.value)
-      focusSmsInput()
     } catch (error) {
       isBtnSendDisabled.value = false
     }
@@ -239,10 +247,6 @@ const submitForm = (refForm: FormInstance) => {
       Notification.error(t('抱歉，您填写的信息有误'))
     }
   })
-}
-
-function focusSmsInput() {
-  refInputCode.value.focus()
 }
 
 onMounted(() => {
