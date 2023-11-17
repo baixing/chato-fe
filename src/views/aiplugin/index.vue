@@ -86,13 +86,14 @@ const steps = ref([
     action: null
   },
   {
-    description: '第三步 点击 加载已解压的扩展程序, 选中刚刚下载解压后的文件夹',
+    description:
+      '第三步 点击 加载已解压的扩展程序(若无显示，则打开左上角的开发者模式), 选中刚刚下载解压后的文件夹',
     image: 'https://cdn.jsdelivr.net/gh/XmchxUp/cloudimg@master/20231111/image.38iz6eviup80.webp',
     buttonText: '',
     action: null
   },
   {
-    description: '第四步 安装好后，刷新Chato界面即可使用',
+    description: '第四步 安装好后，刷新Chato界面即可使用, 网页端登陆小红书',
     image: '',
     buttonText: '',
     action: null
