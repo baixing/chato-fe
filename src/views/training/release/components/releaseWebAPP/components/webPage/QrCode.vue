@@ -51,9 +51,9 @@ const qrcode = useQRCode(props.value, {
 <template>
   <div class="m-qrcode" :class="{ bordered: bordered }" :style="`border-color: ${borderColor};`">
     <img :src="qrcode" v-if="isImg" class="u-qrcode" alt="QRCode" />
-    <a :href="qrcode" download="Chato.png" class="description text-sm text-[#7C5CFC]">{{
-      $t(title)
-    }}</a>
+    <a :href="qrcode" download="Chato.png" class="description text-sm text-[#7C5CFC]">
+      {{ $t(title) }}
+    </a>
   </div>
 </template>
 <style lang="less" scoped>
