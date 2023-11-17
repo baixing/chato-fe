@@ -1,6 +1,6 @@
 <!-- eslint-disable func-call-spacing -->
 <script lang="ts" setup>
-import { reactive, ref } from 'vue'
+import { onUpdated, reactive, ref } from 'vue'
 
 const props = withDefaults(
   defineProps<{
@@ -104,6 +104,15 @@ function handleArrayRight(index: number) {
 
   inputRefs.value[index + 1]?.focus()
 }
+
+onUpdated(() => {
+  const inputRef = inputRefs.value[0]
+  if (inputRef && props.autofocus && inputValue[0] === '') {
+    setTimeout(() => {
+      inputRef.focus()
+    }, 100)
+  }
+})
 </script>
 <template>
   <div class="verification-input">

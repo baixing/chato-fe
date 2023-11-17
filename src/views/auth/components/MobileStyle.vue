@@ -10,7 +10,7 @@
           {{ $t('完成手机号注册, 创建你的') }}
           <span class="text-[#7c5cfc]"> {{ $t('专属AI') }} </span>
         </p>
-        <p class="mt-[20px] text-[13px] text-[#596780]">
+        <p class="mt-[5px] text-[13px] text-[#596780]">
           {{ $t('限时') }}
           <span class="text-[#7c5cfc] font-medium"> {{ $t('免费赠送') }} </span>
           100
@@ -18,7 +18,7 @@
         </p>
       </div>
 
-      <div class="form mt-[114px]">
+      <div class="form mt-[20px]">
         <el-form ref="refForm" :model="modelForm" label-width="0" :label-position="labelPosition">
           <el-input
             v-show="!showSmsCodeInput"
@@ -28,7 +28,12 @@
             :placeholder="$t(`手机号`)"
             autocomplete="off"
             ref="refInputMobile"
-            @keyup.enter="sendSmsCode(refForm)"
+            @keydown.enter="
+              (event) => {
+                event.preventDefault()
+                sendSmsCode(refForm)
+              }
+            "
           >
             <template #prefix>
               <span class="text-black font-sans">+86 </span>
