@@ -177,7 +177,8 @@ const formatDisplayCharacter = (rowData: IDocumentList) => {
 // 生成问答/审阅问答
 const onHandleQuestion = (item: IDocumentList) => {
   // 生成问答
-  if (item.qa_status === 0) {
+  const convertStatus = [0, 3]
+  if (convertStatus.includes(item.qa_status)) {
     const confirmMessage = t(
       '批量生成问答并经过人工审阅后可录入问答库，问答的索引匹配度通常高于文档。内测期间，验收不占用问答额度。是否确认生成？'
     )
