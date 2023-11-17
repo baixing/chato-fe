@@ -11,7 +11,7 @@ export default function useRoleCheck(to: RouteLocationNormalized) {
 
   watch(userInfo, (v) => {
     if (v && /^(tranning|manager).*/.test(to.name as string) && v.role === EAllRole.member) {
-      return router.replace({ name: RoutesMap.resource })
+      return router.replace({ name: RoutesMap.home.homeResource })
     }
   })
 }

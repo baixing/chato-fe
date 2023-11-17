@@ -88,11 +88,6 @@ const coreRoutes = [
         component: () => import('@/views/home/case.vue')
       },
       {
-        name: RoutesMap.home.homeResource,
-        path: 'square',
-        component: () => import('@/views/home/homeResource.vue')
-      },
-      {
         path: 'bot',
         children: [
           {

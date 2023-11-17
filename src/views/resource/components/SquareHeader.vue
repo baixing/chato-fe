@@ -26,10 +26,6 @@ import { useChatStore } from '@/stores/chat'
 import { storeToRefs } from 'pinia'
 import { useRoute, useRouter } from 'vue-router'
 
-defineProps<{
-  requiredTopbar: boolean
-}>()
-
 const router = useRouter()
 const route = useRoute()
 const chatStoreI = useChatStore()
