@@ -7,8 +7,8 @@
           <img :src="logoData" alt="" class="w-[67px] h-[24px]" />
           <div class="flex flex-col justify-between ml-5">
             <h3 class="font-semibold text-lg">小红书智能评论插件</h3>
-            <p class="text-sm text-gray-600 mt-2">3234人使用</p>
-            <p class="text-sm text-yellow-500 mt-1">评分5分</p>
+            <!-- <p class="text-sm text-gray-600 mt-2">3234人使用</p> -->
+            <!-- <p class="text-sm text-yellow-500 mt-1">评分5分</p> -->
           </div>
         </div>
         <div class="p-4 flex-1 space-y-4">
@@ -53,7 +53,7 @@
 
 <script lang="ts" setup>
 import ContentLayout from '@/layout/ContentLayout.vue'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import { RoutesMap } from '../../router'
@@ -74,7 +74,7 @@ const downloadPlugin = () => {
 }
 const steps = ref([
   {
-    description: '第一步 下载插件',
+    description: '第一步 下载插件, 解压文件',
     image: '',
     buttonText: '下载本地文件',
     action: downloadPlugin
@@ -86,12 +86,24 @@ const steps = ref([
     action: null
   },
   {
-    description: '第三步 点击 加载已解压的扩展程序',
+    description: '第三步 点击 加载已解压的扩展程序, 选中刚刚下载解压后的文件夹',
     image: 'https://cdn.jsdelivr.net/gh/XmchxUp/cloudimg@master/20231111/image.38iz6eviup80.webp',
+    buttonText: '',
+    action: null
+  },
+  {
+    description: '第四步 安装好后，刷新Chato界面即可使用',
+    image: '',
     buttonText: '',
     action: null
   }
 ])
+
+watch(installDialogVisible, (newVal, oldVal) => {
+  if (oldVal === true && newVal === false) {
+    location.reload()
+  }
+})
 
 function navigateToNextPage() {
   router.replace({ name: RoutesMap.aiPlugin.detail, params: { name: 'xhs' } })
