@@ -8,86 +8,68 @@
       :label-position="labelPosition"
     >
       <el-form-item :label="$t(mobileLabel)" prop="mobile">
-        <el-input
-          class="input-mobile"
-          v-model.trim="modelForm.mobile"
-          type="text"
-          size="large"
-          :placeholder="$t(`手机号`)"
-          autocomplete="off"
-          ref="refInputMobile"
-        />
-      </el-form-item>
-      <el-form-item
-        class="form-item-code"
-        :label="$t(codeLabel)"
-        prop="code"
-        style="margin-bottom: 15px"
-      >
-        <el-input
-          class="!w-[220px] md:!w-[65%]"
-          v-model.trim="modelForm.code"
-          type="text"
-          size="large"
-          :placeholder="$t(`验证码`)"
-          autocomplete="off"
-          maxlength="4"
-          ref="refInputCode"
-          @input="onCodeInputRBI"
-        />
-        <el-button
-          class="!w-[120px] md:!w-[30%]"
-          size="large"
-          @click="sendSmsCode(refForm)"
-          :disabled="isBtnSendDisabled"
-          ref="refBtnSend"
-          data-script="Chato-verification"
-        >
-          {{ codetText }}
-        </el-button>
-      </el-form-item>
-      <p class="text-right text-[#9DA3AF] text-xs cursor-pointer" @click="codeTipVisible = true">
-        {{ $t('收不到验证码？') }}
-      </p>
-      <el-form-item
-        v-if="!shareChannel && requiredChannel"
-        :label="$t(`来源（选填）`)"
-        prop="channelType"
-      >
-        <el-select
-          v-model="modelForm.channelType"
-          class="w-full"
-          size="large"
-          :placeholder="$t(`来源`)"
-          autocomplete="off"
-        >
-          <el-option
-            v-for="item in ChannelOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
-
-        <el-form-item prop="channel" class="w-full">
+        <div class="flex items-center justify-between gap-2 w-full">
           <el-input
-            v-if="isInputChannel"
-            class="mt-3"
-            v-model.trim="modelForm.channel"
+            class="input-mobile"
+            v-model.trim="modelForm.mobile"
             type="text"
             size="large"
-            :placeholder="$t(`其他来源的详细描述或邀请码`)"
+            :placeholder="$t(`手机号`)"
             autocomplete="off"
-            maxlength="30"
+            ref="refInputMobile"
+            @keyup.enter="sendSmsCode(refForm)"
+          >
+          </el-input>
+          <el-button
+            :type="primary"
+            @click="sendSmsCode(refForm)"
+            :disabled="isBtnSendDisabled"
+            ref="refBtnSend"
+            size="large"
+            data-script="Chato-verification"
+          >
+            {{ codetText }}
+          </el-button>
+        </div>
+      </el-form-item>
+      <transition name="fade">
+        <el-form-item
+          v-show="showSmsCodeInput"
+          class="form-item-code"
+          :label="$t(codeLabel)"
+          prop="code"
+          style="margin-bottom: 15px"
+        >
+          <el-input
+            id="smsInput"
+            v-model.trim="modelForm.code"
+            type="text"
+            size="large"
+            :placeholder="$t(`验证码`)"
+            autocomplete="off"
+            maxlength="4"
+            ref="refInputCode"
+            @input="onCodeInputRBI"
           />
         </el-form-item>
-      </el-form-item>
+      </transition>
+      <transition name="fade">
+        <p
+          v-show="showSmsCodeInput"
+          class="text-right text-[#9DA3AF] text-xs cursor-pointer"
+          @click="codeTipVisible = true"
+        >
+          {{ $t('收不到验证码？') }}
+        </p>
+      </transition>
       <el-form-item class="!mb-0">
         <slot
           :ref="refForm"
           :modelForm="modelForm"
           :refBtnSend="refBtnSend"
           :isInputChannel="isInputChannel"
+          :showSmsCodeInput="showSmsCodeInput"
+          :sendSmsCode="sendSmsCode"
         />
       </el-form-item>
     </el-form>
@@ -120,9 +102,14 @@
 </template>
 
 <script lang="ts" setup>
-import { postSendSmsCodeAPI, getCheckChannelAPI } from '@/api/auth'
+import { getCheckChannelAPI, postSendSmsCodeAPI } from '@/api/auth'
+import { useIsMobile } from '@/composables/useBasicLayout'
 import useChannel from '@/composables/useChannel'
 import useGlobalProperties from '@/composables/useGlobalProperties'
+import useRSA from '@/composables/useRSA'
+import useSpaceRights from '@/composables/useSpaceRights'
+import { LoginCodeTip } from '@/constant/auth'
+import { ESpaceRightsType } from '@/enum/space'
 import { validateCode, validateMobile } from '@/utils/validate'
 import {
   ElNotification as Notification,
@@ -130,12 +117,8 @@ import {
   type FormInstance,
   type FormRules
 } from 'element-plus'
-import { computed, reactive, ref, defineAsyncComponent } from 'vue'
+import { computed, defineAsyncComponent, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import useRSA from '@/composables/useRSA'
-import { LoginCodeTip } from '@/constant/auth'
-import { ESpaceRightsType } from '@/enum/space'
-import useSpaceRights from '@/composables/useSpaceRights'
 
 const UpgradeRightsModal = defineAsyncComponent(
   () => import('@/components/Upgrade/UpgradeRightsModal.vue')
@@ -170,6 +153,8 @@ const refInputCode = ref(null)
 const refInputMobile = ref(null)
 const refBtnSend = ref(null)
 const codeTipVisible = ref(false)
+const isMobile = useIsMobile()
+const showSmsCodeInput = ref(!isMobile)
 
 let smsCodeTrackerTag = false
 const inputChannel = [t('邀请码'), t('其他')]
@@ -190,6 +175,7 @@ const modelForm = reactive({
   channelType: '',
   channel: ''
 })
+
 const ruleForm = reactive<FormRules>({
   mobile: [
     { required: true, message: t('请输入手机号'), trigger: 'blur' },
@@ -269,7 +255,9 @@ const onCodeInputRBI = async () => {
 
 // 发送验证码
 const sendSmsCode = (refForm: FormInstance) => {
+  console.log(1111)
   if (!refForm) return
+  console.log(2222)
   refForm.validateField('mobile', async (message) => {
     if (!message) {
       return refBtnSend.value.ref.blur()
@@ -292,12 +280,25 @@ const sendSmsCode = (refForm: FormInstance) => {
           isBtnSendDisabled.value = false
         }
       }, 1000)
+      showSmsCodeInput.value = true
+      console.log(showSmsCodeInput.value)
+      focusSmsInput()
     } catch (error) {
       isBtnSendDisabled.value = false
       refInputCode.value.blur()
     }
   })
 }
+
+function focusSmsInput() {
+  refInputCode.value.focus()
+}
+
+onMounted(() => {
+  setTimeout(() => {
+    refInputMobile.value.focus()
+  }, 300)
+})
 </script>
 
 <style scoped lang="scss">
@@ -317,5 +318,13 @@ const sendSmsCode = (refForm: FormInstance) => {
   :deep(.el-form-item__label) {
     color: #303133;
   }
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.8s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

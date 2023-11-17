@@ -1,6 +1,6 @@
 <template>
   <div class="w-full h-full overflow-hidden bg-white flex justify-center items-center">
-    <div>
+    <div v-if="!isMobile">
       <LoginHeader />
       <div
         class="p-3 mt-10 md:mt-3 m-auto border border-solid border-[#E4E7ED] md:border-none rounded-lg"
@@ -12,7 +12,7 @@
           @handleRescanCode="handleRescanCode"
         />
         <template v-else>
-          <div class="flex justify-end items-center">
+          <div v-if="!isMobile" class="flex justify-end items-center">
             <div
               class="login-tip relative w-[110px] text-[#596780] text-center py-2 bg-[#F2F3F5] rounded-md mr-[9px]"
             >
@@ -37,6 +37,7 @@
         </template>
       </div>
     </div>
+    <MobileStyle v-else @handleSubmitLogin="handleSubmitLogin"></MobileStyle>
   </div>
 </template>
 
@@ -64,7 +65,7 @@ import BindingMobile from './components/BindingMobile.vue'
 import LoginHeader from './components/LoginHeader.vue'
 import LoginMobile from './components/LoginMobile.vue'
 import LoginWeixin from './components/LoginWeixin.vue'
-
+import MobileStyle from './components/MobileStyle.vue'
 const { t } = useI18n()
 const stateToken = useStorage('auth_token', '')
 const { shareChannel, setShareChannel } = useChannel()
