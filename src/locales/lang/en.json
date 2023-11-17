@@ -1393,6 +1393,8 @@
   "QA相关性": "QA relatedness",
   "数值越高所匹配的文档知识越精准，但来源文档数量可能变少": "The higher the value, the more accurate the document knowledge is, but the number of documents may be less",
   "文档相关性": "Document relatedness",
+  "转文档": "Convert document",
+  "QA 转文档成功": "QA document transfer successful",
   "已爬": "Crawl",
   "条；重复": "article; duplicate ",
   "条；剩余": "articles; remaining ",
