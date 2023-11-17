@@ -54,6 +54,7 @@
                 listType="picture-card"
                 :fixed="false"
                 :isInitialImg="true"
+                accept="image/png, image/jpeg"
                 :disabled="inputTextForm.status === 'preview'"
               />
               <span class="text-[#999999] text-xs ml-1">{{ $t('（最多上传 9 张）') }}</span>
