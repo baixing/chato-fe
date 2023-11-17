@@ -7,8 +7,8 @@
           <img :src="logoData" alt="" class="w-[67px] h-[24px]" />
           <div class="flex flex-col justify-between ml-5">
             <h3 class="font-semibold text-lg">小红书智能评论插件</h3>
-            <!-- <p class="text-sm text-gray-600 mt-2">3234人使用</p> -->
-            <!-- <p class="text-sm text-yellow-500 mt-1">评分5分</p> -->
+            <p class="text-sm text-gray-600 mt-2">3234人使用</p>
+            <p class="text-sm text-yellow-500 mt-1">评分5分</p>
           </div>
         </div>
         <div class="p-4 flex-1 space-y-4">
