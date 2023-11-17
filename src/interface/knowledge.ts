@@ -104,3 +104,12 @@ export interface IQuestionConvertQAList {
   status: EDocConvertCheckStatus
   ref_source: IQuestionConvertQASource[]
 }
+
+export interface IDocmentToQAParams {
+  file_ids: (number | string)[]
+  short_doc_count: number
+  short_doc_txt: number
+  long_doc_count: number
+  long_doc_txt: number
+  prompt?: string
+}

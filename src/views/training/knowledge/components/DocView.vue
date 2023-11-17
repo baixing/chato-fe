@@ -25,6 +25,16 @@
       >
         <el-button @click="handleTriggerMate">{{ $t('批量操作') }}</el-button>
         <el-button
+          v-if="batchRemove && EAllRole.superman === userInfo.role"
+          :disabled="!multipleSelection.length"
+          @click="onDocToQA"
+          link
+          class="ml-4 text-[#303133]"
+        >
+          <el-icon class="mr-1"><Notification /></el-icon>
+          {{ $t('生成训练问答') }}
+        </el-button>
+        <el-button
           :disabled="!multipleSelection.length"
           v-if="batchRemove"
           @click="handleBatchRemove"
@@ -65,6 +75,7 @@
       @reloadList="initDocList"
       @closeDialogVisble="onCloseDialog"
     />
+    <DocToQAModal v-model:visible="docToQAModalVisible" :ids="multipleIds" />
   </div>
 </template>
 <script lang="ts" setup>
@@ -83,6 +94,7 @@ import {
   LearningStatesPerformanceType
 } from '@/enum/knowledge'
 import { ESpaceRightsType } from '@/enum/space'
+import { EAllRole } from '@/enum/user'
 import type { IPage } from '@/interface/common'
 import type { GetFilesByDomainIdType, IDocumentForm, IDocumentList } from '@/interface/knowledge'
 import { RoutesMap } from '@/router'
@@ -96,6 +108,7 @@ import { computed, onUnmounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import DocLearnTable from './DocLearnTable.vue'
+import DocToQAModal from './DocToQAModal.vue'
 
 const { t } = useI18n()
 const { ImagePath: emptydocImg } = useImagePath('empty-doc')
@@ -107,6 +120,7 @@ const route = useRoute()
 const router = useRouter()
 const domainStoreI = useDomainStore()
 const { domainInfo } = storeToRefs(domainStoreI)
+const { userInfo } = storeToRefs(base)
 const domainId = computed(() => domainInfo.value.id || (route.params.botId as string))
 const qtyLimit = base.userInfo.role === USER_ROLES.SUPERMAN ? 1000 : 20 // 同时上传的文件数量限制
 const sizeLimit = 30 // 单个文件的体积限制（MB）
@@ -139,6 +153,8 @@ const pagination = ref<IPage>({
 
 const currentEdit = ref<IDocumentForm>({})
 const dialogVisible = ref(false)
+
+const multipleIds = computed(() => multipleSelection.value.map((item) => item.id))
 
 const onEditPreviewDoc = (value: any, type: EDocumentOperateType) => {
   if (type === EDocumentOperateType.retry) {
@@ -219,6 +235,11 @@ const deteleOrRetryFile = async (type: DeleteRetryFileMateStatusType, ids: numbe
     code: res.data.code,
     message: res.data.msg || res.data.message
   }
+}
+
+const docToQAModalVisible = ref(false)
+const onDocToQA = () => {
+  docToQAModalVisible.value = true
 }
 
 const handleBatchRemove = () => {
