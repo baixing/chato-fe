@@ -341,12 +341,10 @@ const copyText = async () => {
 }
 
 const setObjByObj = <T extends object>(obj1: T, obj2: T, pick?: (keyof T)[]) => {
-  console.log(obj2)
   Object.keys(obj2).forEach((key) => {
     const _key = key as keyof T
     if (pick.includes(_key)) obj1[_key] = obj2[_key] ?? obj1[_key]
   })
-  console.log(obj1)
 }
 
 const onSelectScenes = async (item: (typeof ScenesList)[number]) => {
