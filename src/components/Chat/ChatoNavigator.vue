@@ -237,6 +237,7 @@ const sendData = async () => {
 import { onMounted } from 'vue'
 const history = ref([])
 onMounted(async () => {
+  console.log('onMounted:')
   try {
     const response = await fetch(
       'https://test.api.chato.cn/chato/navigator/navigator_backend/search',
@@ -247,25 +248,25 @@ onMounted(async () => {
       }
     )
     const data = await response.json()
-    data
+
+    history.value = data
       .slice()
       .reverse()
-      .forEach((item) => {
-        history.value.push(
-          {
-            type: 'text',
-            displayType: 'question',
-            content: item.question,
-            status: 'done'
-          },
-          {
-            type: 'text',
-            displayType: 'answer',
-            content: item.answer,
-            status: 'done'
-          }
-        )
-      })
+      .map((item) => [
+        {
+          type: 'text',
+          displayType: 'question',
+          content: item.question,
+          status: 'done'
+        },
+        {
+          type: 'text',
+          displayType: 'answer',
+          content: item.answer,
+          status: 'done'
+        }
+      ])
+      .reduce((A, B) => [...A, ...B], [])
     scrollChatHistory()
   } catch (error) {
     console.error('Fetch error:', error)
