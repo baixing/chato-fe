@@ -235,8 +235,7 @@ import { useStorage } from '@vueuse/core'
 const history = ref([])
 const freshHistory = async () => {
   const authToken = useStorage<string>('auth_token', '')
-  if (authToken && !userInfo.value.id) return
-
+  if (authToken.value && !userInfo.value.id) return
   userId =
     userInfo.value['mobile'] !== undefined ? userInfo.value['mobile'] : localStorage.getItem('uid')
 
