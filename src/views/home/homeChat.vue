@@ -1,6 +1,16 @@
 <template>
   <div class="overflow-hidden w-full h-[calc(100%-74px)] mt-[74px] flex bg-white">
     <ChatSidebar v-show="!isMobile" prefix="" style="border-right: 1px solid rgb(228, 231, 237)" />
+    <div v-if="navigator" class="w-full relative">
+      <span
+        v-show="isMobile"
+        @click="drawerVisible = true"
+        class="inline-block w-fit cursor-pointer rounded-full absolute z-[999]"
+      >
+        <svg-icon name="menu-more" svg-class="w-10 h-10 text-[#303133] mt-1" />
+      </span>
+      <Navigator />
+    </div>
     <Square
       class="bg-[#f2f3f5] w-full"
       v-if="square"
@@ -48,6 +58,7 @@ import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import Square from '../resource/square.vue'
 import homeChatItem from './components/homeChatItem.vue'
+import Navigator from '@/components/chat/ChatoNavigator.vue'
 
 const { isMobile } = useBasicLayout()
 const loading = ref(false)
