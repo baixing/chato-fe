@@ -13,7 +13,7 @@
     </div>
     <Square
       class="bg-[#f2f3f5] w-full"
-      v-if="square"
+      v-else-if="square"
       prefix=""
       :requiredTopbar="false"
       :existMenuMore="false"
@@ -67,6 +67,7 @@ const link = window.location.href
 const { $sensors, $copyText } = useGlobalProperties()
 const { t } = useI18n()
 const square = ref<boolean>(false)
+const navigator = ref<boolean>(false)
 const route = useRoute()
 
 const copyText = (str: string) => {
@@ -91,6 +92,7 @@ watch(
     console.log(newPath)
     // 当路由匹配特定模式时，设置 square 为 true，否则为 false
     square.value = newPath === `/bot/square`
+    navigator.value = newPath === `/bot/chato_navigator`
   },
   { immediate: true }
 )
