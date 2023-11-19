@@ -96,4 +96,8 @@ async function jumpToSquare() {
 const handeGoCreate = () => {
   router.push({ name: RoutesMap.manager.create })
 }
+
+const onLinkToNavigator = () => {
+  router.replace(`${props.prefix}/bot/chato_navigator`)
+}
 </script>
