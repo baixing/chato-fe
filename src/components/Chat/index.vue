@@ -1185,6 +1185,7 @@ watch(
   botSlug,
   (v) => {
     if (botSlug.value === 'square') return
+    if (botSlug.value === 'chato_navigator') return
     recommendQuestions.value = []
     if (v) {
       init()

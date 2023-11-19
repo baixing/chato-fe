@@ -69,7 +69,8 @@ const allMenuList = [
 
 const secondarySidebar = {
   [RoutesMap.chat.c]: ChatSidebar,
-  [RoutesMap.home.homeResource]: ChatSidebar
+  [RoutesMap.home.homeResource]: ChatSidebar,
+  [RoutesMap.chat.navigator]: ChatSidebar
 }
 
 const route = useRoute()
@@ -94,6 +95,7 @@ const activeSideMenu = computed(() => {
   if (
     route.name === RoutesMap.chat.c ||
     route.name === RoutesMap.home.homeResource ||
+    route.name === RoutesMap.chat.navigator ||
     route.name === RoutesMap.aiPlugin.center
   ) {
     return route.name

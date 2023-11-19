@@ -34,7 +34,8 @@ export const RoutesMap = {
     release: 'chatRelease',
     c: 'chatC',
     homeC: 'chatHomeC',
-    resource: 'resource'
+    resource: 'resource',
+    navigator: 'navigator'
   },
   resource: 'resource',
   tranning: {
@@ -199,6 +200,11 @@ const chatRoutes = [
       requiresAuth: true
     },
     children: [
+      {
+        name: RoutesMap.chat.navigator,
+        path: 'bot/chato_navigator',
+        component: () => import('@/components/chat/ChatoNavigator.vue')
+      },
       {
         name: RoutesMap.home.homeResource,
         path: 'bot/square',
