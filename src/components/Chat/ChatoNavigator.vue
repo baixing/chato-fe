@@ -82,7 +82,7 @@
             :placeholder="t(inputPlaceholder)"
             :disabled="internalEnterDisabled"
             @click="emit('inputClick')"
-            @keydown.enter="onKeydownEnter"
+            @keydown.enter="() => sendData()"
           />
           <el-tooltip :disabled="isMobile" :content="t(`发送`)" placement="top" :hide-after="0">
             <span
@@ -157,9 +157,7 @@ import MessageItem from '@/components/Chat/ChatMessageItem.vue'
 
 import { useBase } from '@/stores/base'
 const base = useBase()
-console.log('base', base)
 const { userInfo } = storeToRefs(base)
-console.log('userInfo', base)
 import { storeToRefs } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 import { ElMessage } from 'element-plus'
@@ -185,16 +183,13 @@ const props = defineProps<{
   lastQuestionId?: number
   hiddenClear?: boolean
 }>()
-// const internalValue = computed({
-//   get: () => props.value,
-//   set: (v) => emit('update:value', v)
-// })
+
 const internalValue = ref('')
 const inputPlaceholder = computed(() => '输入问题，换行可通过shift+回车')
 
 const qaList = ref([]) // 用于存储问题及答案的列表
 
-const userId =
+let userId =
   userInfo.value['mobile'] !== undefined ? userInfo.value['mobile'] : localStorage.getItem('uid')
 console.log('userId', userId)
 const sendData = async () => {
@@ -234,10 +229,17 @@ const sendData = async () => {
   })
   scrollChatHistory()
 }
-import { onMounted } from 'vue'
+import { watch, onMounted } from 'vue'
+import { useStorage } from '@vueuse/core'
+
 const history = ref([])
-onMounted(async () => {
-  console.log('onMounted:')
+const freshHistory = async () => {
+  const authToken = useStorage<string>('auth_token', '')
+  if (authToken && !userInfo.value.id) return
+
+  userId =
+    userInfo.value['mobile'] !== undefined ? userInfo.value['mobile'] : localStorage.getItem('uid')
+
   try {
     const response = await fetch(
       'https://test.api.chato.cn/chato/navigator/navigator_backend/search',
@@ -248,7 +250,6 @@ onMounted(async () => {
       }
     )
     const data = await response.json()
-
     history.value = data
       .slice()
       .reverse()
@@ -271,7 +272,9 @@ onMounted(async () => {
   } catch (error) {
     console.error('Fetch error:', error)
   }
-})
+}
+
+watch(base, freshHistory, { immediate: true })
 </script>
 
 <style lang="scss" scoped>
@@ -364,6 +367,7 @@ onMounted(async () => {
   max-width: 100vw;
   overflow-x: hidden;
   overflow-y: auto;
+  scroll-behavior: smooth;
 }
 
 .quick-message-container {
