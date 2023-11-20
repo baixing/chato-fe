@@ -203,7 +203,7 @@ const chatRoutes = [
       {
         name: RoutesMap.chat.navigator,
         path: 'bot/chato_navigator',
-        component: () => import('@/components/chat/ChatoNavigator.vue')
+        component: () => import('@/components/Chat/ChatoNavigator.vue')
       },
       {
         name: RoutesMap.home.homeResource,

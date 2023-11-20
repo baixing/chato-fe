@@ -49,6 +49,7 @@
 </template>
 
 <script setup lang="ts">
+import Navigator from '@/components/Chat/ChatoNavigator.vue'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import useGlobalProperties from '@/composables/useGlobalProperties'
 import ChatSidebar from '@/layout/components/Sidebar/ChatSidebar.vue'
@@ -58,7 +59,6 @@ import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import Square from '../resource/square.vue'
 import homeChatItem from './components/homeChatItem.vue'
-import Navigator from '@/components/chat/ChatoNavigator.vue'
 
 const { isMobile } = useBasicLayout()
 const loading = ref(false)
