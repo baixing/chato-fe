@@ -163,12 +163,7 @@
       v-if="showFooterContactVisible"
       class="home-contact-btn py-5 px-[7px] md:py-4 md:px-[10px] text-base absolute right-7 md:right-1 flex flex-col gap-[14px]"
     >
-      <div
-        class="fixed-btn"
-        id="Chato_right_service_click"
-        data-sensors-click
-        @click="onContactUs()"
-      >
+      <div class="fixed-btn" id="Chato_right_service_click" data-sensors-click @click="onAdvisory">
         <svg-icon class="text-xl mb-[4px]" svg-class="w-5 h-5" name="wechat" />
         <span v-if="!isMobile" class="scale-90">{{ $t('咨询客服') }}</span>
       </div>
@@ -306,8 +301,14 @@ const onEnter = (type?: string) => {
 const onContactUs = (display = 'block') => {
   const containerEl = document.getElementById('inframe_container')
   containerEl && (containerEl.style.display = display)
+}
+
+const onAdvisory = () => {
   if (isMobile.value) {
     checkRightsTypeNeedUpgrade(ESpaceRightsType.default, false)
+    return
+  } else {
+    onContactUs()
   }
 }
 

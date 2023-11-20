@@ -536,7 +536,7 @@
 import useImagePath from '@/composables/useImagePath'
 import { ELangKey } from '@/enum/locales'
 import { useLocales } from '@/stores/locales'
-import { ChatDotRound, VideoPlay } from '@element-plus/icons-vue'
+import { ChatDotRound } from '@element-plus/icons-vue'
 import { storeToRefs } from 'pinia'
 import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
