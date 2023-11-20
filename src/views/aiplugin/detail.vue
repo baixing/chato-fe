@@ -3,10 +3,20 @@
     <Topbar :title="t('小红书')" class="!mb-0 lg:!mb-4" />
     <ContentLayout class="!overflow-hidden !h-auto pt-8 lg:pt-0">
       <div class="p-4 max-w-7xl mx-auto">
-        <h1 v-if="!isLogin">请先安装插件，并且网页登陆小红书</h1>
+        <div class="flex flex-row justify-between">
+          <div class="flex flex-row items-center space-x-4">
+            <img :src="accountInfo.avatar || DefaultAvatar" class="w-10 h-10 rounded-full" />
+            <h2 class="text-xl font-semibold" v-html="accountInfo.title"></h2>
+          </div>
+          <div class="flex items-center">
+            <img :src="XHSLogo" class="w-[67px] h-[24px]" />
+          </div>
+        </div>
+
+        <h1 class="mt-10">评论机器人</h1>
 
         <div
-          class="grid grid-cols-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 gap-4"
+          class="grid grid-cols-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 gap-4 mt-4"
         >
           <div
             data-script="Chato-createBot"
@@ -24,19 +34,28 @@
           </div>
 
           <div
-            class="bg-white rounded-lg min-h-[200px] leading-5 flex flex-col items-center justify-center gap-4 transition cursor-pointer h-full hover:shadow-lg hover:-translate-y-2 lg:p-4 lg:gap-3 lg:h-auto lg:hover:-translate-y-0"
+            class="bg-white rounded-lg min-h-[150px] leading-5 flex flex-col gap-4 transition cursor-pointer h-full hover:shadow-lg hover:-translate-y-2 lg:p-4 lg:gap-3 lg:h-auto lg:hover:-translate-y-0"
             v-for="rb in robots"
             :key="rb.slug"
             @click="selectRobot(rb.slug)"
             :class="{ highlight: selectedDomainSlug === rb.slug }"
           >
-            <img :src="rb.avatar" alt="Robot Avatar" class="w-24 h-24 rounded-full" />
-            <div class="font-bold">{{ rb.name }}</div>
-            <div>{{ rb.system_prompt }}</div>
-            <div class="flex items-center">
+            <div class="flex flex-row gap-4 items-center ml-5 mt-5">
+              <img :src="rb.avatar" alt="Robot Avatar" class="w-10 h-10 rounded-full" />
+              <div class="font-bold">{{ rb.name }}</div>
+            </div>
+
+            <div
+              class="ml-5 text-lg leading-5 line-clamp-2 break-all whitespace-pre-wrap h-10 lg:h-auto"
+              style="color: #b5bed0"
+            >
+              {{ rb.system_prompt }}
+            </div>
+
+            <div class="flex items-center justify-between ml-5">
               <p
                 @click="editRobot(rb.slug)"
-                class="text-blue-500 hover:text-blue-700 focus:outline-none"
+                class="text-sm text-[#B5BED0] hover:text-blue-700 focus:outline-none"
               >
                 编辑
               </p>
@@ -45,26 +64,19 @@
         </div>
 
         <!-- Menu -->
-        <div class="flex justify-between mt-5">
-          <div v-if="isLogin" class="flex flex-col items-center">
-            <div class="flex items-center space-x-4">
-              <img :src="accountInfo.avatar || DefaultAvatar" class="w-10 h-10 rounded-full" />
-              <h2 class="text-xl font-semibold">{{ accountInfo.title }}</h2>
-            </div>
-          </div>
-
+        <div class="flex justify-between mt-10">
           <div class="flex space-x-4 justify-center items-center">
             <h1
-              :class="{ 'bg-blue-500 text-white': selectedMenu === 'posts' }"
+              :class="{ ' text-[#7C5CFC] ': selectedMenu === 'posts' }"
               @click="selectMenu('posts')"
-              class="cursor-pointer px-4 py-2 rounded hover:bg-blue-500 hover:text-white transition-colors"
+              class="cursor-pointer rounded transition-colors"
             >
               帖子列表
             </h1>
             <h1
-              :class="{ 'bg-blue-500 text-white': selectedMenu === 'history' }"
+              :class="{ 'text-[#7C5CFC]': selectedMenu === 'history' }"
               @click="selectMenu('history')"
-              class="cursor-pointer px-4 py-2 rounded hover:bg-blue-500 hover:text-white transition-colors"
+              class="cursor-pointer rounded transition-colors"
             >
               评论列表
             </h1>
@@ -73,33 +85,60 @@
 
         <!-- History -->
         <div v-if="selectedMenu == 'history'" class="mt-4">
-          <div v-for="h in history" :key="h.domain_slug" class="mb-4 p-4 border rounded shadow-sm">
-            <div class="flex items-center space-x-2 mb-2">
-              <img :src="h.avatar || DefaultAvatar" class="w-6 h-6 rounded-full" />
-              <p class="font-semibold">{{ h.name }}</p>
+          <div
+            v-for="h in history"
+            :key="h.domain_slug"
+            class="flex flex-row mb-4 p-4 border rounded shadow-sm"
+          >
+            <div class="my-2 px-2 min-h-[190px] max-w-[140px] w-1/4 overflow-hidden">
+              <div class="relative">
+                <img
+                  :src="proxyImageUrl(h.image)"
+                  alt="Card image"
+                  class="w-full h-48 object-cover cursor-pointer rounded-xl"
+                />
+              </div>
+              <div class="cursor-pointer" @click="openXHSNote(h.note_id)">
+                <div class="flex items-center mb-2 mt-2">
+                  <img :src="h.created_avatar" alt="Avatar" class="w-10 h-10 rounded-full mr-2" />
+                  <div class="flex flex-row justify-between w-full items-center text-xs">
+                    <p class="text-gray-500">{{ h.created_nickname }}</p>
+                  </div>
+                </div>
+              </div>
             </div>
-            <p class="text-gray-600 text-sm">{{ h.comment }}</p>
-            <p class="text-gray-500 text-xs mt-4">
-              {{ formatDate(h.created) }}
-            </p>
+
+            <div class="flex flex-col ml-2">
+              <div class="flex items-center space-x-2 mb-2">
+                <img :src="h.avatar || DefaultAvatar" class="w-6 h-6 rounded-full" />
+                <p class="font-semibold">
+                  {{ h.name }}
+                </p>
+              </div>
+              <p class="text-gray-600 text-sm">
+                <a
+                  :href="`https://www.xiaohongshu.com/explore/${h.note_id}`"
+                  target="_blank"
+                  class="text-inherit no-underline"
+                >
+                  {{ h.comment }}
+                </a>
+              </p>
+              <p class="text-gray-500 text-xs mt-4">
+                {{ formatDate(h.created) }}
+              </p>
+            </div>
           </div>
         </div>
 
         <!-- Posts -->
         <div v-if="selectedMenu == 'posts'">
-          <!-- <el-select v-model="selectedDomainSlug" class="m-2" placeholder="Select" size="large">
-            <el-option
-              v-for="item in domainList"
-              :key="item.id"
-              :label="item.name"
-              :value="item.slug"
-            />
-          </el-select> -->
-          <div class="flex flex-row">
+          <div class="flex flex-row items-center w-1/2">
             <el-input
               v-model="searchQuery"
-              placeholder="搜索..."
-              class="mb-4 w-full lg:w-1/3"
+              placeholder="探索更多内容"
+              class="mb-4 mt-4 text-[#9DA3AF]"
+              style="border-radius: 9999px"
               @input="handleSearch"
             />
             <el-button class="ml-2" type="primary" @click="handleCommentButtonClick"
@@ -108,41 +147,69 @@
           </div>
 
           <div class="flex flex-wrap gap-2 mb-4">
-            <button
+            <p
               v-for="tag in tags"
               :key="tag"
               :class="[
-                'px-4 py-2 text-sm font-medium rounded-full transition-colors duration-150',
-                selectedTag === tag
-                  ? 'bg-blue-500 text-white'
-                  : 'text-blue-500 bg-white hover:bg-blue-100'
+                'px-4 py-2  font-medium transition-colors duration-150  rounded-full',
+                selectedTag === tag ? 'bg-white text-black' : 'bg-gray-100 hover:bg-blue-100'
               ]"
               @click="handleTagSelection(tag)"
             >
               {{ tag }}
-            </button>
+            </p>
           </div>
           <div class="flex flex-wrap -mx-2 overflow-hidden">
-            <div v-for="card in cards" :key="card.id" class="my-2 px-2 w-1/2 overflow-hidden">
+            <div v-for="card in cards" :key="card.id" class="my-2 px-2 w-1/4 overflow-hidden">
               <div class="relative">
-                <div
-                  v-if="card.selected"
-                  class="absolute inset-0 bg-black bg-opacity-25 z-10"
-                  @click="toggleSelection(card)"
-                ></div>
                 <img
                   :src="proxyImageUrl(card.image)"
                   alt="Card image"
-                  class="w-full h-48 object-cover cursor-pointer"
+                  class="w-full h-48 object-cover cursor-pointer rounded-xl"
                   @click="toggleSelection(card)"
+                  :class="{ highlight: card.selected }"
                 />
               </div>
-              <div class="p-4">
-                <div class="flex items-center mb-2">
+              <div class="p-4 cursor-pointer" @click="openXHSNote(card.id)">
+                <h3 class="text-base font-semibold">{{ card.title }}</h3>
+                <div class="flex items-center mb-2 mt-2">
                   <img :src="card.avatar" alt="Avatar" class="w-10 h-10 rounded-full mr-2" />
-                  <div>
-                    <h3 class="text-lg font-semibold">{{ card.title }}</h3>
-                    <p class="text-gray-500 text-sm">{{ card.accountName }}</p>
+                  <div class="flex flex-row justify-between w-full items-center text-xs">
+                    <p class="text-gray-500">{{ card.accountName }}</p>
+                    <div class="flex items-center">
+                      <svg
+                        v-if="card.liked"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="red"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        class="h-5 w-5"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                        />
+                      </svg>
+                      <svg
+                        v-else
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="gray"
+                        class="h-5 w-5"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                        />
+                      </svg>
+
+                      <span>{{ card.liked_count }}</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -153,13 +220,29 @@
     </ContentLayout>
     <el-dialog v-model="showDialog" title="评论机器人">
       <el-form>
-        <el-form-item label="机器人名字">
+        <el-form-item>
+          <h1>机器人名字</h1>
           <el-input v-model="robotInfo.name"></el-input>
         </el-form-item>
-        <el-form-item label="角色设定">
-          <el-input type="textarea" v-model="robotInfo.system_prompt"></el-input>
+        <el-form-item>
+          <div class="flex flex-col">
+            <h1>角色设定</h1>
+            <div class="mt-2">
+              <span
+                v-for="(tag, index) in templateTags"
+                :key="index"
+                class="inline-block rounded-full text-gray-700 px-3 py-1 text-sm font-semibold mr-2 mb-2 cursor-pointer"
+                :class="{ 'bg-sky-100   text-[#7C5CFC] ': selectedTTag === tag }"
+                @click="selectTemplate(tag)"
+              >
+                {{ tag }}
+              </span>
+            </div>
+          </div>
+          <el-input type="textarea" v-model="robotInfo.system_prompt" :rows="5"></el-input>
         </el-form-item>
-        <el-form-item label="置入品牌">
+        <el-form-item>
+          <h1>置入品牌</h1>
           <el-input type="textarea" v-model="robotInfo.brand_name"></el-input>
         </el-form-item>
       </el-form>
@@ -175,8 +258,10 @@
 
 <script setup lang="ts">
 import DefaultAvatar from '@/assets/img/avatar.png'
+import XHSLogo from '@/assets/img/xhs-logo.png'
 import { currentEnvConfig } from '@/config'
 import { useDomainStore } from '@/stores/domain'
+import { ElMessageBox } from 'element-plus'
 import { storeToRefs } from 'pinia'
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -193,6 +278,15 @@ const isLogin = ref(false)
 const showDialog = ref(false)
 const selectedMenu = ref('history')
 const isUpdateRobot = ref(false)
+const templateTags = ref(['好物分享', '经验分享', '知识分享'])
+const selectedTTag = ref()
+const templateContent = {
+  好物分享:
+    'XiaoHongShu Spark将专注于创建符合小红书风格的短评论。它会根据帖子内容提供幽默且直接的回应，并在评论结尾巧妙地推荐相关产品或经验。这些评论将非常简短，大约15个字符，以轻鬆、活泼的语气进行互动。同时，XiaoHongShu Spark将始终遵守社区指南和尊重他人，即使在推广产品或分享经验时也不例外。',
+  经验分享:
+    '专注于为小红书帖子创建简短、幽默的评论，同时加入自己的经验分享。评论将大约15个字符，以俏皮和有趣的方式回应，有时与帖子的主题直接相关，有时则分享个人体验和建议。使用日常语言、流行语句和表情符号，以友好、亲近的方式与观众互动。在保持幽默的同时，结合自己的体验和观点，确保评论尊重并遵守平台的社区指南。在不清楚的情况下，它会选择轻鬆和普遍适用的回应，这些回应充满活力、能量和娱乐性。',
+  知识分享: '知识分享Prompt'
+}
 
 const robots = ref([
   {
@@ -210,7 +304,7 @@ const robotInfo = ref({
 })
 const accountInfo = ref({
   avatar: '',
-  title: ''
+  title: "点击<a href='https://www.xiaohongshu.com/explore' target='_blank'>登陆</a>小红书账号"
 })
 const history = ref([
   {
@@ -220,7 +314,13 @@ const history = ref([
     comment: '',
     avatar: '',
     created: '',
-    brand_name: ''
+    brand_name: '',
+    note_id: '',
+    image: '',
+    liked: '',
+    liked_count: '',
+    created_avatar: '',
+    created_nickname: ''
   }
 ])
 const { domainList } = storeToRefs(domainStoreI)
@@ -229,15 +329,24 @@ const tags = ['推荐', '美食', '穿搭', '彩妆', '影视', '职场', '家�
 
 const cards = ref([])
 
+function openXHSNote(id) {
+  window.open(`https://www.xiaohongshu.com/explore/${id}`, '_blank')
+}
+
+function selectTemplate(tag) {
+  selectedTTag.value = tag
+  robotInfo.value.system_prompt = templateContent[tag]
+}
+
 function selectRobot(slug) {
   selectedDomainSlug.value = slug
 }
 
 function editRobot(slug) {
+  selectedTTag.value = ''
   selectedDomainSlug.value = slug
   let r = robots.value.find((r) => r.slug == slug)
   if (!r) return
-  console.log(r)
   robotInfo.value = {
     name: r.name,
     system_prompt: r.system_prompt,
@@ -271,6 +380,7 @@ function openCreateDialog() {
     system_prompt: '',
     brand_name: ''
   }
+  selectTemplate('好物分享')
 }
 
 async function confirmDialog() {
@@ -311,7 +421,9 @@ async function _handleSearch(keyword: string) {
       image: d.note_card?.image_list[0].url,
       avatar: d.note_card?.user.avatar,
       accountName: d.note_card?.user.nickname,
-      userID: d.note_card?.user.user_id
+      userID: d.note_card?.user.user_id,
+      liked: d.note_card?.interact_info.liked,
+      liked_count: d.note_card?.interact_info.liked_count
     })
   }
 }
@@ -326,15 +438,18 @@ async function handleTagSelection(tag) {
 }
 
 async function handleCommentButtonClick() {
-  if (selectedDomainSlug.value == '') {
-    return
-  }
   const ids = cards.value
     .filter((card) => card.selected)
     .map((card) => {
       card.selected = !card.selected
       return card.id
     })
+  if (selectedDomainSlug.value == '' || ids.length == 0) {
+    ElMessageBox.alert('请选中使用哪个机器人来回答，且选中要评论的笔记。', 'Oops', {
+      confirmButtonText: 'OK'
+    })
+    return
+  }
   await request({
     url: '/chato/api/v1/xhs/comment_notes',
     method: 'POST',
@@ -358,7 +473,9 @@ async function getHomeFeed() {
         image: item.note_card.cover.info_list[0].url,
         avatar: item.note_card.user.avatar,
         accountName: item.note_card.user.nickname,
-        userID: item.note_card.user.user_id
+        userID: item.note_card.user.user_id,
+        liked: item.note_card?.interact_info.liked,
+        liked_count: item.note_card?.interact_info.liked_count
       })
     }
   } catch (error) {
