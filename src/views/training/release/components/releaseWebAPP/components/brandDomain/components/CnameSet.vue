@@ -104,7 +104,9 @@ const cnameSetModel = reactive<IBrandDomainType>({
   id: 0,
   hostname: '',
   record: '',
-  status: EBrandCreateEditStatusType.create
+  status: EBrandCreateEditStatusType.create,
+  pub_key: '',
+  pri_key: ''
 })
 const checked = ref(false)
 const disabled = computed(() => {
@@ -144,14 +146,15 @@ const handleSubmit = async () => {
 }
 
 const onUploadPriFile = async (key: string, fileList: UploadUserFile[]) => {
-  await cosServe(fileList.at(-1).raw, `domain/${key}`, false, fileList.at(-1).name)
+  return await cosServe(fileList.at(-1).raw, `domain/${key}`, false, fileList.at(-1).name)
 }
 
 const watchAndUpload = (keyType: 'pem' | 'key', propName: 'pri_key' | 'pub_key') => {
   watch(
     () => cnameUpload[propName],
     async (v) => {
-      await onUploadPriFile(keyType, v)
+      const res = await onUploadPriFile(keyType, v)
+      cnameSetModel[propName] = res
     }
   )
 }

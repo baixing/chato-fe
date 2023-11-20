@@ -1,31 +1,42 @@
 <template>
-  <div class="flex flex-col justify-start items-start">
-    <span class="text-[#3D3D3D] font-medium mr-3 mb-3">{{ $t('校验文件') }}:</span>
-    <UploadFile
-      v-model:value="uploadDomain"
-      :disabled="false"
-      :name="$t(`上传文件`)"
-      :extra="$t(`后缀为：*.txt的文件，上传成功后约一分钟生效，请耐心等待`)"
-      class="w-full"
-      :maxSize="0.5"
-      :limitType="['.txt']"
-    />
-  </div>
-  <p class="text-[#9DA3AF] my-4 md:text-xs">
-    {{ $t('如何获取校验文件？') }}
-    <a :href="domainDocumentsUrl" class="theme-color">
-      ({{ $t('微信小程序域名校验文件获取指引') }})
-    </a>
-  </p>
-  <div class="flex flex-col justify-start items-start text-sm leading-6 md:text-xs">
-    <span class="text-[#3D3D3D] font-medium mr-3">{{ $t('域名地址') }}:</span>
-    <div class="flex items-center">
-      {{ domianURL }}
-      <el-button link type="primary" class="ml-3" @click="$copyText(domianURL)">
-        {{ $t('复制') }}
-      </el-button>
+  <Modal
+    width="45%"
+    mobile-width="100%"
+    v-model:visible="visible"
+    :title="$t(`嵌入已有小程序`)"
+    :footer="false"
+  >
+    <p class="text-[#3D3D3D] font-medium mb-4">
+      {{ $t('上传校验文件，即可将链接应用于自己小程序的任意位置') }}
+    </p>
+    <div class="flex flex-col justify-start items-start">
+      <span class="text-[#3D3D3D] font-medium mr-3 mb-3">{{ $t('校验文件') }}:</span>
+      <UploadFile
+        v-model:value="uploadDomain"
+        :disabled="false"
+        :name="$t(`上传文件`)"
+        :extra="$t(`后缀为：*.txt的文件，上传成功后约一分钟生效，请耐心等待`)"
+        class="w-full"
+        :maxSize="0.5"
+        :limitType="['.txt']"
+      />
     </div>
-  </div>
+    <p class="text-[#9DA3AF] my-4 md:text-xs">
+      {{ $t('如何获取校验文件？') }}
+      <a :href="domainDocumentsUrl" class="theme-color">
+        ({{ $t('微信小程序域名校验文件获取指引') }})
+      </a>
+    </p>
+    <div class="flex flex-col justify-start items-start text-sm leading-6 md:text-xs">
+      <span class="text-[#3D3D3D] font-medium mr-3">{{ $t('域名地址') }}:</span>
+      <div class="flex items-center">
+        {{ domianURL }}
+        <el-button link type="primary" class="ml-3" @click="$copyText(domianURL)">
+          {{ $t('复制') }}
+        </el-button>
+      </div>
+    </div>
+  </Modal>
 </template>
 
 <script setup lang="ts">
@@ -36,10 +47,16 @@ import { computed, ref, watch } from 'vue'
 import UploadFile from '../UploadFile.vue'
 
 const props = defineProps<{
+  value: boolean
   chatAPI: string
 }>()
+const emit = defineEmits(['update:value'])
 
 const uploadDomain = ref<UploadUserFile[]>([])
+const visible = computed({
+  get: () => props.value,
+  set: (val) => emit('update:value', val)
+})
 
 const domainDocumentsUrl = 'https://baixingwang.feishu.cn/docx/HCyHdcon9o3627xcKhBcN5VinVf'
 const domianURL = computed(() => `${props.chatAPI}?source=${CHATO_SOURCE_APPLET}`)
