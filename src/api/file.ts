@@ -56,6 +56,15 @@ export function uploadQa(domainSlug, params) {
   })
 }
 
+// QA 转文档
+export function qaToDoc(domainId, data) {
+  return request({
+    method: 'post',
+    url: `/chato/api/v1/domains/${domainId}/excel_to_txt`,
+    data
+  })
+}
+
 // 图片上传
 export function uploadImage(params) {
   return request({

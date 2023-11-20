@@ -76,6 +76,16 @@
         <template #default="scope">
           <div class="flex flex-wrap gap-3 items-center">
             <el-button
+              v-if="isSuperAdmin && scope.row.type === 'xlsx'"
+              :loading="qaToDocLoading && qaToDocItem?.id === scope.row.id"
+              @click="onQaToDoc(scope.row)"
+              type="primary"
+              link
+              class="!p-0"
+            >
+              {{ $t('转文档') }}
+            </el-button>
+            <el-button
               v-if="scope.row.type === 'text'"
               @click.prevent="editFile(scope.row)"
               type="primary"
@@ -110,11 +120,13 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { uploadQa } from '@/api/file'
+import { qaToDoc, uploadQa } from '@/api/file'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import { LearningStatesPerformanceType } from '@/enum/knowledge'
+import { EAllRole } from '@/enum/user'
 import type { IPage } from '@/interface/common'
 import type { IDocumentList } from '@/interface/knowledge'
+import { useBase } from '@/stores/base'
 import {
   FILE_STATUS_NAMES,
   getFileStatusName,
@@ -122,8 +134,9 @@ import {
   toSimpleDateTime
 } from '@/utils/formatter'
 import { convertSize, openPreviewUrl } from '@/utils/help'
-import { ElMessageBox, ElNotification as Notification } from 'element-plus'
-import { computed, reactive } from 'vue'
+import { ElMessageBox, ElNotification, ElNotification as Notification } from 'element-plus'
+import { storeToRefs } from 'pinia'
+import { computed, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ReplaceFile from './ReplaceFile.vue'
 import { selectableDeclarations } from './config'
@@ -147,7 +160,11 @@ const emit = defineEmits([
 ])
 
 const { t } = useI18n()
+const baseStoreI = useBase()
+const { userInfo } = storeToRefs(baseStoreI)
 const { isMobile } = useBasicLayout()
+
+const isSuperAdmin = computed(() => EAllRole.superman !== userInfo.value.role)
 
 const internalLoading = computed({
   get: () => props.loading,
@@ -200,6 +217,20 @@ const removeFileCommon = async (fileId: number, message: string) => {
   internalLoading.value = true
   await uploadQa(props.domainSlug, inputTextForm)
   emit('afterRemove', fileId, message)
+}
+
+const qaToDocLoading = ref(false)
+const qaToDocItem = ref()
+const onQaToDoc = async (item) => {
+  try {
+    qaToDocItem.value = item
+    qaToDocLoading.value = true
+    await qaToDoc(props.domainId, { file_id: item.id })
+    ElNotification.success(t('QA 转文档成功'))
+  } catch (e) {
+  } finally {
+    qaToDocLoading.value = false
+  }
 }
 
 // 编辑文本
