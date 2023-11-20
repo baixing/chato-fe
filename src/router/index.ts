@@ -225,11 +225,7 @@ const resourceSquareRoutes = [
   {
     name: RoutesMap.resource,
     path: 'resource',
-    meta: {
-      // title: '资源广场',
-      requiresAuth: true
-    },
-    component: () => import('@/views/resource/square.vue')
+    redirect: { name: RoutesMap.home.homeResource }
   }
 ]
 

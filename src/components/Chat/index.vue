@@ -188,7 +188,6 @@ import {
   SymChatDomainDetail,
   SymChatToken
 } from '@/constant/chat'
-import { CHATO_SOURCE_APPLET } from '@/constant/common'
 import { DebugDomainSymbol, MidJourneyDomainSlug } from '@/constant/domain'
 import { PaidCommercialTypes } from '@/constant/space'
 import { XSSOptions } from '@/constant/xss'
@@ -309,7 +308,6 @@ const watermark = ref<Watermark>()
 const showPreview = ref(false)
 const previewImageUrl = ref('')
 const sensorsQuestionId = computed(() => history.value?.[history.value.length - 1]?.questionId)
-const isInApplet = computed(() => source.value === CHATO_SOURCE_APPLET) // 判断是否在小程序环境
 
 const DefaultChatHistoryPage = {
   total: 0,

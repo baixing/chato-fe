@@ -27,6 +27,7 @@
             class="bg-white rounded-lg line-clamp-2 cursor-pointer hover:shadow-lg hover:-translate-y-2 lg:space-y-3 lg:hover:-translate-y-0 transition-all"
             v-for="c in item.data"
             :key="c.id"
+            @click="onAddSessionChat(c)"
           >
             <div class="p-5 pb-0">
               <div class="flex items-center justify-between mb-5 lg:flex-col lg:!mb-2">
@@ -44,7 +45,7 @@
                   </div>
                 </div>
                 <svg-icon
-                  @click="onPreviewQRCode(c)"
+                  @click="(e) => onPreviewQRCode(e, c)"
                   name="qr-code"
                   svg-class="w-[30px] h-[30px] lg:mt-2"
                 />
@@ -159,7 +160,9 @@ const onGoCreate = (slug: string) => {
 const visibleQRCode = ref(false)
 const currentSlug = ref('')
 
-const onPreviewQRCode = (item) => {
+const onPreviewQRCode = (e: Event, item) => {
+  e.stopPropagation()
+  e.preventDefault()
   currentSlug.value = item.slug
   visibleQRCode.value = true
 }

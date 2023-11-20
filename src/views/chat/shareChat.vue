@@ -1,6 +1,9 @@
 <template>
-  <Chat @show-drawer="(id, slug) => showDrawer(id, slug)" @correct-answer="correctAnswer" />
-
+  <Chat
+    @show-drawer="(id, slug) => showDrawer(id, slug)"
+    @correct-answer="correctAnswer"
+    :avatarShow="!isInApplet"
+  />
   <!-- 文档来源 -->
   <DocSourceDrawer
     v-model:visible="drawerShow"
@@ -27,8 +30,9 @@ import { postCheckLoginCAPI } from '@/api/auth'
 import DocSourceDrawer from '@/components/Chat/ChatDocSourceDrawer.vue'
 import Chat from '@/components/Chat/index.vue'
 import EnterQa from '@/components/EnterAnswer/EnterQa.vue'
+import { useSource } from '@/composables/useSource'
 import { currentEnvConfig } from '@/config'
-import { USER_ROLES } from '@/constant/common'
+import { CHATO_SOURCE_APPLET, USER_ROLES } from '@/constant/common'
 import { ETerminal } from '@/enum/common'
 import { EDocumentTabType } from '@/enum/knowledge'
 import router, { RoutesMap } from '@/router'
@@ -37,7 +41,7 @@ import { getMarkDownUrl, replaceMarkdownUrl } from '@/utils/help'
 import { removewRegReplaceA } from '@/utils/reg'
 import * as url from '@/utils/url'
 import { useStorage } from '@vueuse/core'
-import { reactive, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
 const currentQuestionId = ref<number>()
@@ -52,6 +56,7 @@ const showDrawer = (question_id, slug) => {
 const route = useRoute()
 const base = useBase()
 const $uid = useStorage('uid', '')
+const { source } = useSource()
 const domainId = route.params.botId as string
 const currentSlug = ref<string>((route.params.botSlug as string) || '')
 const dialogVisibleQa = ref(false)
@@ -66,6 +71,7 @@ const defaultForm = reactive({
   content: '',
   images: []
 })
+const isInApplet = computed(() => source.value === CHATO_SOURCE_APPLET) // 判断是否在小程序环境
 
 const correctAnswer = (e) => {
   defaultForm.title = e.question
