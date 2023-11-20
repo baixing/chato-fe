@@ -2,9 +2,94 @@
   <el-form :model="currentDomain" label-width="auto" label-position="top" class="chato-form">
     <el-form-item>
       <template #label>
-        <SLTitle
-          tips="限制将作用于外部用户，同一设备同一浏览器访问时识别为一名用户，成员在后台训练时的对话量不在限制范围内；超出后的回复不计入电力值。"
-        >
+        <div class="flex justify-between items-center">
+          <SLTitle
+            :tips="
+              $t(
+                `根据您当前空间权益，可设置的套餐条数最多{count}条。可设置套餐金额最多300元，可设置天数最多365天`,
+                { count: spaceQuota.total }
+              )
+            "
+          >
+            {{ t('付费规则') }}
+          </SLTitle>
+          <div class="flex items-center gap-3 lg:justify-between lg:w-full">
+            <el-button size="small" type="primary" link @click="onViewRevenue">
+              {{ $t('查看收益') }}
+            </el-button>
+            <SwitchWithStateMsg
+              v-model:value="currentDomain.customer_limit.payment_limit_switch"
+              close-msg="关闭"
+              open-msg="开启"
+            />
+          </div>
+        </div>
+      </template>
+      <el-card
+        class="w-full"
+        style="--el-box-shadow-light: none; --el-card-border-radius: 8px; --el-card-padding: 18px"
+      >
+        <div class="flex flex-col justify-start text-[#303133]">
+          <p class="font-medium">{{ $t('触发条件') }}</p>
+          <div class="text-sm font-normal leading-4 flex items-center gap-3">
+            {{ $t('用户对话') }}
+            <el-input-number
+              v-model="currentDomain.customer_limit.payment_limit.total"
+              :min="1"
+              controls-position="right"
+              class="!max-w-20 mx-2"
+            />
+            {{ $t('条，触发付费设置') }}
+          </div>
+          <p class="flex items-center font-medium my-4">
+            {{ $t('套餐权益配置') }}
+            <el-button
+              type="primary"
+              link
+              class="ml-3"
+              @click="
+                () => {
+                  exampleVisible = true
+                  imgKey = 'payImg'
+                }
+              "
+            >
+              {{ $t('查看示意图') }}
+            </el-button>
+          </p>
+          <div class="text-sm font-normal leading-4 flex items-center gap-3">
+            {{ $t('条数') }}
+            <el-input-number
+              v-model="currentOrderDetail.total_quota"
+              :min="1"
+              :max="spaceQuota.total"
+              controls-position="right"
+              class="!max-w-20 mx-2"
+            />
+            {{ $t('金额') }}
+            <el-input-number
+              v-model="currentOrderDetail.price"
+              :min="0.01"
+              :max="300"
+              controls-position="right"
+              class="!max-w-20 mx-2"
+            />
+            {{ $t('元') }}
+            <el-input-number
+              v-model="currentOrderDetail.duration"
+              :min="1"
+              :max="365"
+              controls-position="right"
+              class="!max-w-20 mx-2"
+            />
+            {{ $t('天') }}
+          </div>
+        </div>
+      </el-card>
+    </el-form-item>
+    <el-form-item>
+      <template #label>
+        <SLTitle tips="最多可试用10笔订单且总支付金额不能超过300元">
           {{ t('用量限制') }}
         </SLTitle>
       </template>
@@ -31,7 +116,7 @@
                 :class="
                   String(currentDomain.customer_limit.rate_limit.time_seconds).length > 4
                     ? 'w-[120px]'
-                    : '!w-20'
+                    : '!max-w-20'
                 "
               />
               <el-select
@@ -52,7 +137,7 @@
                 :max="9999"
                 v-model="currentDomain.customer_limit.rate_limit.num"
                 controls-position="right"
-                class="!w-20"
+                class="!max-w-20"
               />{{ $t('条') }}
             </div>
             <p class="text-[#596780] mb-4">{{ $t('超出默认将回复') }}</p>
@@ -79,7 +164,7 @@
                 :max="9999"
                 v-model="currentDomain.customer_limit.quota_limit.total"
                 controls-position="right"
-                class="!w-20"
+                class="!max-w-20"
               />
               {{ $t('条') }}
             </div>
@@ -147,12 +232,22 @@
               v-model="currentDomain.ad_frequency"
               :min="1"
               controls-position="right"
-              class="!w-20 mx-2"
+              class="!max-w-20 mx-2"
             />
             {{ $t('条，展示一次广告') }}
           </div>
           <div class="flex items-center gap-3 lg:justify-between lg:w-full">
-            <el-button size="small" type="primary" link @click="() => (exampleVisible = true)">
+            <el-button
+              size="small"
+              type="primary"
+              link
+              @click="
+                () => {
+                  exampleVisible = true
+                  imgKey = 'adImg'
+                }
+              "
+            >
               {{ $t('查看示例') }}
             </el-button>
             <SwitchWithStateMsg
@@ -179,9 +274,18 @@
       <el-button type="primary" @click="onSave">{{ $t('保存设定') }}</el-button>
     </el-form-item>
   </el-form>
-  <Modal v-model:visible="exampleVisible" title="查看示例" :footer="false">
+  <Modal
+    v-model:visible="exampleVisible"
+    :width="imgKey === 'payImg' ? '375px' : ''"
+    title="查看示例"
+    :footer="false"
+  >
     <div class="max-h-[65vh] overflow-y-auto">
-      <img :src="AdImg" class="w-full object-contain mx-auto" alt="" />
+      <img
+        :src="imgKey === 'payImg' ? payImg : ImagePath"
+        class="w-full object-contain mx-auto"
+        alt=""
+      />
     </div>
   </Modal>
   <ListManagement
@@ -195,7 +299,9 @@
 
 <script lang="ts" setup>
 import { updateDomain } from '@/api/domain'
+import { getUserPackageListAPI, postUserPackageAPI } from '@/api/order'
 import { getMobileLimitAPI } from '@/api/release'
+import payImg from '@/assets/img/pay-home.png'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
 import Modal from '@/components/Modal/index.vue'
 import SpaceRightsFreeExpUpgrate from '@/components/Space/SpaceRightsFreeExpUpgrate.vue'
@@ -206,28 +312,31 @@ import useImagePath from '@/composables/useImagePath'
 import { FreeCommercialTypeExperienceDay } from '@/constant/space'
 import { ESpaceCommercialType, ESpaceRightsType } from '@/enum/space'
 import type { IDomainInfo } from '@/interface/domain'
+import { RoutesMap } from '@/router'
 import { useBase } from '@/stores/base'
 import { useDomainStore } from '@/stores/domain'
 import { useSpaceStore } from '@/stores/space'
 import { getStringWidth } from '@/utils/string'
 import { getSpecifiedDateSinceNowDay } from '@/utils/timeRange'
 import { ElLoading, ElMessage, ElMessageBox, ElNotification } from 'element-plus'
-import { cloneDeep, isEmpty, isEqual } from 'lodash-es'
+import { cloneDeep, isEqual } from 'lodash-es'
 import { storeToRefs } from 'pinia'
 import { computed, onBeforeUnmount, onMounted, reactive, ref, toRaw, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { onBeforeRouteLeave, useRoute } from 'vue-router'
+import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
 import CollectFormConfig from './components/CollectFormConfig.vue'
 import ListManagement from './components/ListManagement.vue'
 
 const { t } = useI18n()
-const { ImagePath: AdImg } = useImagePath('ad', 'example', 'webp')
+const { ImagePath } = useImagePath('ad', 'example', 'webp')
+const imgKey = ref<'payImg' | 'adImg'>('payImg')
 
 const HansLimit = {
   adText: 100
 }
 
 const route = useRoute()
+const router = useRouter()
 
 const loading = ref()
 const collectFormConfigRef = ref()
@@ -235,11 +344,13 @@ const listManagementRef = ref(false)
 const spaceStoreI = useSpaceStore()
 const domainStoreI = useDomainStore()
 const { domainInfo } = storeToRefs(domainStoreI)
-const { currentRights } = storeToRefs(spaceStoreI)
+const { currentRights, spaceQuota } = storeToRefs(spaceStoreI)
 
 const defaultCustomerLimit = {
   mobile_limit_switch: 0,
   rate_limit_switch: 0,
+  payment_limit_switch: 0,
+  payment_limit: { total: 60 },
   rate_limit: {
     time_unit: 1,
     time_seconds: 60,
@@ -254,6 +365,12 @@ const defaultCustomerLimit = {
 }
 let currentDomain = reactive<Partial<IDomainInfo>>({
   customer_limit: { ...defaultCustomerLimit }
+})
+
+const currentOrderDetail = reactive({
+  total_quota: 30,
+  price: 30,
+  duration: 365
 })
 
 const pageMobileConfig = reactive({
@@ -323,6 +440,14 @@ const syncOriginalFormState = () => {
   originalDomain = { ...toRaw(currentDomain) }
 }
 
+// 保存套餐信息
+const onSaveOrderInfo = async () => {
+  await postUserPackageAPI(domainInfo.value.slug, {
+    ...toRaw(currentOrderDetail),
+    price: currentOrderDetail.price * 100
+  })
+}
+
 const onSave = async () => {
   if (!beforeSaveCheck()) {
     return
@@ -335,6 +460,7 @@ const onSave = async () => {
       background: 'rgba(0, 0, 0, 0.7)'
     })
 
+    await onSaveOrderInfo()
     await updateDomain(currentDomain.id, currentDomain)
     collectFormConfigRef.value?.onUpdateAbleAdForm()
     await domainStoreI.initDomainList(route)
@@ -374,6 +500,23 @@ const showMobileSwitchWarning = async () => {
   })
 }
 
+const onViewRevenue = () => {
+  router.push({
+    name: RoutesMap.namespace.income
+  })
+}
+
+const initOrderInfo = async () => {
+  const res = await getUserPackageListAPI(domainInfo.value.slug)
+  const orderList = res.data.data
+  if (orderList.length) {
+    const orderInfo = orderList[0]
+    currentOrderDetail.duration = orderInfo.duration
+    currentOrderDetail.price = Number((orderInfo.price / 100).toFixed(2))
+    currentOrderDetail.total_quota = orderInfo.total_quota
+  }
+}
+
 watch(
   () => pageMobileConfig.page,
   () => {
@@ -388,10 +531,13 @@ watch(
     const currentDomainInfo = { ...toRaw(v) }
     currentDomainInfo.ad_frequency = currentDomainInfo.ad_frequency || DefaultADFrequency
     currentDomainInfo.ad_content = currentDomainInfo.ad_content || DefaultADContent
-    isEmpty(currentDomainInfo.customer_limit) &&
-      (currentDomainInfo.customer_limit = { ...defaultCustomerLimit })
+    currentDomainInfo.customer_limit = {
+      ...defaultCustomerLimit,
+      ...currentDomainInfo.customer_limit
+    }
     originalDomain = cloneDeep(currentDomainInfo)
     currentDomain = Object.assign(currentDomain, currentDomainInfo)
+    initOrderInfo()
   },
   { immediate: true }
 )

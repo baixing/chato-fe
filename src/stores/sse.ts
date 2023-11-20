@@ -15,6 +15,7 @@ export const useSSEStore = defineStore('sse', () => {
   const sseMsgResult = computed(() => sseResultMap.value.get(sseMsgId.value))
 
   const setSSEResultMap = (res) => {
+    console.log(res, 1)
     const msgId = res.msg_id
     const questionId = res.question_id
 
