@@ -306,6 +306,9 @@ const onEnter = (type?: string) => {
 const onContactUs = (display = 'block') => {
   const containerEl = document.getElementById('inframe_container')
   containerEl && (containerEl.style.display = display)
+  if (isMobile.value) {
+    checkRightsTypeNeedUpgrade(ESpaceRightsType.default, false)
+  }
 }
 
 const onFormModal = (showRef: Ref) => {
@@ -432,7 +435,7 @@ onMounted(() => {
 
   initUid()
   init()
-  onRegisterContactUS()
+  !isMobile.value && onRegisterContactUS()
 })
 
 onBeforeUnmount(() => {
