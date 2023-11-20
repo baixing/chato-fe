@@ -23,7 +23,7 @@
           <el-input
             v-show="!showSmsCodeInput"
             v-model.trim="modelForm.mobile"
-            type="text"
+            type="tel"
             size="large"
             :placeholder="$t(`手机号`)"
             autocomplete="off"
