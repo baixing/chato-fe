@@ -42,7 +42,7 @@ window.onload = () => {
       }
       createChatoConfig.tipChatoBg = data.data.suspend_style
       createChatoConfig.tipChatoColor = data.data.suspend_style_color || '#fff'
-      createChatoConfig.chatoIframeSrc = `/b/${createChatoConfig.domainSlug}?source=${data.data.source}`
+      createChatoConfig.chatoIframeSrc = `${createChatoConfig.wwwBaseURL}/b/${createChatoConfig.domainSlug}?source=${data.data.source}`
       createChatoConfig.popupFrequency = data.data.popup_frequency
       return Promise.resolve(data.data)
     }
