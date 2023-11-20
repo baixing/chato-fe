@@ -418,7 +418,11 @@ const init = async () => {
     loading.value = false
   }
 }
-init()
+orgInfo.value.additions && init()
+watch(orgInfo, (value) => {
+  if (interestDomains.value.length > 0) return
+  value.additions && init()
+})
 const scrollContainerRef = ref()
 let latestScrollHeight = 0
 const onScrollBottom = () => {
