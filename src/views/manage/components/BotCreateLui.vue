@@ -16,28 +16,14 @@
           <p>
             {{ $t('基于多种AI大模型，帮你 10 秒快速定制') }}
           </p>
-        </div>
-      </div>
-    </Transition>
-    <Transition name="left">
-      <div v-show="currentStep > 1">
-        <ChatoDomainAvatar />
-        <div class="left-bubble">
-          <div class="title !mb-2">
+          <div class="title !mb-2 !mt-3">
             <!-- <img src="@/assets/img/emoji/surprise.png" class="w-5" /> -->
             {{ $t('🤖 训练机器人非常简单') }}
           </div>
           <p>
             {{ $t('AI可包办一切，包括初始化设置和自我学习升级') }}
           </p>
-        </div>
-      </div>
-    </Transition>
-    <Transition name="left">
-      <div v-show="currentStep > 2">
-        <ChatoDomainAvatar />
-        <div class="left-bubble">
-          <div class="title !mb-2">
+          <div class="title !mb-2 !mt-3">
             <!-- <img src="@/assets/img/emoji/surprise.png" class="w-5" /> -->
             {{ $t('👀 可以把机器人发布到各端') }}
           </div>
@@ -48,7 +34,7 @@
       </div>
     </Transition>
     <Transition name="left">
-      <div v-show="currentStep > 3">
+      <div v-show="currentStep > 1">
         <ChatoDomainAvatar />
         <div class="left-bubble">
           <div class="title">
@@ -70,38 +56,12 @@
     </Transition>
 
     <Transition name="right">
-      <div v-show="currentStep > 3 && formState.name" class="flex justify-end">
+      <div v-show="currentStep > 2 && formState.name" class="flex justify-end">
         <div class="right-bubble">{{ formState.name }}</div>
       </div>
     </Transition>
-    <Transition name="left" v-if="!orgInfo.additions">
-      <div v-show="currentStep > 4">
-        <ChatoDomainAvatar />
-        <div class="left-bubble">
-          <div class="title">
-            <img src="@/assets/img/emoji/tip.png" class="w-5" />
-            {{ $t('请选择你会将机器人应用在什么场景？') }}
-          </div>
-          <div class="flex flex-wrap gap-3">
-            <span
-              v-for="item in ScenesList"
-              :key="item.value"
-              @click="onSelectScenes(item)"
-              class="select-tag"
-            >
-              {{ $t(item.label) }}
-            </span>
-          </div>
-        </div>
-      </div>
-    </Transition>
-    <Transition name="right" v-if="!orgInfo.additions">
-      <div v-show="currentStep > 4 && formOrgState.organization_type_name" class="flex justify-end">
-        <div class="right-bubble">{{ formOrgState.organization_type_name }}</div>
-      </div>
-    </Transition>
     <Transition name="left">
-      <div v-show="currentStep > 5">
+      <div v-show="currentStep > 3">
         <ChatoDomainAvatar />
         <div class="left-bubble">
           <div class="title">
@@ -234,19 +194,17 @@
 
 <script setup lang="ts">
 import { getAppletLink } from '@/api/domain'
-import { getFirstGuideInterestDomains, saveFirstGuideAdditions } from '@/api/industry'
+import { getFirstGuideInterestDomains } from '@/api/industry'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import useGlobalProperties from '@/composables/useGlobalProperties'
 import { DomainCreateSymbol } from '@/constant/domain'
-import { EUserOriganizationRole } from '@/enum/userInformation'
 import type { IDomainInfo } from '@/interface/domain'
 import type { IDocumentList } from '@/interface/knowledge'
-import type { IUserIdentity } from '@/interface/user'
 import { useBase } from '@/stores/base'
 import QrCode from '@/views/training/release/components/releaseWebAPP/components/webPage/QrCode.vue'
 import dayjs from 'dayjs'
 import { storeToRefs } from 'pinia'
-import { computed, inject, nextTick, reactive, ref, watch, type StyleValue } from 'vue'
+import { computed, inject, nextTick, ref, watch, type StyleValue } from 'vue'
 import { useRouter } from 'vue-router'
 
 type ITransitionItem =
@@ -267,11 +225,6 @@ defineProps<{
   onSetDOCModalVisible: (value: boolean, cd?: Function) => void
 }>()
 
-const ScenesList = [
-  { label: '企业降本增效', value: EUserOriganizationRole.company },
-  { label: '个人工作学习提效', value: EUserOriganizationRole.person }
-] as const
-
 const currentStep = ref(0)
 const loading = ref(false)
 const router = useRouter()
@@ -288,16 +241,6 @@ const link = computed(() => `${window.location.origin}/b/${formState.slug}`)
 const increaseStep = () => {
   currentStep.value += 1
 }
-
-const formOrgState = reactive<{
-  interests: string
-  organization_type: EUserOriganizationRole
-  organization_type_name: string
-}>({
-  interests: '',
-  organization_type: null,
-  organization_type_name: ''
-})
 
 const routerPush = () => router.push({ path: userRoute.value })
 
@@ -347,21 +290,6 @@ const setObjByObj = <T extends object>(obj1: T, obj2: T, pick?: (keyof T)[]) => 
   })
 }
 
-const onSelectScenes = async (item: (typeof ScenesList)[number]) => {
-  if (formOrgState.organization_type) {
-    return
-  }
-  formOrgState.organization_type = item.value
-  formOrgState.organization_type_name = item.label
-  delayIncreaseStep()
-  await saveFirstGuideAdditions({
-    interests: [formOrgState.interests],
-    organization_type: formOrgState.organization_type
-  })
-  delayIncreaseStep(1000)
-  delayIncreaseStep(2000)
-}
-
 const onSelectInterest = (item: IDomainInfo) => {
   setObjByObj(formState, item, [
     'avatar',
@@ -405,20 +333,17 @@ const init = async () => {
     increaseStep()
     delayIncreaseStep(500)
     delayIncreaseStep(1000)
-    delayIncreaseStep(1500)
     interestDomains.value = data
-    if (orgInfo.value.additions) {
-      const additions = JSON.parse(orgInfo.value.additions ?? '') as IUserIdentity
-      formOrgState.interests = additions.company
-      formOrgState.organization_type = additions.organization_type
-      formOrgState.organization_type_name = additions.surname
-    }
   } catch (e) {
   } finally {
     loading.value = false
   }
 }
-init()
+orgInfo.value.additions && init()
+watch(orgInfo, (value) => {
+  if (interestDomains.value.length > 0) return
+  value.additions && init()
+})
 const scrollContainerRef = ref()
 let latestScrollHeight = 0
 const onScrollBottom = () => {

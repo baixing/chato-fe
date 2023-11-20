@@ -22,7 +22,11 @@ module.exports = {
       sm: { max: '639px' }
       // => @media (max-width: 639px) { ... }
     },
-    extend: {}
+    extend: {
+      boxShadow: {
+        '3xl': '0px 8px 32px 0px rgba(0, 0, 0, 0.16)'
+      }
+    }
   },
   plugins: []
 }
