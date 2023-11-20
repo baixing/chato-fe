@@ -120,7 +120,7 @@ onUpdated(() => {
       class="verification-input__inner"
       v-for="i in step"
       ref="inputRefs"
-      type="text"
+      type="number"
       :key="i"
       :autofocus="autofocus && i === 1"
       :value="inputValue[i - 1]"
