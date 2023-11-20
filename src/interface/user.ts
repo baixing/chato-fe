@@ -1,6 +1,6 @@
 import type { ESpaceCommercialType } from '@/enum/space'
 import type { EAllRole } from '@/enum/user'
-import type { EUserOriganizationRole } from '@/enum/userInformation'
+import type { EUserOrganizationRole } from '@/enum/userInformation'
 import type { IDomainInfo } from './domain'
 
 export interface IOrg {
@@ -42,7 +42,7 @@ export interface IUserInfo {
 }
 
 export interface IUserIdentity {
-  organization_type?: EUserOriganizationRole
+  organization_type?: EUserOrganizationRole
   surname?: string
   company?: string
 }

@@ -26,6 +26,7 @@
   </el-drawer>
   <UpgradeRightsModal />
   <FollowPublic />
+  <FirstGuide v-model:visible="firstGuide" />
 </template>
 <script setup lang="ts">
 import UpgradeRightsModal from '@/components/Upgrade/UpgradeRightsModal.vue'
@@ -35,12 +36,14 @@ import useSidebar from '@/composables/useSidebar'
 import useSpaceRights from '@/composables/useSpaceRights'
 import useVersionCheck from '@/composables/useVersionCheck'
 import { ESpaceRightsType } from '@/enum/space'
+import FirstGuide from '@/layout/components/FirstGuide/index.vue'
 import { RoutesMap } from '@/router'
 import { useAuthStore } from '@/stores/auth'
 import { useBase } from '@/stores/base'
 import { useChatStore } from '@/stores/chat'
 import { useDomainStore } from '@/stores/domain'
 import { useSpaceStore } from '@/stores/space'
+import { storeToRefs } from 'pinia'
 import { nextTick, ref } from 'vue'
 import { RouterView, useRoute, useRouter } from 'vue-router'
 import Sidebar from './components/Sidebar/MainSidebar.vue'
@@ -48,7 +51,7 @@ import Skeleton from './components/Skeleton/index.vue'
 
 const { drawerVisible } = useSidebar()
 const { isMobile } = useBasicLayout()
-
+const firstGuide = ref(false)
 const loading = ref(false)
 
 const route = useRoute()
@@ -58,6 +61,7 @@ const chatStoreI = useChatStore()
 const domainStoreI = useDomainStore()
 const spaceStoreI = useSpaceStore()
 const { cookieToken } = useAuthStore()
+const { orgInfo } = storeToRefs(baseStoreI)
 
 useVersionCheck()
 
@@ -75,6 +79,9 @@ const init = async () => {
     // 新用户跳转对话引导页
     if (userInfoRes.id === userInfoRes.org.owner_id && !userInfoRes.org.additions && !cookieToken) {
       if (route.name !== RoutesMap.guide.first) {
+        if (!orgInfo.value.additions) {
+          firstGuide.value = true
+        }
         router.replace({ name: RoutesMap.manager.create })
       }
     } else if (route.name === RoutesMap.guide.first) {
