@@ -238,7 +238,7 @@ import { getFirstGuideInterestDomains, saveFirstGuideAdditions } from '@/api/ind
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import useGlobalProperties from '@/composables/useGlobalProperties'
 import { DomainCreateSymbol } from '@/constant/domain'
-import { EUserOriganizationRole } from '@/enum/userInformation'
+import { EUserOrganizationRole } from '@/enum/userInformation'
 import type { IDomainInfo } from '@/interface/domain'
 import type { IDocumentList } from '@/interface/knowledge'
 import type { IUserIdentity } from '@/interface/user'
@@ -268,8 +268,8 @@ defineProps<{
 }>()
 
 const ScenesList = [
-  { label: '企业降本增效', value: EUserOriganizationRole.company },
-  { label: '个人工作学习提效', value: EUserOriganizationRole.person }
+  { label: '企业降本增效', value: EUserOrganizationRole.company },
+  { label: '个人工作学习提效', value: EUserOrganizationRole.person }
 ] as const
 
 const currentStep = ref(0)
@@ -291,7 +291,7 @@ const increaseStep = () => {
 
 const formOrgState = reactive<{
   interests: string
-  organization_type: EUserOriganizationRole
+  organization_type: EUserOrganizationRole
   organization_type_name: string
 }>({
   interests: '',
