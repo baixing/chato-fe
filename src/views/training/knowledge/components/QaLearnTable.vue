@@ -164,7 +164,7 @@ const baseStoreI = useBase()
 const { userInfo } = storeToRefs(baseStoreI)
 const { isMobile } = useBasicLayout()
 
-const isSuperAdmin = computed(() => EAllRole.superman !== userInfo.value.role)
+const isSuperAdmin = computed(() => EAllRole.superman === userInfo.value.role)
 
 const internalLoading = computed({
   get: () => props.loading,
