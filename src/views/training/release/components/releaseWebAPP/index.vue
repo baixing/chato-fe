@@ -47,8 +47,14 @@ const DrawerSite = defineAsyncComponent(() => import('./components/implantJs/Dra
 const SetEffectSite = defineAsyncComponent(() => import('./components/implantJs/SetEffectSite.vue'))
 const Copylink = defineAsyncComponent(() => import('./components/webPage/Copylink.vue'))
 const CreatePoster = defineAsyncComponent(() => import('./components/gzhPoster/SharePoster.vue'))
-const DrawerApplet = defineAsyncComponent(() => import('./components/applet/DrawerApplet.vue'))
-const SettingApplet = defineAsyncComponent(() => import('./components/applet/SettingApplet.vue'))
+const ExperienceApplet = defineAsyncComponent(
+  () => import('./components/applet/ExperienceApplet.vue')
+)
+const CreateApplet = defineAsyncComponent(() => import('./components/applet/CreateApplet.vue'))
+const VerificationTxt = defineAsyncComponent(
+  () => import('./components/applet/VerificationTxt.vue')
+)
+
 const route = useRoute()
 const { t } = useI18n()
 const base = useBase()
@@ -67,7 +73,6 @@ const chatReleaseURL = computed(() => {
   }
 })
 const chatScript = `${currentEnvConfig.scriptURL}/assets/iframe.min.js`
-const appletConfigDocs = 'https://baixingwang.feishu.cn/docx/C2shd2MHfo7aPfxkUl8cJVJMnGf'
 const defaultAppletcStatus = ref<EAppletcStatus>()
 const releaseChannel = useSessionStorage('releaseChannel', '')
 
@@ -86,7 +91,9 @@ const features = reactive({
   createPoster: false, // 海报
   createAppletVisible: false, // 小程序-扫码授权
   drawerAppletVisible: false, // 小程序-查看授权结果
-  settingAppletVisible: false // 小程序-配置小程序
+  linkAppletVisible: false, // 小程序-链接小程序
+  empowerAppletVisible: false, // 小程序-覆盖已有的
+  verificationAppletVisible: false // 小程序-嵌入已有
 })
 
 const {
@@ -97,7 +104,9 @@ const {
   createAppletVisible,
   createPoster,
   drawerAppletVisible,
-  settingAppletVisible
+  linkAppletVisible,
+  empowerAppletVisible,
+  verificationAppletVisible
 } = toRefs(features)
 
 const { checkRightsTypeNeedUpgrade } = useSpaceRights()
@@ -119,8 +128,11 @@ const handlePreview = (e: string) => {
   window.open(e)
 }
 
-const commonVisible = (visibleRef: Ref<boolean>) => {
-  visibleRef.value = true
+const commonVisible = (visibleRef: Ref<boolean>, show: boolean = false) => {
+  if (show) {
+    checkRightsTypeNeedUpgrade(ESpaceRightsType.default, true)
+  }
+  visibleRef.value = !show
 }
 
 // 域名部署
@@ -160,6 +172,31 @@ const releaseList = [
     ]
   },
   {
+    icon: 'applet',
+    title: t('微信小程序'),
+    desc: t('支持企业通过以下三种不同的方式，将机器人应用在微信小程序中'),
+    setList: [
+      {
+        icon: Tools,
+        label: t('获取小程序链接'),
+        scriptId: 'Chato-applet-link',
+        click: () => commonVisible(linkAppletVisible)
+      },
+      {
+        icon: View,
+        label: t('嵌入已有小程序'),
+        scriptId: 'Chato-applet-iframe',
+        click: () => commonVisible(verificationAppletVisible, rightsMaskVisible.value)
+      },
+      {
+        icon: Document,
+        label: t('覆盖已有小程序'),
+        scriptId: 'Chato-applet-cover',
+        click: () => commonVisible(empowerAppletVisible, rightsMaskVisible.value)
+      }
+    ]
+  },
+  {
     icon: 'wechat-pyq',
     title: t('朋友圈'),
     desc: t('用户扫码后，可直接和您的机器人聊天'),
@@ -195,33 +232,10 @@ const releaseList = [
         click: () => commonVisible(siteListVisible)
       }
     ]
-  },
-  {
-    icon: 'applet',
-    title: t('微信小程序'),
-    desc: t('支持企业授权绑定小程序，提供机器人服务'),
-    setList: [
-      {
-        icon: Tools,
-        label: t('配置小程序'),
-        scriptId: 'Chato-applet-set',
-        click: () => commonVisible(settingAppletVisible)
-      },
-      {
-        icon: View,
-        label: t('查看小程序'),
-        scriptId: 'Chato-applet-view',
-        click: () => commonVisible(drawerAppletVisible)
-      },
-      {
-        icon: Document,
-        label: t('配置文档'),
-        scriptId: 'Chato-applet-document',
-        click: () => handlePreview(appletConfigDocs)
-      }
-    ]
   }
 ]
+
+const upgradationName = ['wangye', 'applet']
 
 const handleCopyButtonClick = (e: MouseEvent) => {
   e.stopPropagation()
@@ -290,7 +304,7 @@ onMounted(() => {
               </el-icon>
               {{ ic.label }}
             </div>
-            <SpaceRightsMask :visible="rightsMaskVisible && item.icon !== 'wangye'">
+            <SpaceRightsMask :visible="rightsMaskVisible && !upgradationName.includes(item.icon)">
               <SpaceRightsFreeExpUpgrate upgrade-link upgrade-text="该功能为付费权益" />
             </SpaceRightsMask>
           </ReleaseBox>
@@ -325,13 +339,16 @@ onMounted(() => {
       :domainId="domainInfo.id"
       @handleRetry="createAppletVisible = true"
     />
-    <SettingApplet
-      v-model:value="settingAppletVisible"
-      :defaultAppletcStatus="defaultAppletcStatus"
+    <ExperienceApplet v-model:value="linkAppletVisible" :slug="domainInfo.slug" />
+    <CreateApplet
+      v-model:value="empowerAppletVisible"
       :domainId="domainInfo.id"
-      :slug="domainInfo.slug"
-      :chatAPI="chatReleaseURL.chatWebPage"
+      :defaultAppletcStatus="defaultAppletcStatus"
       @handleView="drawerAppletVisible = true"
+    />
+    <VerificationTxt
+      v-model:value="verificationAppletVisible"
+      :chatAPI="chatReleaseURL.chatWebPage"
     />
   </div>
 </template>

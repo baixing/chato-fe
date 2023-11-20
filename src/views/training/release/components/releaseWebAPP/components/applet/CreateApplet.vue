@@ -1,26 +1,52 @@
 <template>
-  <component
-    :is="appletComponet[currentEmpowerStatus]"
-    @handleEmpower="handleEmpower"
-    @handleView="handleView"
-  />
+  <Modal
+    width="45%"
+    mobile-width="100%"
+    v-model:visible="visible"
+    :title="$t(`覆盖已有小程序`)"
+    :footer="false"
+  >
+    <el-tabs v-model="activeName">
+      <el-tab-pane :label="$t(`授权`)" name="empower">
+        <component
+          :is="appletComponet[currentEmpowerStatus]"
+          @handleEmpower="handleEmpower"
+          @handleView="handleView"
+        />
+      </el-tab-pane>
+      <el-tab-pane :label="$t(`已授权`)" name="authorized">
+        <DrawerApplet
+          @handleRetry="activeName = 'empower'"
+          :domainId="domainId"
+          :value="activeName === 'authorized'"
+        />
+      </el-tab-pane>
+    </el-tabs>
+  </Modal>
 </template>
 
 <script setup lang="ts">
 import { postMiniAppAuthUrlAPI } from '@/api/release'
 import { EAppletcStatus } from '@/enum/release'
 import { ElMessageBox } from 'element-plus'
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import DrawerApplet from './components/DrawerApplet.vue'
 import Empower from './components/Empower.vue'
 import EmpowerResult from './components/EmpowerResult.vue'
 
 const props = defineProps<{
-  visible: boolean
+  value: boolean
   domainId: number | string
   defaultAppletcStatus: EAppletcStatus
 }>()
 const emit = defineEmits(['update:value', 'handleView'])
+
+const activeName = ref('empower')
+const visible = computed({
+  get: () => props.value,
+  set: (val) => emit('update:value', val)
+})
 
 const { t } = useI18n()
 const currentEmpowerStatus = ref(EAppletcStatus.empower)
@@ -59,7 +85,7 @@ watch(
 )
 
 watch(
-  () => props.visible,
+  () => props.value,
   (v) => {
     !v && (currentEmpowerStatus.value = EAppletcStatus.empower)
   }

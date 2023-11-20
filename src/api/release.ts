@@ -1,31 +1,30 @@
 import type { EChannelType, EQrCodeHookType } from '@/enum/release'
+import type { IPageFilter } from '@/interface/common'
 import type {
+  IAppletAuthParams,
+  IAppletAuthRes,
   IApplicationFormData,
-  IGroupList,
   IBrandDomainType,
   IBrandDomainTypeKeyFile,
-  ISingelGroupList,
+  ICreateAccountCode,
+  ICreateAccountEmpowerRes,
+  ICreateAccountParams,
+  ICreateGroupRes,
+  ICreateSingleChatAPI,
+  IDingDingPublicFormType,
   IFeishuPublicSerachRes,
   IFeishuSwitchConfigType,
   IFeishuiPublicFormType,
-  IPatchChannelType,
-  IWeixinConfigType,
-  IDingDingPublicFormType,
-  IJoinGroupChatAPI,
-  ICreateSingleChatAPI,
-  ICreateAccountParams,
-  ICreateAccountEmpowerRes,
-  ICreateGroupRes,
-  IUpdateGroupDetail,
-  ICreateAccountCode,
-  IAppletAuthParams,
-  IAppletAuthRes,
   IGetBroadcastParams,
-  ISettingBroadcastType,
+  IGroupList,
+  IJoinGroupChatAPI,
   IMobileLimitItem,
-  IAppletDomainCheckParams
+  IPatchChannelType,
+  ISettingBroadcastType,
+  ISingelGroupList,
+  IUpdateGroupDetail,
+  IWeixinConfigType
 } from '@/interface/release'
-import type { IPageFilter } from '@/interface/common'
 import request from '@/utils/request'
 
 // 创建账号-验证码校验
@@ -278,7 +277,7 @@ export function postMiniAppAuthUrlAPI(data: IAppletAuthParams) {
 }
 
 // 查询微信小程序授权状态
-export function postMiniAppAuthStatusAPI(data: { domain_id: number }) {
+export function postMiniAppAuthStatusAPI(data: { domain_id: number | string }) {
   return request<IAppletAuthRes>({
     url: `/chato/api/v1/publish_channels/wechat/mini_prog/get_by_domain`,
     data
