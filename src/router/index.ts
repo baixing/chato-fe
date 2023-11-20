@@ -59,7 +59,8 @@ export const RoutesMap = {
     namespaceName: 'namespace',
     personalSetting: 'namespacePersonalSetting',
     management: 'namespacePersonalManagement',
-    summary: 'namespaceSummary'
+    summary: 'namespaceSummary',
+    income: 'namespaceIncome'
   },
   vip: {
     center: 'vipCenter'
@@ -348,9 +349,13 @@ const spaceManager = [
     children: [
       {
         name: RoutesMap.namespace.personalSetting,
-        // meta: { title: '个人设置' },
         path: 'personal',
         component: () => import('@/views/space/personalSetting.vue')
+      },
+      {
+        name: RoutesMap.namespace.income,
+        path: 'income',
+        component: () => import('@/views/space/personalIncome.vue')
       },
       {
         name: RoutesMap.namespace.summary,
@@ -358,7 +363,6 @@ const spaceManager = [
         component: () => import('@/views/space/summarySpace.vue')
       },
       {
-        // meta: { title: '空间管理' },
         path: ':spaceId',
         component: () => import('@/views/space/index.vue'),
         children: [

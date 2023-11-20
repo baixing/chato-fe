@@ -3,7 +3,7 @@ import { EFengkongField } from '@/enum/common'
 import { ELangKey } from '@/enum/locales'
 import type { IResponse } from '@/interface/common'
 import i18n from '@/locales'
-import router from '@/router'
+import router, { RoutesMap } from '@/router'
 import { useAuthStore } from '@/stores/auth'
 import { useLocalStorage } from '@vueuse/core'
 import axios, { AxiosError, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios'
@@ -41,8 +41,8 @@ service.interceptors.response.use(
       const authStoreI = useAuthStore()
       switch (data.code) {
         case 401: {
-          authStoreI.$patch({ authToken: '' })
           data.message = $t('您的登录状态已失效，请重新登录。')
+          authStoreI.$patch({ authToken: '' })
           if (window.location.pathname !== '/') {
             router.replace('/auth/login')
           }
@@ -63,6 +63,14 @@ service.interceptors.response.use(
           data.message = errorMap + data.message + '，请重新操作'
           break
         }
+        case 210401:
+          router.push({
+            name: RoutesMap.auth.loginInvite,
+            query: {
+              pay: '1',
+              slug: data.data.domain_slug
+            }
+          })
       }
       if (!tokenAbnormal) {
         tokenAbnormal = true

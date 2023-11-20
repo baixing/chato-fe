@@ -7,7 +7,7 @@
   >
     <p
       v-if="isInvite"
-      class="w-full text-center text-[#B5BED0] flex justify-center items-center mb-2 text-xs mt-5 cursor-pointer"
+      class="w-full text-center text-[#B5BED0] flex justify-center items-center mb-2 text-xs mt-5 md:mt-3 cursor-pointer"
     >
       {{ $t('登录即表示默认同意') }}
       <a class="mx-1" @click.prevent="() => openPreviewUrl(kPrivacyLinkUrl)">
@@ -33,29 +33,29 @@
     </div>
     <el-button
       data-script="Chato-loginOrReg"
-      :class="['w-full', isInvite && '!bg-[#303133] !rounded-full !text-white !border-none']"
+      :class="['w-full']"
       type="primary"
       size="large"
       :disabled="!isBtnSubmitEnabled"
       @click="submitFormOrSendSms(slotProps)"
     >
-      {{ $t(slotProps.showSmsCodeInput ? submitBtnText : '获取验证码') }}
+      {{ $t(submitBtnText) }}
     </el-button>
   </MobileForm>
 </template>
 
 <script lang="ts" setup>
+import useBaiduPromotion from '@/composables/useBaiduPromotion'
+import useByteDancePromotion from '@/composables/useByteDancePromotion'
+import useChannel from '@/composables/useChannel'
+import useRSA from '@/composables/useRSA'
+import { kPrivacyLinkUrl, kUserAgreementLinkUrl } from '@/constant/terms'
+import type { ILoginMobile } from '@/interface/auth'
+import { openPreviewUrl } from '@/utils/help'
 import { ElNotification as Notification, type FormInstance } from 'element-plus'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import MobileForm from './MobileForm.vue'
-import type { ILoginMobile } from '@/interface/auth'
-import useRSA from '@/composables/useRSA'
-import useChannel from '@/composables/useChannel'
-import useBaiduPromotion from '@/composables/useBaiduPromotion'
-import useByteDancePromotion from '@/composables/useByteDancePromotion'
-import { openPreviewUrl } from '@/utils/help'
-import { kPrivacyLinkUrl, kUserAgreementLinkUrl } from '@/constant/terms'
 
 const emit = defineEmits(['loginEnterSuccess', 'handleSubmitLogin'])
 withDefaults(
@@ -104,11 +104,11 @@ const submitForm = (
 }
 
 function submitFormOrSendSms(slotProps) {
-  if (slotProps.showSmsCodeInput) {
-    submitForm(slotProps.refBtnSend, slotProps.ref, slotProps.modelForm, slotProps.isInputChannel)
-  } else {
-    slotProps.sendSmsCode(slotProps.ref)
-    console.log(slotProps.showSmsCodeInput)
-  }
+  // if (slotProps.showSmsCodeInput) {
+  submitForm(slotProps.refBtnSend, slotProps.ref, slotProps.modelForm, slotProps.isInputChannel)
+  // } else {
+  //   slotProps.sendSmsCode(slotProps.ref)
+  //   console.log(slotProps.showSmsCodeInput)
+  // }
 }
 </script>
