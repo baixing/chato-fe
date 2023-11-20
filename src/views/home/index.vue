@@ -69,7 +69,7 @@
           id="Chato_login_click"
           @click="onEnter()"
         >
-          {{ authToken ? $t('登录') : $t('免费使用') }}
+          {{ authToken ? $t('进入') : $t('免费使用') }}
         </el-button>
       </div>
     </el-header>
