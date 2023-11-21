@@ -1,24 +1,24 @@
 <template>
   <Topbar :title="t('升级权益')" class="!mb-0 lg:!mb-4" />
   <ContentLayout>
-    <div class="flex items-center gap-2 text-[#596780] text-sm my-8">
+    <div class="flex items-center gap-2 text-[#596780] text-sm my-8 lg:mt-0 lg:mb-4">
       <svg-icon name="rights-filled" />
       <span>{{ t('您当前套餐为') }}</span>
       <span class="text-[#7C5CFC]">{{ SpaceCommercialTypeMapper[currentRights.type] }}</span>
       <span>{{ t('可升级套餐包') }}</span>
     </div>
-    <div class="grid grid-cols-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-5">
+    <div class="grid grid-cols-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-5 lg:gap-4">
       <div
         v-for="item in packageList"
         :key="`package_${item.id}`"
         :class="[
-          'relative bg-white rounded-lg pt-6 overflow-hidden cursor-pointer transition-all hover:scale-105',
+          'relative bg-white rounded-lg pt-6 overflow-hidden cursor-pointer transition-all hover:scale-105 lg:flex lg:flex-row-reverse lg:py-3',
           currentRights.type === item.desc && 'border border-solid border-[#7C5CFC]',
           HigherCommercialType.includes(item.desc) && 'line-grad-gold-card-bg'
         ]"
       >
         <div
-          class="flex flex-col items-center text-[#596780] px-6 border-solid border-b border-t-0 border-l-0 border-r-0 border-[#E4E7ED]"
+          class="flex flex-col items-center text-[#596780] px-6 border-solid border-b border-t-0 border-l-0 border-r-0 border-[#E4E7ED] lg:border-b-0 lg:border-l lg:px-3 lg:w-5/12 lg:justify-center"
         >
           <span
             :class="[
@@ -73,7 +73,7 @@
         </div>
         <div
           :class="[
-            'p-6 space-y-4 text-[#596780] text-sm',
+            'p-6 space-y-4 text-[#596780] text-sm flex-1 lg:px-3 lg:py-0 lg:space-y-2',
             HigherCommercialType.includes(item.desc) && '!text-[#6C4E2D]'
           ]"
         >
@@ -95,14 +95,14 @@
           </p>
           <p class="desc-between">
             <span>{{ t('发布平台') }}</span>
-            <span v-if="ESpaceCommercialType.free === item.desc">{{ t('网页 小程序') }}</span>
+            <span v-if="ESpaceCommercialType.free === item.desc">{{ t('网页 H5') }}</span>
             <span v-else class="flex gap-2 items-center text-[#303133]">
               {{ t('全平台') }}
               <el-tooltip
                 placement="top"
                 :content="
                   t(
-                    '网页 小程序、JS 嵌入、API 调用、朋友圈、钉钉、飞书、抖音、微信客服、微信公众号、微信小程序'
+                    '网页 H5、JS 嵌入、API 调用、朋友圈、钉钉、飞书、抖音、微信客服、微信公众号、微信小程序'
                   )
                 "
               >
@@ -337,7 +337,7 @@ onBeforeUnmount(() => {
 
 <style lang="scss" scoped>
 .rights-btn {
-  @apply w-[69%] mb-6 transition-opacity hover:opacity-80;
+  @apply w-[69%] mb-6 transition-opacity hover:opacity-80 lg:w-11/12;
 }
 
 .line-grad-purpple {
