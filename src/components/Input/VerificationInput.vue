@@ -13,8 +13,8 @@
           type="number"
           pattern="[0-9]"
           :style="{
-            width: `${props.fieldWidth}px`,
-            height: `${props.fieldHeight}px`
+            width: `${fieldWidth}px`,
+            height: `${fieldHeight}px`
           }"
           :autoFocus="autoFocus && index === autoFocusIndex"
           :data-id="index"
@@ -27,8 +27,8 @@
           @input="onValueChange"
           @focus="onFocus"
           @keydown="onKeyDown"
-          :required="props.required"
-          :disabled="props.disabled"
+          :required="required"
+          :disabled="disabled"
           maxlength="1"
         />
       </template>
@@ -36,33 +36,27 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { defineEmits, defineProps, onBeforeUpdate, ref, toRef } from 'vue'
 
-const props = defineProps({
-  className: String,
-  fields: {
-    type: Number,
-    default: 3
-  },
-  fieldWidth: {
-    type: Number,
-    default: 64
-  },
-  fieldHeight: {
-    type: Number,
-    default: 64
-  },
-  disabled: {
-    type: Boolean,
-    default: false
-  },
-  required: {
-    type: Boolean,
-    default: true
-  },
-  title: String
-})
+const props = withDefaults(
+  defineProps<{
+    className: string
+    fields: number
+    fieldWidth: number
+    fieldHeight: number
+    disabled: boolean
+    required: boolean
+    title: string
+  }>(),
+  {
+    fields: 3,
+    fieldWidth: 64,
+    fieldHeight: 64,
+    disabled: false,
+    required: true
+  }
+)
 
 const emit = defineEmits(['change', 'complete'])
 
@@ -198,8 +192,8 @@ const onKeyDown = (e) => {
   }
 }
 
-const triggerChange = (values = values.value) => {
-  const val = values.join('')
+const triggerChange = (newValues = values.value) => {
+  const val = newValues.join('')
   emit('change', val)
   if (val.length >= fields.value) {
     emit('complete', val)
