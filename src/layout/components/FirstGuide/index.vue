@@ -28,9 +28,9 @@
           <div class="text-[##303133] font-medium text-sm mb-3">
             {{ $t('你会将机器人应用在什么场景？') }}
           </div>
-          <div class="flex justify-between gap-4 w-full mb-10">
+          <div class="flex justify-between gap-4 w-full mb-10 flex-col">
             <div
-              class="flex-col border rounded-lg text-[#596780] flex-col cursor-pointer border-solid border-[#E4E7ED] bg-white"
+              class="flex-col border rounded-lg text-[#596780] cursor-pointer border-solid border-[#E4E7ED] bg-white"
               v-for="item in ScenesList"
               @click="userInfoOrganization = item.value"
               :key="item.value"
