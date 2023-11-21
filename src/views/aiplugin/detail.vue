@@ -159,7 +159,7 @@
               {{ tag }}
             </p>
           </div>
-          <div class="flex flex-wrap -mx-2 overflow-hidden">
+          <div ref="refFeedList" class="flex flex-wrap -mx-2 overflow-y-scroll">
             <div v-for="card in cards" :key="card.id" class="my-2 px-2 w-1/4 overflow-hidden">
               <div class="relative">
                 <img
@@ -215,6 +215,10 @@
               </div>
             </div>
           </div>
+          <div class="flex items-center" v-if="isLoadingFeed">
+            <div class="spinner"></div>
+            <span class="loading-text">加载中...</span>
+          </div>
         </div>
       </div>
     </ContentLayout>
@@ -260,15 +264,15 @@
 import DefaultAvatar from '@/assets/img/avatar.png'
 import XHSLogo from '@/assets/img/xhs-logo.png'
 import { currentEnvConfig } from '@/config'
-import { useDomainStore } from '@/stores/domain'
+// import { useDomainStore } from '@/stores/domain'
+import { useInfiniteScroll } from '@vueuse/core'
 import { ElMessageBox } from 'element-plus'
-import { storeToRefs } from 'pinia'
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ContentLayout from '../../layout/ContentLayout.vue'
 import request from '../../utils/request'
 
-const domainStoreI = useDomainStore()
+// const domainStoreI = useDomainStore()
 
 const { t } = useI18n()
 const searchQuery = ref('')
@@ -276,7 +280,7 @@ const selectedTag = ref('推荐')
 const selectedDomainSlug = ref('')
 const isLogin = ref(false)
 const showDialog = ref(false)
-const selectedMenu = ref('history')
+const selectedMenu = ref('posts')
 const isUpdateRobot = ref(false)
 const templateTags = ref(['好物分享', '经验分享', '知识分享'])
 const selectedTTag = ref()
@@ -329,11 +333,33 @@ const history = ref([
     created_nickname: ''
   }
 ])
-const { domainList } = storeToRefs(domainStoreI)
 
+// const { domainList } = storeToRefs(domainStoreI)
 const tags = ['推荐', '美食', '穿搭', '彩妆', '影视', '职场', '家装', '游戏', '旅游']
-
 const cards = ref([])
+const refFeedList = ref<HTMLElement | null>(null)
+const isLoadingFeed = ref(false)
+
+const loadMoreContent = () => {
+  if (isLoadingFeed.value) return
+  isLoadingFeed.value = true
+
+  setTimeout(async () => {
+    console.log('1212')
+    await getHomeFeed()
+    isLoadingFeed.value = false
+  }, 2000)
+}
+
+useInfiniteScroll(
+  refFeedList,
+  () => {
+    loadMoreContent()
+  },
+  {
+    distance: 10
+  }
+)
 
 function openXHSNote(id) {
   window.open(`https://www.xiaohongshu.com/explore/${id}`, '_blank')
@@ -390,7 +416,6 @@ function openCreateDialog() {
 }
 
 async function confirmDialog() {
-  console.log(isUpdateRobot.value)
   if (isUpdateRobot.value) {
     await request({
       url: `/chato/api/v1/domains/update_xhs_bot/${selectedDomainSlug.value}`,
@@ -551,5 +576,26 @@ onMounted(() => {
 <style scoped>
 .highlight {
   border: 2px solid #f00; /* Change this to your preferred highlight color */
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #ccc;
+  border-top-color: #666;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 8px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-text {
+  font-size: 14px;
+  color: #666;
 }
 </style>
