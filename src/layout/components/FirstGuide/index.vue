@@ -30,7 +30,7 @@
           </div>
           <div class="flex justify-between gap-4 w-full mb-10">
             <div
-              class="w-1/2 border rounded-lg text-[#596780] cursor-pointer border-solid border-[#E4E7ED] bg-white"
+              class="flex-col border rounded-lg text-[#596780] flex-col cursor-pointer border-solid border-[#E4E7ED] bg-white"
               v-for="item in ScenesList"
               @click="userInfoOrganization = item.value"
               :key="item.value"
@@ -39,16 +39,18 @@
                 '!border-[#7C5CFC]': item.value === userInfoOrganization
               }"
             >
-              <div class="py-3 px-7 flex lg:flex-col items-center justify-between">
+              <div class="py-3 px-7 lg:pl-5 flex items-center">
                 <div
-                  class="w-10 h-10 text-xl flex items-center justify-center bg-[#F2F3F5] rounded-full lg:mb-1"
+                  class="w-10 h-10 text-xl flex mr-4 items-center justify-center bg-[#F2F3F5] rounded-full lg:mb-1"
                 >
                   <svg-icon :name="item.icon" />
                 </div>
-                <div class="text-xs font-medium">{{ item.label }}</div>
-              </div>
-              <div class="text-xs text-center px-7 mb-3 information">
-                {{ item.information }}
+                <div>
+                  <div class="text-xs font-medium">{{ item.label }}</div>
+                  <div class="text-xs information">
+                    {{ item.information }}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
