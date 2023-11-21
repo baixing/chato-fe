@@ -95,14 +95,14 @@
           </p>
           <p class="desc-between">
             <span>{{ t('发布平台') }}</span>
-            <span v-if="ESpaceCommercialType.free === item.desc">{{ t('网页 H5') }}</span>
+            <span v-if="ESpaceCommercialType.free === item.desc">{{ t('网页 小程序') }}</span>
             <span v-else class="flex gap-2 items-center text-[#303133]">
               {{ t('全平台') }}
               <el-tooltip
                 placement="top"
                 :content="
                   t(
-                    '网页 H5、JS 嵌入、API 调用、朋友圈、钉钉、飞书、抖音、微信客服、微信公众号、微信小程序'
+                    '网页 小程序、JS 嵌入、API 调用、朋友圈、钉钉、飞书、抖音、微信客服、微信公众号、微信小程序'
                   )
                 "
               >
