@@ -34,6 +34,31 @@
       hidden-batch
       @closeDialogVisble="() => (dialogVisibleQa = false)"
     />
+
+    <Modal
+      width="500px"
+      mobile-width="90%"
+      :title="$t('小纳同学')"
+      :visible="!!debugDomain?.system_prompt"
+      :footer="false"
+    >
+      <div class="flex flex-col items-center">
+        <img
+          src="https://afu-1255830993.cos.ap-shanghai.myqcloud.com/avatar/bot/2023010/590eb6bf-05bc-4b87-82b7-6fa5d2d19248.txt"
+          class="w-40 h-40"
+          alt=""
+        />
+        <p class="text-[#9DA3AF] my-4 md:text-xs">{{ $t('免费为企业设计AI解决方案') }}</p>
+        <a
+          href="https://afu-1255830993.cos.ap-shanghai.myqcloud.com/avatar/bot/2023010/590eb6bf-05bc-4b87-82b7-6fa5d2d19248.txt"
+          :download="$t('二维码.png')"
+          target="_blank"
+          class="theme-color"
+        >
+          {{ $t('保存') }}
+        </a>
+      </div>
+    </Modal>
   </div>
 </template>
 
