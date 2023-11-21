@@ -1,3 +1,4 @@
+import useChannel from '@/composables/useChannel'
 import usePageTitle from '@/composables/usePageTitle'
 import useRoleCheck from '@/composables/useRoleCheck'
 import useSidebar from '@/composables/useSidebar'
@@ -447,11 +448,19 @@ const router = createRouter({
 
 router.beforeEach((to) => {
   const { drawerVisible } = useSidebar()
+  const { shareChannel } = useChannel()
+  const sensors = new Sensors()
+  const { saInstance } = sensors
   drawerVisible.value = false
 
   locationComToCn()
   useRoleCheck(to)
   usePageTitle(to.meta?.title)
+  saInstance?.track('channel-source', {
+    name: 'channel来源',
+    type: 'channel-source',
+    data: shareChannel
+  })
   // useCheckDomain(to)
   const authStoreI = useAuthStore()
   if (to.meta.requiresAuth && !authStoreI.authToken) {
