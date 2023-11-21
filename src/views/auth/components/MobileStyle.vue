@@ -86,15 +86,12 @@
           <VerificationInput
             v-if="isMobile"
             v-show="showSmsCodeInput"
-            v-model="modelForm.code"
-            :step="4"
-            :autofocus="true"
-            @change="
+            :fields="4"
+            @change="(val) => (modelForm.code = val)"
+            @complete="
               (value) => {
                 modelForm.code = value
-                if (value.length === 4) {
-                  submitForm(refForm)
-                }
+                submitForm(refForm)
               }
             "
           >
