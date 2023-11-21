@@ -335,7 +335,21 @@ const history = ref([
 ])
 
 // const { domainList } = storeToRefs(domainStoreI)
-const tags = ['推荐', '美食', '穿搭', '彩妆', '影视', '职场', '家装', '游戏', '旅游']
+const tags = [
+  '推荐',
+  '美食',
+  '穿搭',
+  '彩妆',
+  '影视',
+  '职场',
+  '家装',
+  '游戏',
+  '旅游',
+  '动漫',
+  '头像',
+  '学习',
+  '手工'
+]
 const cards = ref([])
 const refFeedList = ref<HTMLElement | null>(null)
 const isLoadingFeed = ref(false)
