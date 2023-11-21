@@ -24,9 +24,9 @@
               if (el) inputs[index + 1] = el
             }
           "
-          v-on:input="onValueChange"
-          v-on:focus="onFocus"
-          v-on:keydown="onKeyDown"
+          @input="onValueChange"
+          @focus="onFocus"
+          @keydown="onKeyDown"
           :required="props.required"
           :disabled="props.disabled"
           maxlength="1"
