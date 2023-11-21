@@ -90,7 +90,7 @@
       </div>
     </Transition>
     <Transition name="left">
-      <div v-show="currentStep > 6">
+      <div v-show="currentStep > 4">
         <ChatoDomainAvatar />
         <div class="left-bubble">
           <div class="title">

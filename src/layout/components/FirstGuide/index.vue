@@ -79,8 +79,8 @@ const visible = ref(false)
 const authToken = cookieToken
 
 const ScenesList = [
-  { label: '企业降本增效', value: EUserOrganizationRole.company, icon: 'company' },
-  { label: '个人工作学习', value: EUserOrganizationRole.person, icon: 'person' }
+  { label: '企业用户', value: EUserOrganizationRole.company, icon: 'company' },
+  { label: '个人用户', value: EUserOrganizationRole.person, icon: 'person' }
 ] as const
 
 const delayIncreaseStep = (time = 300) => {
