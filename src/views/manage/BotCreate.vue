@@ -214,7 +214,8 @@ const defaultFormState: Partial<IDomainInfo> = {
   avatar_show: true,
   name_show: true,
   desc_show: 0,
-  name_and_avatar_show: 0
+  name_and_avatar_show: 0,
+  toc_privacy: 1
 }
 let originalFormState = { ...defaultFormState }
 let originalTemplateFormState = {}
