@@ -7,13 +7,14 @@
       enter-active-class="transition duration-200"
       leave-active-class="transition duration-200"
     >
-      <Sidebar v-show="!isMobile" />
+      <Sidebar v-show="!isMobile && !firstGuide" />
     </Transition>
     <el-main class="main-container">
       <router-view />
     </el-main>
   </el-container>
   <el-drawer
+    v-if="!firstGuide"
     v-model="drawerVisible"
     direction="ltr"
     :with-header="false"
@@ -22,7 +23,7 @@
     @handleClose="drawerVisible = false"
     class="siderbar-drawer"
   >
-    <Sidebar />
+    <Sidebar v-show="!firstGuide" />
   </el-drawer>
   <UpgradeRightsModal />
   <FollowPublic />
@@ -45,7 +46,7 @@ import { useDomainStore } from '@/stores/domain'
 import { useSpaceStore } from '@/stores/space'
 import { storeToRefs } from 'pinia'
 import { nextTick, ref } from 'vue'
-import { RouterView, useRoute, useRouter } from 'vue-router'
+import { RouterView, onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
 import Sidebar from './components/Sidebar/MainSidebar.vue'
 import Skeleton from './components/Skeleton/index.vue'
 
@@ -79,15 +80,14 @@ const init = async () => {
     // 新用户跳转对话引导页
     if (userInfoRes.id === userInfoRes.org.owner_id && !userInfoRes.org.additions && !cookieToken) {
       if (route.name !== RoutesMap.guide.first) {
+        await router.replace({ name: RoutesMap.manager.create })
         if (!orgInfo.value.additions) {
           firstGuide.value = true
         }
-        router.replace({ name: RoutesMap.manager.create })
       }
     } else if (route.name === RoutesMap.guide.first) {
       router.replace({ name: RoutesMap.manager.create })
     }
-
     await Promise.all([
       domainStoreI.initDomainList(route),
       chatStoreI.initChatList(),
@@ -100,6 +100,10 @@ const init = async () => {
 }
 
 init()
+
+onBeforeRouteUpdate(() => {
+  firstGuide.value = false
+})
 
 nextTick(() => {
   checkRightsTypeNeedUpgrade(ESpaceRightsType.usage)

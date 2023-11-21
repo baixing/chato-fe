@@ -71,7 +71,7 @@
       <div class="text-[#606266]">你配置的机器人信息还未保存，是否保存？</div>
     </div>
     <template #footer>
-      <el-button plain @click="onBeforeRoute()">{{ t('不保存') }}</el-button>
+      <!-- <el-button plain @click="onBeforeRoute()">{{ t('不保存') }}</el-button> -->
       <el-button plain @click="onBeforeRoute(onSave, 'draft')">{{ t('仅存为草稿') }}</el-button>
       <el-button type="primary" @click="onBeforeRoute(onSave)">{{ t('确认保存') }} </el-button>
     </template>
@@ -214,7 +214,8 @@ const defaultFormState: Partial<IDomainInfo> = {
   avatar_show: true,
   name_show: true,
   desc_show: 0,
-  name_and_avatar_show: 0
+  name_and_avatar_show: 0,
+  toc_privacy: 1
 }
 let originalFormState = { ...defaultFormState }
 let originalTemplateFormState = {}
