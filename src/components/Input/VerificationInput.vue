@@ -1,175 +1,253 @@
-<!-- eslint-disable func-call-spacing -->
-<script lang="ts" setup>
-import { onUpdated, reactive, ref } from 'vue'
-
-const props = withDefaults(
-  defineProps<{
-    step?: number
-    autofocus?: boolean
-    disabled?: boolean
-    inputFormatter?: (t: string) => string
-  }>(),
-  {
-    step: 6,
-    inputFormatter: (t: string) => {
-      return t.replace(/[^a-z0-9A-Z]/g, '').toUpperCase()
-    }
-  }
-)
-
-const emit = defineEmits<{
-  (e: 'change', value: string): void
-}>()
-
-const inputValue = reactive(new Array(props.step).fill(''))
-
-const inputRefs = ref<Record<number, HTMLInputElement>>({})
-
-function handleChange(value: string, index: number) {
-  const formattedValue = props.inputFormatter(value)
-
-  if (formattedValue === '') {
-    inputValue[index] = formattedValue
-    const inputRef = inputRefs.value[index]
-    if (inputRef) {
-      inputRef.value = inputValue[index]
-    }
-    emit('change', inputValue.join(''))
-
-    return
-  }
-
-  /** 输入框长度必须设置为大于 1，方便输入替换原来的值 */
-  inputValue[index] =
-    formattedValue.length === 1 ? formattedValue : formattedValue.replace(inputValue[index], '')[0]
-
-  const inputRef = inputRefs.value[index]
-  if (inputRef) {
-    inputRef.value = inputValue[index]
-  }
-
-  inputRefs.value[Math.min(index + 1, props.step - 1)]?.focus()
-
-  emit('change', inputValue.join(''))
-}
-
-/** 处理粘贴，必须 preventDefault，否则会粘贴到输入框，两边一起处理会混乱 */
-function handlePaste(value: string, index: number) {
-  const valueArr = props.inputFormatter(value).split('')
-
-  if (valueArr.length === 0) {
-    return
-  }
-
-  for (let i = 0; i < valueArr.length; i++) {
-    if (inputValue[index + i] === undefined) {
-      break
-    }
-
-    inputValue[index + i] = valueArr[i]
-  }
-
-  inputRefs.value[Math.min(index + value.length, props.step - 1)]?.focus()
-
-  emit('change', inputValue.join(''))
-}
-
-/** 处理输入框本身为空的情况 */
-function handleBackspace(index: number) {
-  if (inputValue[index] !== '') {
-    inputValue[index] = ''
-    emit('change', inputValue.join(''))
-    return
-  }
-
-  if (index === 0) {
-    return
-  }
-
-  inputRefs.value[index - 1]?.focus()
-}
-
-function handleArrayLeft(index: number) {
-  if (index === 0) {
-    return
-  }
-
-  inputRefs.value[index - 1]?.focus()
-}
-
-function handleArrayRight(index: number) {
-  if (index === props.step - 1) {
-    return
-  }
-
-  inputRefs.value[index + 1]?.focus()
-}
-
-onUpdated(() => {
-  const inputRef = inputRefs.value[0]
-  if (inputRef && props.autofocus && inputValue[0] === '') {
-    setTimeout(() => {
-      inputRef.focus()
-    }, 100)
-  }
-})
-</script>
 <template>
-  <div class="verification-input">
-    <input
-      class="verification-input__inner"
-      v-for="i in step"
-      ref="inputRefs"
-      type="tel"
-      :key="i"
-      :autofocus="autofocus && i === 1"
-      :value="inputValue[i - 1]"
-      :readonly="disabled"
-      :disabled="disabled"
-      :maxlength="2"
-      @paste.prevent="handlePaste($event.clipboardData?.getData('Text') || '', i - 1)"
-      @keydown.left="handleArrayLeft(i - 1)"
-      @keydown.right="handleArrayRight(i - 1)"
-      @keydown.backspace="handleBackspace(i - 1)"
-      @input.prevent.stop="(e) => handleChange((e.target as HTMLInputElement).value, i - 1)"
-    />
+  <div
+    v-bind:class="{
+      'code-input-container': true,
+      [className]: !!className
+    }"
+  >
+    <div class="code-input">
+      <p class="title" v-if="title">{{ title }}</p>
+      <template v-for="(v, index) in values" :key="index">
+        <input
+          class="w-14 h-14 rounded-lg border border-gray outline-none focus:outline-none focus:border-primary focus:ring-0 text-center transition-all"
+          type="number"
+          pattern="[0-9]"
+          :style="{
+            width: `${props.fieldWidth}px`,
+            height: `${props.fieldHeight}px`
+          }"
+          :autoFocus="autoFocus && index === autoFocusIndex"
+          :data-id="index"
+          :value="v"
+          :ref="
+            (el) => {
+              if (el) inputs[index + 1] = el
+            }
+          "
+          v-on:input="onValueChange"
+          v-on:focus="onFocus"
+          v-on:keydown="onKeyDown"
+          :required="props.required"
+          :disabled="props.disabled"
+          maxlength="1"
+        />
+      </template>
+    </div>
   </div>
 </template>
 
-<style lang="less" scoped>
-.verification-input {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+<script setup>
+import { defineEmits, defineProps, onBeforeUpdate, ref, toRef } from 'vue'
 
-  .verification-input__inner {
-    border: none;
-    background-color: #f2f2f2;
-    border-radius: 8px;
-    outline: none;
-    //box-shadow: 0 -2px 0 -1px #ccc inset;
-    margin-right: 20px;
-    height: 64px;
-    width: 64px;
-    text-align: center;
-    font-size: 20px;
-    transition: all 0.2s;
-    ime-mode: disabled;
+const props = defineProps({
+  className: String,
+  fields: {
+    type: Number,
+    default: 3
+  },
+  fieldWidth: {
+    type: Number,
+    default: 64
+  },
+  fieldHeight: {
+    type: Number,
+    default: 64
+  },
+  disabled: {
+    type: Boolean,
+    default: false
+  },
+  required: {
+    type: Boolean,
+    default: true
+  },
+  title: String
+})
 
-    &:hover,
-    &:focus {
-      // border: 1px solid #7c5cfc;
-      // background-color: #ffffff;
+const emit = defineEmits(['change', 'complete'])
+
+const KEY_CODE = {
+  backspace: 8,
+  delete: 46,
+  left: 37,
+  up: 38,
+  right: 39,
+  down: 40
+}
+
+const values = ref([])
+const iRefs = ref([])
+const inputs = ref([])
+const fields = toRef(props, 'fields')
+const autoFocusIndex = ref(0)
+const autoFocus = true
+
+const initVals = () => {
+  let vals
+  if (values.value && values.value.length) {
+    vals = []
+    for (let i = 0; i < fields.value; i++) {
+      vals.push(values.value[i] || '')
     }
-
-    &[disabled] {
-      //box-shadow: 0 -2px 0 -1px #d2d2d2 inset;
-    }
-
-    &:last-child {
-      margin-right: 0;
-    }
+    autoFocusIndex.value = values.value.length >= fields.value ? 0 : values.value.length
+  } else {
+    vals = Array(fields.value).fill('')
   }
+  iRefs.value = []
+  for (let i = 0; i < fields.value; i++) {
+    iRefs.value.push(i + 1)
+  }
+  values.value = vals
+}
+
+const onFocus = (e) => {
+  e.target.select(e)
+}
+
+const onValueChange = (e) => {
+  const index = parseInt(e.target.dataset.id)
+  e.target.value = e.target.value.replace(/[^\d]/gi, '')
+  // this.handleKeys[index] = false;
+  if (e.target.value === '' || !e.target.validity.valid) {
+    return
+  }
+  let next
+  const value = e.target.value
+  values.value = Object.assign([], values.value)
+  if (value.length > 1) {
+    let nextIndex = value.length + index - 1
+    if (nextIndex >= fields.value) {
+      nextIndex = fields.value - 1
+    }
+    next = iRefs.value[nextIndex]
+    const split = value.split('')
+    split.forEach((item, i) => {
+      const cursor = index + i
+      if (cursor < fields.value) {
+        values.value[cursor] = item
+      }
+    })
+  } else {
+    next = iRefs.value[index + 1]
+    values.value[index] = value
+  }
+  if (next) {
+    const element = inputs.value[next]
+    element.focus()
+    element.select()
+  }
+  triggerChange(values.value)
+}
+
+const onKeyDown = (e) => {
+  const index = parseInt(e.target.dataset.id)
+  const prevIndex = index - 1
+  const nextIndex = index + 1
+  const prev = iRefs.value[prevIndex]
+  const next = iRefs.value[nextIndex]
+  switch (e.keyCode) {
+    case KEY_CODE.backspace: {
+      e.preventDefault()
+      const vals = [...values.value]
+      if (values.value[index]) {
+        vals[index] = ''
+        values.value = vals
+        triggerChange(vals)
+      } else if (prev) {
+        vals[prevIndex] = ''
+        inputs.value[prev].focus()
+        values.value = vals
+        triggerChange(vals)
+      }
+      break
+    }
+    case KEY_CODE.delete: {
+      e.preventDefault()
+      const vals = [...values.value]
+      if (values.value[index]) {
+        vals[index] = ''
+        values.value = vals
+        triggerChange(vals)
+      } else if (next) {
+        vals[nextIndex] = ''
+        inputs.value[next].focus()
+        values.value = vals
+        triggerChange(vals)
+      }
+      break
+    }
+    case KEY_CODE.left:
+      e.preventDefault()
+      if (prev) {
+        inputs.value[prev].focus()
+      }
+      break
+    case KEY_CODE.right:
+      e.preventDefault()
+      if (next) {
+        inputs.value[next].focus()
+      }
+      break
+    case KEY_CODE.up:
+    case KEY_CODE.down:
+      e.preventDefault()
+      break
+    default:
+      // this.handleKeys[index] = true;
+      break
+  }
+}
+
+const triggerChange = (values = values.value) => {
+  const val = values.join('')
+  emit('change', val)
+  if (val.length >= fields.value) {
+    emit('complete', val)
+  }
+}
+
+initVals()
+
+onBeforeUpdate(() => {
+  inputs.value = []
+})
+</script>
+
+<style scoped>
+.code-input-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+}
+.code-input {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 10px;
+}
+.code-input > input {
+  border: solid 1px #f2f2f2;
+  background-color: #f2f2f2;
+  font-family: 'Lato';
+  font-size: 20px;
+  border-radius: 8px;
+  text-align: center;
+  transition: 0.2s all fade;
+  color: #525461;
+  box-sizing: border-box;
+  -webkit-appearance: initial;
+}
+.code-input > input:focus {
+  outline: none;
+  border: 1px solid #7c5cfc;
+  background-color: #ffffff;
+  caret-color: #006fff;
+}
+.title {
+  margin: 0;
+  height: 20px;
+  padding-bottom: 10px;
 }
 </style>
