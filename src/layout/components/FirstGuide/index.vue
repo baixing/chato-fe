@@ -30,7 +30,7 @@
           </div>
           <div class="flex justify-between gap-4 w-full mb-10">
             <div
-              class="text-[#596780] py-3 px-7 w-1/2 flex lg:flex-col cursor-pointer items-center justify-between border rounded-lg border-solid border-[#E4E7ED] bg-white"
+              class="w-1/2 border rounded-lg text-[#596780] cursor-pointer border-solid border-[#E4E7ED] bg-white"
               v-for="item in ScenesList"
               @click="userInfoOrganization = item.value"
               :key="item.value"
@@ -39,12 +39,17 @@
                 '!border-[#7C5CFC]': item.value === userInfoOrganization
               }"
             >
-              <div
-                class="w-10 h-10 text-xl flex items-center justify-center bg-[#F2F3F5] rounded-full lg:mb-1"
-              >
-                <svg-icon :name="item.icon" />
+              <div class="py-3 px-7 flex lg:flex-col items-center justify-between">
+                <div
+                  class="w-10 h-10 text-xl flex items-center justify-center bg-[#F2F3F5] rounded-full lg:mb-1"
+                >
+                  <svg-icon :name="item.icon" />
+                </div>
+                <div class="text-xs font-medium">{{ item.label }}</div>
               </div>
-              <div class="text-xs font-medium">{{ item.label }}</div>
+              <div class="text-xs text-center px-7 mb-3 information">
+                {{ item.information }}
+              </div>
             </div>
           </div>
           <el-button
@@ -79,8 +84,18 @@ const visible = ref(false)
 const authToken = cookieToken
 
 const ScenesList = [
-  { label: '企业用户', value: EUserOrganizationRole.company, icon: 'company' },
-  { label: '个人用户', value: EUserOrganizationRole.person, icon: 'person' }
+  {
+    label: '企业用户',
+    value: EUserOrganizationRole.company,
+    icon: 'company',
+    information: '用于公司业务中的营销、提效、降本等'
+  },
+  {
+    label: '个人用户',
+    value: EUserOrganizationRole.person,
+    icon: 'person',
+    information: '用于个人提效、创作、娱乐等'
+  }
 ] as const
 
 const delayIncreaseStep = (time = 300) => {
@@ -158,5 +173,8 @@ watch(userInfo, () => {
 .button-leave-to {
   opacity: 0;
   transform: translateX(30px);
+}
+.information {
+  font-size: 10px;
 }
 </style>
