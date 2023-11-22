@@ -87,12 +87,17 @@
 </template>
 <script lang="ts" setup>
 import { addChatSessionB, addChatSessionC } from '@/api/chatList'
+import { createDraftDomain, getDomainDetailPublic, updateDomain } from '@/api/domain'
 import { getResourceB, getResourceC } from '@/api/resource'
 import DefaultAvatar from '@/assets/img/avatar.png'
+import useSpaceRights from '@/composables/useSpaceRights'
+import { EDomainStatus } from '@/enum/domain'
+import { ESpaceRightsType } from '@/enum/space'
 import ContentLayout from '@/layout/ContentLayout.vue'
 import { RoutesMap } from '@/router'
 import { useAuthStore } from '@/stores/auth'
 import { useChatStore } from '@/stores/chat'
+import { useDomainStore } from '@/stores/domain'
 import { useStorage } from '@vueuse/core'
 import { ElLoading } from 'element-plus'
 import { storeToRefs } from 'pinia'
@@ -122,8 +127,10 @@ const $uid = useStorage('uid', '')
 const resourceList = ref([])
 const authStoreI = useAuthStore()
 const chatStoreI = useChatStore()
+const domainStoreI = useDomainStore()
 const { authToken } = storeToRefs(authStoreI)
 const { chatList } = storeToRefs(chatStoreI)
+const { checkRightsTypeNeedUpgrade } = useSpaceRights()
 const isLoggedIn = computed(() => !!authToken.value)
 const emit = defineEmits(['hidden_square'])
 async function onAddSessionChat(item) {
@@ -153,8 +160,32 @@ async function onAddSessionChat(item) {
 
 const initing = ref(false)
 
-const onGoCreate = (slug: string) => {
-  // router.push({ name: RoutesMap.manager.create, params: { botSlug: slug } })
+const onGoCreate = async (botSlug: string) => {
+  const needUpgrade = await checkRightsTypeNeedUpgrade(ESpaceRightsType.bot)
+  if (needUpgrade) {
+    return
+  }
+  const {
+    data: { data: dataInfo }
+  } = await createDraftDomain()
+  const {
+    data: { data }
+  } = await getDomainDetailPublic(botSlug)
+  const { id, slug } = dataInfo
+  const { name, system_prompt, avatar, welcome, desc } = data
+  const newDomain = {
+    id,
+    slug,
+    name,
+    system_prompt,
+    avatar,
+    welcome,
+    desc,
+    status: EDomainStatus.able
+  }
+  await updateDomain(id, newDomain)
+  domainStoreI.$patch({ domainInfo: newDomain })
+  router.push({ name: RoutesMap.tranning.botChat, params: { botId: id } })
 }
 
 const visibleQRCode = ref(false)

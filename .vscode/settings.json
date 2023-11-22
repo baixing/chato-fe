@@ -1,30 +1,30 @@
-{
-  // 团队统一 setting
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.formatOnSave": true,
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true,
-    "source.organizeImports": true
-  },
-  "editor.quickSuggestions": {
-    "strings": true
-  },
-  "[vue]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[javascript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[typescript]": {
-    "editor.defaultFormatter": "vscode.typescript-language-features"
-  },
-  "[xml]": {
-    "editor.defaultFormatter": "DotJoshJohnson.xml"
-  },
-  "vue3snippets.enable-compile-vue-file-on-did-save-code": false,
-  "i18n-ally.localesPaths": [
-    "src/locales",
-    "src/locales/lang"
-  ]
-}
+// {
+//   // 团队统一 setting
+//   "typescript.tsdk": "node_modules/typescript/lib",
+//   "editor.defaultFormatter": "esbenp.prettier-vscode",
+//   "editor.formatOnSave": true,
+//   "editor.codeActionsOnSave": {
+//     "source.fixAll.eslint": true,
+//     "source.organizeImports": true
+//   },
+//   "editor.quickSuggestions": {
+//     "strings": true
+//   },
+//   "[vue]": {
+//     "editor.defaultFormatter": "esbenp.prettier-vscode"
+//   },
+//   "[javascript]": {
+//     "editor.defaultFormatter": "esbenp.prettier-vscode"
+//   },
+//   "[typescript]": {
+//     "editor.defaultFormatter": "vscode.typescript-language-features"
+//   },
+//   "[xml]": {
+//     "editor.defaultFormatter": "DotJoshJohnson.xml"
+//   },
+//   "vue3snippets.enable-compile-vue-file-on-did-save-code": false,
+//   "i18n-ally.localesPaths": [
+//     "src/locales",
+//     "src/locales/lang"
+//   ]
+// }

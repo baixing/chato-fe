@@ -7,7 +7,7 @@
     >
       <div
         data-script="Chato-createBot"
-        class="bg-white rounded-lg min-h-[200px] leading-5 flex flex-col items-center justify-center gap-4 transition cursor-pointer h-full hover:shadow-lg hover:-translate-y-2 lg:p-4 lg:gap-3 lg:h-auto lg:hover:-translate-y-0"
+        class="bg-white rounded-lg min-h-[150px] leading-5 flex flex-col items-center justify-center gap-4 transition cursor-pointer h-full hover:shadow-lg hover:-translate-y-2 lg:p-4 lg:gap-3 lg:h-auto lg:hover:-translate-y-0"
         @click="onNew"
       >
         <div
@@ -18,7 +18,7 @@
           </el-icon>
         </div>
         <p class="font-medium text-sm text-[#7C5CFC]">{{ t('创建机器人') }}</p>
-        <p class="text-[#9DA3AF] text-[13px]">{{ t('快速创建一个属于你的机器人吧！') }}</p>
+        <!-- <p class="text-[#9DA3AF] text-[13px]">{{ t('快速创建一个属于你的机器人吧！') }}</p> -->
       </div>
       <BotListCard
         v-for="item in domainList"

@@ -44,7 +44,7 @@
               :name="internalBot.use_scope ? 'visible' : 'private'"
               @click="() => emit('visible', internalBot)"
             >
-              {{ t('访问权限') }}
+              {{ t('访问权限') }}({{ internalBot.use_scope ? t('公开') : t('私密') }})
             </IconBtn>
             <template v-if="isPrivilege">
               <IconBtn
@@ -79,7 +79,7 @@
       {{ internalBot.desc }}
     </p>
 
-    <div class="flex items-center justify-between">
+    <!-- <div class="flex items-center justify-between">
       <template v-if="EDomainStatus.draft === internalBot.status">
         <IconBtn
           v-if="isAllowedDelete"
@@ -100,8 +100,8 @@
           {{ t('继续创建') }}
         </el-button>
       </template>
-      <template v-else>
-        <!-- <div class="gap-4 flex items-center justify-between">
+      <template v-else> -->
+    <!-- <div class="gap-4 flex items-center justify-between">
           <IconBtn :icon="Edit" @click="() => onLinkTo(RoutesMap.tranning.roleInfo)">
             {{ t('编辑') }}
           </IconBtn>
@@ -170,8 +170,8 @@
         >
           {{ t('对话') }}
         </el-button> -->
-      </template>
-    </div>
+    <!-- </template>
+    </div> -->
 
     <span
       v-if="EDomainStatus.draft === internalBot.status"

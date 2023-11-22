@@ -63,15 +63,31 @@
               <img src="@/assets/img/emoji/tip.png" class="w-5" />
               {{ $t('请选择你会将机器人应用在什么场景？') }}
             </div>
-            <div class="flex flex-wrap gap-3">
-              <span
+            <div class="flex justify-between gap-4 w-full mb-10 flex-col">
+              <div
+                class="flex-col border rounded-lg text-[#596780] cursor-pointer border-solid border-[#E4E7ED] bg-white"
                 v-for="item in ScenesList"
-                :key="item.value"
                 @click="onSelectScenes(item)"
-                class="select-tag"
+                :key="item.value"
+                :class="{
+                  '!text-[#7C5CFC]': item.value === formState.organization_type_name,
+                  '!border-[#7C5CFC]': item.value === formState.organization_type_name
+                }"
               >
-                {{ $t(item.label) }}
-              </span>
+                <div class="py-3 px-7 lg:pl-5 flex items-center">
+                  <div
+                    class="w-10 h-10 text-xl flex mr-4 items-center justify-center bg-[#F2F3F5] rounded-full lg:mb-1"
+                  >
+                    <svg-icon :name="item.icon" />
+                  </div>
+                  <div>
+                    <div class="text-xs font-medium">{{ item.label }}</div>
+                    <div class="text-xs information">
+                      {{ item.information }}
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -110,9 +126,24 @@ import { useBase } from '@/stores/base'
 import { nextTick, reactive, ref, watch } from 'vue'
 import ChatoDomainAvatar from './components/ChatoDomainAvatar.vue'
 
+// const ScenesList = [
+//   { label: '企业降本增效', value: EUserOrganizationRole.company },
+//   { label: '个人工作学习提效', value: EUserOrganizationRole.person }
+// ] as const
+
 const ScenesList = [
-  { label: '企业降本增效', value: EUserOrganizationRole.company },
-  { label: '个人工作学习提效', value: EUserOrganizationRole.person }
+  {
+    label: '企业用户',
+    value: EUserOrganizationRole.company,
+    icon: 'company',
+    information: '用于公司业务中的营销、提效、降本等'
+  },
+  {
+    label: '个人用户',
+    value: EUserOrganizationRole.person,
+    icon: 'person',
+    information: '用于个人提效、创作、娱乐等'
+  }
 ] as const
 
 const baseStoreI = useBase()
@@ -178,7 +209,7 @@ const onGotoCreate = async () => {
     } = await createDraftDomain()
 
     const { id, slug } = data
-    const { name, avatar, system_prompt, desc } = selectInterestDomain
+    const { name, avatar, system_prompt, desc, welcome } = selectInterestDomain
     const domainState: Partial<IDomainInfo> = {
       id,
       slug,
@@ -186,6 +217,7 @@ const onGotoCreate = async () => {
       avatar,
       desc,
       system_prompt,
+      welcome,
       status: EDomainStatus.able
     }
     await updateDomain(id, domainState)
