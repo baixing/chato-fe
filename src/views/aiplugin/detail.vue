@@ -13,6 +13,11 @@
           </div>
         </div>
 
+        <span
+          class="mt-10 flex justify-center p-4 bg-blue-100 border-t-4 border-blue-500 rounded-lg shadow-md text-blue-700 hover:bg-blue-200 transition-colors duration-300 ease-in-out"
+        >
+          请选中使用哪个机器人来回答，和选中要评论的笔记。
+        </span>
         <h1 class="mt-10">评论机器人</h1>
 
         <div
@@ -133,17 +138,19 @@
 
         <!-- Posts -->
         <div v-if="selectedMenu == 'posts'">
-          <div class="flex flex-row items-center w-1/2">
-            <el-input
-              v-model="searchQuery"
-              placeholder="探索更多内容"
-              class="mb-4 mt-4 text-[#9DA3AF]"
-              style="border-radius: 9999px"
-              @input="handleSearch"
-            />
-            <el-button class="ml-2" type="primary" @click="handleCommentButtonClick"
-              >评论</el-button
-            >
+          <div class="flex flex-row justify-between mb-4 mt-4">
+            <div class="w-1/2">
+              <el-input
+                v-model="searchQuery"
+                placeholder="探索更多内容"
+                class="flex-grow text-[#9DA3AF] rounded-full bg-white border border-gray-300"
+                @input="handleSearch"
+              />
+            </div>
+
+            <el-button class="flex-shrink-0 ml-2" type="primary" @click="handleCommentButtonClick">
+              AI评论
+            </el-button>
           </div>
 
           <div class="flex flex-wrap gap-2 mb-4">

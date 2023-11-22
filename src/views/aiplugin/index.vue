@@ -43,15 +43,22 @@
         </div>
       </el-card>
     </ContentLayout>
-    <el-dialog v-model="installDialogVisible" title="安装小红书插件步骤">
-      <div class="steps-container">
-        <div class="step-item" v-for="(step, index) in steps" :key="index">
-          <p class="font-bold mt-5" v-html="step.description"></p>
-          <img v-if="step.image" :src="step.image" alt="步骤图片" />
-          <el-button class="mt-5" v-if="step.buttonText" type="primary" @click="step.action">{{
-            step.buttonText
-          }}</el-button>
-        </div>
+    <el-dialog class="bg-[#f2f3f5]" v-model="installDialogVisible" title="安装小红书插件步骤">
+      <div
+        class="step-item mx-auto w-3/4 text-center bg-white my-10 rounded-lg shadow-lg p-6"
+        v-for="(step, index) in steps"
+        :key="index"
+      >
+        <p class="font-bold text-lg text-primary-500 my-2" v-html="step.description"></p>
+        <img v-if="step.image" :src="step.image" alt="步骤图片" class="mx-auto my-4" />
+        <el-button
+          class="mt-5 text-lg font-bold"
+          v-if="step.buttonText"
+          type="primary"
+          @click="step.action"
+        >
+          {{ step.buttonText }}
+        </el-button>
       </div>
     </el-dialog>
   </div>
@@ -63,11 +70,12 @@
 }
 
 .steps-container {
-  text-align: center;
 }
+
 .step-item {
   margin-bottom: 20px;
 }
+
 .step-item img {
   margin: 10px 0;
   max-width: 100%;
@@ -105,14 +113,15 @@ const steps = ref([
     action: downloadPlugin
   },
   {
-    description: '第二步 打开Chrome浏览器 输入 chrome://extensions/',
+    description:
+      '第二步 打开Chrome浏览器 输入 <span class="text-blue-500">chrome://extensions/</span>',
     image: 'https://cdn.jsdelivr.net/gh/XmchxUp/cloudimg@master/20231111/image.6v1vjscf7jk0.png',
     buttonText: '',
     action: null
   },
   {
     description:
-      '第三步 点击 加载已解压的扩展程序(若无显示，则打开左上角的开发者模式), 选中刚刚下载解压后的文件夹',
+      '第三步 点击 <span class="text-blue-500">加载已解压的扩展程序</span>(若无显示，则打开左上角的开发者模式), 选中刚刚下载解压后的文件夹',
     image: 'https://cdn.jsdelivr.net/gh/XmchxUp/cloudimg@master/20231111/image.38iz6eviup80.webp',
     buttonText: '',
     action: null
