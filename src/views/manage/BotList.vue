@@ -148,7 +148,7 @@ const onNew = async () => {
   if (needUpgrade) {
     return
   }
-  router.push({ name: RoutesMap.manager.create })
+  router.push({ name: RoutesMap.guide.first })
 }
 
 const onRefresh = async () => {

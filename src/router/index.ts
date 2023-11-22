@@ -268,6 +268,11 @@ const trainningRoutes = [
         meta: { requiresAuth: true },
         children: [
           {
+            name: RoutesMap.tranning.botChat,
+            path: 'chat',
+            component: () => import('@/views/training/chat/index.vue')
+          },
+          {
             name: RoutesMap.tranning.roleInfo,
             path: 'roleInfo/:type?',
             component: () => import('@/views/training/roleInfo/index.vue')
@@ -393,13 +398,13 @@ const inviteMember = [
 ]
 
 // 引导
-// const guideRoutes = [
-//   {
-//     name: RoutesMap.guide.first,
-//     path: '/guide/first',
-//     component: () => import('@/views/guide/firstGuide.vue')
-//   }
-// ]
+const guideRoutes = [
+  {
+    name: RoutesMap.guide.first,
+    path: '/guide/first',
+    component: () => import('@/views/guide/firstGuide.vue')
+  }
+]
 
 const namespaceSwitch = [
   {
@@ -442,7 +447,8 @@ const router = createRouter({
     ...loginedRoutes,
     ...inviteMember,
     ...namespaceSwitch,
-    ...finalRoutes
+    ...finalRoutes,
+    ...guideRoutes
   ] as RouteRecordRaw[]
 })
 
