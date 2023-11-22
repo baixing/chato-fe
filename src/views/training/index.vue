@@ -87,10 +87,11 @@ const popoverVisible = ref(false)
 const activeMenu = computed(() => route.name as string)
 
 const menus: IMenuItem[] = [
-  { title: '角色信息', routeName: RoutesMap.tranning.roleInfo },
-  { title: '知识库', routeName: RoutesMap.tranning.knowledge },
-  { title: '对外发布', routeName: RoutesMap.tranning.release },
-  { title: '数据报表', routeName: RoutesMap.tranning.report }
+  { title: '对话', routeName: RoutesMap.tranning.botChat },
+  { title: '编辑', routeName: RoutesMap.tranning.roleInfo },
+  { title: '知识', routeName: RoutesMap.tranning.knowledge },
+  { title: '发布', routeName: RoutesMap.tranning.release },
+  { title: '数据', routeName: RoutesMap.tranning.report }
 ]
 
 const onMenuSelect = (routeName: string) => {

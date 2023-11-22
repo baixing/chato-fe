@@ -94,7 +94,7 @@ async function jumpToSquare() {
 }
 
 const handeGoCreate = () => {
-  router.push({ name: RoutesMap.manager.create })
+  router.push({ name: RoutesMap.guide.first })
 }
 
 const onLinkToNavigator = () => {

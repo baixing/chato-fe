@@ -199,8 +199,8 @@ const onLinkTo = async (routeName: string, routeParams?: Record<string, string>)
 }
 
 const onCardClick = () => {
-  const linkRouteName =
-    EDomainStatus.draft === internalBot.value.status ? RoutesMap.manager.create : RoutesMap.chat.c
-  onLinkTo(linkRouteName)
+  // const linkRouteName =
+  //   EDomainStatus.draft === internalBot.value.status ? RoutesMap.manager.create : RoutesMap.chat.c
+  onLinkTo(RoutesMap.tranning.botChat)
 }
 </script>

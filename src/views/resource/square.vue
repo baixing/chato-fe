@@ -154,7 +154,7 @@ async function onAddSessionChat(item) {
 const initing = ref(false)
 
 const onGoCreate = (slug: string) => {
-  router.push({ name: RoutesMap.manager.create, params: { botSlug: slug } })
+  // router.push({ name: RoutesMap.manager.create, params: { botSlug: slug } })
 }
 
 const visibleQRCode = ref(false)
