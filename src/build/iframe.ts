@@ -226,3 +226,5 @@ window.onload = () => {
 
   chatoIframe()
 }
+
+export {}

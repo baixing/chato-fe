@@ -21,7 +21,7 @@
           >
           </el-input>
           <el-button
-            :type="primary"
+            type="primary"
             @click="sendSmsCode(refForm)"
             :disabled="isBtnSendDisabled"
             ref="refBtnSend"

@@ -7,7 +7,8 @@ import request from '@/utils/request'
 export function getQuestionsSummary(orgId, domainId = null) {
   const params = {
     org_id: orgId,
-    source: 'all'
+    source: 'all',
+    domain_id: undefined
   }
   if (domainId !== null) {
     params.domain_id = domainId // 只在domainId不为null时包括该参数
@@ -38,6 +39,7 @@ export function getQuestions({
     begin_time: begin_time,
     end_time: end_time,
     mid_question_id,
+    domain_id: undefined,
     keyword
   }
   if (domainId != null) {
@@ -52,7 +54,8 @@ export function getQuestions({
 export function exportQuestions({ ids, domainId = null, midQuestionId }) {
   const data = {
     ids: ids,
-    mid_question_id: midQuestionId
+    mid_question_id: midQuestionId,
+    domain_id: undefined
   }
 
   if (domainId !== null) {

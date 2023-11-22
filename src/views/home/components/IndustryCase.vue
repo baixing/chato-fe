@@ -102,10 +102,10 @@ import CpYywj from '@/assets/img/home/cp/yywj.png'
 import EmNet from '@/assets/img/home/emoji/net.png'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import useImagePath from '@/composables/useImagePath'
+import router, { RoutesMap } from '@/router'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import IndustryCaseCard from './IndustryCaseCard.vue'
-import router, { RoutesMap } from '@/router'
 
 // 获取home/caseImg目录下的图片路径
 const { ImagePath: CaseChatoPath } = useImagePath('chato', 'home/caseImg')
@@ -177,7 +177,7 @@ const { isMobile } = useBasicLayout()
 //   onTimerListener()
 // }
 
-const onClickCase = (index: number) => {
+const onClickCase = () => {
   router.push({ name: RoutesMap.auth.login })
 }
 

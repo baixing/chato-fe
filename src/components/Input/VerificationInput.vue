@@ -37,7 +37,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineEmits, defineProps, onBeforeUpdate, ref, toRef } from 'vue'
+import { onBeforeUpdate, ref, toRef } from 'vue'
 
 const props = withDefaults(
   defineProps<{
