@@ -194,3 +194,11 @@ export function docToQA(domain_id: number | string, data: IDocmentToQAParams) {
     data
   })
 }
+
+// 生成 QA 验收报告
+export function generateQACheckReport(domain_id: number | string) {
+  return request({
+    method: 'post',
+    url: `/chato/api/document_management/${domain_id}/qa_acceptance_check`
+  })
+}

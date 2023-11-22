@@ -80,6 +80,13 @@
               >
                 {{ t('克隆') }}
               </IconBtn>
+              <IconBtn
+                v-if="isSuperAdmin"
+                :icon="Finished"
+                @click="() => emit('acceptance', internalBot)"
+              >
+                {{ t('验收') }}
+              </IconBtn>
               <template v-if="isPrivilege">
                 <IconBtn
                   :icon="internalBot.visible ? Hide : View"
@@ -131,6 +138,7 @@ import DefaultAvatar from '@/assets/img/avatar.png'
 import IconBtn from '@/components/IconBtn/index.vue'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import { EDomainStatus } from '@/enum/domain'
+import { EAllRole } from '@/enum/user'
 import type { IDomainInfo } from '@/interface/domain'
 import { RoutesMap } from '@/router'
 import { useBase } from '@/stores/base'
@@ -141,6 +149,7 @@ import {
   Compass,
   Delete,
   Edit,
+  Finished,
   Hide,
   Notification,
   Position,
@@ -155,7 +164,7 @@ const props = defineProps<{
   bot?: IDomainInfo
 }>()
 
-const emit = defineEmits(['delete', 'sync', 'cloneRobot', 'visible'])
+const emit = defineEmits(['delete', 'sync', 'cloneRobot', 'visible', 'acceptance'])
 
 // 特殊权益用户开放同步/隐藏资源广场机器人按钮
 const PrivilegeUser = '18116404787'
@@ -170,6 +179,7 @@ const { isMobile } = useBasicLayout()
 
 const internalBot = computed(() => props.bot)
 const isPrivilege = computed(() => userInfo.value.mobile === PrivilegeUser)
+const isSuperAdmin = computed(() => userInfo.value.role === EAllRole.superman)
 const isAllowedDelete = computed(
   () =>
     userInfo.value.id === userInfo.value.org.owner_id ||
