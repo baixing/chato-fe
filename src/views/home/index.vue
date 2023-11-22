@@ -158,31 +158,47 @@
         </div>
       </div>
     </div>
-
+    <img
+      v-if="isMobile"
+      src="@/assets/img/xiaona.png"
+      class="absolute w-11 h-11 object-cover right-[2px] bottom-20 rounded-full shadow-lg arrow-box"
+      @click="onContactXN"
+    />
     <div
       v-if="showFooterContactVisible"
-      class="home-contact-btn py-5 px-[7px] md:py-4 md:px-[10px] text-base absolute right-7 md:right-1 flex flex-col gap-[14px]"
+      class="home-contact-btn text-base absolute flex flex-col gap-[14px] overflow-hidden py-5 px-2 md:p-0 right-7 md:right-2"
     >
-      <div class="fixed-btn" id="Chato_right_service_click" data-sensors-click @click="onAdvisory">
-        <svg-icon class="text-xl mb-[4px]" svg-class="w-5 h-5" name="wechat" />
-        <span v-if="!isMobile" class="scale-90">{{ $t('咨询客服') }}</span>
-      </div>
-      <div id="Chato_right_login_click" data-sensors-click @click="onEnter()" class="fixed-btn">
-        <svg-icon class="text-xl mb-[4px]" name="free-experience" />
-        <span v-if="!isMobile" class="scale-90">{{ $t('免费使用') }}</span>
-      </div>
+      <template v-if="!isMobile">
+        <div
+          class="fixed-btn"
+          id="Chato_right_service_click"
+          data-sensors-click
+          @click="onAdvisory"
+        >
+          <svg-icon class="text-xl mb-[4px]" svg-class="w-5 h-5" name="wechat" />
+          <span v-if="!isMobile" class="scale-90">{{ $t('咨询客服') }}</span>
+        </div>
+        <div id="Chato_right_login_click" data-sensors-click @click="onEnter()" class="fixed-btn">
+          <svg-icon class="text-xl mb-[4px]" name="free-experience" />
+          <span v-if="!isMobile" class="scale-90">{{ $t('免费使用') }}</span>
+        </div>
+        <div
+          class="fixed-btn"
+          id="Chato_right_reserve_click"
+          data-sensors-click
+          @click="scheduleMask = true"
+        >
+          <svg-icon class="text-xl mb-[4px]" svg-class="w-5 h-5" name="phone-outlined" />
+          <span v-if="!isMobile" class="scale-90">{{ $t('预约演示') }}</span>
+        </div>
+      </template>
       <div
-        class="fixed-btn"
-        id="Chato_right_reserve_click"
-        data-sensors-click
-        @click="scheduleMask = true"
+        v-if="headerShowBg"
+        @click="handleScrollTop"
+        :class="['fixed-btn', isMobile && 'w-9 h-9 rounded-full']"
       >
-        <svg-icon class="text-xl mb-[4px]" svg-class="w-5 h-5" name="phone-outlined" />
-        <span v-if="!isMobile" class="scale-90">{{ $t('预约演示') }}</span>
-      </div>
-      <div v-if="headerShowBg" @click="handleScrollTop" class="fixed-btn">
-        <svg-icon class="text-xl mb-[4px]" name="return-top" />
-        <span v-if="!isMobile">{{ $t('返回') }}</span>
+        <svg-icon class="text-xl" name="return-top" />
+        <span v-if="!isMobile" class="mt-1">{{ $t('返回') }}</span>
       </div>
     </div>
   </div>
@@ -266,6 +282,10 @@ const onLinkNash = () => {
     path: `/nash`
   })
   window.open(routerData.href, '_blank')
+}
+
+const onContactXN = () => {
+  window.open(`https://admin.sdlian.cn/l/ZkjRKDiEcb`, '_blank')
 }
 
 const videoMask = ref(false)
@@ -522,5 +542,22 @@ watch(
 .button-container {
   display: flex;
   gap: 1rem; /* Adjust the gap size as needed */
+}
+
+.arrow-box {
+  border: 2px solid rgba(124, 92, 252);
+  animation: blink 2s linear infinite;
+}
+
+@keyframes blink {
+  0% {
+    border-color: transparent;
+  }
+  50% {
+    border-color: rgba(124, 92, 252);
+  }
+  100% {
+    border-color: transparent;
+  }
 }
 </style>
