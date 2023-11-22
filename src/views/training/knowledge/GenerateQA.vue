@@ -8,13 +8,10 @@
       <div
         class="w-full flex md:block md:flex-wrap md:mt-2 justify-between items-center text-[#596780] text-sm"
       >
-        <div class="flex items-center">
-          {{
-            $t('已审核 （{count1}）条；待审核（{count2}）条', {
-              count1: auditedLen,
-              count2: auditedGenerateList.length
-            })
-          }}
+        <div class="flex items-center cursor-pointer">
+          <span>
+            {{ $t('待审核（{count2}）条', { count2: unAuditedLen }) }}
+          </span>
 
           <el-button class="ml-6" type="primary" link @click="onRefreshList">
             {{ $t('刷新') }}
@@ -45,7 +42,13 @@
             v-model="generateForm.question"
             :placeholder="$t('请输入问题')"
             class="w-full"
-            @blur="onSaveQuestion(auditedGenerateList[next].id)"
+            @blur="
+              onSaveQuestion(
+                auditedGenerateList[next].id,
+                generateForm.question,
+                generateForm.answer
+              )
+            "
           />
         </el-form-item>
         <el-form-item :label="$t('回复答案')" prop="answer">
@@ -54,7 +57,13 @@
             :rows="!isMobile ? 20 : 5"
             v-model="generateForm.answer"
             :placeholder="$t('请输入答案')"
-            @blur="onSaveQuestion(auditedGenerateList[next].id)"
+            @blur="
+              onSaveQuestion(
+                auditedGenerateList[next].id,
+                generateForm.question,
+                generateForm.answer
+              )
+            "
             class="w-full"
           />
         </el-form-item>
@@ -148,7 +157,6 @@ const botId = computed(() => (route.params.botId as string) || '')
 const generateForm = reactive({
   page: 1,
   size: 20,
-  count: 0,
   question: '',
   answer: ''
 })
@@ -159,6 +167,7 @@ const drawerVisible = ref(false)
 const sourcesData = ref<IQuestionConvertQASource[]>([])
 
 const auditedLen = ref(0) // 已审核
+const unAuditedLen = ref(0) // 待审阅
 
 const onGoBack = () => {
   router.push({
@@ -184,25 +193,23 @@ const onCheckAuditedGenerateList = (id: number, isAll: boolean) => {
     auditedGenerateList.value.splice(index, 1)
   }
 
-  console.log(auditedGenerateList.value)
-
   next.value = 0
 
   onUpdateGenerateForm()
 }
 
-const onSaveQuestion = async (id: number) => {
+const onSaveQuestion = async (id: number, question: string, answer: string) => {
   await patchGenerateQASaveAPI(id, {
-    question: generateForm.question,
-    answer: generateForm.answer
+    question: question,
+    answer: answer
   })
-  // auditedGenerateList.value = auditedGenerateList.value.map((item) => {
-  //   if (item.id === id) {
-  //     item.question = generateForm.question
-  //     item.answer = generateForm.answer
-  //   }
-  //   return item
-  // })
+  auditedGenerateList.value = [...auditedGenerateList.value].map((item) => {
+    if (item.id === id) {
+      item.question = question
+      item.answer = answer
+    }
+    return item
+  })
 }
 
 const onDeprecatedOrUnloading = async (id: number, all: boolean, status: EDocConvertOrDisuse) => {
@@ -229,10 +236,16 @@ const onDeprecatedOrUnloading = async (id: number, all: boolean, status: EDocCon
       domain_slug: domainInfo.value.slug
     }
     loading.value = true
-    await postGenerateQAUnloadingAPI(docId.value, data)
-    ElNotification.success(t(status === EDocConvertOrDisuse.convert ? '已转存' : '已弃用'))
+    const res = await postGenerateQAUnloadingAPI(docId.value, data)
+    ElNotification.success(res.data.message)
     onCheckAuditedGenerateList(id, all)
-    onInitCheckedAudited()
+    if (all) {
+      unAuditedLen.value = 0
+      auditedLen.value = 0
+    } else {
+      unAuditedLen.value--
+      auditedLen.value++
+    }
   } catch (error) {
   } finally {
     loading.value = false
@@ -253,7 +266,6 @@ const onUpdateGenerateForm = () => {
 
 const onRefreshList = () => {
   generateForm.page = 1
-  generateForm.count = 0
   auditedGenerateList.value = []
   onInitGenerateList()
 }
@@ -266,9 +278,8 @@ const onInitGenerateList = async () => {
     is_handle: false
   })
   const { data, pagination } = res.data
-  generateForm.count = pagination.total
-  auditedGenerateList.value = [...auditedGenerateList.value, ...data]
-
+  unAuditedLen.value = pagination.total
+  auditedGenerateList.value.push(...data)
   if (generateForm.page < pagination.page_count) {
     generateForm.page++
     onInitGenerateList()
@@ -287,6 +298,15 @@ const onInitCheckedAudited = async () => {
 
   const { pagination } = res.data
   auditedLen.value = pagination.total
+}
+
+const onhandleRouter = () => {
+  router.push({
+    name: RoutesMap.tranning.knowledge,
+    params: {
+      botId: botId.value
+    }
+  })
 }
 
 watch(next, (n) => {
