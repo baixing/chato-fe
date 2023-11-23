@@ -1,4 +1,5 @@
 import BasicSSL from '@vitejs/plugin-basic-ssl'
+import legacy from '@vitejs/plugin-legacy'
 import vue from "@vitejs/plugin-vue"
 import { fileURLToPath, URL } from "node:url"
 import { resolve } from "path"
@@ -80,6 +81,29 @@ export default defineConfig(({ command, mode }) => {
         theme: 'okaidia',
         css: true,
       }),
+      legacy({
+        targets: ['chrome < 60', 'edge < 15'],
+        additionalLegacyPolyfills: ['regenerator-runtime/runtime'],
+        renderLegacyChunks: true,
+        polyfills: [
+          'es.symbol',
+          'es.array.filter',
+          'es.promise',
+          'es.promise.finally',
+          'es/map',
+          'es/set',
+          'es.array.for-each',
+          'es.object.define-properties',
+          'es.object.define-property',
+          'es.object.get-own-property-descriptor',
+          'es.object.get-own-property-descriptors',
+          'es.object.keys',
+          'es.object.to-string',
+          'web.dom-collections.for-each',
+          'esnext.global-this',
+          'esnext.string.match-all'
+        ]
+      }),
       isProd ? viteSentry(sentryConfig) : null,
       // visualizer({
       //   open: true,  //注意这里要设置为true，否则无效
@@ -103,9 +127,11 @@ export default defineConfig(({ command, mode }) => {
     base: "/",
     build: {
       sourcemap: isProd,
-      target: "esnext",
+      target: "modules",
       emptyOutDir: true,
       outDir: "dist",
+      cssCodeSplit: true,
+      minify: "terser",
       rollupOptions: {
         input: {
           index: resolve(__dirname, "index.html"),
