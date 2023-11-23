@@ -212,7 +212,11 @@ watch(
       t(
         '抱歉，我还没有学习到关于这个问题的知识。您可以尝试问些其他问题，或者联系我们的专业团队以获取支持。'
       )
-    originalDomain = cloneDeep(currentDomainInfo)
+    originalDomain = cloneDeep({
+      ...currentDomainInfo,
+      llm: currentDomainInfo.llm || '7e78bce4872633c2',
+      qa_modifiable: currentDomainInfo.qa_modifiable || 0
+    })
     currentDomain = Object.assign(currentDomain, currentDomainInfo)
   },
   { immediate: true }
