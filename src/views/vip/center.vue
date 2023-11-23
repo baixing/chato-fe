@@ -209,7 +209,7 @@ import type { IOrderPackage } from '@/interface/order'
 import ContentLayout from '@/layout/ContentLayout.vue'
 import router, { RoutesMap } from '@/router'
 import { useSpaceStore } from '@/stores/space'
-import { openPreviewUrl } from '@/utils/help'
+import { isWechat, openPreviewUrl } from '@/utils/help'
 import { ElNotification } from 'element-plus'
 import { storeToRefs } from 'pinia'
 import { onBeforeUnmount, onMounted, ref } from 'vue'
@@ -262,17 +262,29 @@ const payModalPaymentCodeLoading = ref(false)
 const payModalPackage = ref<IOrderPackage>()
 
 let refreshInterval = null
-
+const currentEnvIsWechat = isWechat()
 const onOpenPay = async (item: IOrderPackage) => {
   try {
-    payModalVisible.value = true
-    payModalPaymentCodeLoading.value = true
-    payModalPackage.value = item
+    if (!isMobile.value) {
+      payModalVisible.value = true
+      payModalPaymentCodeLoading.value = true
+      payModalPackage.value = item
+    }
     refreshInterval && clearInterval(refreshInterval)
+    const payType = isMobile.value ? 2 : 3
     const {
       data: { data: paymentRes }
-    } = await getOrderPackagePaymentCode({ package_id: item.id, payment_price: item.sale_price })
-    payModalPaymentCode.value = `data:image/png;base64,${paymentRes.payment_qr_code}`
+    } = await getOrderPackagePaymentCode({
+      package_id: item.id,
+      payment_price: item.sale_price,
+      pay_type: payType
+    })
+
+    if (isMobile.value && !currentEnvIsWechat) {
+      window.open(paymentRes.payment_code_url)
+    } else {
+      payModalPaymentCode.value = `data:image/png;base64,${paymentRes.payment_qr_code}`
+    }
 
     refreshInterval = setInterval(async () => {
       const {
