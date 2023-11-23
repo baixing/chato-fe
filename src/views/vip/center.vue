@@ -114,12 +114,16 @@
             </span>
           </p>
           <p class="desc-between">
-            <span>{{ t('定制广告推送') }}</span>
-            <SupportedRender :supported="item.ad" />
+            <span>{{ t('企微托管') }}</span>
+            <SupportedRender :supported="item.wx_group_num" />
           </p>
           <p class="desc-between">
             <span>{{ t('定制品牌显示') }}</span>
             <SupportedRender :supported="item.brand" />
+          </p>
+          <p class="desc-between">
+            <span>{{ t('定制广告推送') }}</span>
+            <SupportedRender :supported="item.ad" />
           </p>
           <p class="desc-between">
             <span>{{ t('对话问题推荐') }}</span>
