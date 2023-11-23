@@ -265,7 +265,7 @@ let refreshInterval = null
 const currentEnvIsWechat = isWechat()
 const onOpenPay = async (item: IOrderPackage) => {
   try {
-    if (!isMobile.value) {
+    if (!isMobile.value || currentEnvIsWechat) {
       payModalVisible.value = true
       payModalPaymentCodeLoading.value = true
       payModalPackage.value = item
@@ -281,7 +281,10 @@ const onOpenPay = async (item: IOrderPackage) => {
     })
 
     if (isMobile.value && !currentEnvIsWechat) {
-      window.open(paymentRes.payment_code_url)
+      // 解决 safari window.open 拦截问题
+      setTimeout(() => {
+        window.open(paymentRes.payment_code_url)
+      })
     } else {
       payModalPaymentCode.value = `data:image/png;base64,${paymentRes.payment_qr_code}`
     }
