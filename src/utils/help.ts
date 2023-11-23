@@ -214,3 +214,8 @@ export const confirmAndSubmit = async <T>(
     next()
   }
 }
+
+export const isWechat = () => {
+  const userAgent = window.navigator.userAgent.toLowerCase()
+  return (userAgent.match(/MicroMessenger/i) as unknown as string) == 'micromessenger'
+}

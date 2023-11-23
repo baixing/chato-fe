@@ -9,7 +9,11 @@ export function getOrderPackageList() {
   })
 }
 
-export function getOrderPackagePaymentCode(data: { package_id: number; payment_price: number }) {
+export function getOrderPackagePaymentCode(data: {
+  package_id: number
+  payment_price: number
+  pay_type: number
+}) {
   return request<IOrderPaymentCode>({
     method: 'post',
     url: `/chato/api/package/order/create_order_and_payment`,
