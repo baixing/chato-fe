@@ -30,9 +30,12 @@ app.use(asyncRegisterGlobalComponents, globalComponents)
 app.use(elementIcon)
 
 const base = useBase()
-try {
-  await base.getABTestConfig()
-} catch (e) {}
+const initAB = async () => {
+  try {
+    await base.getABTestConfig()
+  } catch (e) {}
+}
+initAB()
 
 useSensors(app)
 
