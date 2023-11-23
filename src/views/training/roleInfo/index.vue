@@ -62,6 +62,7 @@
 import { domainLLMConfigAPI, updateDomain } from '@/api/domain'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import { DebugDomainSymbol, DomainEditSymbol, DomainHansLimitSymbol } from '@/constant/domain'
+import { EDomainStatus } from '@/enum/domain'
 import type { IDomainInfo, IDomainLLMConfig } from '@/interface/domain'
 import { RoutesMap } from '@/router'
 import { useDomainStore } from '@/stores/domain'
@@ -101,7 +102,7 @@ const domainLLMTypeOptions = ref<IDomainLLMConfig[]>([])
 
 const activeTab = computed(() => (route.params?.type as string) || 'base')
 // 是否修改过
-const isModified = computed(() => !isEqual(currentDomain, originalDomain))
+const isModified = () => !isEqual(currentDomain, originalDomain)
 
 const tabComponents = [
   { key: 'base', title: '基础信息', component: BaseInfo },
@@ -169,7 +170,10 @@ const onSave = async () => {
       background: 'rgba(0, 0, 0, 0.7)'
     })
 
-    await updateDomain(currentDomain.id, currentDomain)
+    await updateDomain(currentDomain.id, {
+      ...currentDomain,
+      status: EDomainStatus.able
+    })
     await domainStoreI.initDomainList(route)
     syncOriginalFormState()
     ElNotification.success(t('保存成功'))
@@ -208,15 +212,18 @@ watch(
       t(
         '抱歉，我还没有学习到关于这个问题的知识。您可以尝试问些其他问题，或者联系我们的专业团队以获取支持。'
       )
-    originalDomain = cloneDeep(currentDomainInfo)
+    originalDomain = cloneDeep({
+      ...currentDomainInfo,
+      llm: currentDomainInfo.llm || '7e78bce4872633c2',
+      qa_modifiable: currentDomainInfo.qa_modifiable || 0
+    })
     currentDomain = Object.assign(currentDomain, currentDomainInfo)
   },
   { immediate: true }
 )
-
 onBeforeRouteLeave(async (to, from, next) => {
   try {
-    if (!isModified.value) {
+    if (!isModified()) {
       return
     }
     await ElMessageBox.confirm(t('当前页面有内容更新，请确认是否保存？'), t('温馨提示'), {
@@ -238,7 +245,7 @@ provide(DomainHansLimitSymbol, currentDomainHansLimit)
 onMounted(() => {
   initLLMConfigOption()
   window.onbeforeunload = () => {
-    if (isModified.value) {
+    if (isModified()) {
       return true
     }
   }

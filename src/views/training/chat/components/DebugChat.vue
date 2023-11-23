@@ -7,6 +7,7 @@
       @showDrawer="onOpenDrawer"
       :avatarShow="false"
       chatClassName="chat-debug"
+      type="create"
     />
     <div
       v-if="!debugDomain?.system_prompt"

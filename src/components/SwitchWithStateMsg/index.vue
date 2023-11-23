@@ -26,6 +26,7 @@ const props = withDefaults(
     closeMsg?: string
     size?: SwitchProps['size']
     msgPosition?: 'left' | 'right'
+    isShow?: boolean
   }>(),
   {
     size: 'small',
@@ -40,7 +41,7 @@ const emit = defineEmits(['update:value', 'change'])
 const internalVal = computed({
   get: () => Number(props.value),
   set: (val) => {
-    emit('change', val)
+    emit('change', val, props.isShow)
     emit('update:value', val)
   }
 })

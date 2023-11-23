@@ -64,6 +64,7 @@
           openMsg="开启"
           closeMsg="关闭"
           @change="onCorrectAnswerChange"
+          :isShow="true"
         />
       </div>
       <div
@@ -417,7 +418,7 @@ const onCorrectClick = async () => {
   }
 }
 
-const onCorrectAnswerChange = async (val: number) => {
+const onCorrectAnswerChange = async (val: number, isShow?: boolean) => {
   try {
     let action = t('关闭')
     let msg = t('关闭后所有对话用户都不再可以修正对话，是否确认关闭？')
@@ -426,11 +427,12 @@ const onCorrectAnswerChange = async (val: number) => {
       msg = t('开启后所有用户都可以修正对话，其修正内容将参与到学习，是否确认开启？')
     }
 
-    await ElMessageBox.confirm(msg, t('确认{action}', { action: action }), {
-      confirmButtonText: t('确认'),
-      cancelButtonText: t('取消'),
-      type: 'warning'
-    })
+    if (!isShow)
+      await ElMessageBox.confirm(msg, t('确认{action}', { action: action }), {
+        confirmButtonText: t('确认'),
+        cancelButtonText: t('取消'),
+        type: 'warning'
+      })
 
     currentDomain.qa_modifiable = val
 
