@@ -67,11 +67,12 @@
 </template>
 
 <script setup lang="ts">
+import { getFileUrl } from '@/api/file'
 import DefaultAvatar from '@/assets/img/avatar.png'
 import Avatar from '@/components/Avatar/index.vue'
 import { useBasicLayout } from '@/composables/useBasicLayout'
-import { cosServe } from '@/utils/cos'
 import type { UploadRawFile } from 'element-plus'
+import { v4 as uuidv4 } from 'uuid'
 import { computed, ref } from 'vue'
 import { VueCropper } from 'vue-cropper'
 import { useI18n } from 'vue-i18n'
@@ -123,9 +124,14 @@ const onColorPicker = (value) => {
 
 const setTimbre = () => {
   cropper.value.getCropBlob(async (data: Blob) => {
-    const res = await cosServe(data)
-    imgUploadDialogVisible.value = false
-    imgByModal.value = res
+    try {
+      const formData = new FormData()
+      formData.append('file', new File([data], uuidv4() + '.png'))
+      const res = await getFileUrl(formData)
+      imgByModal.value = res.data.data.url
+    } finally {
+      imgUploadDialogVisible.value = false
+    }
   })
 }
 

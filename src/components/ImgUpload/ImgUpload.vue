@@ -116,12 +116,13 @@
 </template>
 
 <script setup lang="ts">
+import { getFileUrl } from '@/api/file'
 import DefaultAvatar from '@/assets/img/avatar.png'
 import Modal from '@/components/Modal/index.vue'
 import type { IUploadOptions } from '@/interface/uploadOptions'
-import { cosServe } from '@/utils/cos'
 import type { UploadFile, UploadFiles, UploadRawFile, UploadUserFile } from 'element-plus'
 import { isArray } from 'lodash'
+import { v4 as uuidv4 } from 'uuid'
 import { computed, ref, watch } from 'vue'
 import { VueCropper } from 'vue-cropper'
 import 'vue-cropper/dist/index.css'
@@ -189,12 +190,19 @@ watch(imgUrl, () => (fileList.value = getFileList()))
 watch(fileList, async (value: UploadFiles, oldValue: UploadFiles) => {
   if (props.disabled) return
   if (value.length > oldValue.length) {
-    const res = await cosServe(value.at(-1).raw)
-    fileList.value.at(-1).url = res
-    emit(
-      'update:imgUrl',
-      fileList.value.map((item) => item.url)
-    )
+    let url
+    try {
+      const formData = new FormData()
+      formData.append('file', value.at(-1).raw)
+      const res = await getFileUrl(formData)
+      url = res.data.data.url
+    } finally {
+      fileList.value.at(-1).url = url || DefaultAvatar
+      emit(
+        'update:imgUrl',
+        fileList.value.map((item) => item.url)
+      )
+    }
   }
 })
 
@@ -235,18 +243,26 @@ const imgUploadDialogVisible = ref(false)
 
 const setTimbre = () => {
   cropper.value.getCropBlob(async (data: Blob) => {
-    const res = await cosServe(data)
-    imgUploadDialogVisible.value = false
-    if (props.listType) {
-      const index = fileList.value.findIndex((item) => item.url === cropImgUrl.value)
-      fileList.value[index].url = res
-      emit(
-        'update:imgUrl',
-        fileList.value.map((item) => item.url)
-      )
-      return
+    try {
+      const url = await new Promise<string | undefined>(async (resolve) => {
+        const formData = new FormData()
+        formData.append('file', new File([data], uuidv4() + '.png'))
+        const res = await getFileUrl(formData)
+        resolve(res.data.data.url)
+      })
+      if (props.listType) {
+        const index = fileList.value.findIndex((item) => item.url === cropImgUrl.value)
+        fileList.value[index].url = url || DefaultAvatar
+        emit(
+          'update:imgUrl',
+          fileList.value.map((item) => item.url)
+        )
+        return
+      }
+      emit('update:imgUrl', url)
+    } catch (error) {
+      console.error('Error:', error)
     }
-    emit('update:imgUrl', res)
   })
 }
 </script>
