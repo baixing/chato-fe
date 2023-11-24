@@ -3,7 +3,7 @@ import SpaceRightsFreeExpUpgrate from '@/components/Space/SpaceRightsFreeExpUpgr
 import SpaceRightsMask from '@/components/Space/SpaceRightsMask.vue'
 import useSpaceRights from '@/composables/useSpaceRights'
 import { currentEnvConfig } from '@/config'
-import { FreeCommercialTypeExperienceDay, PaidCommercialTypes } from '@/constant/space'
+import { FreeCommercialTypeExperienceDay } from '@/constant/space'
 import { EAccountSettingStatus } from '@/enum/release'
 import { ESpaceCommercialType, ESpaceRightsType } from '@/enum/space'
 import type { ICreateAccountRes } from '@/interface/release'
@@ -111,7 +111,7 @@ const {
   drawerAccountVisible
 } = toRefs(features)
 
-const { checkRightsTypeNeedUpgrade, isAllowedCommercialType } = useSpaceRights()
+const { checkRightsTypeNeedUpgrade } = useSpaceRights()
 
 const createWeixinChat = async () => {
   const needUpgrade = await checkRightsTypeNeedUpgrade(ESpaceRightsType.groupChat)
@@ -122,13 +122,9 @@ const createWeixinChat = async () => {
 }
 
 const createWeixinAccount = async () => {
-  const needUpgrade = isAllowedCommercialType(PaidCommercialTypes)
-  if (!needUpgrade) {
-    return checkRightsTypeNeedUpgrade(ESpaceRightsType.default)
-  }
-  const limited = await checkRightsTypeNeedUpgrade(ESpaceRightsType.weixinAccount)
-  if (limited) {
-    return checkRightsTypeNeedUpgrade(ESpaceRightsType.default)
+  const needUpgrade = await checkRightsTypeNeedUpgrade(ESpaceRightsType.weixinAccount)
+  if (needUpgrade) {
+    return
   }
   createAccountVisible.value = true
 }

@@ -22,6 +22,7 @@ export default function useSpaceRights() {
   const { userInfo, userCommercialType } = storeToRefs(baseStoreI)
 
   const remainDays = computed(() => currentRights.value.days)
+  const trusteeAccountNum = computed(() => currentRights.value.trustee_account_num)
 
   const isNotAllowedCommercialType = (notAllowedTypes: ESpaceCommercialType[]) => {
     return notAllowedTypes.includes(userCommercialType.value)
@@ -59,7 +60,7 @@ export default function useSpaceRights() {
       }
       case ESpaceRightsType.weixinAccount: {
         const res = await serachAccountListAPI(userInfo.value?.org?.id)
-        isUpperLimited = res.data.data.length >= 1
+        isUpperLimited = res.data.data.length >= trusteeAccountNum.value
         break
       }
       default: {
