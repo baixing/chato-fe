@@ -146,7 +146,7 @@
         <div
           v-for="item in footerQrCode"
           :key="item.label"
-          class="flex items-center justify-center text-[12px] text-[#9DA3AF] lg:flex-col"
+          class="flex items-center justify-center text-[12px] text-[#9DA3AF] lg:flex-col lg:last:mb-5"
         >
           <div
             class="shrink-0 mr-[12px] leading-5 text-[14px] text-left lg:text-center lg:mb-[5px]"
@@ -200,6 +200,17 @@
   <ScheduleDemoModal v-model:visible="scheduleMask" />
   <UpgradeRightsModal />
   <JoinDemoModal v-model:visible="joinMask" />
+  <div v-if="isMobile" class="fixed left-12 right-12 bottom-5 h-11 z-[999]">
+    <el-button
+      class="affix-box !w-full !h-[46px] !text-sm !text-white font-medium !rounded-lg border-none border-0 shadow-none"
+      @click="onEnter()"
+    >
+      <svg-icon class="text-sm mr-1" name="gift" />
+      <span>{{ $t('免费领取') }}</span>
+      <span class="text-[#FFE74A] p-1">{{ '100' }}</span>
+      <span>{{ $t('对话额度') }}</span>
+    </el-button>
+  </div>
 </template>
 <script setup lang="ts">
 import baixingAI from '@/assets/img/home/baixing-ai.png'
@@ -532,5 +543,18 @@ watch(
 .button-container {
   display: flex;
   gap: 1rem; /* Adjust the gap size as needed */
+}
+.affix-box {
+  background: linear-gradient(117deg, #0547ff -84%, #d683ff 125%);
+  animation: blink 1.5s linear infinite;
+}
+
+@keyframes blink {
+  0% {
+    box-shadow: 0 0 #7c5cfcbf;
+  }
+  100% {
+    box-shadow: 0 0 0 12px #faad1400;
+  }
 }
 </style>

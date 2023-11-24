@@ -17,19 +17,33 @@
       <svg-icon svg-class="w-4 h-[75px] lg:w-2 lg:h-9" name="home_play" />
     </div>
     <section class="text-lg leading-9 text-[#696984] text-center lg:text-sm lg:leading-7">
-      <p>
-        {{ $t('只需上传学习素材或添加提示语，') }}<br class="hidden lg:block" />{{
-          $t('即可获得独特个性和超强能力的专属助理机器人。')
-        }}
-      </p>
-      <p>
+      <ABTestRender :caseNum="9">
+        <template #viewA>
+          <p>
+            {{ $t('只需上传学习素材或添加提示语，') }}<br class="hidden lg:block" />{{
+              $t('即可获得独特个性和超强能力的专属助理机器人。')
+            }}
+          </p>
+        </template>
+        <template #viewB></template>
+      </ABTestRender>
+      <p v-if="!isMobile">
         {{ $t('Chato 帮助企业先人一步运用 AI 理念，') }}<br class="hidden lg:block" />
         {{ $t('释放难以想象的产出与价值。') }}
       </p>
     </section>
-    <div class="text-center flex gap-8 items-center justify-center lg:gap-4">
+    <div
+      :class="
+        isMobile && testCaseValue
+          ? ['text-center flex flex-col gap-2 items-center justify-center lg:gap-1']
+          : ['text-center flex  gap-8 items-center justify-center lg:gap-4']
+      "
+    >
       <el-button
-        class="w-[228px] !h-[60px] !text-lg font-medium tracking-[0.08em] !rounded-lg mt-7 !ml-0 hover:!scale-105 lg:!text-sm lg:w-[153px] lg:!h-[45px] lg:mt-5 btn-grad shadow-lg"
+        :class="[
+          'w-[228px] !h-[60px] !text-lg font-medium tracking-[0.08em] !rounded-lg mt-7 !ml-0 hover:!scale-105 lg:!text-sm lg:w-[153px] lg:!h-[45px] lg:mt-5 btn-grad shadow-lg',
+          isMobile && testCaseValue ? '!w-[288px]' : 'w-[228px]'
+        ]"
         type="primary"
         id="Chato_top_create_click"
         @click="onEnter()"
@@ -38,10 +52,13 @@
       </el-button>
       <el-button
         id="Chato_top_resource_click"
-        class="w-[228px] !h-[60px] !text-lg font-medium tracking-[0.08em] !rounded-lg mt-7 !ml-0 hover:!scale-105 lg:!text-sm lg:w-[153px] lg:!h-[45px] !border-[#7C5CFC] lg:mt-5 !bg-[#F2F2F5] !text-[#7C5CFC] shadow-lg"
+        :class="[
+          'w-[228px] !h-[60px] !text-lg font-medium tracking-[0.08em] !rounded-lg mt-7 !ml-0 hover:!scale-105 lg:!text-sm lg:w-[153px] lg:!h-[45px] !border-[#7C5CFC] lg:mt-5 !bg-[#F2F2F5] !text-[#7C5CFC] shadow-lg',
+          isMobile && testCaseValue ? '!w-[288px]' : 'w-[228px]'
+        ]"
         @click="onEnter('Chato_top_resource_click')"
       >
-        {{ $t('对话Chato') }}
+        {{ $t('开启对话') }}
       </el-button>
     </div>
     <IndustryCase />
@@ -533,6 +550,9 @@
 </template>
 
 <script setup lang="ts">
+import ABTestRender from '@/components/ABTestRender/index.vue'
+import useABTest from '@/composables/useABTest'
+import { useBasicLayout } from '@/composables/useBasicLayout'
 import useImagePath from '@/composables/useImagePath'
 import { ELangKey } from '@/enum/locales'
 import { useLocales } from '@/stores/locales'
@@ -545,6 +565,10 @@ import IndustryCase from './components/IndustryCase.vue'
 const { ImagePath: homeStepImg } = useImagePath('step', 'home')
 const { locale } = storeToRefs(useLocales())
 const { t } = useI18n()
+const { isMobile } = useBasicLayout()
+
+const { abTestConfig } = useABTest(10)
+const testCaseValue = abTestConfig.value[10] === '1'
 
 const dynamicClasses = computed(() => {
   if (locale.value === ELangKey.en) {
