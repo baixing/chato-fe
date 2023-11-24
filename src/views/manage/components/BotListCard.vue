@@ -40,6 +40,13 @@
               {{ t('克隆') }}
             </IconBtn>
             <IconBtn
+              v-if="isSuperAdmin"
+              :icon="Finished"
+              @click="() => emit('acceptance', internalBot)"
+            >
+              {{ t('验收') }}
+            </IconBtn>
+            <IconBtn
               class="w-full"
               :name="internalBot.use_scope ? 'visible' : 'private'"
               @click="() => emit('visible', internalBot)"
@@ -193,7 +200,7 @@ import { RoutesMap } from '@/router'
 import { useBase } from '@/stores/base'
 import { useChatStore } from '@/stores/chat'
 import { useDomainStore } from '@/stores/domain'
-import { Compass, Delete, Hide, Notification, View } from '@element-plus/icons-vue'
+import { Compass, Delete, Finished, Hide, Notification, View } from '@element-plus/icons-vue'
 import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
