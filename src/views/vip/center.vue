@@ -115,7 +115,7 @@
           </p>
           <p class="desc-between">
             <span>{{ t('企微托管') }}</span>
-            <SupportedRender :supported="item.wx_group_num" />
+            <SupportedRender :supported="item.trustee_account_num" />
           </p>
           <p class="desc-between">
             <span>{{ t('定制品牌显示') }}</span>

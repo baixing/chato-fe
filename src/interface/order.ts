@@ -22,6 +22,7 @@ export interface IOrderPackage {
   image_quota: number
   single_chat_flag: number
   custom_host_cnt: number
+  trustee_account_num: number
 }
 
 export interface IOrderPaymentCode {
