@@ -202,3 +202,12 @@ export function generateQACheckReport(domain_id: number | string) {
     url: `/chato/api/document_management/${domain_id}/qa_acceptance_check`
   })
 }
+
+// 上传头像接口
+export const getFileUrl = (data: FormData) => {
+  return request({
+    method: 'post',
+    url: `/chato/api/file/upload/file`,
+    data
+  })
+}

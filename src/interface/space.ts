@@ -6,6 +6,7 @@ export interface ISpaceRights {
   domain_num: number
   account_num: number
   wx_group_num: number
+  trustee_account_num: number
   ad: boolean // 是否可配置对话广告
   brand: boolean // 是否可配置品牌广告
   dns: boolean // 是否可配置品牌域名
