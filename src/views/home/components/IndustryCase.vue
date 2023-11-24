@@ -25,7 +25,7 @@
     </div>
     <div>
       <div
-        v-if="!isMobile && testCaseValue"
+        v-if="!isMobile"
         class="top-tag px-6 py-3 rounded-[22px] w-fit mx-auto flex items-center justify-center gap-1 text-white font-medium text-xs mb-5"
       >
         <img
