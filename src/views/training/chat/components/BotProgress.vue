@@ -12,9 +12,29 @@
     </div>
     <el-progress :percentage="50" :text-inside="true" />
   </div>
-  <Modal v-model:visible="visible" title="完善智能号" :footer="false">
+  <Modal v-model:visible="visible" title="完善智能号" :footer="false" width="390px">
     <div>
       <div>完善信息可以帮助你获得更好的回答质量</div>
+      <div class="flex flex-col gap-y-6 mt-6">
+        <div v-for="item in taskList" :key="item.icon" class="flex justify-between items-center">
+          <div class="flex">
+            <div
+              class="flex justify-center text-2xl items-center text-[#7C5CFC] bg-[#7C5CFC]/[.08] w-12 h-12 rounded-lg"
+            >
+              <svg-icon :name="item.icon" />
+            </div>
+            <div class="flex flex-col justify-between py-[2px] pl-3">
+              <div class="text-[#3D3D3D] text-sm font-medium">{{ item.name }}</div>
+              <div class="text-[#9DA3AF] text-xs">
+                电力值 <span class="text-[#7C5CFC]">+{{ item.power }}</span>
+              </div>
+            </div>
+          </div>
+          <div>
+            <el-button class="!rounded-full" type="primary"> 去完成</el-button>
+          </div>
+        </div>
+      </div>
     </div>
   </Modal>
 </template>
@@ -23,6 +43,12 @@
 import { ref } from 'vue'
 
 const visible = ref(false)
+const taskList = [
+  { name: '配置形象信息', power: 100, icon: 'task-user' },
+  { name: '对话配置与调试', power: 100, icon: 'task-chat' },
+  { name: '上传知识', power: 100, icon: 'task-post-add' },
+  { name: '发布分享', power: 100, icon: 'task-send' }
+] as const
 </script>
 
 <style lang="scss">
