@@ -181,13 +181,7 @@
   <Modal v-model:visible="reserveVisible" :footer="false" :title="t(`预约训练`)">
     <div class="text-center text-sm leading-4 text-[#596780]">
       <p>{{ t('联系训练师，预约训练服务。') }}</p>
-      <el-link
-        v-if="isMobile"
-        :underline="false"
-        type="primary"
-        class="mt-6"
-        href="https://admin.sdlian.cn/l/ZkjRKDiEcb"
-      >
+      <el-link v-if="isMobile" :underline="false" type="primary" class="mt-6" :href="XIAONAQIWEI">
         {{ t('联系训练师') }}
       </el-link>
       <img v-else class="w-[400px] mt-6 mx-auto" src="@/assets/img/lock-crcode.png" />
@@ -200,6 +194,7 @@ import { getOrderPackageList, getOrderPackagePaymentCode, refreshPaymentStatus }
 import Topbar from '@/components/Topbar/index.vue'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import useSpaceRights from '@/composables/useSpaceRights'
+import { XIAONAQIWEI } from '@/constant/common'
 import { OrderPaymentStatus } from '@/constant/order'
 import { SpaceCommercialTypeMapper } from '@/constant/space'
 import { kUserPaymentLinkUrl } from '@/constant/terms'

@@ -8,13 +8,7 @@
       >
         {{ $t(item) }}
       </div>
-      <el-link
-        v-if="isMobile"
-        :underline="false"
-        type="primary"
-        class="mt-6"
-        href="https://admin.sdlian.cn/l/ZkjRKDiEcb"
-      >
+      <el-link v-if="isMobile" :underline="false" type="primary" class="mt-6" :href="XIAONAQIWEI">
         {{ $t('联系客服') }}
       </el-link>
       <img v-else class="w-[400px] mt-6 mx-auto" src="@/assets/img/lock-crcode.png" />
@@ -25,6 +19,7 @@
 <script setup lang="ts">
 import Modal from '@/components/Modal/index.vue'
 import { useBasicLayout } from '@/composables/useBasicLayout'
+import { XIAONAQIWEI } from '@/constant/common'
 import { SpaceRightsLimitTips } from '@/constant/space'
 import { useSpaceStore } from '@/stores/space'
 import { storeToRefs } from 'pinia'

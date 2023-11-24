@@ -24,6 +24,7 @@ import { ElConfigProvider } from 'element-plus'
 import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
 import { useBasicLayout } from './composables/useBasicLayout'
+import { XIAONAQIWEI } from './constant/common'
 
 // 设置不同环境的 Favicon
 useFavicon()
@@ -34,7 +35,7 @@ const { locale } = storeToRefs(useLocales())
 const clocale = computed(() => Elementlocales[locale.value])
 
 const onContactXN = () => {
-  window.open(`https://admin.sdlian.cn/l/ZkjRKDiEcb`, '_blank')
+  window.open(XIAONAQIWEI, '_blank')
 }
 </script>
 
