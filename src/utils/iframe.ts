@@ -82,9 +82,9 @@ export const chatoIframe = async () => {
     display: none;
     position: fixed;
     z-index: 999999;
-    width: 85vw;
+    width: 50%;
     max-width: 375px;
-    height: 48vh;
+    height: 62vh;
     max-height: 667px;
     right: 12px;
     bottom: 12px;
