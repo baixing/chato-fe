@@ -9,12 +9,12 @@
         class="w-7 h-7 rounded-full shrink-0 overflow-hidden"
         alt=""
       />
-      <span>{{ `chato 导航助手` || '...' }}</span>
+      <span>{{ `Chato 导航助手` || '...' }}</span>
     </div>
 
     <div
       class="flex flex-col h-full w-full overflow-hidden"
-      v-loading="$isLoading"
+      v-loading="isLoading"
       element-loading-background="#fffc"
     >
       <div v-if="false" class="empty h-full">
@@ -45,9 +45,6 @@
             :isInternal="isInternal && isChatingPractice"
             :is-loading-answer="isLoadingAnswer"
             :correct-visible="false"
-            @evaluate="onEvaluate"
-            @send-message="submit"
-            @show-more-action="onShowMoreAction"
             @receive-question-answer="(mItem) => emit('correctAnswer', mItem)"
             @click-source="(questionId) => emit('showDrawer', questionId, botSlug)"
           />
@@ -64,7 +61,6 @@
           <span
             data-sensors-click
             id="Chato_chat_delete_click"
-            :data-sensors-question-id="internalLastQuestionId"
             :class="['input-icon-btn', true && '!hidden']"
             @click="emit('clear')"
           >
@@ -114,7 +110,7 @@
           v-show="chatRecordingEnterVisible"
           :class="['recorder-container', footerBrandShow && '!-bottom-8']"
         >
-          <el-icon size="16" color="#596780" @click="onCloseRecorder" class="close-icon">
+          <el-icon size="16" color="#596780" class="close-icon">
             <Close />
           </el-icon>
           <el-input
@@ -128,7 +124,7 @@
           />
         </div>
 
-        <div
+        <!-- <div
           class="flex gap-2 items-center justify-center px-5 overflow-hidden h-5"
           @click="() => emit('click')"
         >
@@ -136,7 +132,7 @@
             <img v-if="logo" :src="logo" class="h-full max-w-[66px] object-cover" />
           </span>
           <p class="text-[#596780] text-xs truncate leading-5">{{ name }}</p>
-        </div>
+        </div> -->
       </div>
       <ChatFooter
         name="Powered by Chato"
@@ -145,7 +141,6 @@
           'mb-2 leading-4 text-xs flex justify-center text-[#596780] text-center shrink-0',
           !isCustomerBrand && 'cursor-pointer'
         ]"
-        @click="onFooterBrandLink"
       />
     </div>
   </div>
@@ -159,11 +154,18 @@ import { useBase } from '@/stores/base'
 const base = useBase()
 const { userInfo } = storeToRefs(base)
 import { storeToRefs } from 'pinia'
-import { useAuthStore } from '@/stores/auth'
+// import { useAuthStore } from '@/stores/auth'
 import { ElMessage } from 'element-plus'
+import { useBasicLayout } from '@/composables/useBasicLayout'
 const isLoadingAnswer = ref(false)
-const inputText = ref('')
 const refChatHistory = ref(null)
+const isLoading = ref(true)
+const internalEnterDisabled = false
+const footerBrandShow = false
+const isCustomerBrand = false
+const chatRecordingEnterVisible = false
+const isInternal = false
+const { isMobile } = useBasicLayout()
 //未展开
 const scrollChatHistory = () => {
   nextTick(() => {
@@ -177,17 +179,15 @@ import { useI18n } from 'vue-i18n'
 import ChatFooter from '@/components/Chat/ChatFooter.vue'
 const { t } = useI18n()
 const emit = defineEmits(['update:value', 'inputClick', 'clear', 'submit'])
-const props = defineProps<{
-  value: string
-  disabled?: boolean
-  lastQuestionId?: number
-  hiddenClear?: boolean
-}>()
+// const props = defineProps<{
+//   value: string
+//   disabled?: boolean
+//   lastQuestionId?: number
+//   hiddenClear?: boolean
+// }>()
 
 const internalValue = ref('')
 const inputPlaceholder = computed(() => '输入问题，换行可通过shift+回车')
-
-const qaList = ref([]) // 用于存储问题及答案的列表
 
 let userId =
   userInfo.value['mobile'] !== undefined ? userInfo.value['mobile'] : localStorage.getItem('uid')
@@ -229,7 +229,7 @@ const sendData = async () => {
   })
   scrollChatHistory()
 }
-import { watch, onMounted } from 'vue'
+import { watch } from 'vue'
 import { useStorage } from '@vueuse/core'
 
 const history = ref([])
@@ -267,6 +267,7 @@ const freshHistory = async () => {
         }
       ])
       .reduce((A, B) => [...A, ...B], [])
+    isLoading.value = false
     scrollChatHistory()
   } catch (error) {
     console.error('Fetch error:', error)
