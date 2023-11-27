@@ -42,7 +42,7 @@
             v-model="generateForm.question"
             :placeholder="$t('请输入问题')"
             class="w-full"
-            @blur="
+            @input="
               onSaveQuestion(
                 auditedGenerateList[next].id,
                 generateForm.question,
@@ -57,7 +57,7 @@
             :rows="!isMobile ? 20 : 5"
             v-model="generateForm.answer"
             :placeholder="$t('请输入答案')"
-            @blur="
+            @input="
               onSaveQuestion(
                 auditedGenerateList[next].id,
                 generateForm.question,
@@ -138,6 +138,7 @@ import { EDocConvertOrDisuse } from '@/enum/knowledge'
 import type { IQuestionConvertQAList, IQuestionConvertQASource } from '@/interface/knowledge'
 import { RoutesMap } from '@/router'
 import { useDomainStore } from '@/stores/domain'
+import { useDebounceFn } from '@vueuse/core'
 import { ElMessageBox, ElNotification } from 'element-plus'
 import { storeToRefs } from 'pinia'
 import { computed, reactive, ref, watch } from 'vue'
@@ -198,7 +199,7 @@ const onCheckAuditedGenerateList = (id: number, isAll: boolean) => {
   onUpdateGenerateForm()
 }
 
-const onSaveQuestion = async (id: number, question: string, answer: string) => {
+const onSaveQuestion = useDebounceFn(async (id: number, question: string, answer: string) => {
   await patchGenerateQASaveAPI(id, {
     question: question,
     answer: answer
@@ -210,7 +211,7 @@ const onSaveQuestion = async (id: number, question: string, answer: string) => {
     }
     return item
   })
-}
+}, 500)
 
 const onDeprecatedOrUnloading = async (id: number, all: boolean, status: EDocConvertOrDisuse) => {
   try {
@@ -236,6 +237,7 @@ const onDeprecatedOrUnloading = async (id: number, all: boolean, status: EDocCon
       domain_slug: domainInfo.value.slug
     }
     loading.value = true
+    await onSaveQuestion(id, generateForm.question, generateForm.answer)
     const res = await postGenerateQAUnloadingAPI(docId.value, data)
     ElNotification.success(res.data.message)
     onCheckAuditedGenerateList(id, all)
@@ -300,15 +302,6 @@ const onInitCheckedAudited = async () => {
   auditedLen.value = pagination.total
 }
 
-const onhandleRouter = () => {
-  router.push({
-    name: RoutesMap.tranning.knowledge,
-    params: {
-      botId: botId.value
-    }
-  })
-}
-
 watch(next, (n) => {
   if (n >= auditedGenerateList.value.length - 1) return
   onUpdateGenerateForm()
@@ -326,6 +319,9 @@ onInitCheckedAudited()
     }
     .el-page-header__title {
       @apply text-base;
+    }
+    .el-page-header__content {
+      @apply block;
     }
     .el-divider {
       display: none;
