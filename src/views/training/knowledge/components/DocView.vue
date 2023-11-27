@@ -269,7 +269,7 @@ const onGenerateQA = async (id: number) => {
   if (!res.data.data) {
     return checkRightsTypeNeedUpgrade(ESpaceRightsType.default)
   }
-  ElNotification.success(t('问答生成成功'))
+  ElNotification.success(t('问答生成中'))
   initDocList()
 }
 

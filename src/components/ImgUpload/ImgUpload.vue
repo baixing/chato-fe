@@ -189,7 +189,7 @@ watch(imgUrl, () => (fileList.value = getFileList()))
 
 watch(fileList, async (value: UploadFiles, oldValue: UploadFiles) => {
   if (props.disabled) return
-  if (value.length > oldValue.length) {
+  if (value.length > oldValue.length && value.at(-1).raw) {
     let url
     try {
       const formData = new FormData()
