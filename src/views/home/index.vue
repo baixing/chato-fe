@@ -158,12 +158,6 @@
         </div>
       </div>
     </div>
-    <img
-      v-if="isMobile"
-      src="@/assets/img/xiaona.png"
-      class="absolute w-11 h-11 object-cover right-[2px] bottom-20 rounded-full shadow-lg arrow-box"
-      @click="onContactXN"
-    />
     <div
       v-if="showFooterContactVisible"
       class="home-contact-btn text-base absolute flex flex-col gap-[14px] overflow-hidden py-5 px-2 md:p-0 right-7 md:right-2"
@@ -293,10 +287,6 @@ const onLinkNash = () => {
     path: `/nash`
   })
   window.open(routerData.href, '_blank')
-}
-
-const onContactXN = () => {
-  window.open(`https://admin.sdlian.cn/l/ZkjRKDiEcb`, '_blank')
 }
 
 const videoMask = ref(false)
@@ -558,23 +548,6 @@ watch(
 .affix-box {
   background: linear-gradient(117deg, #0547ff -84%, #d683ff 125%);
   animation: affix-link 1.5s linear infinite;
-}
-
-.arrow-box {
-  border: 2px solid rgba(124, 92, 252);
-  animation: blink 2s linear infinite;
-}
-
-@keyframes blink {
-  0% {
-    border-color: transparent;
-  }
-  50% {
-    border-color: rgba(124, 92, 252);
-  }
-  100% {
-    border-color: transparent;
-  }
 }
 
 @keyframes affix-link {
