@@ -200,7 +200,10 @@
   <ScheduleDemoModal v-model:visible="scheduleMask" />
   <UpgradeRightsModal />
   <JoinDemoModal v-model:visible="joinMask" />
-  <div v-if="isMobile" class="fixed left-12 right-12 bottom-5 h-11 z-[999]">
+  <div
+    v-if="isMobile && activeMenuRouteName !== RoutesMap.home.homeChat"
+    class="fixed left-12 right-12 bottom-5 h-11 z-[999]"
+  >
     <el-button
       class="affix-box !w-full !h-[46px] !text-sm !text-white font-medium !rounded-lg border-none border-0 shadow-none"
       @click="onEnter()"
