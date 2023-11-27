@@ -5,9 +5,9 @@
     <h3
       class="hidden text-5xl leading-[72px] font-medium text-[#303133] text-center lg:text-[26px] lg:leading-[38px] lg:block"
     >
-      {{ $t('行业') }}
+      {{ testCaseValue && isMobile ? $t('多样化') : $t('行业') }}
       <strong class="tracking-[0.08em] bg-clip-text text-transparent line-grad-bg">
-        {{ $t('案例') }}
+        {{ testCaseValue && isMobile ? $t('应用场景') : $t('案例') }}
       </strong>
     </h3>
     <div v-if="isMobile" @click="onClickCase">
@@ -25,6 +25,7 @@
     </div>
     <div>
       <div
+        v-if="!isMobile"
         class="top-tag px-6 py-3 rounded-[22px] w-fit mx-auto flex items-center justify-center gap-1 text-white font-medium text-xs mb-5"
       >
         <img
@@ -39,7 +40,7 @@
         v-if="isMobile"
         indicator-position="outside"
         :initial-index="activeIndex"
-        :interval="2000"
+        :interval="4000"
         @change="(c) => (activeIndex = c)"
         arrow="never"
         height="auto"
@@ -100,6 +101,7 @@ import EmSuperman from '@/assets/img/home/emoji/superman.png'
 import FsActive from '@/assets/img/fs-active.png'
 import CpYywj from '@/assets/img/home/cp/yywj.png'
 import EmNet from '@/assets/img/home/emoji/net.png'
+import useABTest from '@/composables/useABTest'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import useImagePath from '@/composables/useImagePath'
 import router, { RoutesMap } from '@/router'
@@ -107,6 +109,8 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import IndustryCaseCard from './IndustryCaseCard.vue'
 
+const { abTestConfig } = useABTest(8)
+const testCaseValue = abTestConfig.value[8] === '1'
 // 获取home/caseImg目录下的图片路径
 const { ImagePath: CaseChatoPath } = useImagePath('chato', 'home/caseImg')
 const { ImagePath: CaseTswctPath } = useImagePath('tswct', 'home/caseImg')
@@ -116,7 +120,47 @@ const { ImagePath: CaseJpcgPath } = useImagePath('jpcg', 'home/caseImg')
 const { ImagePath: CaseYywjPath } = useImagePath('yywj', 'home/caseImg')
 
 const { t } = useI18n()
-const caseList = computed(() => [
+
+const caseList1 = computed(() => [
+  {
+    icon: 'heart',
+    emoji: EmShine,
+    title: t('服务咨询行业'),
+    bg: 'linear-gradient(153deg, #4278F6 -38%, #51C8FF 111%)',
+    caseImg: CaseXlaiPath.value,
+    tagName: t('网页发布'),
+    tagIcon: 'computer-filled'
+  },
+  {
+    icon: 'teaching',
+    title: t('教育培训行业'),
+    bg: 'linear-gradient(148deg, #05FF8E -19%, #52C8FF 134%)',
+    emoji: EmNet,
+    caseImg: CaseYywjPath.value,
+    tagName: t('JS 嵌入'),
+    tagIcon: 'js-access'
+  },
+  {
+    icon: 'media',
+    title: t('新媒体行业'),
+    bg: 'linear-gradient(148deg, #356BFF -185%, #FD83FF 134%)',
+    emoji: EmHeart,
+    caseImg: CaseWjsPath.value,
+    tagName: t('微信群聊'),
+    tagIcon: 'wechat-filled'
+  },
+  {
+    icon: 'drinking',
+    title: t('线下门店顾问'),
+    bg: 'linear-gradient(144deg, #FF4C72 -31%, #FFE873 136%)',
+    emoji: EmSuperman,
+    caseImg: CaseJpcgPath.value,
+    tagName: t('飞书群聊'),
+    tagIcon: FsActive
+  }
+])
+
+const caseList2 = computed(() => [
   {
     logo: CpChato,
     emoji: EmShine,
@@ -167,9 +211,11 @@ const caseList = computed(() => [
   }
 ])
 
+const { isMobile } = useBasicLayout()
+const caseList = testCaseValue && isMobile.value ? caseList1 : caseList2
+
 let timer
 const activeIndex = ref(0)
-const { isMobile } = useBasicLayout()
 
 // const onSelectCase = (index: number) => {
 //   activeIndex.value = index
