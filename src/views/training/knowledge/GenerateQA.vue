@@ -43,11 +43,12 @@
             :placeholder="$t('请输入问题')"
             class="w-full"
             @input="
-              onSaveQuestion(
-                auditedGenerateList[next].id,
-                generateForm.question,
-                generateForm.answer
-              )
+              () =>
+                onSaveQuestion(
+                  auditedGenerateList[next].id,
+                  generateForm.question,
+                  generateForm.answer
+                )
             "
           />
         </el-form-item>
@@ -58,11 +59,12 @@
             v-model="generateForm.answer"
             :placeholder="$t('请输入答案')"
             @input="
-              onSaveQuestion(
-                auditedGenerateList[next].id,
-                generateForm.question,
-                generateForm.answer
-              )
+              () =>
+                onSaveQuestion(
+                  auditedGenerateList[next].id,
+                  generateForm.question,
+                  generateForm.answer
+                )
             "
             class="w-full"
           />

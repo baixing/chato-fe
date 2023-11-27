@@ -250,6 +250,7 @@ interface Props {
   type?: 'create'
   authLogin?: boolean
   avatarShow?: boolean
+  isResource?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -257,7 +258,8 @@ const props = withDefaults(defineProps<Props>(), {
   bSlug: '',
   isChatingPractice: false,
   isreadRouteParam: false,
-  avatarShow: true
+  avatarShow: true,
+  isResource: false
 })
 
 const debugDomain = inject<IDomainInfo>(DebugDomainSymbol, null)
@@ -966,6 +968,10 @@ const currentMoreActions = computed<EMessageActionType[]>(() => {
         ? true
         : item !== EMessageActionType.fix
     )
+  }
+
+  if (props.isResource) {
+    actions = actions.filter((item) => item !== EMessageActionType.fix)
   }
 
   return actions
