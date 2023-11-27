@@ -2,6 +2,7 @@
   <Chat
     :isreadRouteParam="true"
     :internalProps="isInternal"
+    :isResource="true"
     @correctAnswer="correctAnswer"
     @showDrawer="onOpenSource"
     :bSlug="botSlug"
