@@ -1455,7 +1455,7 @@
   "已弃用": "Abandoned",
   "全部转存": "Transfer all",
   "批量生成问答并经过人工审阅后可录入问答库，问答的索引匹配度通常高于文档。内测期间，验收不占用问答额度。是否确认生成？": "Batch generation of Q&A and manual review after it can be entered into the Q&A library. The index match of the Q&A is usuall",
-  "问答生成成功": "Q&A generation succeeded",
+  "问答生成中": "Q&A generating",
   "对话Chato": "Dialogue Chato",
   "个人问答机器人": "Personal Q&A Robot",
   "企业专属机器人": "Enterprise Exclusive Robot",
