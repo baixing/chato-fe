@@ -70,18 +70,22 @@
                 @click="onSelectScenes(item)"
                 :key="item.value"
                 :class="{
-                  '!text-[#7C5CFC]': item.value === formState.organization_type_name,
-                  '!border-[#7C5CFC]': item.value === formState.organization_type_name
+                  '!border-[#7C5CFC]': item.value === formState.organization_type
                 }"
               >
-                <div class="py-3 px-7 lg:pl-5 flex items-center">
+                <div class="py-3 px-7 lg:pl-5 flex items-center flex-col">
                   <div
-                    class="w-10 h-10 text-xl flex mr-4 items-center justify-center bg-[#F2F3F5] rounded-full lg:mb-1"
+                    class="w-10 h-10 text-xl flex items-center justify-center bg-[#F2F3F5] rounded-full m-0 mb-2"
                   >
-                    <svg-icon :name="item.icon" />
+                    <svg-icon
+                      :name="item.icon"
+                      :class="{
+                        '!text-[#7C5CFC]': item.value === formState.organization_type
+                      }"
+                    />
                   </div>
-                  <div>
-                    <div class="text-xs font-medium">{{ item.label }}</div>
+                  <div class="text-center">
+                    <div class="text-sm font-medium text-[#303133] mb-2">{{ item.label }}</div>
                     <div class="text-xs information">
                       {{ item.information }}
                     </div>
@@ -133,13 +137,13 @@ import ChatoDomainAvatar from './components/ChatoDomainAvatar.vue'
 
 const ScenesList = [
   {
-    label: '企业用户',
+    label: '公司业务使用',
     value: EUserOrganizationRole.company,
     icon: 'company',
     information: '用于公司业务中的营销、提效、降本等'
   },
   {
-    label: '个人用户',
+    label: '个人体验使用',
     value: EUserOrganizationRole.person,
     icon: 'person',
     information: '用于个人提效、创作、娱乐等'
