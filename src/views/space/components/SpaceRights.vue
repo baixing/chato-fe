@@ -32,7 +32,16 @@
         <svg-icon :name="item.icon" svg-class="text-white w-4 h-4" />
       </div>
       <div class="text-[#3D3D3D]">
-        <p class="text-base font-medium">{{ item.title }}</p>
+        <p class="text-base font-medium flex items-center">
+          {{ item.title }}
+          <el-tooltip :disabled="!item.tips" placement="right" :content="item.tips">
+            <svg-icon
+              v-if="item.tips"
+              name="question-circle"
+              svg-class="text-[#596780] w-4 h-4 cursor-pointer ml-[6px]"
+            />
+          </el-tooltip>
+        </p>
         <p class="text-[#9DA3AF] text-sm mb-3 mt-5">{{ item.desc }}</p>
         <p class="text-lg font-medium">{{ `${item.consume}/${item.total}` }}</p>
       </div>
@@ -54,8 +63,8 @@ const defaultCardList = {
   domain: {
     bg: '#4381FF',
     icon: 'magic-cube',
-    title: t('训练机器人'),
-    desc: t('已训练/总数'),
+    title: t('创建机器人个数'),
+    desc: t('已创建数/总数'),
     consume: 0,
     total: 0
   },
@@ -63,6 +72,7 @@ const defaultCardList = {
     bg: '#1CC29D',
     icon: 'battery',
     title: t('电力值'),
+    tips: t('机器人可回答条数'),
     desc: t('已使用量/总量'),
     consume: 0,
     total: 0
@@ -78,16 +88,18 @@ const defaultCardList = {
   member: {
     bg: '#7C5CFC',
     icon: 'user-group',
-    title: t('空间用户数'),
-    desc: t('已添加用户数/总数'),
+    title: t('空间成员数'),
+    tips: t('添加到空间下的成员，可共同训练/使用机器人'),
+    desc: t('已添加数/总数'),
     consume: 0,
     total: 0
   },
   painting: {
     bg: '#08C3D8',
     icon: 'picture',
-    title: t('图像值'),
-    desc: t('已生成/总数'),
+    title: t('AI 绘画条数'),
+    tips: t('在「我的对话—探索机器人」中，使用 “AI 绘画” 生成图片的条数'),
+    desc: t('已生成数/总数'),
     consume: 0,
     total: 0
   }
