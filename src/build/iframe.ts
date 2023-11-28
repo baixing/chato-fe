@@ -213,6 +213,11 @@ window.onload = () => {
         popupFrequencyChato(createChatoConfig.popupFrequency)
       })
 
+      const xiaonaEl = document.getElementById('Chato_mobile_xiaona_chat_click')
+      if (xiaonaEl) {
+        xiaonaEl.style.display = 'none'
+      }
+
       popupFrequencyChato(createChatoConfig.popupFrequency)
     }
 
