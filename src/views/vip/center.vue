@@ -265,8 +265,8 @@ const onOpenPay = async (item: IOrderPackage) => {
       payModalPaymentCodeLoading.value = true
       payModalPackage.value = item
     }
+    const payType = isMobile.value && !currentEnvIsWechat ? 2 : 3
     refreshInterval && clearInterval(refreshInterval)
-    const payType = isMobile.value ? 2 : 3
     const {
       data: { data: paymentRes }
     } = await getOrderPackagePaymentCode({
