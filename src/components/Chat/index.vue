@@ -173,6 +173,7 @@ import useGlobalProperties from '@/composables/useGlobalProperties'
 import useSSEAudio from '@/composables/useSSEAudio'
 import { useSource } from '@/composables/useSource'
 import useSpaceRights from '@/composables/useSpaceRights'
+import { useWebSocketConnect } from '@/composables/useWebSocket'
 import { currentEnvConfig } from '@/config'
 import {
   ChatMessageFinalStatus,
@@ -200,7 +201,7 @@ import type { ITTSParams } from '@/interface/tts'
 import router, { RoutesMap } from '@/router'
 import { useAuthStore } from '@/stores/auth'
 import { useBase } from '@/stores/base'
-import { useSSEStore } from '@/stores/sse'
+import { useSocketStore } from '@/stores/socket'
 import { formatChatMessageAnswer } from '@/utils/chat'
 import { $notnull, copyPaste, randomString } from '@/utils/help'
 import { convertToMarkdown, regReplaceA, removewRegReplaceA } from '@/utils/reg'
@@ -258,8 +259,6 @@ const props = withDefaults(defineProps<Props>(), {
 
 const debugDomain = inject<IDomainInfo>(DebugDomainSymbol, null)
 const { t } = useI18n()
-const sseStore = useSSEStore()
-const { sseMsgResult } = storeToRefs(sseStore)
 const { source } = useSource()
 const route = useRoute()
 const base = useBase()
@@ -320,6 +319,9 @@ const chatHistoryParams: ChatHistoryParams = reactive({
 })
 
 const SSEInstance = new SSE()
+const socketStore = useSocketStore()
+const socketInstance = useWebSocketConnect(currentEnvConfig.socketURL)
+const { socketResultMap } = storeToRefs(socketStore)
 
 const link = computed(
   () =>
@@ -478,7 +480,6 @@ const checkQuotaInPlatformC = async () => {
 
 async function init() {
   $isLoading.value = true
-  sseStore.$patch({ sseMsgId: '' })
   history.value = []
   chatHistoryParams.page = 1
   chatHistoryPage = Object.assign(chatHistoryPage, {
@@ -488,9 +489,7 @@ async function init() {
   if (!isInternal) {
     await checkQuotaInPlatformC()
   }
-  const historyChatList = await getHistoryChat()
-  const sseMsgId = historyChatList.length ? historyChatList[0].id : ''
-  sseStore.$patch({ sseMsgId })
+  await getHistoryChat()
   watermarkFunc()
 }
 
@@ -524,7 +523,7 @@ function getBotInfo() {
           ? JSON.parse(res.data.data.shortcuts)
           : []
       inputLength.value = detail.value.question_max_length
-      !sseStore.isExistInPeddingDomains(botSlug.value) && sayWelcome()
+      !socketStore.isExistInPeddingDomains(botSlug.value) && sayWelcome()
       shareWeixinInit(detail.value)
       // 健硕需求p参数
       $notnull(query_p) ? submit(query_p) : ''
@@ -574,12 +573,11 @@ const getHistoryChat = async (scrollBottomTag = true) => {
         questionId: list_item.id,
         evaluation: list_item.evaluation,
         question: list_item.question,
-        status:
-          list_item.status === EWsMessageStatus.pending ? EWsMessageStatus.done : list_item.status,
+        status: list_item.status,
         command: list_item.command
       }
 
-      if (!list_item.answer_deleted) {
+      if (!list_item.answer_deleted && list_item.status !== EWsMessageStatus.pending) {
         newHistory.unshift(...[answer])
       }
       if (!list_item.question_deleted) {
@@ -681,13 +679,13 @@ const submit = async (str = '') => {
   const xssFilterText = xss(text, XSSOptions)
   history.value.push({
     displayType: EMessageDisplayType.question,
-    msg_id,
+    msg_id: randomString(32),
     id: `${_id}-q`,
     content: xssFilterText
   })
   detail.value.show_recommend_question && initRecommendQuestions(xssFilterText)
   commonRequestSocket(xssFilterText, msg_id, _id)
-  sseStore.updatePeddingDomains(botSlug.value)
+  socketStore.updatePeddingDomains(botSlug.value)
   // 语音播放重置
   onResetPlayingAudio()
 }
@@ -717,16 +715,23 @@ const onTerminateRetry = async () => {
       return
     }
 
+    const content =
+      lastAnswer.content +
+      regReplaceA(t('#继续#'), {
+        class: 'answer-continue',
+        'data-cid': lastAnswer.msg_id || lastAnswer.questionId
+      })
+
     const terminateParams = {
       type: 'close',
-      text: removewRegReplaceA(lastAnswer.content),
+      text: content,
       cutoff_continue_qid: lastAnswer.questionId,
       ...chatCommonParams.value,
-      fake_domain: debugDomain || undefined
+      fake_domain: debugDomain || undefined,
+      msg_id: lastAnswer.msg_id
     }
 
-    sseStore.terminatedSSEResultMap(lastAnswer, detail.value.slug)
-    await SSEInstance.request('/chato/chat/close', terminateParams)
+    socketInstance.send(JSON.stringify(terminateParams))
     const SSEAudioDoneParams = {
       chunk_message: '',
       status: EWsMessageStatus.done,
@@ -801,28 +806,11 @@ async function sendMsgRequest(message) {
     navit_msg_id: isMidJourneyDomain.value ? random(1000000, 9999999) : undefined,
     fake_domain: debugDomain || undefined
   }
-  console.log('abTestConfig.value:', abTestConfig.value[7], typeof abTestConfig.value[7])
   if (params.source === 'chato_home' && abTestConfig.value[7] === '0') {
     params.type = 'flow'
   }
-  sseStore.$patch({ sseMsgId: message.msg_id })
   try {
-    let sseUrl = '/chato/sse'
-    isMidJourneyDomain.value && (sseUrl += '/mj')
-    const SSEFetching = SSEInstance.request(
-      sseUrl,
-      params,
-      async (res) => {
-        sseStore.setSSEResultMap(res)
-        needsSSEAudio.value &&
-          (await SSETextToAudio({ sseRes: res, domainSlug: botSlug.value, token: chatToken.value }))
-      },
-      {
-        responseAll: true
-      }
-    )
-    sseStore.setAbortControllerMap(detail.value.slug, SSEInstance.abortCtrl)
-    await SSEFetching
+    socketInstance.send(JSON.stringify(params))
     if (isAiGenerate.value) {
       inputText.value = await getChatQuestion(history.value.at(-1).content)
       submit()
@@ -834,38 +822,35 @@ async function sendMsgRequest(message) {
   }
 }
 
-const generateMessage = (data) => {
-  isLoadingAnswer.value = ChatMessageFinalStatus.includes(data.status) ? false : true
-  continueTarget.value && (continueTarget.value.innerText = t('继续'))
-  // socket 返回消息需要更改的问题和答案 index
-  let currentQuestionIndex: number
-  let currentAnswerIndex: number
-  history.value.map((item, index) => {
-    if (item?.msg_id === data.msg_id || item?.questionId === data.question_id) {
-      if (item.displayType === EMessageDisplayType.question) {
-        currentQuestionIndex = index
-      } else if (item.displayType === EMessageDisplayType.answer) {
-        currentAnswerIndex = index
-      }
-    }
-  })
-
-  if (isNaN(Number(currentQuestionIndex)) || isNaN(Number(currentAnswerIndex))) {
-    return
+const generateMessage = (data, key) => {
+  const isFinalStatus = ChatMessageFinalStatus.includes(data.status)
+  isLoadingAnswer.value = !isFinalStatus
+  if (continueTarget.value) {
+    continueTarget.value.innerText = t('继续')
   }
 
-  const currentProgress = history.value[currentAnswerIndex].progress || 0
-
-  const currentAnswer: IMessageItem = {
-    ...history.value[currentAnswerIndex],
+  const defaulthHistoryItem: IMessageItem = {
+    displayType: EMessageDisplayType.answer,
+    msg_id: key,
+    id: key,
     type: data.type,
     content: data.chunk_message,
+    questionId: data.question_id,
     status: data.status,
     ref_source_len: data.ref_source_len,
-    questionId: data.question_id,
     evaluation: null,
-    progress: data.progress > currentProgress ? data.progress : currentProgress,
-    command: data.command
+    command: data.command,
+    progress: 0
+  }
+
+  const historyIndex = history.value.findIndex((item) => item.msg_id === key)
+  const historyItem = historyIndex !== -1 ? history.value[historyIndex] : defaulthHistoryItem
+  const updatedProgress = Math.max(data.progress, historyItem.progress || 0)
+
+  const currentAnswer = {
+    ...historyItem,
+    ...defaulthHistoryItem,
+    progress: updatedProgress
   }
 
   if (data.finish_reason === 'length') {
@@ -875,22 +860,14 @@ const generateMessage = (data) => {
     })
   }
 
-  if (ChatMessageFinalStatus.includes(data.status)) {
-    // 对话无额度，权益弹窗
-    if (EWsMessageStatus.forbid_quota === data.status) {
-      const quotaType = isMidJourneyDomain.value
-        ? ESpaceRightsType.paintQuota
-        : ESpaceRightsType.quota
-      checkRightsTypeNeedUpgrade(quotaType)
-    }
+  if (isFinalStatus && data.status === EWsMessageStatus.forbid_quota) {
+    const quotaType = isMidJourneyDomain.value
+      ? ESpaceRightsType.paintQuota
+      : ESpaceRightsType.quota
+    checkRightsTypeNeedUpgrade(quotaType)
   }
 
-  history.value[currentAnswerIndex] = currentAnswer
-
-  history.value[currentQuestionIndex] = {
-    ...history.value[currentQuestionIndex],
-    questionId: data.question_id
-  }
+  history.value[historyIndex !== -1 ? historyIndex : history.value.length] = currentAnswer
 }
 
 // 特殊处理：继续
@@ -1273,9 +1250,13 @@ watch(
 )
 
 watch(
-  sseMsgResult,
-  (v) => {
-    v && generateMessage(v)
+  socketResultMap,
+  (socket) => {
+    for (let [key, value] of socket) {
+      if (value.domain_slug === botSlug.value) {
+        generateMessage(value, key as string)
+      }
+    }
   },
   { deep: true }
 )
