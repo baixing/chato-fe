@@ -88,6 +88,13 @@ export interface IDomainInfo {
   conversation_mode_meta?: string
   conversation_arouse_mode?: EDomainConversationModeArousalMethod
   toc_privacy: number
+  task_progress?: [
+    basicInformation: 0 | 1,
+    knowledge: 0 | 1,
+    moreInformation: 0 | 1,
+    publish: 0 | 1,
+    receiveMessages: 0 | 1
+  ]
 }
 
 export interface IDomainShortcut {
