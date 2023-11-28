@@ -129,7 +129,8 @@ const codeContent = (id: number) => {
     id: ${id}
   }
   var st = document.createElement("script");
-  st.type="text/javascript";
+  st.type = 'module';
+  st.crossOrigin = true;
   st.async = true;st.src = "${props.chatScript}";
   var header = document.getElementsByTagName("head")[0];
   header.appendChild(st);
