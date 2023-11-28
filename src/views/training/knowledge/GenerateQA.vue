@@ -158,6 +158,7 @@ const { domainInfo } = storeToRefs(domainStoreI)
 const docId = computed(() => (route.query.docId as string) || '')
 const botId = computed(() => (route.params.botId as string) || '')
 const generateForm = reactive({
+  id: 0,
   page: 1,
   size: 20,
   question: '',
@@ -239,7 +240,7 @@ const onDeprecatedOrUnloading = async (id: number, all: boolean, status: EDocCon
       domain_slug: domainInfo.value.slug
     }
     loading.value = true
-    await onSaveQuestion(id, generateForm.question, generateForm.answer)
+    await onSaveQuestion(all ? generateForm.id : id, generateForm.question, generateForm.answer)
     const res = await postGenerateQAUnloadingAPI(docId.value, data)
     ElNotification.success(res.data.message)
     onCheckAuditedGenerateList(id, all)
@@ -265,6 +266,7 @@ const onUpdateGenerateForm = () => {
   const currentGenerate = auditedGenerateList.value[next.value]
   generateForm.question = currentGenerate.question
   generateForm.answer = currentGenerate.answer
+  generateForm.id = currentGenerate.id
   sourcesData.value = currentGenerate.ref_source
 }
 
