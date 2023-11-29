@@ -1,12 +1,17 @@
 <template>
-  <div class="input-box">
-    <el-tooltip :disabled="isMobile" :content="t(`清空历史消息`)" placement="top" :hide-after="0">
+  <div class="input-box lg:!px-0">
+    <el-tooltip
+      :disabled="internalEnterDisabled"
+      :content="t(`清空历史消息`)"
+      placement="top"
+      :hide-after="0"
+    >
       <span
         data-sensors-click
         id="Chato_chat_delete_click"
         :data-sensors-question-id="internalLastQuestionId"
         :class="['input-icon-btn', internalHiddenClear && '!hidden']"
-        @click="emit('clear')"
+        @click="() => !internalEnterDisabled && emit('clear')"
       >
         <svg-icon name="chat-clear" svg-class="w-6 h-6 text-[#303133]" />
       </span>
@@ -34,11 +39,27 @@
           :autosize="{ maxRows: 5 }"
           v-model="internalValue"
           :placeholder="t(inputPlaceholder)"
-          :disabled="internalEnterDisabled"
+          :disabled="isAiGenerate || internalEnterDisabled"
           @click="emit('inputClick')"
           @keydown.enter="onKeydownEnter"
         />
-        <el-tooltip :disabled="isMobile" :content="t(`发送`)" placement="top" :hide-after="0">
+        <el-tooltip
+          :disabled="isAiGenerate || internalEnterDisabled"
+          :content="t('语音输入')"
+          placement="top"
+          :hide-after="0"
+        >
+          <span @click="(e) => !internalEnterDisabled && onRecording(e)" class="send-btn">
+            <svg-icon svg-class="w-6 h-6 text-[#303133]" name="chat-sound" />
+          </span>
+        </el-tooltip>
+        <el-tooltip
+          class="lg:pl-1"
+          v-if="!internalEnterDisabled"
+          :content="t(`发送`)"
+          placement="top"
+          :hide-after="0"
+        >
           <span
             :disabled="internalEnterDisabled"
             @click="() => onSend()"
@@ -54,17 +75,35 @@
             />
           </span>
         </el-tooltip>
+        <el-tooltip v-else :content="t(`终止`)" placement="top" :hide-after="0">
+          <span
+            :disabled="!internalEnterDisabled"
+            @click="emit('onTerminateRetry')"
+            data-script="Chato-send-question"
+            class="send-btn transition-colors"
+          >
+            <svg-icon
+              :svg-class="['w-6 h-6 text-[#303133] transition-colors hover:text-[#7C5CFC]']"
+              name="pause"
+            />
+          </span>
+        </el-tooltip>
       </div>
-      <el-tooltip :disabled="isMobile" :content="t('语音输入')" placement="top" :hide-after="0">
-        <span @click="onRecording" class="input-icon-btn">
-          <svg-icon svg-class="w-6 h-6 text-[#303133]" name="chat-sound" />
-        </span>
-      </el-tooltip>
     </template>
-    <div
-      v-show="internalEnterDisabled"
-      class="absolute top-0 right-0 bottom-0 left-0 cursor-not-allowed bg-[#ffffffa3] z-[1]"
-    />
+    <el-tooltip
+      v-if="needAiGenerate"
+      :disabled="internalEnterDisabled"
+      :content="t('自动生成')"
+      placement="top"
+      :hide-after="0"
+    >
+      <span @click="() => onIsAiGenerate(!isAiGenerate)" class="input-icon-btn">
+        <svg-icon
+          svg-class="w-6 h-6 text-[#303133]"
+          :name="isAiGenerate ? 'ai-pause' : 'ai-generate'"
+        />
+      </span>
+    </el-tooltip>
     <div
       v-show="chatRecordingEnterVisible"
       :class="['recorder-container', footerBrandShow && '!-bottom-8']"
@@ -144,9 +183,12 @@ const props = defineProps<{
   disabled?: boolean
   lastQuestionId?: number
   hiddenClear?: boolean
+  isAiGenerate: boolean
+  onIsAiGenerate: (v) => void
+  needAiGenerate: boolean
 }>()
 
-const emit = defineEmits(['update:value', 'inputClick', 'clear', 'submit'])
+const emit = defineEmits(['update:value', 'inputClick', 'clear', 'submit', 'onTerminateRetry'])
 
 const { t } = useI18n()
 const route = useRoute()
@@ -168,7 +210,7 @@ const internalEnterDisabled = computed({
 })
 const internalHiddenClear = computed(() => props.hiddenClear)
 const internalLastQuestionId = computed(() => props.lastQuestionId)
-
+const isAiGenerate = computed(() => props.isAiGenerate)
 const inputPlaceholder = computed(() =>
   isMobile.value ? '请输入问题' : '输入问题，换行可通过shift+回车'
 )
@@ -278,7 +320,7 @@ const onSendRecorder = () => {
 
 // 消息发送
 const onSend = (val?: string) => {
-  emit('submit', val)
+  !isAiGenerate.value && emit('submit', val)
 }
 
 // 语音对话，进来就开启录音
@@ -359,6 +401,7 @@ onBeforeUnmount(() => {
 
     &:hover {
       background-color: #f2f3f5;
+
       svg {
         color: #7c5cfc;
       }
@@ -411,6 +454,7 @@ onBeforeUnmount(() => {
     cursor: pointer;
     position: absolute;
     z-index: 2;
+
     &:hover {
       opacity: 0.8;
     }

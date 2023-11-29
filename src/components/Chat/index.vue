@@ -85,18 +85,6 @@
           {{ $t('电力值不足，更多电力值请咨询产品顾问') }}
         </div>
       </div>
-
-      <div
-        v-show="isLoadingAnswer"
-        data-sensors-click
-        id="Chato_chat_stop_click"
-        :data-sensors-question-id="sensorsQuestionId"
-        class="shrink-0 mb-4 mt-3 mx-auto flex items-center gap-2 text-[#303133] text-xs cursor-pointer px-4 py-3 rounded-md bg-[#F2F3F5] w-fit hover:opacity-80"
-        @click="onTerminateRetry"
-      >
-        <el-icon class="text-base"><VideoPause /></el-icon>{{ $t('终止') }}
-      </div>
-
       <div v-if="detail.shortcuts?.length" class="chat-center quick-message-bottom relative">
         <span
           v-for="(item, index) in detailShortcutsArr"
@@ -120,9 +108,13 @@
         :last-question-id="sensorsQuestionId"
         :hidden-clear="isMidJourneyDomain"
         :disabled="isLoadingAnswer"
+        :needAiGenerate="needAiGenerate"
+        :is-ai-generate="isAiGenerate"
+        :on-is-ai-generate="(v) => (isAiGenerate = v)"
         @input-click="scrollChatHistory"
         @clear="clearChatHistory"
         @submit="submit"
+        @onTerminateRetry="onTerminateRetry"
         class="chat-center"
       />
       <ChatFooter
@@ -251,6 +243,7 @@ interface Props {
   authLogin?: boolean
   avatarShow?: boolean
   isResource?: boolean
+  needAiGenerate?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -259,7 +252,8 @@ const props = withDefaults(defineProps<Props>(), {
   isChatingPractice: false,
   isreadRouteParam: false,
   avatarShow: true,
-  isResource: false
+  isResource: false,
+  needAiGenerate: false
 })
 
 const debugDomain = inject<IDomainInfo>(DebugDomainSymbol, null)
@@ -270,11 +264,14 @@ const { sseMsgResult } = storeToRefs(sseStore)
 const { source } = useSource()
 const route = useRoute()
 const base = useBase()
+const isAiGenerate = ref(false)
 const { userInfo } = storeToRefs(base)
 const authStoreI = useAuthStore()
 const { authToken, uid } = storeToRefs(authStoreI)
 const emit = defineEmits(['showDrawer', 'correctAnswer'])
 const { $sensors, $copyText } = useGlobalProperties()
+// 是否正在加载回答的消息内容
+const isLoadingAnswer = ref(false)
 const botSlug = computed(() => {
   if (debugDomain?.slug) {
     return debugDomain.slug
@@ -334,6 +331,36 @@ const copyText = (str: string) => {
   $copyText(str, '链接已复制成功，快分享给你的好友吧！')
 }
 
+watch(isAiGenerate, (v) => v && successRBI() && onAIGenerate())
+
+const onAIGenerate = async () => {
+  try {
+    const promptStr = inputText.value
+    let resStr = ''
+    inputText.value = ''
+
+    await SSEInstance.request(
+      '/prompt/generated',
+      {
+        role: detail.value.name,
+        system_prompt: detail.value.system_prompt,
+        user_prompt: promptStr,
+        generate_type: '欢迎语'
+      },
+      (str) => {
+        resStr += str
+        const parts = resStr.split('#')
+        if (parts[2] !== null) {
+          inputText.value = parts[1]
+        }
+      }
+    )
+  } catch (e) {
+  } finally {
+    submit()
+  }
+}
+
 // ---- 业务打点-----
 const scanCodeSuccessRBI = () => {
   $sensors?.track('chat_share', {
@@ -345,6 +372,16 @@ const scanCodeSuccessRBI = () => {
   })
 }
 // ----------------
+const successRBI = () => {
+  $sensors?.track('automatic_generated', {
+    name: t('自动生成'),
+    type: 'automatic_generated',
+    data: {
+      time: dayjs().format('YYYY-MM-DD HH:mm:ss')
+    }
+  })
+  return true
+}
 
 // 水印
 const watermarkFunc = () => {
@@ -644,8 +681,6 @@ const submit = async (str = '') => {
 
 // 是否被终止
 const isTerminated = ref(false)
-// 是否正在加载回答的消息内容
-const isLoadingAnswer = ref(false)
 
 const chatToken = computed(() => (isInternal ? authToken.value : uid.value))
 const needsSSEAudio = computed(
@@ -775,6 +810,10 @@ async function sendMsgRequest(message) {
     )
     sseStore.setAbortControllerMap(detail.value.slug, SSEInstance.abortCtrl)
     await SSEFetching
+    if (isAiGenerate.value) {
+      inputText.value = await getChatQuestion(history.value.at(-1).content)
+      submit()
+    }
   } catch (err) {
     history.value[history.value.length - 1].status = EWsMessageStatus.error
     history.value[history.value.length - 1].content = err
@@ -1130,6 +1169,19 @@ const initRecommendQuestions = async (question: string) => {
     recommendQuestionsLoading.value = false
   }
 }
+
+const getChatQuestion = async (question: string) =>
+  new Promise<string>(async (resolve) => {
+    try {
+      const {
+        data: { data }
+      } = await getChatRecommendQuestions({ ...chatCommonParams.value, question })
+      resolve(data.recommends[0].question)
+    } catch (e) {
+    } finally {
+      recommendQuestionsLoading.value = false
+    }
+  })
 
 const onClickRecommend = (ques: string) => {
   submit(ques)
