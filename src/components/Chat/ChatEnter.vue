@@ -39,12 +39,12 @@
           :autosize="{ maxRows: 5 }"
           v-model="internalValue"
           :placeholder="t(inputPlaceholder)"
-          :disabled="internalEnterDisabled"
+          :disabled="isAiGenerate || internalEnterDisabled"
           @click="emit('inputClick')"
           @keydown.enter="onKeydownEnter"
         />
         <el-tooltip
-          :disabled="internalEnterDisabled"
+          :disabled="isAiGenerate || internalEnterDisabled"
           :content="t('语音输入')"
           placement="top"
           :hide-after="0"
@@ -54,13 +54,13 @@
           </span>
         </el-tooltip>
         <el-tooltip
-          v-if="!internalEnterDisabled"
+          v-if="isAiGenerate || !internalEnterDisabled"
           :content="t(`发送`)"
           placement="top"
           :hide-after="0"
         >
           <span
-            :disabled="internalEnterDisabled"
+            :disabled="isAiGenerate || internalEnterDisabled"
             @click="() => onSend()"
             data-script="Chato-send-question"
             class="send-btn transition-colors"
@@ -95,10 +95,7 @@
       placement="top"
       :hide-after="0"
     >
-      <span
-        @click="() => !internalEnterDisabled && onIsAiGenerate(!isAiGenerate)"
-        class="input-icon-btn"
-      >
+      <span @click="() => onIsAiGenerate(!isAiGenerate)" class="input-icon-btn">
         <svg-icon
           svg-class="w-6 h-6 text-[#303133]"
           :name="isAiGenerate ? 'ai-pause' : 'ai-generate'"
@@ -324,7 +321,7 @@ const onSendRecorder = () => {
 
 // 消息发送
 const onSend = (val?: string) => {
-  emit('submit', val)
+  !isAiGenerate.value && emit('submit', val)
 }
 
 // 语音对话，进来就开启录音

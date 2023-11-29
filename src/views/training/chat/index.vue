@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white h-full">
+  <div class="bg-white h-[calc(100%-56px)]">
     <DebugChat class="h-full mx-auto !px-[18%] lg:!px-4" />
   </div>
 </template>

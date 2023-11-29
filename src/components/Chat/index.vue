@@ -267,6 +267,8 @@ const authStoreI = useAuthStore()
 const { authToken, uid } = storeToRefs(authStoreI)
 const emit = defineEmits(['showDrawer', 'correctAnswer'])
 const { $sensors, $copyText } = useGlobalProperties()
+// 是否正在加载回答的消息内容
+const isLoadingAnswer = ref(false)
 const botSlug = computed(() => {
   if (debugDomain?.slug) {
     return debugDomain.slug
@@ -324,6 +326,37 @@ const link = computed(
 const copyText = (str: string) => {
   scanCodeSuccessRBI()
   $copyText(str, '链接已复制成功，快分享给你的好友吧！')
+}
+
+watch(isAiGenerate, (v) => v && onAIGenerate())
+
+const onAIGenerate = async () => {
+  isLoadingAnswer.value = true
+  try {
+    const promptStr = inputText.value
+    let resStr = ''
+    inputText.value = ''
+
+    await SSEInstance.request(
+      '/prompt/generated',
+      {
+        role: detail.value.name,
+        system_prompt: detail.value.system_prompt,
+        user_prompt: promptStr,
+        generate_type: '欢迎语'
+      },
+      (str) => {
+        resStr += str
+        const parts = resStr.split('#')
+        if (parts[2] !== null) {
+          inputText.value = parts[1]
+        }
+      }
+    )
+  } catch (e) {
+  } finally {
+    submit()
+  }
 }
 
 // ---- 业务打点-----
@@ -636,8 +669,6 @@ const submit = async (str = '') => {
 
 // 是否被终止
 const isTerminated = ref(false)
-// 是否正在加载回答的消息内容
-const isLoadingAnswer = ref(false)
 
 const chatToken = computed(() => (isInternal ? authToken.value : uid.value))
 const needsSSEAudio = computed(
@@ -767,6 +798,10 @@ async function sendMsgRequest(message) {
     )
     sseStore.setAbortControllerMap(detail.value.slug, SSEInstance.abortCtrl)
     await SSEFetching
+    if (isAiGenerate.value) {
+      inputText.value = await getChatQuestion(history.value.at(-1).content)
+      submit()
+    }
   } catch (err) {
     history.value[history.value.length - 1].status = EWsMessageStatus.error
     history.value[history.value.length - 1].content = err
@@ -1122,6 +1157,19 @@ const initRecommendQuestions = async (question: string) => {
     recommendQuestionsLoading.value = false
   }
 }
+
+const getChatQuestion = async (question: string) =>
+  new Promise<string>(async (resolve) => {
+    try {
+      const {
+        data: { data }
+      } = await getChatRecommendQuestions({ ...chatCommonParams.value, question })
+      resolve(data.recommends[0].question)
+    } catch (e) {
+    } finally {
+      recommendQuestionsLoading.value = false
+    }
+  })
 
 const onClickRecommend = (ques: string) => {
   submit(ques)
