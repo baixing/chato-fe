@@ -108,6 +108,7 @@
         :last-question-id="sensorsQuestionId"
         :hidden-clear="isMidJourneyDomain"
         :disabled="isLoadingAnswer"
+        :needAiGenerate="needAiGenerate"
         :is-ai-generate="isAiGenerate"
         :on-is-ai-generate="(v) => (isAiGenerate = v)"
         @input-click="scrollChatHistory"
@@ -242,6 +243,7 @@ interface Props {
   authLogin?: boolean
   avatarShow?: boolean
   isResource?: boolean
+  needAiGenerate?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -250,7 +252,8 @@ const props = withDefaults(defineProps<Props>(), {
   isChatingPractice: false,
   isreadRouteParam: false,
   avatarShow: true,
-  isResource: false
+  isResource: false,
+  needAiGenerate: false
 })
 
 const debugDomain = inject<IDomainInfo>(DebugDomainSymbol, null)
@@ -328,10 +331,9 @@ const copyText = (str: string) => {
   $copyText(str, '链接已复制成功，快分享给你的好友吧！')
 }
 
-watch(isAiGenerate, (v) => v && onAIGenerate())
+watch(isAiGenerate, (v) => v && successRBI() && onAIGenerate())
 
 const onAIGenerate = async () => {
-  isLoadingAnswer.value = true
   try {
     const promptStr = inputText.value
     let resStr = ''
@@ -370,6 +372,16 @@ const scanCodeSuccessRBI = () => {
   })
 }
 // ----------------
+const successRBI = () => {
+  $sensors?.track('automatic_generated', {
+    name: t('自动生成'),
+    type: 'automatic_generated',
+    data: {
+      time: dayjs().format('YYYY-MM-DD HH:mm:ss')
+    }
+  })
+  return true
+}
 
 // 水印
 const watermarkFunc = () => {

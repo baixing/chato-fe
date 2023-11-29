@@ -6,6 +6,7 @@
       @correctAnswer="onCorrectAnswer"
       @showDrawer="onOpenDrawer"
       :avatarShow="false"
+      :needAiGenerate="true"
       chatClassName="chat-debug"
       type="create"
     />

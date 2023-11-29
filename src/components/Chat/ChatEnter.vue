@@ -1,5 +1,5 @@
 <template>
-  <div class="input-box">
+  <div class="input-box lg:!px-0">
     <el-tooltip
       :disabled="internalEnterDisabled"
       :content="t(`清空历史消息`)"
@@ -54,13 +54,14 @@
           </span>
         </el-tooltip>
         <el-tooltip
-          v-if="isAiGenerate || !internalEnterDisabled"
+          class="lg:pl-1"
+          v-if="!internalEnterDisabled"
           :content="t(`发送`)"
           placement="top"
           :hide-after="0"
         >
           <span
-            :disabled="isAiGenerate || internalEnterDisabled"
+            :disabled="internalEnterDisabled"
             @click="() => onSend()"
             data-script="Chato-send-question"
             class="send-btn transition-colors"
@@ -82,7 +83,7 @@
             class="send-btn transition-colors"
           >
             <svg-icon
-              :svg-class="['w-6 h-6 text-[#B5BED0] transition-colors hover:text-[#7C5CFC]']"
+              :svg-class="['w-6 h-6 text-[#303133] transition-colors hover:text-[#7C5CFC]']"
               name="pause"
             />
           </span>
@@ -90,6 +91,7 @@
       </div>
     </template>
     <el-tooltip
+      v-if="needAiGenerate"
       :disabled="internalEnterDisabled"
       :content="t('自动生成')"
       placement="top"
@@ -102,10 +104,6 @@
         />
       </span>
     </el-tooltip>
-    <!-- <div
-      v-show="internalEnterDisabled"
-      class="absolute top-0 right-0 bottom-0 left-0 cursor-not-allowed bg-[#ffffffa3] z-[1]"
-    /> -->
     <div
       v-show="chatRecordingEnterVisible"
       :class="['recorder-container', footerBrandShow && '!-bottom-8']"
@@ -187,6 +185,7 @@ const props = defineProps<{
   hiddenClear?: boolean
   isAiGenerate: boolean
   onIsAiGenerate: (v) => void
+  needAiGenerate: boolean
 }>()
 
 const emit = defineEmits(['update:value', 'inputClick', 'clear', 'submit', 'onTerminateRetry'])
