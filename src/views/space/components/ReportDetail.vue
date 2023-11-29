@@ -59,7 +59,7 @@
         </div>
         <SearchInput v-model:value="keyword" size="large" />
       </div>
-      <div v-if="!isMobile" class="button-container">
+      <div v-if="false" class="button-container">
         <el-button v-if="multipleSelection.size > 0" type="primary" @click="() => handleExport()">
           {{ $t('导出当前') }}
         </el-button>
@@ -100,7 +100,7 @@
             </ul>
           </template>
         </el-table-column>
-        <el-table-column v-if="!isMobile" type="selection" width="55" />
+        <el-table-column v-if="false" type="selection" width="55" />
         <el-table-column v-if="!isMobile" prop="seq" :label="$t(`序号`)" align="left" width="80" />
         <el-table-column :label="$t(`提问`)">
           <template #default="{ row }">
@@ -145,18 +145,13 @@
 </template>
 <script setup>
 import * as apiReport from '@/api/report'
-import EnterQa from '@/components/EnterAnswer/EnterQa.vue'
 import SearchInput from '@/components/Input/SearchInput.vue'
 import { useBasicLayout } from '@/composables/useBasicLayout'
-import { currentEnvConfig } from '@/config'
-import { RoutesMap } from '@/router'
 import { toSimpleDateTime } from '@/utils/formatter'
 import { detectMarkdown, renderMarkdown } from '@/utils/markdown'
-import * as url from '@/utils/url'
 import { debouncedWatch } from '@vueuse/core'
 import { ElNotification as Notification } from 'element-plus'
-import { storeToRefs } from 'pinia'
-import { computed, nextTick, reactive, ref, watch } from 'vue'
+import { computed, nextTick, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 
