@@ -85,18 +85,6 @@
           {{ $t('电力值不足，更多电力值请咨询产品顾问') }}
         </div>
       </div>
-
-      <div
-        v-show="isLoadingAnswer"
-        data-sensors-click
-        id="Chato_chat_stop_click"
-        :data-sensors-question-id="sensorsQuestionId"
-        class="shrink-0 mb-4 mt-3 mx-auto flex items-center gap-2 text-[#303133] text-xs cursor-pointer px-4 py-3 rounded-md bg-[#F2F3F5] w-fit hover:opacity-80"
-        @click="onTerminateRetry"
-      >
-        <el-icon class="text-base"><VideoPause /></el-icon>{{ $t('终止') }}
-      </div>
-
       <div v-if="detail.shortcuts?.length" class="chat-center quick-message-bottom relative">
         <span
           v-for="(item, index) in detailShortcutsArr"
@@ -120,9 +108,12 @@
         :last-question-id="sensorsQuestionId"
         :hidden-clear="isMidJourneyDomain"
         :disabled="isLoadingAnswer"
+        :is-ai-generate="isAiGenerate"
+        :on-is-ai-generate="(v) => (isAiGenerate = v)"
         @input-click="scrollChatHistory"
         @clear="clearChatHistory"
         @submit="submit"
+        @onTerminateRetry="onTerminateRetry"
         class="chat-center"
       />
       <ChatFooter
@@ -270,6 +261,7 @@ const { sseMsgResult } = storeToRefs(sseStore)
 const { source } = useSource()
 const route = useRoute()
 const base = useBase()
+const isAiGenerate = ref(false)
 const { userInfo } = storeToRefs(base)
 const authStoreI = useAuthStore()
 const { authToken, uid } = storeToRefs(authStoreI)
