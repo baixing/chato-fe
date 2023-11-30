@@ -27,7 +27,12 @@ export const updateDomain = (domainId: string | number, data) => {
   return request<IDomainInfo | string[]>({
     method: 'patch',
     url: `/chato/api/domains/${domainId}`,
-    data
+    data: {
+      ...data,
+      avatar:
+        data.avatar ||
+        'https://afu-1255830993.cos.ap-shanghai.myqcloud.com/chato_image/avater/932c581b16b6c2c07368d3e15c533888.jpg'
+    }
   })
 }
 
