@@ -30,6 +30,25 @@
     <DebugChat v-if="!isMobile" />
   </div>
 
+  <Modal
+    v-model:visible="visible"
+    :width="300"
+    class="!p-0 flex justify-center !pb-4"
+    :slotHeader="false"
+    :footer="false"
+  >
+    <div class="h-[150px] flex justify-center">
+      <img :src="IconReward" class="w-[200px] h-full object-cover" />
+    </div>
+    <div class="text-center mt-4 text-[#3D3D3D] text-base font-medium mb-3">
+      {{ $t('恭喜你，完成') }} <span class="text-[#7C5CFC]">{{ $t('配置形象信息') }}</span>
+      {{ $t('任务') }}
+    </div>
+    <div class="text-[#596780] text-xs text-center">
+      {{ $t('获得电力值') }} <span class="text-[#7C5CFC]">+100</span>
+    </div>
+  </Modal>
+
   <span
     v-if="isMobile"
     @click="chatMobileModalVisible = true"
@@ -60,6 +79,7 @@
 
 <script setup lang="ts">
 import { domainLLMConfigAPI, updateDomain } from '@/api/domain'
+import IconReward from '@/assets/img/Icon-Reward.png'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import { DebugDomainSymbol, DomainEditSymbol, DomainHansLimitSymbol } from '@/constant/domain'
 import { EDomainStatus } from '@/enum/domain'
@@ -85,7 +105,7 @@ const router = useRouter()
 
 const domainStoreI = useDomainStore()
 const { domainInfo } = storeToRefs(domainStoreI)
-
+const visible = ref(false)
 let originalDomain: Partial<IDomainInfo> = {}
 let currentDomain = reactive<Partial<IDomainInfo>>({})
 const currentDomainHansLimit = reactive({
@@ -141,6 +161,10 @@ const beforeSaveCheck = () => {
   return true
 }
 
+const setModifyFields = (keys: (keyof IDomainInfo)[]) => {
+  return keys.every((value) => currentDomain[value] === originalDomain[value])
+}
+
 const onSave = async () => {
   try {
     if (!beforeSaveCheck()) {
@@ -169,7 +193,19 @@ const onSave = async () => {
       text: t('保存中'),
       background: 'rgba(0, 0, 0, 0.7)'
     })
-
+    if (
+      !setModifyFields(['avatar', 'name', 'welcome', 'system_prompt', 'desc']) &&
+      currentDomain.task_progress[0] === 0
+    ) {
+      currentDomain.task_progress[0] = 20
+      visible.value = true
+      setTimeout(() => {
+        visible.value = false
+      }, 6000)
+      setTimeout(() => {
+        visible.value = true
+      }, 2000)
+    }
     await updateDomain(currentDomain.id, {
       ...currentDomain,
       status: EDomainStatus.able
@@ -181,10 +217,6 @@ const onSave = async () => {
   } finally {
     loading.value.close()
   }
-}
-
-const onCancel = () => {
-  currentDomain = Object.assign(currentDomain, originalDomain)
 }
 
 const initLLMConfigOption = async () => {
