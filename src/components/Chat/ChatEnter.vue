@@ -1,5 +1,5 @@
 <template>
-  <div class="input-box lg:!px-0">
+  <div class="input-box" :class="[needAiGenerate ? 'lg:!px-0' : 'lg:!px-3']">
     <el-tooltip
       :disabled="internalEnterDisabled"
       :content="t(`清空历史消息`)"
@@ -54,7 +54,6 @@
           </span>
         </el-tooltip>
         <el-tooltip
-          class="lg:pl-1"
           v-if="!internalEnterDisabled"
           :content="t(`发送`)"
           placement="top"
@@ -64,7 +63,7 @@
             :disabled="internalEnterDisabled"
             @click="() => onSend()"
             data-script="Chato-send-question"
-            class="send-btn transition-colors"
+            class="send-btn transition-colors pl-1"
           >
             <svg-icon
               :svg-class="[
@@ -80,7 +79,7 @@
             :disabled="!internalEnterDisabled"
             @click="emit('onTerminateRetry')"
             data-script="Chato-send-question"
-            class="send-btn transition-colors"
+            class="send-btn transition-colors pl-1"
           >
             <svg-icon
               :svg-class="['w-6 h-6 text-[#303133] transition-colors hover:text-[#7C5CFC]']"
@@ -97,12 +96,17 @@
       placement="top"
       :hide-after="0"
     >
-      <span @click="() => onIsAiGenerate(!isAiGenerate)" class="input-icon-btn">
-        <svg-icon
-          svg-class="w-6 h-6 text-[#303133]"
-          :name="isAiGenerate ? 'ai-pause' : 'ai-generate'"
-        />
-      </span>
+      <div
+        @click="() => onIsAiGenerate(!isAiGenerate)"
+        class="input-icon-btn bg-[#7C5CFC]/[.08] lg:bg-transparent"
+      >
+        <div class="w-full flex justify-center items-center">
+          <svg-icon
+            svg-class="w-6 h-6 text-[#303133]"
+            :name="isAiGenerate ? 'ai-pause' : 'ai-generate'"
+          />
+        </div>
+      </div>
     </el-tooltip>
     <div
       v-show="chatRecordingEnterVisible"
