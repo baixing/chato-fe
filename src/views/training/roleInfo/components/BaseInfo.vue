@@ -166,9 +166,9 @@
       {{ $t('恭喜你，完成') }} <span class="text-[#7C5CFC]">{{ $t('上传知识') }}</span>
       {{ $t('任务') }}
     </div>
-    <div class="text-[#596780] text-xs text-center">
+    <!-- <div class="text-[#596780] text-xs text-center">
       {{ $t('获得电力值') }} <span class="text-[#7C5CFC]">+100</span>
-    </div>
+    </div> -->
   </Modal>
 </template>
 
