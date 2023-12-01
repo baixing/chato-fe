@@ -22,8 +22,10 @@
 
 <script setup lang="ts">
 import { RoutesMap } from '@/router'
+import { useAuthStore } from '@/stores/auth'
 import { useChatStore } from '@/stores/chat'
 import { storeToRefs } from 'pinia'
+import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -31,9 +33,18 @@ const route = useRoute()
 const chatStoreI = useChatStore()
 const { chatList } = storeToRefs(chatStoreI)
 
+const authStoreI = useAuthStore()
+const { authToken } = storeToRefs(authStoreI)
+const isLoggedIn = computed(() => !!authToken.value)
+
 const handleGoChat = () => {
   const name = route.name === RoutesMap.home.homeChat ? RoutesMap.home.homeChat : RoutesMap.chat.c
-
+  if (!isLoggedIn.value) {
+    return router.replace({
+      name: RoutesMap.auth.login,
+      query: { redirect: route.fullPath, type: `${name}` }
+    })
+  }
   router.push({
     name,
     params: {

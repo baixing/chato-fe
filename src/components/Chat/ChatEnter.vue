@@ -44,6 +44,7 @@
           @keydown.enter="onKeydownEnter"
         />
         <el-tooltip
+          v-if="false"
           :disabled="isAiGenerate || internalEnterDisabled"
           :content="t('语音输入')"
           placement="top"

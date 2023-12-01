@@ -134,6 +134,12 @@ const { checkRightsTypeNeedUpgrade } = useSpaceRights()
 const isLoggedIn = computed(() => !!authToken.value)
 const emit = defineEmits(['hidden_square'])
 async function onAddSessionChat(item) {
+  if (!isLoggedIn.value) {
+    return router.replace({
+      name: RoutesMap.auth.login,
+      query: { redirect: `${props.prefix}/bot/${item.slug}` }
+    })
+  }
   emit('hidden_square', 'hide')
   if (chatList.value.filter((i) => i.slug === item.slug).length)
     return router.replace(`${props.prefix}/bot/${item.slug}`)
