@@ -1,5 +1,5 @@
 <template>
-  <div class="container-preview-page bg-white relative">
+  <div class="container-preview-page bg-white relative parent-element">
     <div
       v-if="detail.name_and_avatar_show && avatarShow"
       class="flex items-center justify-center h-14 bg-white mb-0 text-sm font-medium gap-2 shrink-0"
@@ -227,7 +227,7 @@ import {
 } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
-import Watermark from 'watermark-plus'
+import { BlindWatermark, Watermark } from 'watermark-js-plus'
 import xss from 'xss'
 import ChatFooter from './ChatFooter.vue'
 import ChatMessageMore from './ChatMessageMore.vue'
@@ -304,6 +304,7 @@ const socketResult = ref({
   chunk_message: ''
 })
 const watermark = ref<Watermark>()
+const blindWatermark = ref<BlindWatermark>()
 const showPreview = ref(false)
 const previewImageUrl = ref('')
 const sensorsQuestionId = computed(() => history.value?.[history.value.length - 1]?.questionId)
@@ -385,14 +386,26 @@ const successRBI = () => {
 
 // 水印
 const watermarkFunc = () => {
-  if (watermark.value) return
-  watermark.value = new Watermark({
-    content: userInfo.value.id || uid.value || 'chato',
-    alpha: 0.01,
-    onSuccess: () => {},
-    onWatermarkNull: () => console.error('watermark error')
-  })
-  watermark.value.create()
+  if (!blindWatermark.value) {
+    blindWatermark.value = new BlindWatermark({
+      content: userInfo.value.id.toString() || uid.value.toString() || 'chato',
+      rotate: 30,
+      onSuccess: () => {}
+    })
+    blindWatermark.value.create()
+  }
+
+  if (!watermark.value) {
+    watermark.value = new Watermark({
+      parent: '.parent-element',
+      fontColor: '#e4e5e5',
+      fontSize: '12px',
+      rotate: 30,
+      content: '内容由AI生成仅供参考',
+      onSuccess: () => {}
+    })
+    watermark.value.create()
+  }
 }
 
 // 是否是绘画机器人，通过对话的回答是否包含 mjImage 类型的消息
@@ -1235,6 +1248,7 @@ onBeforeUnmount(() => {
   document.removeEventListener('click', onElClick)
   refChatHistory.value?.removeEventListener('click', chatHisListener)
   watermark.value && watermark.value.destroy()
+  blindWatermark.value && blindWatermark.value.destroy()
 })
 
 watch(
@@ -1398,5 +1412,7 @@ defineExpose({
   text-align: center;
   color: $color-minor;
   opacity: 0.5;
+}
+.parent-element {
 }
 </style>
