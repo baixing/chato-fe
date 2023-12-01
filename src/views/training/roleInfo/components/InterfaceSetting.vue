@@ -370,7 +370,7 @@ const checkCorrectTicketExpired = async () => {
 
 const changeConversation = (value) => {
   if (
-    value === EDomainConversationMode.video &&
+    value === EDomainConversationMode.audio &&
     !currentDomain.conversation_mode_meta &&
     timbreList.value.length
   ) {
