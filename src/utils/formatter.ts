@@ -37,6 +37,7 @@ export const FILE_TYPE_NAMES = {
   pptx: 'pptx',
   xls: 'excel',
   xlsx: 'excel',
+  url: 'url',
   ...UPLOAD_FILE_FORCED_CONVERSION_TO_TXT_TYPES.reduce((pre, cur) => {
     pre[cur.replace('.', '')] = 'txt'
     return pre
