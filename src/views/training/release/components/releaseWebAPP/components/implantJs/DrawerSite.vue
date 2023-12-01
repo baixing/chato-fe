@@ -130,7 +130,6 @@ const codeContent = (id: number) => {
   }
   var st = document.createElement("script");
   st.type = 'module';
-  st.crossOrigin = true;
   st.async = true;st.src = "${props.chatScript}";
   var header = document.getElementsByTagName("head")[0];
   header.appendChild(st);
