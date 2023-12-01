@@ -21,6 +21,8 @@
 </template>
 
 <script setup lang="ts">
+import useSpaceRights from '@/composables/useSpaceRights'
+import { ESpaceRightsType } from '@/enum/space'
 import { RoutesMap } from '@/router'
 import { useChatStore } from '@/stores/chat'
 import { storeToRefs } from 'pinia'
@@ -30,7 +32,7 @@ const router = useRouter()
 const route = useRoute()
 const chatStoreI = useChatStore()
 const { chatList } = storeToRefs(chatStoreI)
-
+const { checkRightsTypeNeedUpgrade } = useSpaceRights()
 const handleGoChat = () => {
   const name = route.name === RoutesMap.home.homeChat ? RoutesMap.home.homeChat : RoutesMap.chat.c
 
@@ -43,7 +45,11 @@ const handleGoChat = () => {
   })
 }
 
-const handeGoCreate = () => {
+const handeGoCreate = async () => {
+  const needUpgrade = await checkRightsTypeNeedUpgrade(ESpaceRightsType.bot)
+  if (needUpgrade) {
+    return
+  }
   router.push({ name: RoutesMap.guide.first })
 }
 </script>

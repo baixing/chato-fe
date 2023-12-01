@@ -257,7 +257,6 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const debugDomain = inject<IDomainInfo>(DebugDomainSymbol, null)
-
 const { t } = useI18n()
 const sseStore = useSSEStore()
 const { sseMsgResult } = storeToRefs(sseStore)

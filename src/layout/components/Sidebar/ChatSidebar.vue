@@ -60,11 +60,12 @@
 
 <script setup lang="ts">
 import DefaultAvatar from '@/assets/img/avatar.png'
+import useSpaceRights from '@/composables/useSpaceRights'
+import { ESpaceRightsType } from '@/enum/space'
+import { RoutesMap } from '@/router'
 import { useChatStore } from '@/stores/chat'
 import { storeToRefs } from 'pinia'
 import { useRoute, useRouter } from 'vue-router'
-import { RoutesMap } from '@/router'
-import { ref, watch } from 'vue'
 
 const props = withDefaults(
   defineProps<{
@@ -79,7 +80,7 @@ const route = useRoute()
 const router = useRouter()
 const chatStoreI = useChatStore()
 const { chatList } = storeToRefs(chatStoreI)
-
+const { checkRightsTypeNeedUpgrade } = useSpaceRights()
 const emit = defineEmits(['to_square', 'hide_square'])
 const onLinkToChat = (slug: string) => {
   emit('hide_square', 'hide')
@@ -93,7 +94,11 @@ async function jumpToSquare() {
   console.log(route.path)
 }
 
-const handeGoCreate = () => {
+const handeGoCreate = async () => {
+  const needUpgrade = await checkRightsTypeNeedUpgrade(ESpaceRightsType.bot)
+  if (needUpgrade) {
+    return
+  }
   router.push({ name: RoutesMap.guide.first })
 }
 

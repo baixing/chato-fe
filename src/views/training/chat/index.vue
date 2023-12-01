@@ -1,8 +1,13 @@
 <template>
   <div class="bg-white h-full max-h-[calc(100%-56px)]">
     <div class="h-full mx-auto !px-[18%] lg:!px-4 flex flex-col">
-      <BotProgress />
-      <DebugChat class="flex-1 overflow-y-auto" />
+      <BotProgress
+        v-if="
+          domainInfo.task_progress &&
+          domainInfo.task_progress.reduce((pre, cur) => pre + cur, 20) !== 100
+        "
+      />
+      <DebugChat class="flex-1 overflow-y-auto" v-if="domainInfo" />
     </div>
   </div>
 </template>

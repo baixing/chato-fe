@@ -7,7 +7,7 @@
     :footer="false"
   >
     <p class="text-[#3D3D3D] font-medium mb-4">
-      {{ $t('通过一下方式，可以访问小程序专属页面。') }}
+      {{ $t('通过以下方式，可以访问小程序专属页面。') }}
     </p>
     <div class="text-left" v-loading="loading">
       <p class="text-[#3D3D3D] font-medium mr-3 mb-4">{{ $t('1、小程序码') }}</p>
