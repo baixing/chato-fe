@@ -9,7 +9,6 @@
       :needAiGenerate="true"
       :bSlug="domainSlug"
       chatClassName="chat-debug"
-      type="create"
     />
     <div
       v-if="!debugDomain?.system_prompt"
