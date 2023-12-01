@@ -102,6 +102,7 @@ import { deleteRetryFileMate, getFilesByDomainId, postGenerateDocAPI } from '@/a
 import IconReward from '@/assets/img/Icon-Reward.png'
 import EnterDoc from '@/components/EnterAnswer/EnterDoc.vue'
 import SearchInput from '@/components/Input/SearchInput.vue'
+import useGlobalProperties from '@/composables/useGlobalProperties'
 import useImagePath from '@/composables/useImagePath'
 import useSpaceRights from '@/composables/useSpaceRights'
 import { currentEnvConfig } from '@/config'
@@ -122,6 +123,7 @@ import { useBase } from '@/stores/base'
 import { useDomainStore } from '@/stores/domain'
 import * as url from '@/utils/url'
 import { debouncedWatch } from '@vueuse/core'
+import dayjs from 'dayjs'
 import { ElLoading, ElMessageBox, ElNotification } from 'element-plus'
 import { storeToRefs } from 'pinia'
 import { computed, onUnmounted, ref, watch } from 'vue'
@@ -160,6 +162,7 @@ const learnCount = ref<{
 })
 const serachStatus = ref(false)
 const searchInput = ref<string>('')
+const { $sensors } = useGlobalProperties()
 const multipleSelection = ref<IDocumentList[]>([])
 const DocSelectStatus = ref(LearningStatesPerformanceType.all)
 const batchRemove = ref<boolean>(false)
@@ -226,18 +229,28 @@ const initDocList = async () => {
       await updateDomain(domainInfo.value.id, {
         task_progress: domainInfo.value.task_progress
       })
+      sensorsTaskProgress()
       setTimeout(() => {
         visible.value = false
-      }, 6000)
-      setTimeout(() => {
-        visible.value = true
       }, 2000)
+      visible.value = true
     }
   } catch (err) {
   } finally {
     loading.value = false
     serachStatus.value = false
   }
+}
+
+const sensorsTaskProgress = () => {
+  $sensors?.track('mission_completed', {
+    name: t('任务完成'),
+    type: 'mission_completed',
+    data: {
+      task_progress: 1,
+      time: dayjs().format('YYYY-MM-DD HH:mm:ss')
+    }
+  })
 }
 
 const handleTriggerMate = () => {

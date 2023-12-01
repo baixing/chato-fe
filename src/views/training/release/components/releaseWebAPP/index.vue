@@ -23,6 +23,7 @@ import {
   View
 } from '@element-plus/icons-vue'
 import { useSessionStorage } from '@vueuse/core'
+import dayjs from 'dayjs'
 import { storeToRefs } from 'pinia'
 import {
   computed,
@@ -132,7 +133,6 @@ const handlePreview = (e: string) => {
 }
 
 const postReview = async () => {
-  console.log(domainInfo.value.task_progress)
   if (domainInfo.value.task_progress[2] === 0) {
     domainInfo.value.task_progress[2] = 20
     await updateDomain(domainInfo.value.id, {
@@ -140,11 +140,21 @@ const postReview = async () => {
     })
     setTimeout(() => {
       visible.value = false
-    }, 6000)
-    setTimeout(() => {
-      visible.value = true
     }, 2000)
+    visible.value = true
+    sensorsTaskProgress()
   }
+}
+
+const sensorsTaskProgress = () => {
+  $sensors?.track('mission_completed', {
+    name: t('任务完成'),
+    type: 'mission_completed',
+    data: {
+      task_progress: 2,
+      time: dayjs().format('YYYY-MM-DD HH:mm:ss')
+    }
+  })
 }
 
 const commonVisible = (visibleRef: Ref<boolean>, show: boolean = false) => {

@@ -81,12 +81,14 @@
 import { domainLLMConfigAPI, updateDomain } from '@/api/domain'
 import IconReward from '@/assets/img/Icon-Reward.png'
 import { useBasicLayout } from '@/composables/useBasicLayout'
+import useGlobalProperties from '@/composables/useGlobalProperties'
 import { DebugDomainSymbol, DomainEditSymbol, DomainHansLimitSymbol } from '@/constant/domain'
 import { EDomainStatus } from '@/enum/domain'
 import type { IDomainInfo, IDomainLLMConfig } from '@/interface/domain'
 import { RoutesMap } from '@/router'
 import { useDomainStore } from '@/stores/domain'
 import { getStringWidth } from '@/utils/string'
+import dayjs from 'dayjs'
 import { ElLoading, ElMessage, ElMessageBox, ElNotification } from 'element-plus'
 import { cloneDeep, isEqual } from 'lodash-es'
 import { storeToRefs } from 'pinia'
@@ -119,7 +121,7 @@ const currentDomainHansLimit = reactive({
 })
 const chatMobileModalVisible = ref(false)
 const domainLLMTypeOptions = ref<IDomainLLMConfig[]>([])
-
+const { $sensors } = useGlobalProperties()
 const activeTab = computed(() => (route.params?.type as string) || 'base')
 // 是否修改过
 const isModified = () => !isEqual(currentDomain, originalDomain)
@@ -199,11 +201,9 @@ const onSave = async () => {
     ) {
       currentDomain.task_progress[0] = 20
       visible.value = true
+      sensorsTaskProgress()
       setTimeout(() => {
         visible.value = false
-      }, 6000)
-      setTimeout(() => {
-        visible.value = true
       }, 2000)
     }
     await updateDomain(currentDomain.id, {
@@ -217,6 +217,17 @@ const onSave = async () => {
   } finally {
     loading.value.close()
   }
+}
+
+const sensorsTaskProgress = () => {
+  $sensors?.track('mission_completed', {
+    name: t('任务完成'),
+    type: 'mission_completed',
+    data: {
+      task_progress: 0,
+      time: dayjs().format('YYYY-MM-DD HH:mm:ss')
+    }
+  })
 }
 
 const initLLMConfigOption = async () => {
