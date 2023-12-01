@@ -62,6 +62,7 @@
         @edit-preview-doc="onEditPreviewDoc"
         @generateQA="onGenerateQA"
         @generateQARouter="onGenerateQARouter"
+        @refresh="initDocList"
       />
     </div>
     <EnterDoc
