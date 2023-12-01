@@ -1,5 +1,6 @@
 import { EDomainConversationMode, EDomainConversationModeArousalMethod } from '@/enum/domain'
 import type { IDomainInfo } from '@/interface/domain'
+import { RoutesMap } from '@/router'
 import type { InjectionKey } from 'vue'
 
 export const DomainCategoryOptions = [
@@ -75,6 +76,31 @@ export const DomainConversationModeOptions = [
 export const DomainConversationModeArousalMethodOptions = [
   { label: '主动触发', value: EDomainConversationModeArousalMethod.ActiveTrigger },
   { label: '自动识别语音', value: EDomainConversationModeArousalMethod.AutomaticSpeechRecognition }
+] as const
+
+export const taskList = [
+  {
+    name: '配置形象信息',
+    power: 100,
+    icon: 'task-user',
+    fraction: 20,
+    routeName: RoutesMap.tranning.roleInfo
+  },
+  // { name: '对话配置与调试', power: 100, icon: 'task-chat' },
+  {
+    name: '上传知识',
+    power: 100,
+    icon: 'task-post-add',
+    fraction: 40,
+    routeName: RoutesMap.tranning.knowledge
+  },
+  {
+    name: '发布分享',
+    power: 100,
+    icon: 'task-send',
+    fraction: 20,
+    routeName: RoutesMap.tranning.release
+  }
 ] as const
 
 export const DebugDomainSymbol = Symbol('temporary-debug-domain')

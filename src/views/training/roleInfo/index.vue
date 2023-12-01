@@ -30,6 +30,25 @@
     <DebugChat v-if="!isMobile" />
   </div>
 
+  <Modal
+    v-model:visible="visible"
+    :width="300"
+    class="!p-0 flex justify-center !pb-4"
+    :slotHeader="false"
+    :footer="false"
+  >
+    <div class="h-[150px] flex justify-center">
+      <img :src="IconReward" class="w-[200px] h-full object-cover" />
+    </div>
+    <div class="text-center mt-4 text-[#3D3D3D] text-base font-medium mb-3">
+      {{ $t('恭喜你，完成') }} <span class="text-[#7C5CFC]">{{ $t('配置形象信息') }}</span>
+      {{ $t('任务') }}
+    </div>
+    <!-- <div class="text-[#596780] text-xs text-center">
+      {{ $t('获得电力值') }} <span class="text-[#7C5CFC]">+100</span>
+    </div> -->
+  </Modal>
+
   <span
     v-if="isMobile"
     @click="chatMobileModalVisible = true"
@@ -60,13 +79,16 @@
 
 <script setup lang="ts">
 import { domainLLMConfigAPI, updateDomain } from '@/api/domain'
+import IconReward from '@/assets/img/Icon-Reward.png'
 import { useBasicLayout } from '@/composables/useBasicLayout'
+import useGlobalProperties from '@/composables/useGlobalProperties'
 import { DebugDomainSymbol, DomainEditSymbol, DomainHansLimitSymbol } from '@/constant/domain'
 import { EDomainStatus } from '@/enum/domain'
 import type { IDomainInfo, IDomainLLMConfig } from '@/interface/domain'
 import { RoutesMap } from '@/router'
 import { useDomainStore } from '@/stores/domain'
 import { getStringWidth } from '@/utils/string'
+import dayjs from 'dayjs'
 import { ElLoading, ElMessage, ElMessageBox, ElNotification } from 'element-plus'
 import { cloneDeep, isEqual } from 'lodash-es'
 import { storeToRefs } from 'pinia'
@@ -85,7 +107,7 @@ const router = useRouter()
 
 const domainStoreI = useDomainStore()
 const { domainInfo } = storeToRefs(domainStoreI)
-
+const visible = ref(false)
 let originalDomain: Partial<IDomainInfo> = {}
 let currentDomain = reactive<Partial<IDomainInfo>>({})
 const currentDomainHansLimit = reactive({
@@ -99,7 +121,7 @@ const currentDomainHansLimit = reactive({
 })
 const chatMobileModalVisible = ref(false)
 const domainLLMTypeOptions = ref<IDomainLLMConfig[]>([])
-
+const { $sensors } = useGlobalProperties()
 const activeTab = computed(() => (route.params?.type as string) || 'base')
 // 是否修改过
 const isModified = () => !isEqual(currentDomain, originalDomain)
@@ -141,6 +163,10 @@ const beforeSaveCheck = () => {
   return true
 }
 
+const setModifyFields = (keys: (keyof IDomainInfo)[]) => {
+  return keys.every((value) => currentDomain[value] === originalDomain[value])
+}
+
 const onSave = async () => {
   try {
     if (!beforeSaveCheck()) {
@@ -169,7 +195,17 @@ const onSave = async () => {
       text: t('保存中'),
       background: 'rgba(0, 0, 0, 0.7)'
     })
-
+    if (
+      !setModifyFields(['avatar', 'name', 'welcome', 'system_prompt', 'desc']) &&
+      currentDomain.task_progress[0] === 0
+    ) {
+      currentDomain.task_progress[0] = 20
+      visible.value = true
+      sensorsTaskProgress()
+      setTimeout(() => {
+        visible.value = false
+      }, 2000)
+    }
     await updateDomain(currentDomain.id, {
       ...currentDomain,
       status: EDomainStatus.able
@@ -183,8 +219,15 @@ const onSave = async () => {
   }
 }
 
-const onCancel = () => {
-  currentDomain = Object.assign(currentDomain, originalDomain)
+const sensorsTaskProgress = () => {
+  $sensors?.track('mission_completed', {
+    name: t('任务完成'),
+    type: 'mission_completed',
+    data: {
+      task_progress: 0,
+      time: dayjs().format('YYYY-MM-DD HH:mm:ss')
+    }
+  })
 }
 
 const initLLMConfigOption = async () => {

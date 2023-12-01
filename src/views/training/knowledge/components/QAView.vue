@@ -66,11 +66,32 @@
     @reloadList="initQAList"
     @closeDialogVisble="onCloseDialog"
   />
+  <Modal
+    v-model:visible="visible"
+    :width="300"
+    class="!p-0 flex justify-center !pb-4"
+    :slotHeader="false"
+    :footer="false"
+  >
+    <div class="h-[150px] flex justify-center">
+      <img :src="IconReward" class="w-[200px] h-full object-cover" />
+    </div>
+    <div class="text-center mt-4 text-[#3D3D3D] text-base font-medium mb-3">
+      {{ $t('恭喜你，完成') }} <span class="text-[#7C5CFC]">{{ $t('上传知识') }}</span>
+      {{ $t('任务') }}
+    </div>
+    <!-- <div class="text-[#596780] text-xs text-center">
+      {{ $t('获得电力值') }} <span class="text-[#7C5CFC]">+100</span>
+    </div> -->
+  </Modal>
 </template>
 <script lang="ts" setup>
+import { updateDomain } from '@/api/domain'
 import { deleteRetryFileMate, getFilesByDomainId } from '@/api/file'
+import IconReward from '@/assets/img/Icon-Reward.png'
 import EnterQa from '@/components/EnterAnswer/EnterQa.vue'
 import SearchInput from '@/components/Input/SearchInput.vue'
+import useGlobalProperties from '@/composables/useGlobalProperties'
 import useImagePath from '@/composables/useImagePath'
 import { currentEnvConfig } from '@/config'
 import { USER_ROLES } from '@/constant/common'
@@ -89,6 +110,7 @@ import { useDomainStore } from '@/stores/domain'
 import { $notnull } from '@/utils/help'
 import * as url from '@/utils/url'
 import { debouncedWatch } from '@vueuse/core'
+import dayjs from 'dayjs'
 import { ElLoading, ElMessageBox, ElNotification } from 'element-plus'
 import { storeToRefs } from 'pinia'
 import { computed, onUnmounted, ref, watch } from 'vue'
@@ -102,6 +124,7 @@ const { ImagePath: emptyQAPath } = useImagePath('empty-qa')
 let timer = null
 const route = useRoute()
 const base = useBase()
+const visible = ref(false)
 const domainStoreI = useDomainStore()
 const { domainInfo } = storeToRefs(domainStoreI)
 const domainId = computed(() => domainInfo.value.id || (route.params.botId as string))
@@ -114,6 +137,7 @@ const multipleSelection = ref<IDocumentList[]>([])
 const batchRemove = ref<boolean>(false)
 const QaSelectStatus = ref(LearningStatesPerformanceType.all)
 const searchInput = ref<string>('')
+const { $sensors } = useGlobalProperties()
 const loading = ref(true)
 const tableData = ref<IDocumentList[]>([])
 const pagination = ref<IPage>({
@@ -182,10 +206,32 @@ const initQAList = async () => {
     } = await getFilesByDomainId(domainId.value, params)
     tableData.value = data
     pagination.value.page_count = meta.pagination.page_count
+    if (tableData.value.length > 0 && domainInfo.value.task_progress[1] === 0) {
+      domainInfo.value.task_progress[1] = 40
+      await updateDomain(domainInfo.value.id, {
+        task_progress: domainInfo.value.task_progress
+      })
+      sensorsTaskProgress()
+      setTimeout(() => {
+        visible.value = false
+      }, 2000)
+      visible.value = true
+    }
   } catch (err) {
   } finally {
     loading.value = false
   }
+}
+
+const sensorsTaskProgress = () => {
+  $sensors?.track('mission_completed', {
+    name: t('任务完成'),
+    type: 'mission_completed',
+    data: {
+      task_progress: 1,
+      time: dayjs().format('YYYY-MM-DD HH:mm:ss')
+    }
+  })
 }
 
 const handleTriggerMate = () => {

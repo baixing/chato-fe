@@ -152,15 +152,36 @@
     @setSuccess="onCloseEnterModal"
     @closeDialogVisble="onCloseEnterModal"
   />
+  <Modal
+    v-model:visible="visible"
+    :width="300"
+    class="!p-0 flex justify-center !pb-4"
+    :slotHeader="false"
+    :footer="false"
+  >
+    <div class="h-[150px] flex justify-center">
+      <img :src="IconReward" class="w-[200px] h-full object-cover" />
+    </div>
+    <div class="text-center mt-4 text-[#3D3D3D] text-base font-medium mb-3">
+      {{ $t('恭喜你，完成') }} <span class="text-[#7C5CFC]">{{ $t('上传知识') }}</span>
+      {{ $t('任务') }}
+    </div>
+    <!-- <div class="text-[#596780] text-xs text-center">
+      {{ $t('获得电力值') }} <span class="text-[#7C5CFC]">+100</span>
+    </div> -->
+  </Modal>
 </template>
 
 <script setup lang="ts">
+import { updateDomain } from '@/api/domain'
 import { deleteFile, getFilesByDomainId } from '@/api/file'
+import IconReward from '@/assets/img/Icon-Reward.png'
 import AIGenerateBtn from '@/components/AIGenerateBtn/index.vue'
 import EnterDoc from '@/components/EnterAnswer/EnterDoc.vue'
 import EnterQa from '@/components/EnterAnswer/EnterQa.vue'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
 import SLTitle from '@/components/Title/SLTitle.vue'
+import useGlobalProperties from '@/composables/useGlobalProperties'
 import { currentEnvConfig } from '@/config'
 import { USER_ROLES } from '@/constant/common'
 import { DomainEditSymbol, DomainHansLimitSymbol } from '@/constant/domain'
@@ -173,13 +194,14 @@ import { useBase } from '@/stores/base'
 import { getFileStatusName } from '@/utils/formatter'
 import { openPreviewUrl } from '@/utils/help'
 import { Close } from '@element-plus/icons-vue'
+import dayjs from 'dayjs'
 import { ElMessageBox, ElNotification } from 'element-plus'
 import { computed, inject, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const currentDomain = inject<Partial<IDomainInfo>>(DomainEditSymbol)
 const currentDomainHansLimit = inject<Record<string, string>>(DomainHansLimitSymbol)
-
+const { $sensors } = useGlobalProperties()
 const defaultAIGenerateInputDisabled = {
   desc: false,
   system_prompt: false,
@@ -209,6 +231,7 @@ const defaultQAFormState: IQAForm = {
 const DOCFormState = ref<IDocumentForm>({})
 let QAFormState = reactive<IQAForm>({ ...defaultQAFormState })
 
+const visible = ref(false)
 const QAModalVisible = ref(false)
 const DOCModalVisible = ref(false)
 const uploadFilesListLoading = ref(false)
@@ -221,10 +244,34 @@ const initFilesList = async () => {
       data: { data }
     } = await getFilesByDomainId(currentDomain.id.toString(), { page: 1, page_size: 1000 })
     uploadFilesList.value = data
+    if (uploadFilesList.value.length > 0 && currentDomain.task_progress[1] === 0) {
+      currentDomain.task_progress[1] = 40
+      await updateDomain(currentDomain.id, {
+        task_progress: currentDomain.task_progress
+      })
+      setTimeout(() => {
+        visible.value = false
+      }, 6000)
+      setTimeout(() => {
+        sensorsTaskProgress()
+        visible.value = true
+      }, 2000)
+    }
   } catch (e) {
   } finally {
     uploadFilesListLoading.value = false
   }
+}
+
+const sensorsTaskProgress = () => {
+  $sensors?.track('mission_completed', {
+    name: t('任务完成'),
+    type: 'mission_completed',
+    data: {
+      task_progress: 1,
+      time: dayjs().format('YYYY-MM-DD HH:mm:ss')
+    }
+  })
 }
 
 const onOpenQAModal = () => {

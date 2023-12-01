@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { updateDomain } from '@/api/domain'
+import IconReward from '@/assets/img/Icon-Reward.png'
 import SpaceRightsFreeExpUpgrate from '@/components/Space/SpaceRightsFreeExpUpgrate.vue'
 import SpaceRightsMask from '@/components/Space/SpaceRightsMask.vue'
 import useGlobalProperties from '@/composables/useGlobalProperties'
@@ -21,6 +23,7 @@ import {
   View
 } from '@element-plus/icons-vue'
 import { useSessionStorage } from '@vueuse/core'
+import dayjs from 'dayjs'
 import { storeToRefs } from 'pinia'
 import {
   computed,
@@ -58,6 +61,7 @@ const VerificationTxt = defineAsyncComponent(
 const route = useRoute()
 const { t } = useI18n()
 const base = useBase()
+const visible = ref(false)
 const spaceStoreI = useSpaceStore()
 const domainStoreI = useDomainStore()
 const { userInfo, orgInfo, userCommercialType } = storeToRefs(base)
@@ -128,7 +132,33 @@ const handlePreview = (e: string) => {
   window.open(e)
 }
 
+const postReview = async () => {
+  if (domainInfo.value.task_progress[2] === 0) {
+    domainInfo.value.task_progress[2] = 20
+    await updateDomain(domainInfo.value.id, {
+      task_progress: domainInfo.value.task_progress
+    })
+    setTimeout(() => {
+      visible.value = false
+    }, 2000)
+    visible.value = true
+    sensorsTaskProgress()
+  }
+}
+
+const sensorsTaskProgress = () => {
+  $sensors?.track('mission_completed', {
+    name: t('任务完成'),
+    type: 'mission_completed',
+    data: {
+      task_progress: 2,
+      time: dayjs().format('YYYY-MM-DD HH:mm:ss')
+    }
+  })
+}
+
 const commonVisible = (visibleRef: Ref<boolean>, show: boolean = false) => {
+  postReview()
   if (show) {
     checkRightsTypeNeedUpgrade(ESpaceRightsType.default, true)
   }
@@ -206,6 +236,7 @@ const releaseList = [
         label: t('生成海报'),
         scriptId: 'Chato-preview-chat',
         click: () => {
+          postReview()
           commonVisible(createPoster)
           $sensors.track('bot_poster_click', {
             bot_id: botId.value
@@ -351,6 +382,24 @@ onMounted(() => {
       :chatAPI="chatReleaseURL.chatWebPage"
     />
   </div>
+  <Modal
+    v-model:visible="visible"
+    :width="300"
+    class="!p-0 flex justify-center !pb-4"
+    :slotHeader="false"
+    :footer="false"
+  >
+    <div class="h-[150px] flex justify-center">
+      <img :src="IconReward" class="w-[200px] h-full object-cover" />
+    </div>
+    <div class="text-center mt-4 text-[#3D3D3D] text-base font-medium mb-3">
+      {{ $t('恭喜你，完成') }} <span class="text-[#7C5CFC]">{{ $t('发布分享') }}</span>
+      {{ $t('任务') }}
+    </div>
+    <!-- <div class="text-[#596780] text-xs text-center">
+      {{ $t('获得电力值') }} <span class="text-[#7C5CFC]">+100</span>
+    </div> -->
+  </Modal>
 </template>
 
 <style lang="scss" scoped>
