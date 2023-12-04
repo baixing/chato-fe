@@ -4,24 +4,20 @@
     class="box-border overflow-hidden h-full w-full bg-white flex flex-col justify-center items-center md:px-6"
   >
     <div class="flex flex-col justify-center items-center text-center">
-      <p class="mb-16 text-[36px] text-[#596780] font-medium md:text-[30px] md:mb-[74px]">
+      <p class="mb-9 text-[30px] text-[#596780] font-medium md:text-[24px] md:mb-7">
         {{ $t('Hi，邀请你和我对话') }}
       </p>
+      <Avatar
+        :avatar="robotDetail.avatar || avatar"
+        :size="52"
+        :name="(robotDetail.name || '').slice(0, 2)"
+        class="w-[79px] h-[79px] rounded-full mb-4"
+      />
+      <h1 class="mb-4 text-sm">{{ robotDetail.name }}</h1>
       <div
-        class="box-border w-[360px] md:w-full relative rounded-lg px-3 pb-4 pt-[50px] mb-10"
+        class="box-border w-[360px] md:w-full relative rounded-lg px-3 py-4 mb-8"
         style="border: 1px solid #e4e7ed"
       >
-        <!-- <img
-          :src="robotDetail.avatar || avatar"
-          class="absolute top-0 left-[50%] translate-y-[-50%] translate-x-[-50%] w-[79px] h-[79px] rounded-full z-[999]"
-        /> -->
-        <Avatar
-          :avatar="robotDetail.avatar || avatar"
-          :size="79"
-          :name="robotDetail.name.slice(0, 2)"
-          class="absolute top-0 left-[50%] translate-y-[-50%] translate-x-[-50%] w-[79px] h-[79px] rounded-full z-[999]"
-        />
-        <h1 class="mb-3">{{ robotDetail.name }}</h1>
         <p class="overflow-ellipsis md:line-clamp-3 text-[#878787] text-sm">
           {{ robotDetail.desc }}
         </p>
@@ -39,13 +35,14 @@
 </template>
 
 <script lang="ts" setup>
-import { postCheckLoginCAPI, postLoginCAPI } from '@/api/auth'
+import { postLoginCAPI } from '@/api/auth'
 import { getDomainDetailPublic } from '@/api/domain'
 import avatar from '@/assets/img/avatar.png'
 import useGlobalProperties from '@/composables/useGlobalProperties'
 import type { IDomainInfo } from '@/interface/domain'
 import { RoutesMap } from '@/router'
 import { useAuthStore } from '@/stores/auth'
+import { cuserStore } from '@/stores/cuser'
 import dayjs from 'dayjs'
 import { ElLoading, ElNotification as Notification } from 'element-plus'
 import { storeToRefs } from 'pinia'
@@ -55,6 +52,7 @@ import { useRoute, useRouter } from 'vue-router'
 import LoginMobile from './components/LoginMobile.vue'
 
 const { t } = useI18n()
+const cuser = cuserStore()
 const { $sensors } = useGlobalProperties()
 const router = useRouter()
 const route = useRoute()
@@ -64,33 +62,32 @@ const loading = ref(true)
 const robotDetail = ref<Partial<IDomainInfo>>({})
 
 const botSlug = computed(() => (route.query.slug as string) || '')
+const pay = computed(() => (route.query.pay as string) || '0')
 
 // ----- C端登录 -------
 
 const loginEnterSuccess = async (token: string, channel: string, close?: () => void) => {
   authStore.setUid(token)
-  const res = await postCheckLoginCAPI(botSlug.value, uid.value)
-  if (!res.data.data.login || !res.data.data.usable) {
-    Notification.info(t('该手机号没有被邀请'))
-  } else {
-    Notification.success(t('登录成功'))
+  Notification.success(t('登录成功'))
+  const res = await cuser.checkUserLoginStatus(botSlug.value)
+  if (res) {
     router.replace({
       name: RoutesMap.chat.release,
       params: {
-        botSlug: botSlug.value
+        botSlug: botSlug.value,
+        pay: pay.value
       }
     })
+    $sensors?.track('c_login_success', {
+      name: t('C端登录'),
+      type: 'c_login_success',
+      data: {
+        id: token,
+        time: dayjs().format('YYYY-MM-DD HH:mm:ss')
+      }
+    })
+    close && close()
   }
-
-  $sensors?.track('c_login_success', {
-    name: t('C端登录'),
-    type: 'c_login_success',
-    data: {
-      id: token,
-      time: dayjs().format('YYYY-MM-DD HH:mm:ss')
-    }
-  })
-  close && close()
 }
 
 const handleSubmitLogin = async (postData: any) => {
@@ -100,7 +97,7 @@ const handleSubmitLogin = async (postData: any) => {
     background: 'rgba(0, 0, 0, 0.7)'
   })
   try {
-    const res = await postLoginCAPI(postData)
+    const res = await postLoginCAPI({ ...postData, eid: uid.value })
     const userToken = res.data.data.uuid
     loginEnterSuccess(userToken, postData.channel, () => {
       loading.close()

@@ -34,7 +34,6 @@
       </el-form-item>
       <transition name="fade">
         <el-form-item
-          v-show="showSmsCodeInput"
           class="form-item-code"
           :label="$t(codeLabel)"
           prop="code"
@@ -54,11 +53,7 @@
         </el-form-item>
       </transition>
       <transition name="fade">
-        <p
-          v-show="showSmsCodeInput"
-          class="text-right text-[#9DA3AF] text-xs cursor-pointer"
-          @click="codeTipVisible = true"
-        >
+        <p class="text-right text-[#9DA3AF] text-xs cursor-pointer" @click="codeTipVisible = true">
           {{ $t('收不到验证码？') }}
         </p>
       </transition>
@@ -68,7 +63,6 @@
           :modelForm="modelForm"
           :refBtnSend="refBtnSend"
           :isInputChannel="isInputChannel"
-          :showSmsCodeInput="showSmsCodeInput"
           :sendSmsCode="sendSmsCode"
         />
       </el-form-item>
@@ -154,7 +148,7 @@ const refInputMobile = ref(null)
 const refBtnSend = ref(null)
 const codeTipVisible = ref(false)
 const isMobile = useIsMobile()
-const showSmsCodeInput = ref(!isMobile)
+// const showSmsCodeInput = ref(!isMobile)
 
 let smsCodeTrackerTag = false
 const inputChannel = [t('邀请码'), t('其他')]
@@ -255,9 +249,7 @@ const onCodeInputRBI = async () => {
 
 // 发送验证码
 const sendSmsCode = (refForm: FormInstance) => {
-  console.log(1111)
   if (!refForm) return
-  console.log(2222)
   refForm.validateField('mobile', async (message) => {
     if (!message) {
       return refBtnSend.value.ref.blur()
@@ -280,8 +272,6 @@ const sendSmsCode = (refForm: FormInstance) => {
           isBtnSendDisabled.value = false
         }
       }, 1000)
-      showSmsCodeInput.value = true
-      console.log(showSmsCodeInput.value)
       focusSmsInput()
     } catch (error) {
       isBtnSendDisabled.value = false
@@ -308,7 +298,7 @@ onMounted(() => {
   }
 
   :deep(.el-form-item) {
-    margin-bottom: 16px;
+    margin-bottom: 20px;
   }
 
   .form-item-code :deep(.el-form-item__content) {
@@ -317,6 +307,7 @@ onMounted(() => {
 
   :deep(.el-form-item__label) {
     color: #303133;
+    margin-bottom: 1px;
   }
 }
 .fade-enter-active,

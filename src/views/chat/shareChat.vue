@@ -26,7 +26,6 @@
 
 <script setup lang="ts">
 // TODO: refactor chat
-import { postCheckLoginCAPI } from '@/api/auth'
 import DocSourceDrawer from '@/components/Chat/ChatDocSourceDrawer.vue'
 import Chat from '@/components/Chat/index.vue'
 import EnterQa from '@/components/EnterAnswer/EnterQa.vue'
@@ -35,12 +34,11 @@ import { currentEnvConfig } from '@/config'
 import { CHATO_SOURCE_APPLET, USER_ROLES } from '@/constant/common'
 import { ETerminal } from '@/enum/common'
 import { EDocumentTabType } from '@/enum/knowledge'
-import router, { RoutesMap } from '@/router'
 import { useBase } from '@/stores/base'
+import { cuserStore } from '@/stores/cuser'
 import { getMarkDownUrl, replaceMarkdownUrl } from '@/utils/help'
 import { removewRegReplaceA } from '@/utils/reg'
 import * as url from '@/utils/url'
-import { useStorage } from '@vueuse/core'
 import { computed, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
@@ -55,8 +53,8 @@ const showDrawer = (question_id, slug) => {
 
 const route = useRoute()
 const base = useBase()
-const $uid = useStorage('uid', '')
 const { source } = useSource()
+const { checkUserLoginStatus, getCuserOrderInfo } = cuserStore()
 const domainId = route.params.botId as string
 const currentSlug = ref<string>((route.params.botSlug as string) || '')
 const dialogVisibleQa = ref(false)
@@ -82,17 +80,6 @@ const correctAnswer = (e) => {
 }
 
 // 校验C端登录
-const checkLoginMobile = async () => {
-  const res = await postCheckLoginCAPI(currentSlug.value, $uid.value)
-  if (!res.data.data.login || !res.data.data.usable) {
-    router.push({
-      name: RoutesMap.auth.loginInvite,
-      query: {
-        slug: currentSlug.value
-      }
-    })
-  }
-}
-
-checkLoginMobile()
+checkUserLoginStatus(currentSlug.value)
+getCuserOrderInfo(currentSlug.value)
 </script>

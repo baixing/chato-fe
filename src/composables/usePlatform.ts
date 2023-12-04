@@ -17,6 +17,7 @@ export default function usePlatform() {
     android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
     iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者QQHD浏览器
     iPad: u.indexOf('iPad') > -1, //是否iPad
-    webApp: u.indexOf('Safari') == -1 //是否web应该程序，没有头部与底部
+    webApp: u.indexOf('Safari') == -1, //是否web应该程序，没有头部与底部
+    weixin: u.indexOf('MicroMessenger') > -1 // 微信环境
   }
 }

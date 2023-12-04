@@ -28,6 +28,10 @@
         <el-icon class="mr-2"><Edit /></el-icon>
         {{ $t('个人设置') }}
       </el-button>
+      <el-button link @click="onLinkTo(RoutesMap.namespace.income)" class="btn">
+        <svg-icon class="mr-2" name="pay-income" />
+        {{ $t('我的收益') }}
+      </el-button>
       <el-button link @click="onLinkTo(RoutesMap.auth.logout)" class="btn">
         <el-icon class="mr-2"><SwitchButton /></el-icon>
         {{ $t('退出登录') }}
