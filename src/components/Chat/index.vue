@@ -388,7 +388,8 @@ const successRBI = () => {
 const watermarkFunc = () => {
   if (!blindWatermark.value) {
     blindWatermark.value = new BlindWatermark({
-      content: userInfo.value.id.toString() || uid.value.toString() || 'chato',
+      contentType: 'multi-line-text',
+      content: userInfo.value.id?.toString() || uid.value?.toString() || 'chato',
       rotate: 30,
       onSuccess: () => {}
     })
