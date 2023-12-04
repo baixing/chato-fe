@@ -37,14 +37,8 @@ declare global {
       token: string
       id: number
     }
-    WeixinJSBridge?: {
-      invoke(action: string, data: any, callback: (res: any) => void): void
-    }
   }
   interface Array<T> {
     findLastIndex(predicate: (value: T, index: number, obj: T[]) => unknown, thisArg?: any): number
-  }
-  interface Document {
-    attachEvent(event: string, listener: EventListener): boolean
   }
 }

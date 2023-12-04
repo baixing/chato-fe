@@ -4,14 +4,11 @@ import type {
   EDomainStatus,
   EDomainType
 } from '@/enum/domain'
-import type { EAllRole } from '@/enum/user'
 import type { IOrg } from './user'
 
 export interface IDomainCustomerLimit {
   mobile_limit_switch: number
   rate_limit_switch: number
-  payment_limit_switch: number
-  payment_limit: { total: number }
   rate_limit: {
     time_unit: number
     time_seconds: number
@@ -31,16 +28,6 @@ export interface IDomainCustomerLimit {
   }
 }
 
-export interface IDomainInfoCreator {
-  id: number
-  nickname: string
-  mobile: string
-  org: number
-  role: EAllRole
-  status: string
-  avatar: string
-}
-
 export interface IDomainInfo {
   id: number
   created: string
@@ -51,7 +38,7 @@ export interface IDomainInfo {
   file_count: number
   system_prompt: string
   welcome: string
-  creator: IDomainInfoCreator
+  creator: number
   updater: number
   avatar: string
   avatar_show: boolean

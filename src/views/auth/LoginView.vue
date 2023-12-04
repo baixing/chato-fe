@@ -66,12 +66,11 @@ import LoginHeader from './components/LoginHeader.vue'
 import LoginMobile from './components/LoginMobile.vue'
 import LoginWeixin from './components/LoginWeixin.vue'
 import MobileStyle from './components/MobileStyle.vue'
-
 const { t } = useI18n()
 const stateToken = useStorage('auth_token', '')
 const { shareChannel, setShareChannel } = useChannel()
 const { invite_ticket } = useInvite()
-const mobile = useIsMobile()
+const isMobile = useIsMobile()
 const { $sensors } = useGlobalProperties()
 const router = useRouter()
 const route = useRoute()
@@ -79,9 +78,8 @@ const baseStoreI = useBase()
 const redir = route.query.redirect || '/'
 const authStoreI = useAuthStore()
 const { authToken } = storeToRefs(authStoreI)
-const isMobile = computed(() => mobile && route.query.isMobile !== 'true')
-const loginWay = ref<ELoginWay>(isMobile.value ? ELoginWay.loginScanCode : ELoginWay.loginMobile)
-const isbindingMobile = ref<boolean>(route.query.isbindingMobile === 'true')
+const loginWay = ref<ELoginWay>(isMobile ? ELoginWay.loginScanCode : ELoginWay.loginMobile)
+const isbindingMobile = ref<boolean>(false)
 const loginQRCodeRes = ref<ILoginQRCodeResult>(null)
 const loginQRCodeEmpowerStatusRes = ref<ILoginQRCodeEmpowerResult>(null)
 const timer = ref(null)
@@ -89,18 +87,10 @@ const timeout = ref(false)
 const loading = ref(true)
 
 const userId = computed(() => {
-  if (route.query.userId) {
-    return route.query.userId as string
-  }
-
-  if (
-    $notnull(loginQRCodeEmpowerStatusRes.value) &&
+  return $notnull(loginQRCodeEmpowerStatusRes.value) &&
     !!loginQRCodeEmpowerStatusRes.value.external_user_id
-  ) {
-    return loginQRCodeEmpowerStatusRes.value.external_user_id
-  }
-
-  return ''
+    ? loginQRCodeEmpowerStatusRes.value.external_user_id
+    : ''
 })
 const url = computed(() => {
   return $notnull(loginQRCodeRes.value) ? loginQRCodeRes.value.url : ''
