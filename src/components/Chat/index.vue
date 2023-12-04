@@ -806,9 +806,9 @@ async function sendMsgRequest(message) {
     navit_msg_id: isMidJourneyDomain.value ? random(1000000, 9999999) : undefined,
     fake_domain: debugDomain || undefined
   }
-  if (params.source === 'chato_home' && abTestConfig.value[7] === '0') {
-    params.type = 'flow'
-  }
+  // if (params.source === 'chato_home' && abTestConfig.value[7] === '0') {
+  //   params.type = 'flow'
+  // }
   try {
     socketInstance.send(JSON.stringify(params))
     if (isAiGenerate.value) {
