@@ -34,6 +34,7 @@
       </el-form-item>
       <transition name="fade">
         <el-form-item
+          v-show="true"
           class="form-item-code"
           :label="$t(codeLabel)"
           prop="code"
@@ -53,7 +54,11 @@
         </el-form-item>
       </transition>
       <transition name="fade">
-        <p class="text-right text-[#9DA3AF] text-xs cursor-pointer" @click="codeTipVisible = true">
+        <p
+          v-show="true"
+          class="text-right text-[#9DA3AF] text-xs cursor-pointer"
+          @click="codeTipVisible = true"
+        >
           {{ $t('收不到验证码？') }}
         </p>
       </transition>
