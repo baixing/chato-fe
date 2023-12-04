@@ -66,7 +66,7 @@ const onMore = (e, message: IMessageItem) => {
   emit('showMoreAction', message, position)
 }
 
-const mjProgress = computed(() => `${Number(props.message?.progress || 0) * 100}%`)
+const mjProgress = computed(() => `${Number(props.message?.progress || 0)}%`)
 
 const chatToken = inject<Ref<string>>(SymChatToken)
 

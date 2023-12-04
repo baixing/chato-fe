@@ -43,5 +43,6 @@ export const enum EWsMessageStatus {
 export const enum EMessageType {
   text = 'text',
   image = 'image',
-  mjImage = 'mj_image'
+  mjImage = 'mj_image',
+  end_flow = 'end_flow'
 }

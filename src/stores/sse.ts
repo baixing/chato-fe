@@ -30,8 +30,8 @@ export const useSSEStore = defineStore('sse', () => {
       ...res,
       chunk_message: formatChatMessageAnswer({
         content: res.chunk_message,
-        lastContent: lastChunkMsg,
-        type: res.type
+        type: res.type,
+        lastContent: lastChunkMsg
       })
     }
 
