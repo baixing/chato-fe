@@ -40,7 +40,7 @@ const props = defineProps<{
   domainId: number | string
   defaultAppletcStatus: EAppletcStatus
 }>()
-const emit = defineEmits(['update:value'])
+const emit = defineEmits(['update:value', 'handleView'])
 
 const activeName = ref('empower')
 const visible = computed({
@@ -73,7 +73,7 @@ const handleEmpower = async () => {
 }
 
 const handleView = () => {
-  activeName.value = 'authorized'
+  emit('handleView')
 }
 
 watch(

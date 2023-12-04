@@ -22,5 +22,4 @@
   "[xml]": {
     "editor.defaultFormatter": "DotJoshJohnson.xml"
   },
-  "i18n-ally.localesPaths": ["locales", "src/locales", "src/locales/lang"]
 }

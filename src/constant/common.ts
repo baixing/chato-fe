@@ -6,8 +6,6 @@ export const CHATO_SOURCE_SHAKEDOWN = 'Chato_shakedown_web' // 调试页面
 export const CHATO_SOURCE_JS = 'Chato_share_js' // js嵌入
 export const CHATO_SOURCE_PUBLIC = 'mp_menu' // 微信公众号
 export const CHATO_SOURCE_APPLET = 'wx_mini_prog' // 微信小程序
-export const CHATO_APP_ID = 'wx627b77845363787d' // 纳什公众号id
-export const CHATO_BAIXING_APP_ID = 'wx3e83c7262c068c6c' // Baixing AI 公众号id
 
 export const UPLOAD_FILE_VIDEO_AUDIO_TYPES = [
   '.mp3',

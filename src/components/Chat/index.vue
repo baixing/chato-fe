@@ -11,21 +11,12 @@
         :name="detail.name.slice(0, 2)"
         class="w-7 h-7 rounded-full shrink-0 overflow-hidden"
       />
-      <span>{{ detail.name.slice(0, 11) || '...' }}</span>
+      <span>{{ detail.name || '...' }}</span>
       <span
+        @click="copyText(link)"
         class="flex w-fit cursor-pointer rounded-full absolute z-[999] top-0 right-0 h-14 items-center text-base pr-5"
       >
-        <svg-icon
-          @click="copyText(link)"
-          name="share"
-          svg-class="text-[#303133] mt-1 mr-1 w-6 h-6"
-        />
-        <svg-icon
-          v-show="!isInternal && !!detail.customer_limit.payment_limit_switch"
-          @click="chatMoreVisible = true"
-          name="more"
-          svg-class="text-[#303133] mt-1 ml-2 w-6 h-6"
-        />
+        <svg-icon name="share" svg-class="text-[#303133] mt-1 w-6 h-6" />
       </span>
     </div>
     <div
@@ -155,17 +146,10 @@
     :uid="customerFormState.uId"
   />
   <el-image-viewer v-if="showPreview" :url-list="[previewImageUrl]" @close="showPreview = false" />
-  <ChatMoreNavigator
-    :domainInfo="detail"
-    v-model:value="chatMoreVisible"
-    @handleActivatePackage="payModalVisible = true"
-  />
-  <ChatPayModal :domainInfo="detail" v-model:value="payModalVisible" />
   <AudioPlayer />
 </template>
 
 <script lang="ts" setup>
-import { postWeixinH5Login } from '@/api/auth'
 import {
   chatToBotHistoryB,
   chatToBotHistoryC,
@@ -196,7 +180,6 @@ import {
   SymChatDomainDetail,
   SymChatToken
 } from '@/constant/chat'
-import { CHATO_BAIXING_APP_ID } from '@/constant/common'
 import { DebugDomainSymbol, MidJourneyDomainSlug } from '@/constant/domain'
 import { PaidCommercialTypes } from '@/constant/space'
 import { XSSOptions } from '@/constant/xss'
@@ -208,7 +191,6 @@ import {
   EMessageType,
   EWsMessageStatus
 } from '@/enum/message'
-import { EWeixinH5LoginType } from '@/enum/order'
 import { ESpaceRightsType } from '@/enum/space'
 import type { ChatHistoryParams, IChatCommonParams } from '@/interface/chat'
 import type { IDomainInfo } from '@/interface/domain'
@@ -220,13 +202,7 @@ import { useAuthStore } from '@/stores/auth'
 import { useBase } from '@/stores/base'
 import { useSSEStore } from '@/stores/sse'
 import { formatChatMessageAnswer } from '@/utils/chat'
-import {
-  $notnull,
-  copyPaste,
-  isWechat,
-  onRouteWeixinDefaultLogin,
-  randomString
-} from '@/utils/help'
+import { $notnull, copyPaste, randomString } from '@/utils/help'
 import { convertToMarkdown, regReplaceA, removewRegReplaceA } from '@/utils/reg'
 import SSE from '@/utils/sse'
 import { getStringWidth } from '@/utils/string'
@@ -255,7 +231,6 @@ import { BlindWatermark, Watermark } from 'watermark-js-plus'
 import xss from 'xss'
 import ChatFooter from './ChatFooter.vue'
 import ChatMessageMore from './ChatMessageMore.vue'
-import ChatMoreNavigator from './ChatMoreNavigator.vue'
 
 interface Props {
   internalProps?: boolean
@@ -332,11 +307,6 @@ const blindWatermark = ref<BlindWatermark>()
 const showPreview = ref(false)
 const previewImageUrl = ref('')
 const sensorsQuestionId = computed(() => history.value?.[history.value.length - 1]?.questionId)
-const chatMoreVisible = ref(false)
-const payModalVisible = ref(Boolean(route.query.pay || false))
-
-const redirectCode = computed(() => (route.query.code as string) || '')
-const currentEnvIsWechat = isWechat()
 
 const DefaultChatHistoryPage = {
   total: 0,
@@ -522,9 +492,6 @@ async function init() {
   const sseMsgId = historyChatList.length ? historyChatList[0].id : ''
   sseStore.$patch({ sseMsgId })
   watermarkFunc()
-  if (currentEnvIsWechat && !!detail.value.customer_limit.payment_limit_switch) {
-    onWeixinH5DefaultLogin()
-  }
 }
 
 function getBotInfo() {
@@ -562,7 +529,7 @@ function getBotInfo() {
       // 健硕需求p参数
       $notnull(query_p) ? submit(query_p) : ''
     })
-    .catch(() => {})
+    .catch((err) => {})
     .finally(() => {})
 }
 
@@ -1234,28 +1201,6 @@ const onClickRecommend = (ques: string) => {
   recommendQuestions.value = []
 }
 
-const onShowPayModalVisible = () => {
-  payModalVisible.value = true
-}
-
-const onWeixinH5DefaultLogin = async () => {
-  if (redirectCode.value) {
-    try {
-      const res = await postWeixinH5Login({
-        code: redirectCode.value,
-        app_id: CHATO_BAIXING_APP_ID,
-        type: EWeixinH5LoginType.customer
-      })
-      const { token } = res.data.data
-      authStoreI.setUid(token)
-    } catch (error) {
-      onRouteWeixinDefaultLogin(window.location.href, CHATO_BAIXING_APP_ID)
-    }
-  } else {
-    onRouteWeixinDefaultLogin(window.location.href, CHATO_BAIXING_APP_ID)
-  }
-}
-
 watch(refChatHistory, (v) => {
   v && v.addEventListener('click', chatHisListener)
 })
@@ -1277,22 +1222,14 @@ onMounted(() => {
     for (let mutation of mutationsList) {
       if (mutation.type === 'childList') {
         const copyBtns = document.querySelectorAll('.copy-btn-code')
-        const allLimitElement = document.querySelectorAll('.qa-restrictions')
         // 移除旧的点击事件监听器
         copyBtns.forEach((btn) => {
           btn.removeEventListener('click', handleCopyButtonClick)
-        })
-        allLimitElement.forEach((item) => {
-          item.removeEventListener('click', onShowPayModalVisible)
         })
 
         // 添加新的点击事件监听器
         copyBtns.forEach((btn) => {
           btn.addEventListener('click', handleCopyButtonClick)
-        })
-
-        allLimitElement.forEach((item) => {
-          item.addEventListener('click', onShowPayModalVisible)
         })
       }
     }
@@ -1380,7 +1317,6 @@ defineExpose({
   onClearHistoryRelation
 })
 </script>
-
 <style lang="scss" scoped>
 .chat-history {
   @apply px-1 py-4;

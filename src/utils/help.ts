@@ -219,9 +219,3 @@ export const isWechat = () => {
   const userAgent = window.navigator.userAgent.toLowerCase()
   return (userAgent.match(/MicroMessenger/i) as unknown as string) == 'micromessenger'
 }
-
-export const onRouteWeixinDefaultLogin = (href: string, appId) => {
-  window.location.href = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appId}&redirect_uri=${encodeURIComponent(
-    href
-  )}&response_type=code&scope=snsapi_base#wechat_redirect`
-}

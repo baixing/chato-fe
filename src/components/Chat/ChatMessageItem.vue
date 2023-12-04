@@ -119,7 +119,6 @@ provide(SymChatMessageAudioTTSParams, audioTTSParams)
                 ? 'visible'
                 : 'invisible'
             ]"
-            v-if="message.status !== EWsMessageStatus.forbid"
             @click="(e) => onMore(e, message)"
           >
             <svg-icon name="more-vertical" svg-class="w-4 h-4" />
@@ -167,7 +166,7 @@ provide(SymChatMessageAudioTTSParams, audioTTSParams)
       <!-- 消息底部逻辑（文档来源、赞踩与修正、消息状态） -->
       <!-- 消息状态：思考中、回答中 -->
       <ChatMessageStatus
-        v-if="isAnswerMessage && isLast && message.status"
+        v-if="isAnswerMessage && isLast"
         :message="message"
         :is-loading-answer="isLoadingAnswer"
       />
@@ -234,10 +233,7 @@ provide(SymChatMessageAudioTTSParams, audioTTSParams)
             {{ $t('修正') }}
           </div>
         </div>
-        <div
-          v-else-if="isLast && message.status !== EWsMessageStatus.forbid"
-          class="flex items-center gap-2 mt-2"
-        >
+        <div v-else-if="isLast" class="flex items-center gap-2 mt-2">
           <svg-icon
             name="good-default"
             svg-class="w-4 h-4 text-[#303133] cursor-pointer transition-colors hover:!text-[var(--hoverColor)]"

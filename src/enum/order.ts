@@ -15,8 +15,3 @@ export enum EOrderPaymentStatus {
   pay_failed = 'pay_failed',
   refund_failed = 'refund_failed'
 }
-
-export enum EWeixinH5LoginType {
-  normal = 'normal',
-  customer = 'customer'
-}
