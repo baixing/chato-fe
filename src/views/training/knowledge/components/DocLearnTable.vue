@@ -1,5 +1,7 @@
 <script lang="ts" setup>
-import { deleteFile, getWXPublicLearnCount } from '@/api/file'
+import { deleteFile, getWXPublicLearnCount, updateDocRefreshSwitch } from '@/api/file'
+import SwitchWithStateMsg from '@/components/SwitchWithStateMsg/index.vue'
+import SLTitle from '@/components/Title/SLTitle.vue'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import {
   UPLOAD_FILE_FORCED_CONVERSION_TO_TXT_TYPES,
@@ -18,8 +20,8 @@ import {
   toSimpleDateTime
 } from '@/utils/formatter'
 import { convertSize, openPreviewUrl } from '@/utils/help'
-import { ElMessageBox, ElNotification as Notification } from 'element-plus'
-import { computed, onMounted, onUnmounted } from 'vue'
+import { ElMessageBox, ElNotification, ElNotification as Notification } from 'element-plus'
+import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ReplaceFile from './ReplaceFile.vue'
 import { selectableDeclarations } from './config'
@@ -42,6 +44,7 @@ const emit = defineEmits([
   'update:loading',
   'update:pagination',
   'editPreviewDoc',
+  'refresh',
   'removeDoc',
   'generateQA',
   'generateQARouter',
@@ -122,7 +125,7 @@ function editFile(file: IDocumentList, type) {
 }
 
 function previewFile(file: IDocumentList) {
-  if (FILE_TYPE_NAMES[file.type] === 'txt' && file.content_html) {
+  if (['txt', 'url'].includes(FILE_TYPE_NAMES[file.type]) && file.content_html) {
     emit('editPreviewDoc', file, EDocumentOperateType.preview)
   } else {
     openPreviewUrl(file.raw_file_url)
@@ -165,6 +168,7 @@ const formatDisplayCharacter = (rowData: IDocumentList) => {
   // 如果是txt文件或音视频或图片转成 txt 文件，且生成的 txt 文件有内容，则显示字符数，不然就显示文件大小值
   if (
     rowData.type === 'text' ||
+    rowData.type === 'url' ||
     (UPLOAD_FILE_FORCED_CONVERSION_TO_TXT_TYPES.includes(`.${rowData.type}`) &&
       rowData.content_html)
   ) {
@@ -201,6 +205,28 @@ const onHandleQuestion = (item: IDocumentList) => {
     // 审阅问答
     emit('generateQARouter', item.id)
   }
+}
+
+const timingVisible = ref(false)
+const timingFormState = reactive<{
+  fileId: number
+  refresh_switch: number
+}>({
+  fileId: null,
+  refresh_switch: 0
+})
+const onOpenTimingConfig = (item: IDocumentList) => {
+  timingFormState.fileId = item.id
+  timingFormState.refresh_switch = item.refresh_switch
+  timingVisible.value = true
+}
+
+const onSaveTimingConfig = async () => {
+  try {
+    await updateDocRefreshSwitch(timingFormState.fileId, timingFormState.refresh_switch)
+    ElNotification.success(t('操作成功'))
+    emit('refresh')
+  } catch {}
 }
 
 onUnmounted(() => {
@@ -297,7 +323,10 @@ onUnmounted(() => {
               {{ $t('重试') }}
             </el-button>
             <el-button
-              v-else-if="FILE_TYPE_NAMES[scope.row.type] === 'txt'"
+              v-else-if="
+                FILE_TYPE_NAMES[scope.row.type] === 'txt' ||
+                FILE_TYPE_NAMES[scope.row.type] === 'url'
+              "
               @click.prevent="editFile(scope.row, EDocumentOperateType.update)"
               :disabled="scope.row.status !== LearningStatesPerformanceType.learned"
               type="primary"
@@ -322,6 +351,15 @@ onUnmounted(() => {
             >
               {{ $t(KnowledgeQuestionConvertQABtn[scope.row.qa_status]) }}
             </el-button>
+            <el-button
+              v-if="FILE_TYPE_NAMES[scope.row.type] === 'url'"
+              @click.prevent="onOpenTimingConfig(scope.row)"
+              type="primary"
+              link
+              class="p-0"
+            >
+              {{ $t('配置定时任务') }}
+            </el-button>
             <el-button link type="danger" class="p-0 !ml-0" @click="onDeleteFile(scope.row.id)">
               {{ $t('删除') }}
             </el-button>
@@ -345,6 +383,24 @@ onUnmounted(() => {
         v-model:current-page="internalPagination.page"
       />
     </div>
+
+    <Modal v-model:visible="timingVisible" title="配置定时任务" @submit="onSaveTimingConfig">
+      <el-form label-position="right" :model="timingFormState" class="chato-form">
+        <el-form-item class="!mb-0">
+          <template #label>
+            <SLTitle tips="开启后，将于每周一 03:00 定时再次学习当前网页内容。">
+              {{ t('定时刷新') }}
+            </SLTitle>
+          </template>
+          <SwitchWithStateMsg
+            v-model:value="timingFormState.refresh_switch"
+            open-msg="开启"
+            close-msg="关闭"
+            msg-position="right"
+          />
+        </el-form-item>
+      </el-form>
+    </Modal>
   </div>
 </template>
 

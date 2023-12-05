@@ -34,7 +34,7 @@
       </el-form-item>
       <transition name="fade">
         <el-form-item
-          v-show="showSmsCodeInput"
+          v-show="true"
           class="form-item-code"
           :label="$t(codeLabel)"
           prop="code"
@@ -55,7 +55,7 @@
       </transition>
       <transition name="fade">
         <p
-          v-show="showSmsCodeInput"
+          v-show="true"
           class="text-right text-[#9DA3AF] text-xs cursor-pointer"
           @click="codeTipVisible = true"
         >

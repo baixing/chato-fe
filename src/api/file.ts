@@ -211,3 +211,14 @@ export const getFileUrl = (data: FormData) => {
     data
   })
 }
+
+// 定时刷新
+export const updateDocRefreshSwitch = (file_id: number, refresh_switch: number) => {
+  return request({
+    method: 'post',
+    url: `/chato/api/document_management/${file_id}/refresh_switch`,
+    data: {
+      refresh_switch
+    }
+  })
+}

@@ -130,7 +130,10 @@
     </Transition>
     <div v-for="(item, index) in transitionList" :key="index">
       <Transition :name="item.name">
-        <div :style="{ 'text-align': `-webkit-${item.name}`  } as unknown as StyleValue">
+        <div
+          v-show="true"
+          :style="{ 'text-align': `-webkit-${item.name}`  } as unknown as StyleValue"
+        >
           <ChatoDomainAvatar v-if="item.name === 'left'" />
           <div :class="`${item.name}-bubble`" v-if="item.type === 'share'">
             <div class="title">
@@ -159,9 +162,9 @@
             </p>
             <p>
               {{ $t('☞  微信抖音等第三方') }}
-              <span class="text-[#7C5CFC] cursor-pointer mr-1" @click="routerPush">{{
-                $t('前往分享')
-              }}</span>
+              <span class="text-[#7C5CFC] cursor-pointer mr-1" @click="routerPush">
+                {{ $t('前往分享') }}
+              </span>
             </p>
           </div>
           <div :class="`${item.name}-bubble`" v-if="item.type === 'doc'">
@@ -174,8 +177,6 @@
               <span class="flex-1 truncate transition-colors cursor-pointer">
                 {{ file.title }}
               </span>
-              <!-- <span class="text-[#7C5CFC]">{{ $t(getFileStatusName(item.status)) }}</span>
-              <el-button link :icon="Close" @click="onDeleteFile(item.id)" /> -->
             </p>
           </div>
           <div :class="`${item.name}-bubble`" v-else>

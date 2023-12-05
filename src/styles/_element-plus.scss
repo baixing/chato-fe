@@ -112,6 +112,19 @@
   }
 }
 
+.el-form--label-right {
+  &.chato-form {
+    .el-form-item {
+      gap: 16px;
+    }
+    .el-form-item__label {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0 !important;
+    }
+  }
+}
+
 .chat-mobile-chat-drawer {
   .el-drawer__body {
     padding: 0;

@@ -21,6 +21,8 @@
 </template>
 
 <script setup lang="ts">
+import useSpaceRights from '@/composables/useSpaceRights'
+import { ESpaceRightsType } from '@/enum/space'
 import { RoutesMap } from '@/router'
 import { useAuthStore } from '@/stores/auth'
 import { useChatStore } from '@/stores/chat'
@@ -37,6 +39,7 @@ const authStoreI = useAuthStore()
 const { authToken } = storeToRefs(authStoreI)
 const isLoggedIn = computed(() => !!authToken.value)
 
+const { checkRightsTypeNeedUpgrade } = useSpaceRights()
 const handleGoChat = () => {
   const name = route.name === RoutesMap.home.homeChat ? RoutesMap.home.homeChat : RoutesMap.chat.c
   if (!isLoggedIn.value) {
@@ -54,7 +57,11 @@ const handleGoChat = () => {
   })
 }
 
-const handeGoCreate = () => {
+const handeGoCreate = async () => {
+  const needUpgrade = await checkRightsTypeNeedUpgrade(ESpaceRightsType.bot)
+  if (needUpgrade) {
+    return
+  }
   router.push({ name: RoutesMap.guide.first })
 }
 </script>

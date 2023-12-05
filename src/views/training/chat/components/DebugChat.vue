@@ -7,8 +7,8 @@
       @showDrawer="onOpenDrawer"
       :avatarShow="false"
       :needAiGenerate="true"
+      :bSlug="domainSlug"
       chatClassName="chat-debug"
-      type="create"
     />
     <div
       v-if="!debugDomain?.system_prompt"
@@ -58,12 +58,13 @@ const base = useBase()
 
 const debugDomain = inject<IDomainInfo>(DebugDomainSymbol)
 const domainId = computed(() => debugDomain?.id?.toString() || '')
+//@ts-ignore
+const domainSlug = computed(() => debugDomain?.value?.slug)
 const apiUpload = computed(() =>
   url.join(currentEnvConfig.uploadBaseURL, `/chato/api/domains/${domainId.value}/files/upload/qa`)
 )
 const qtyLimit = base.userInfo.role === USER_ROLES.SUPERMAN ? 1000 : 20 // 同时上传的文件数量限制
 const sizeLimit = 30 // 单个文件的体积限制（MB）
-
 const defaultForm = reactive({
   title: '',
   question_id: 0,

@@ -24,6 +24,7 @@ export interface IDocumentList {
   title: string
   domain: IDomainInfo
   status: LearningStatesPerformanceType
+  refresh_switch: number // 定时刷新
   raw_size: number
   raw_file_url: string
   raw_file_hash: string

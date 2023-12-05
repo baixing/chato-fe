@@ -2,7 +2,7 @@
   <div class="px-4 my-7">
     <div class="flex justify-between items-center mb-3 h-5">
       <div class="flex gap-x-2 items-center">
-        <div class="text-xs text-[#3D3D3D]">{{ $t('任务进度') }}</div>
+        <div class="text-xs text-[#3D3D3D]">{{ $t('资料完善程度') }}</div>
         <div class="text-color text-base">{{ schedule }} %</div>
         <div class="text-xs text-[#9DA3AF]">{{ $t('3项 建议优化') }}</div>
       </div>
