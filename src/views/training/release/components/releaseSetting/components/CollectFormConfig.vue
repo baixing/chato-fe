@@ -126,7 +126,7 @@
 
   <Modal v-model:visible="previewVisible" title="预览表单" class="preview-dialog">
     <div class="p-4 bg-white rounded">
-      <p class="text-[#303133] font-medium leading-7 text-base mb-4">{{ $t('留下联系方式') }}</p>
+      <p class="text-[#303133] font-medium leading-7 text-base mb-4">{{ formState.title }}</p>
       <CustomerForm :id="formState.id" disabled />
     </div>
   </Modal>
