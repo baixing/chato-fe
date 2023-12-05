@@ -190,25 +190,29 @@
 </template>
 
 <script setup lang="ts">
+import { getJsApiPaySignAPI, postWeixinH5Login } from '@/api/auth'
 import { getOrderPackageList, getOrderPackagePaymentCode, refreshPaymentStatus } from '@/api/order'
 import Topbar from '@/components/Topbar/index.vue'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import useSpaceRights from '@/composables/useSpaceRights'
-import { XIAONAQIWEI } from '@/constant/common'
+import { CHATO_BAIXING_APP_ID, XIAONAQIWEI } from '@/constant/common'
 import { OrderPaymentStatus } from '@/constant/order'
 import { SpaceCommercialTypeMapper } from '@/constant/space'
 import { kUserPaymentLinkUrl } from '@/constant/terms'
-import { EOrderPaymentStatus } from '@/enum/order'
+import { EOrderPaymentStatus, EWeixinH5LoginType } from '@/enum/order'
 import { ESpaceCommercialType, ESpaceRightsType } from '@/enum/space'
 import type { IOrderPackage } from '@/interface/order'
 import ContentLayout from '@/layout/ContentLayout.vue'
 import router, { RoutesMap } from '@/router'
+import { useAuthStore } from '@/stores/auth'
 import { useSpaceStore } from '@/stores/space'
-import { isWechat, openPreviewUrl } from '@/utils/help'
+import { isWechat, onRouteWeixinDefaultLogin, openPreviewUrl } from '@/utils/help'
+import { payJSAPI } from '@/utils/pay'
 import { ElNotification } from 'element-plus'
 import { storeToRefs } from 'pinia'
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRoute } from 'vue-router'
 import SupportedRender from './components/SupportedRender.vue'
 
 const HigherCommercialType = [
@@ -216,9 +220,11 @@ const HigherCommercialType = [
   ESpaceCommercialType.selfStandard
 ]
 
+const route = useRoute()
 const { t } = useI18n()
 const { isMobile } = useBasicLayout()
 
+const authStoreI = useAuthStore()
 const spaceStoreI = useSpaceStore()
 const { currentRights } = storeToRefs(spaceStoreI)
 
@@ -256,16 +262,24 @@ const payModalPaymentCode = ref('')
 const payModalPaymentCodeLoading = ref(false)
 const payModalPackage = ref<IOrderPackage>()
 
+const redirectCode = computed(() => (route.query.code as string) || '')
+
 let refreshInterval = null
 const currentEnvIsWechat = isWechat()
+
+const determinePayType = (isMobile, isWechatEnvironment) => {
+  if (isWechatEnvironment && isMobile) return 0
+  return isMobile ? 2 : 3
+}
+
 const onOpenPay = async (item: IOrderPackage) => {
   try {
-    if (!isMobile.value || currentEnvIsWechat) {
+    if (!isMobile.value) {
       payModalVisible.value = true
       payModalPaymentCodeLoading.value = true
       payModalPackage.value = item
     }
-    const payType = isMobile.value && !currentEnvIsWechat ? 2 : 3
+    const payType = determinePayType(isMobile.value, currentEnvIsWechat)
     refreshInterval && clearInterval(refreshInterval)
     const {
       data: { data: paymentRes }
@@ -275,11 +289,15 @@ const onOpenPay = async (item: IOrderPackage) => {
       pay_type: payType
     })
 
-    if (isMobile.value && !currentEnvIsWechat) {
+    if (isMobile.value) {
       // 解决 safari window.open 拦截问题
-      setTimeout(() => {
-        window.open(paymentRes.payment_code_url)
-      })
+      if (!currentEnvIsWechat) {
+        setTimeout(() => {
+          window.open(paymentRes.payment_code_url)
+        })
+      } else {
+        onWeixinPay(paymentRes.payment_code_url)
+      }
     } else {
       payModalPaymentCode.value = `data:image/png;base64,${paymentRes.payment_qr_code}`
     }
@@ -305,6 +323,21 @@ const onOpenPay = async (item: IOrderPackage) => {
   }
 }
 
+const onWeixinPay = async (id: string) => {
+  const res = await getJsApiPaySignAPI(id)
+  const { data, sign_str } = res.data.data
+  const params = {
+    appId: data.app_id,
+    timeStamp: Number(data.timestamp),
+    nonceStr: data.nonce_str,
+    package: data.package,
+    paySign: sign_str,
+    signType: 'RSA'
+  }
+  const result = await payJSAPI(params)
+  result ? ElNotification.success(t('支付成功')) : ElNotification.info(t('支付失败'))
+}
+
 const onUpgrade = (item: IOrderPackage) => {
   if (HigherCommercialType.includes(item.desc)) {
     checkRightsTypeNeedUpgrade(ESpaceRightsType.default)
@@ -319,9 +352,38 @@ const onReserve = () => {
   reserveVisible.value = true
 }
 
+const onWeixinH5DefaultLogin = async () => {
+  if (redirectCode.value) {
+    const res = await postWeixinH5Login({
+      code: redirectCode.value,
+      app_id: CHATO_BAIXING_APP_ID,
+      type: EWeixinH5LoginType.normal
+    })
+    const { need_bind_mobile, token, external_user_id } = res.data.data
+    if (need_bind_mobile) {
+      authStoreI.setToken('')
+      router.replace({
+        name: RoutesMap.auth.login,
+        query: {
+          userId: external_user_id,
+          isbindingMobile: 'true',
+          redirect: window.location.host + window.location.pathname,
+          isMobile: 'true'
+        }
+      })
+    } else {
+      authStoreI.setToken(token)
+      window.location.reload()
+    }
+  } else {
+    onRouteWeixinDefaultLogin(window.location.href, CHATO_BAIXING_APP_ID)
+  }
+}
+
 const init = async () => {
   try {
     initing.value = true
+    currentEnvIsWechat && onWeixinH5DefaultLogin()
     const {
       data: { data }
     } = await getOrderPackageList()

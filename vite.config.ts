@@ -15,7 +15,7 @@ import viteSentry from 'vite-plugin-sentry'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import buildConfig from './plugins/build-id'
 
-// import { visualizer } from "rollup-plugin-visualizer"
+// import { visualizer } from 'rollup-plugin-visualizer'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {

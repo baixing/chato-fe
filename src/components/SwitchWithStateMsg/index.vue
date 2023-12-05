@@ -46,3 +46,10 @@ const internalVal = computed({
   }
 })
 </script>
+
+<style scoped lang="scss">
+:deep(.el-switch--small .el-switch__core) {
+  height: 20px !important;
+  border-radius: 10px !important;
+}
+</style>

@@ -9,6 +9,7 @@ import { currentEnvConfig } from '@/config'
 import { FreeCommercialTypeExperienceDay } from '@/constant/space'
 import { EAppletcStatus } from '@/enum/release'
 import { ESpaceCommercialType, ESpaceRightsType } from '@/enum/space'
+import { RoutesMap } from '@/router'
 import { useBase } from '@/stores/base'
 import { useDomainStore } from '@/stores/domain'
 import { useSpaceStore } from '@/stores/space'
@@ -37,7 +38,7 @@ import {
   type Ref
 } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import ReleaseBox from '../releaseView/components/ReleaseBox.vue'
 
 const ApplicationForm = defineAsyncComponent(
@@ -57,7 +58,7 @@ const CreateApplet = defineAsyncComponent(() => import('./components/applet/Crea
 const VerificationTxt = defineAsyncComponent(
   () => import('./components/applet/VerificationTxt.vue')
 )
-
+const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
 const base = useBase()
@@ -94,7 +95,6 @@ const features = reactive({
   brandDomainVisible: false, // 域名部署
   createPoster: false, // 海报
   createAppletVisible: false, // 小程序-扫码授权
-  drawerAppletVisible: false, // 小程序-查看授权结果
   linkAppletVisible: false, // 小程序-链接小程序
   empowerAppletVisible: false, // 小程序-覆盖已有的
   verificationAppletVisible: false // 小程序-嵌入已有
@@ -107,7 +107,6 @@ const {
   brandDomainVisible,
   createAppletVisible,
   createPoster,
-  drawerAppletVisible,
   linkAppletVisible,
   empowerAppletVisible,
   verificationAppletVisible
@@ -273,6 +272,16 @@ const handleCopyButtonClick = (e: MouseEvent) => {
   copyPaste((e.target as HTMLElement).querySelector('.text').innerHTML)
 }
 
+const onHandleSetPay = () => {
+  router.push({
+    name: RoutesMap.tranning.release,
+    params: {
+      botId: botId.value,
+      type: 'settings'
+    }
+  })
+}
+
 watch(
   () => route.query,
   (v) => {
@@ -314,7 +323,7 @@ onMounted(() => {
 <template>
   <div class="release-drawer-container">
     <template v-if="!maskVisible">
-      <div class="mx-auto my-0">
+      <div class="mx-auto mb-6">
         <div class="overflow-hidden flex flex-wrap justify-between">
           <ReleaseBox
             v-for="item in releaseList"
@@ -341,6 +350,21 @@ onMounted(() => {
           </ReleaseBox>
         </div>
       </div>
+      <!-- 付费问答 -->
+      <div class="w-full p-6 rounded-lg" style="border: 1px solid #e4e7ed">
+        <p class="text-[#303133] text-base font-medium">{{ $t('你还可以设置付费问答') }}</p>
+        <p class="text-[#596780] text-sm mt-4 mb-5">
+          {{ $t('作为机器人创作者，可以将您的创作成果分享出去，让更多人使用并获取报酬') }}
+        </p>
+        <el-button
+          type="primary"
+          style="--el-button-bg-color: #fff; --el-button-text-color: #7c5cfc"
+          class="flex-shrink-0 !px-8"
+          @click="onHandleSetPay"
+        >
+          {{ $t('去设置') }}
+        </el-button>
+      </div>
     </template>
     <ApplicationForm
       v-else
@@ -365,17 +389,11 @@ onMounted(() => {
     />
     <Copylink v-model:value="showCopyLinkVisbile" :chatWebPage="chatReleaseURL.chatWebPage" />
     <CreatePoster v-model:value="createPoster" :domainId="botId" />
-    <DrawerApplet
-      v-model:value="drawerAppletVisible"
-      :domainId="domainInfo.id"
-      @handleRetry="createAppletVisible = true"
-    />
     <ExperienceApplet v-model:value="linkAppletVisible" :slug="domainInfo.slug" />
     <CreateApplet
       v-model:value="empowerAppletVisible"
       :domainId="domainInfo.id"
       :defaultAppletcStatus="defaultAppletcStatus"
-      @handleView="drawerAppletVisible = true"
     />
     <VerificationTxt
       v-model:value="verificationAppletVisible"
