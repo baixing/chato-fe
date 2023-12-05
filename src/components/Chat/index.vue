@@ -152,6 +152,7 @@
   <CustomerFormDialog
     v-model:visible="customerFormState.visible"
     :form-id="customerFormState.formId"
+    :title="customerFormState.title"
     :uid="customerFormState.uId"
   />
   <el-image-viewer v-if="showPreview" :url-list="[previewImageUrl]" @close="showPreview = false" />
@@ -1157,20 +1158,23 @@ const customerFormState = reactive<{
   visible: boolean
   formId: string
   uId: string
+  title: string
 }>({
   visible: false,
   formId: '',
-  uId: ''
+  uId: '',
+  title: ''
 })
 
 const onElClick = (event) => {
   onHiddenChatMore()
-  const target = event.target || event.srcElement
+  const target = (event.target || event.srcElement) as HTMLElement
   if (target?.id === 'Chato-customer-collect-form') {
     event.stopPropagation()
     customerFormState.formId = target.getAttribute('data-form-id')
     customerFormState.uId = target.getAttribute('data-uid')
     customerFormState.visible = true
+    customerFormState.title = target.innerText
   }
 }
 

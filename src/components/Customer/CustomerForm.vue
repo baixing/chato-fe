@@ -20,7 +20,7 @@
           />
         </el-form-item>
       </el-form>
-      <div class="flex gap-3 items-center justify-end">
+      <div class="flex gap-3 items-center justify-end mt-4">
         <el-button :disabled="internalDisabled" @click="onCancel">取消</el-button>
         <el-button
           :loading="submitting"
@@ -38,6 +38,7 @@
 
 <script setup lang="ts">
 import { getCustomerFormConfig, saveCustomerForm } from '@/api/customerForm'
+import useByteDancePromotion, { postBytedancePromotion } from '@/composables/useByteDancePromotion'
 import useChannel from '@/composables/useChannel'
 import type { ICustomerFormConfig } from '@/interface/customerForm'
 import Ajv from 'ajv'
@@ -45,7 +46,6 @@ import AjvErrors from 'ajv-errors'
 import { ElMessage, ElNotification } from 'element-plus'
 import { computed, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import useByteDancePromotion, { postBytedancePromotion } from '@/composables/useByteDancePromotion'
 
 const props = defineProps<{
   id?: number | string
