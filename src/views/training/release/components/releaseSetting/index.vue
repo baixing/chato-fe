@@ -532,7 +532,7 @@ watch(
       ...currentDomainInfo.customer_limit
     }
     originalDomain = cloneDeep(currentDomainInfo)
-    currentDomain = { ...currentDomain, ...currentDomainInfo }
+    currentDomain = Object.assign(currentDomain, currentDomainInfo)
     initOrderInfo()
   },
   { immediate: true }
