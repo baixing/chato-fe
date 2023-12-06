@@ -152,48 +152,29 @@
               :class="{ '!mb-0': demonstrationData.wx_public_url }"
               :label="$t('搜索名称')"
             >
-              <div class="relative w-full h-10">
-                <el-input
-                  type="text"
-                  v-model="spliderPublicForm.publicSearchName"
-                  :placeholder="$t('请输入公众号的名称')"
-                  maxlength="30"
-                  @change="getWXPublicListByPublicName"
-                >
-                  <template #suffix>
-                    <el-icon
-                      class="el-input__icon hover:cursor-pointer"
-                      @click="getWXPublicListByPublicName"
-                    >
-                      <search />
-                    </el-icon> </template
-                ></el-input>
-                <el-select
-                  class="w-full absolute -top-10 left-0 -z-10"
-                  v-model="spliderPublicForm.publicName"
-                  :automatic-dropdown="true"
-                  placeholder="请选择公众号"
-                  ref="spliderPublicFormName"
-                  @change="(value:string) => spliderPublicForm.publicSearchName = value"
-                >
-                  <el-option
-                    v-for="item in WXPublicList"
-                    :key="item.fakeid"
-                    :label="item.nickname"
-                    :value="item.nickname"
-                  >
-                    {{ item.nickname }}
-                  </el-option>
-                </el-select>
-              </div>
+              <el-select
+                class="w-full"
+                ref="spliderWxPublicEl"
+                v-model="spliderPublicForm.publicName"
+                filterable
+                clearable
+                remote
+                reserve-keyword
+                :placeholder="$t('请输入公众号的名称')"
+                :remote-method="getWXPublicListByPublicName"
+                :loading="wxPublicListLoading"
+              >
+                <el-option
+                  v-for="item in WXPublicList"
+                  :key="item.fakeid"
+                  :label="item.nickname"
+                  :value="item.nickname"
+                />
+              </el-select>
               <div
-                class="text-[#7C5CFC] text-xs cursor-pointer !leading-6 z-[999]"
-                @click="
-                  onDemonstration(
-                    () => (spliderPublicForm.publicSearchName = '百姓课堂-' + domainName)
-                  )
-                "
                 v-if="demonstrationData.wx_public_url"
+                class="text-[#7C5CFC] text-xs cursor-pointer leading-6"
+                @click="onFillWXPublic"
               >
                 {{ t('填充示例公众号') }}
               </div>
@@ -233,7 +214,12 @@
         <span class="dialog-footer" v-if="inputTextForm.status !== 'preview'">
           <template v-if="showSubmit">
             <el-button @click="() => emit('closeDialogVisble', false)">{{ $t('取消') }}</el-button>
-            <el-button type="primary" data-script="Chato-doc-submit" @click="submitInputText()">
+            <el-button
+              type="primary"
+              :disabled="modalSubmitDisabled"
+              data-script="Chato-doc-submit"
+              @click="submitInputText()"
+            >
               {{ $t('确认') }}
             </el-button>
           </template>
@@ -426,7 +412,7 @@ const demonstrationNameList = [
 const $textExceedLimit = computed(() => {
   return getStringWidth(inputTextForm.content_html + inputTextForm.title || '') > limit.text_prompt
 })
-const domainName = computed(() => props.domainName)
+const domainName = computed(() => props.domainName || '')
 
 const demonstrationFile = async () => {
   demonstrationSensors()
@@ -452,6 +438,27 @@ const demonstrationFile = async () => {
       })
   } catch (error) {
     loading.close()
+  }
+}
+
+const modalSubmitDisabled = computed(() => {
+  if (activeName.value === 'input-public' && !spliderPublicForm.publicName) {
+    return true
+  } else {
+    return false
+  }
+})
+
+const spliderWxPublicEl = ref()
+const onFillWXPublic = async () => {
+  try {
+    demonstrationSensors()
+    const fillExampleName = `百姓课堂-${domainName.value}`
+    await getWXPublicListByPublicName(fillExampleName)
+    spliderWxPublicEl.value.focus()
+    spliderPublicForm.publicName = fillExampleName
+  } catch (e) {
+    spliderPublicForm.publicName = ''
   }
 }
 
@@ -560,11 +567,23 @@ const getPublicContent = async () => {
   return Number(res.data.data)
 }
 
-const getWXPublicListByPublicName = async () => {
-  const res = await apiFile.getWXPublicList({ name: spliderPublicForm.publicSearchName })
-  spliderPublicForm.publicName = ''
-  WXPublicList.value = res.data.data
-  spliderPublicFormName.value.focus()
+const wxPublicListLoading = ref(false)
+
+const getWXPublicListByPublicName = async (name: string) => {
+  if (!name || wxPublicListLoading.value) {
+    WXPublicList.value = []
+    return
+  }
+
+  try {
+    wxPublicListLoading.value = true
+    const res = await apiFile.getWXPublicList({ name })
+    WXPublicList.value = res.data.data
+  } catch (e) {
+    throw new Error(e)
+  } finally {
+    wxPublicListLoading.value = false
+  }
 }
 
 function beforeUpload(rawFile: UploadRawFile) {
