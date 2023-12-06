@@ -169,7 +169,12 @@
                   :key="item.fakeid"
                   :label="item.nickname"
                   :value="item.nickname"
-                />
+                >
+                  <div class="flex gap-2 items-center">
+                    <img :src="item.round_head_img" class="w-6 h-6 object-cover" />
+                    {{ item.nickname }}
+                  </div>
+                </el-option>
               </el-select>
               <div
                 v-if="demonstrationData.wx_public_url"
