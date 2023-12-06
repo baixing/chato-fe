@@ -15,4 +15,4 @@ export function useIsMobile() {
   return isExist.length ? true : false
 }
 
-export const isIphone = () => navigator.userAgent.includes('iphone')
+export const isIphone = () => navigator.userAgent.includes('iPhone')

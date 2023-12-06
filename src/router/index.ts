@@ -159,7 +159,7 @@ const router = createRouter({
 router.beforeEach((to) => {
   if (to.fullPath === '/')
     return {
-      path: '/c/bot/q94e6rxnl8q7830m'
+      path: '/c/bot/ge9p359y4v27d2oq'
     }
   const { drawerVisible } = useSidebar()
   drawerVisible.value = false

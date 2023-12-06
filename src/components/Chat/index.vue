@@ -1,5 +1,8 @@
 <template>
-  <div class="container-preview-page bg-white relative parent-element">
+  <div
+    class="container-preview-page bg-white relative parent-element"
+    :class="[isIphoneBol && 'pb-2']"
+  >
     <div
       v-if="detail.name_and_avatar_show && avatarShow"
       class="flex items-center justify-center h-14 bg-white mb-0 text-sm font-medium gap-2 shrink-0"
@@ -114,7 +117,6 @@
         @submit="submit"
         @onTerminateRetry="onTerminateRetry"
         class="chat-center"
-        :class="[isIphoneBol && 'mb-2']"
       />
     </div>
   </div>
@@ -336,16 +338,6 @@ const SSEInstance = new SSE()
 const socketStore = useSocketStore()
 const socketInstance = useWebSocketConnect(currentEnvConfig.socketURL)
 const { socketResultMap } = storeToRefs(socketStore)
-
-const link = computed(
-  () =>
-    `${window.location.origin}/${detail.value.org.id === 208 ? 'bot' : 'b'}/${detail.value.slug}`
-)
-
-const copyText = (str: string) => {
-  scanCodeSuccessRBI()
-  $copyText(str, '链接已复制成功，快分享给你的好友吧！')
-}
 
 watch(isAiGenerate, (v) => v && successRBI() && onAIGenerate())
 
