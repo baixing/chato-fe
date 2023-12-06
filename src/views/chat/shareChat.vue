@@ -3,6 +3,7 @@
     @show-drawer="(id, slug) => showDrawer(id, slug)"
     @correct-answer="correctAnswer"
     :avatarShow="!isInApplet"
+    :brandShow="!isInApplet"
   />
   <!-- 文档来源 -->
   <DocSourceDrawer
