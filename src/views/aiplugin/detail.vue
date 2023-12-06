@@ -372,15 +372,9 @@ const loadMoreContent = () => {
   }, 2000)
 }
 
-useInfiniteScroll(
-  refFeedList,
-  () => {
-    loadMoreContent()
-  },
-  {
-    distance: 10
-  }
-)
+useInfiniteScroll(refFeedList, () => {
+  loadMoreContent()
+})
 
 function openXHSNote(id) {
   window.open(`https://www.xiaohongshu.com/explore/${id}`, '_blank')
