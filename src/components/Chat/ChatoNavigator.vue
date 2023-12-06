@@ -147,16 +147,20 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, ref } from 'vue'
 import MessageItem from '@/components/Chat/ChatMessageItem.vue'
+import { computed, nextTick, ref } from 'vue'
 
 import { useBase } from '@/stores/base'
+import { storeToRefs } from 'pinia'
 const base = useBase()
 const { userInfo } = storeToRefs(base)
-import { storeToRefs } from 'pinia'
 // import { useAuthStore } from '@/stores/auth'
-import { ElMessage } from 'element-plus'
+import ChatFooter from '@/components/Chat/ChatFooter.vue'
 import { useBasicLayout } from '@/composables/useBasicLayout'
+import { useStorage } from '@vueuse/core'
+import { ElMessage } from 'element-plus'
+import { watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 const isLoadingAnswer = ref(false)
 const refChatHistory = ref(null)
 const isLoading = ref(true)
@@ -175,8 +179,6 @@ const scrollChatHistory = () => {
     }
   })
 }
-import { useI18n } from 'vue-i18n'
-import ChatFooter from '@/components/Chat/ChatFooter.vue'
 const { t } = useI18n()
 const emit = defineEmits(['update:value', 'inputClick', 'clear', 'submit'])
 // const props = defineProps<{
@@ -229,8 +231,6 @@ const sendData = async () => {
   })
   scrollChatHistory()
 }
-import { watch } from 'vue'
-import { useStorage } from '@vueuse/core'
 
 const history = ref([])
 const freshHistory = async () => {

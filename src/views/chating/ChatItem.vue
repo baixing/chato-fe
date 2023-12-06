@@ -47,7 +47,7 @@ withDefaults(
   }>(),
   {
     authLogin: false,
-    isInternal: true
+    isInternal: false
   }
 )
 

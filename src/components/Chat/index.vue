@@ -15,17 +15,6 @@
       <span
         class="flex w-fit cursor-pointer rounded-full absolute z-[999] top-0 right-0 h-14 items-center text-base pr-5"
       >
-        <!-- <svg-icon
-          @click="copyText(link)"
-          name="share"
-          svg-class="text-[#303133] mt-1 mr-1 w-6 h-6"
-        />
-        <svg-icon
-          v-show="!isInternal && !!detail.customer_limit.payment_limit_switch"
-          @click="chatMoreVisible = true"
-          name="more"
-          svg-class="text-[#303133] mt-1 ml-2 w-6 h-6"
-        /> -->
       </span>
     </div>
     <div
@@ -125,17 +114,8 @@
         @submit="submit"
         @onTerminateRetry="onTerminateRetry"
         class="chat-center"
+        :class="[isIphoneBol && 'mb-2']"
       />
-      <!-- <ChatFooter
-        v-if="detail.brand_show"
-        :name="detail.brand_name"
-        :logo="detail.brand_logo"
-        :class="[
-          'mb-2 leading-4 text-xs flex justify-center text-[#596780] text-center shrink-0',
-          !isCustomerBrand && 'cursor-pointer'
-        ]"
-        @click="onFooterBrandLink"
-      /> -->
     </div>
   </div>
   <ChatMessageMore
@@ -185,6 +165,7 @@ import ChatEnter from '@/components/Chat/ChatEnter.vue'
 import MessageItem from '@/components/Chat/ChatMessageItem.vue'
 import CustomerFormDialog from '@/components/Customer/CustomerFormDialog.vue'
 import useAudioPlayer from '@/composables/useAudioPlayer'
+import { isIphone } from '@/composables/useBasicLayout'
 import useGlobalProperties from '@/composables/useGlobalProperties'
 import useSSEAudio from '@/composables/useSSEAudio'
 import { useSource } from '@/composables/useSource'
@@ -292,6 +273,7 @@ const base = useBase()
 const isAiGenerate = ref(false)
 const { userInfo } = storeToRefs(base)
 const authStoreI = useAuthStore()
+const isIphoneBol = isIphone()
 const { authToken, uid } = storeToRefs(authStoreI)
 const emit = defineEmits(['showDrawer', 'correctAnswer'])
 const { $sensors, $copyText } = useGlobalProperties()

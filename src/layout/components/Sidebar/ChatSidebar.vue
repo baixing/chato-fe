@@ -19,23 +19,8 @@
         />
         <span class="inline-block truncate">{{ item.name }}</span>
       </li>
-      <li
-        key="chato 导航助手"
-        :class="[
-          'h-12 px-3 flex items-center gap-[6px] rounded-lg cursor-pointer mb-2 text-sm leading-[22px] hover:bg-[#f2f3f5] transition-colors'
-          // route.params.botSlug === firstChatItem?.slug && 'bg-[#f2f3f5]'
-        ]"
-        @click="onLinkToNavigator()"
-      >
-        <img
-          :src="`https://afu-1255830993.cos.ap-shanghai.myqcloud.com/chato_image/Chato.png`"
-          alt=""
-          class="w-7 h-7 rounded-full object-cover"
-        />
-        <span class="inline-block truncate">{{ `Chato浏览器` }}</span>
-      </li>
     </ul>
-    <div
+    <!-- <div
       class="w-[180px] px-3 py-2 overflow-y-auto"
       style="border-top: 1px solid rgb(228, 231, 237)"
     >
@@ -54,7 +39,7 @@
         <svg-icon name="square_1" svg-class="w-5 h-5 mr-2" style="font-size: 22px" />
         {{ $t('探索机器人') }}
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 

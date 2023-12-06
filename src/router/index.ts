@@ -1,8 +1,6 @@
-import useChannel from '@/composables/useChannel'
 import usePageTitle from '@/composables/usePageTitle'
 import useRoleCheck from '@/composables/useRoleCheck'
 import useSidebar from '@/composables/useSidebar'
-import { useAuthStore } from '@/stores/auth'
 import Sensors from '@/utils/sensors'
 import { locationComToCn } from '@/utils/url'
 import { nextTick } from 'vue'
@@ -98,41 +96,51 @@ const coreRoutes = [
     ]
   }
 ]
-const chatRoutes = [
-  {
-    path: 'c',
-    component: () => import('@/views/chat/index.vue'),
-    meta: {
-      title: '对话',
-      requiresAuth: true
-    },
-    children: [
-      {
-        name: RoutesMap.chat.navigator,
-        path: 'bot/chato_navigator',
-        component: () => import('@/components/Chat/ChatoNavigator.vue')
-      },
-      {
-        name: RoutesMap.home.homeResource,
-        path: 'bot/square',
-        component: () => import('@/views/resource/square.vue')
-      },
-      {
-        name: RoutesMap.chat.c,
-        path: 'bot/:botSlug',
-        // meta: { title: '聊天' },
-        component: () => import('@/views/chating/ChatItem.vue')
-      }
-    ]
-  }
-]
 
 const loginedRoutes = [
   {
     path: '/',
     component: () => import('@/layout/MainLayout.vue'),
     meta: { requiresAuth: true },
-    children: [...coreRoutes, ...chatRoutes]
+    children: [
+      {
+        name: RoutesMap.release,
+        path: '/b',
+        component: RouterView,
+        children: [
+          {
+            name: RoutesMap.chat.release,
+            path: ':botSlug',
+            component: () => import('@/views/chat/shareChat.vue'),
+            meta: {
+              // title: '对话'
+            }
+          }
+        ]
+      },
+      {
+        path: '/',
+        component: () => import('@/views/chat/index.vue'),
+        meta: {
+          title: '对话',
+          requiresAuth: true
+        },
+        children: [
+          // {
+          //   name: RoutesMap.home.homeResource,
+          //   path: '/c/bot/square',
+          //   component: () => import('@/views/resource/square.vue')
+          // },
+          {
+            name: RoutesMap.chat.c,
+            path: '/c/bot/:botSlug',
+            // meta: { title: '聊天' },
+            component: () => import('@/views/chating/ChatItem.vue')
+          }
+        ]
+      },
+      ...coreRoutes
+    ]
   }
 ]
 
@@ -149,32 +157,15 @@ const router = createRouter({
 })
 
 router.beforeEach((to) => {
+  if (to.fullPath === '/')
+    return {
+      path: '/c/bot/q94e6rxnl8q7830m'
+    }
   const { drawerVisible } = useSidebar()
-  const { shareChannel } = useChannel()
-  const sensors = new Sensors()
-  const { saInstance } = sensors
   drawerVisible.value = false
-
   locationComToCn()
   useRoleCheck(to)
   usePageTitle(to.meta?.title)
-  saInstance?.track('channel-source', {
-    name: 'channel来源',
-    type: 'channel-source',
-    data: shareChannel
-  })
-  // useCheckDomain(to)
-  const authStoreI = useAuthStore()
-  if (to.meta.requiresAuth && !authStoreI.authToken) {
-    let query
-    // 通过 redirect 参数保存当前所在的位置，以便登录后返回
-    // 如果当前是首页，就不用存了，因为登录后默认回首页
-    if (to.fullPath !== '/') query = { redirect: to.fullPath }
-    return {
-      path: '/auth/login',
-      query
-    }
-  }
 })
 
 router.afterEach((to) => {

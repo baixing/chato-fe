@@ -41,10 +41,10 @@ service.interceptors.response.use(
       const authStoreI = useAuthStore()
       switch (data.code) {
         case 401: {
-          data.message = $t('您的登录状态已失效，请重新登录。')
+          // data.message = $t('您的登录状态已失效，请重新登录。')
           authStoreI.$patch({ authToken: '' })
           if (window.location.pathname !== '/') {
-            router.replace('/auth/login')
+            // router.replace('/auth/login')
           }
           break
         }

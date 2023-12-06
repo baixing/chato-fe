@@ -52,27 +52,7 @@
                 {{ c.desc }}
               </div>
             </div>
-            <div
-              class="border-t border-0 border-solid !text-sm text-[#596780] border-[#E4E7ED] flex justify-between h-11 items-center"
-            >
-              <div
-                class="basis-1/2 text-center border-0 h-full leading-[44px] border-r border-solid border-[#E4E7ED] flex items-center justify-center hover:!text-[#7C5CFC]"
-                @click.stop="onGoCreate(c.slug)"
-              >
-                <el-icon class="mr-1 !text-base lg:!hidden">
-                  <Plus class="text-[#9DA3AF]" />
-                </el-icon>
-                <div class="text-xs">{{ t('创建同款') }}</div>
-              </div>
-              <div
-                class="basis-1/2 text-center flex items-center justify-center hover:!text-[#7C5CFC]"
-              >
-                <el-icon class="mr-1 !text-base lg:!hidden">
-                  <ChatDotRound class="text-[#9DA3AF]" />
-                </el-icon>
-                <div class="text-xs" @click="onAddSessionChat(c)">{{ t('对话') }}</div>
-              </div>
-            </div>
+            <div class="!text-sm text-[#596780] flex justify-between h-2 items-center"></div>
           </div>
         </div>
       </div>
@@ -98,7 +78,7 @@ import { ElLoading } from 'element-plus'
 import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import QrCodeRobot from './components/QrCodeRobot.vue'
 
 const props = withDefaults(
@@ -116,7 +96,6 @@ const props = withDefaults(
 
 const { t } = useI18n()
 const router = useRouter()
-const route = useRoute()
 const $uid = useStorage('uid', '')
 const resourceList = ref([])
 const authStoreI = useAuthStore()

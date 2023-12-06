@@ -1,10 +1,10 @@
-export const FULL_SITE_NAME = 'Chato - 基于AI技术 轻松创建对话机器人'
-export const SITE_NAME = 'Chato'
-export const CHARO_SOURCE_RESOURCE = 'Chato_resource_web' // 资源广场-默认source
-export const CHATO_SOURCE_SHARE = 'Chato_share_web' // 网页分享
-export const CHATO_SOURCE_SHAKEDOWN = 'Chato_shakedown_web' // 调试页面
-export const CHATO_SOURCE_JS = 'Chato_share_js' // js嵌入
-export const CHATO_SOURCE_PUBLIC = 'mp_menu' // 微信公众号
+export const FULL_SITE_NAME = '阿旺'
+export const SITE_NAME = '阿旺'
+export const CHARO_SOURCE_RESOURCE = 'wx_mini_prog' // 资源广场-默认source
+export const CHATO_SOURCE_SHARE = '阿旺' // 网页分享
+export const CHATO_SOURCE_SHAKEDOWN = '阿旺' // 调试页面
+export const CHATO_SOURCE_JS = '阿旺' // js嵌入
+export const CHATO_SOURCE_PUBLIC = 'wx_mini_prog' // 微信公众号
 export const CHATO_SOURCE_APPLET = 'wx_mini_prog' // 微信小程序
 export const CHATO_APP_ID = 'wx627b77845363787d' // 纳什公众号id
 export const CHATO_BAIXING_APP_ID = 'wx3e83c7262c068c6c' // Baixing AI 公众号id

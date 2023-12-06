@@ -378,7 +378,6 @@ onBeforeUnmount(() => {
   background-color: #fff;
   position: relative;
   box-sizing: border-box;
-
   .input-icon-btn {
     @apply w-12 h-12 flex items-center justify-center rounded-full shrink-0 cursor-pointer transition-colors hover:bg-[#f2f3f5] lg:w-8 lg:h-8;
   }
