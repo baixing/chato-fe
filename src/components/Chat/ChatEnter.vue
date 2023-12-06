@@ -89,10 +89,9 @@
         </el-tooltip>
       </div>
     </template>
-    <!-- <el-tooltip
+    <el-tooltip
       v-if="needAiGenerate"
-      :disabled="internalEnterDisabled"
-      :content="t('自动生成')"
+      :content="t(isAiGenerate ? '停止自动生成' : '自动生成')"
       placement="top"
       :hide-after="0"
     >
@@ -107,7 +106,7 @@
           />
         </div>
       </div>
-    </el-tooltip> -->
+    </el-tooltip>
     <div
       v-show="chatRecordingEnterVisible"
       :class="['recorder-container', footerBrandShow && '!-bottom-8']"

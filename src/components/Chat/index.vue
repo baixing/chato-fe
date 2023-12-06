@@ -119,7 +119,7 @@
         :disabled="isLoadingAnswer"
         :needAiGenerate="needAiGenerate"
         :is-ai-generate="isAiGenerate"
-        :on-is-ai-generate="(v) => (isAiGenerate = v)"
+        :on-is-ai-generate="onUpdateAIGenerate"
         @input-click="scrollChatHistory"
         @clear="clearChatHistory"
         @submit="submit"
@@ -230,13 +230,17 @@ import {
   randomString
 } from '@/utils/help'
 import { convertToMarkdown, regReplaceA, removewRegReplaceA } from '@/utils/reg'
-import SSE from '@/utils/sse'
 import { getStringWidth } from '@/utils/string'
 import { isURL } from '@/utils/url'
 import shareWeixin from '@/utils/weixinShare'
 import { useDebounceFn } from '@vueuse/core'
 import dayjs from 'dayjs'
-import { ElMessage, ElMessageBox, ElNotification as Notification } from 'element-plus'
+import {
+  ElMessage,
+  ElMessageBox,
+  ElNotification,
+  ElNotification as Notification
+} from 'element-plus'
 import 'highlight.js/styles/default.css'
 import { random, remove } from 'lodash'
 import { storeToRefs } from 'pinia'
@@ -353,7 +357,6 @@ const chatHistoryParams: ChatHistoryParams = reactive({
   page_size: 10
 })
 
-const SSEInstance = new SSE()
 const socketStore = useSocketStore()
 const socketInstance = useWebSocketConnect(currentEnvConfig.socketURL)
 const { socketResultMap } = storeToRefs(socketStore)
@@ -368,34 +371,9 @@ const copyText = (str: string) => {
   $copyText(str, '链接已复制成功，快分享给你的好友吧')
 }
 
-watch(isAiGenerate, (v) => v && successRBI() && onAIGenerate())
-
-const onAIGenerate = async () => {
-  try {
-    const promptStr = inputText.value
-    let resStr = ''
-    inputText.value = ''
-
-    await SSEInstance.request(
-      '/prompt/generated',
-      {
-        role: detail.value.name,
-        system_prompt: detail.value.system_prompt,
-        user_prompt: promptStr,
-        generate_type: '欢迎语'
-      },
-      (str) => {
-        resStr += str
-        const parts = resStr.split('#')
-        if (parts[2] !== null) {
-          inputText.value = parts[1]
-        }
-      }
-    )
-  } catch (e) {
-  } finally {
-    submit()
-  }
+const onUpdateAIGenerate = (v) => {
+  isAiGenerate.value = v
+  v && successRBI()
 }
 
 // ---- 业务打点-----
@@ -843,15 +821,8 @@ async function sendMsgRequest(message) {
     navit_msg_id: isMidJourneyDomain.value ? random(1000000, 9999999) : undefined,
     fake_domain: debugDomain || undefined
   }
-  // if (params.source === 'chato_home' && abTestConfig.value[7] === '0') {
-  //   params.type = 'flow'
-  // }
   try {
     socketInstance.send(JSON.stringify(params))
-    if (isAiGenerate.value) {
-      inputText.value = await getChatQuestion(history.value.at(-1).content)
-      submit()
-    }
   } catch (err) {
     history.value[history.value.length - 1].status = EWsMessageStatus.error
     history.value[history.value.length - 1].content = err
@@ -859,7 +830,7 @@ async function sendMsgRequest(message) {
   }
 }
 
-const generateMessage = (data, key) => {
+const generateMessage = async (data, key) => {
   const isFinalStatus = ChatMessageFinalStatus.includes(data.status)
   isLoadingAnswer.value = !isFinalStatus
   if (continueTarget.value) {
@@ -1200,18 +1171,23 @@ const initRecommendQuestions = async (question: string) => {
   }
 }
 
-const getChatQuestion = async (question: string) =>
-  new Promise<string>(async (resolve) => {
-    try {
-      const {
-        data: { data }
-      } = await getChatRecommendQuestions({ ...chatCommonParams.value, question })
-      resolve(data.recommends[0].question)
-    } catch (e) {
-    } finally {
-      recommendQuestionsLoading.value = false
+const getChatQuestion = async (question = '') => {
+  try {
+    const {
+      data: { data }
+    } = await getChatRecommendQuestions({ ...chatCommonParams.value, question })
+    if (!data.recommends.length) {
+      isAiGenerate.value = false
+      ElNotification.warning('暂无可自动生成的问题')
+      return ''
+    } else {
+      return data.recommends[0].question
     }
-  })
+  } catch (e) {
+  } finally {
+    recommendQuestionsLoading.value = false
+  }
+}
 
 const onClickRecommend = (ques: string) => {
   submit(ques)
@@ -1244,14 +1220,39 @@ const onWeixinH5DefaultLogin = async () => {
   }
 }
 
+let AINextChatGenerating = false
+const onAIGenerateNextChat = async () => {
+  if (AINextChatGenerating) {
+    return
+  }
+
+  const lastHistoryItem = history.value.at(-1)
+  if (
+    lastHistoryItem.isWelcome ||
+    (ChatMessageFinalStatus.includes(lastHistoryItem.status) &&
+      lastHistoryItem.status !== EWsMessageStatus.forbid_quota)
+  ) {
+    AINextChatGenerating = true
+    try {
+      const nextQues = await getChatQuestion(lastHistoryItem.question)
+      inputText.value = nextQues
+      submit()
+    } catch (e) {
+    } finally {
+      AINextChatGenerating = false
+    }
+  }
+}
+
 watch(refChatHistory, (v) => {
   v && v.addEventListener('click', chatHisListener)
 })
 
 watch(
-  history,
+  [history, isAiGenerate],
   () => {
     scrollBottom.value && scrollChatHistory()
+    isAiGenerate.value && onAIGenerateNextChat()
   },
   { deep: true }
 )
