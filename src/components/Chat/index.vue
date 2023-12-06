@@ -127,7 +127,7 @@
         class="chat-center"
       />
       <ChatFooter
-        v-if="detail.brand_show"
+        v-if="detail.brand_show && brandShow"
         :name="detail.brand_name"
         :logo="detail.brand_logo"
         :class="[
@@ -271,6 +271,7 @@ interface Props {
   avatarShow?: boolean
   isResource?: boolean
   needAiGenerate?: boolean
+  brandShow?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -280,7 +281,8 @@ const props = withDefaults(defineProps<Props>(), {
   isreadRouteParam: false,
   avatarShow: true,
   isResource: false,
-  needAiGenerate: false
+  needAiGenerate: false,
+  brandShow: true
 })
 
 const debugDomain = inject<IDomainInfo>(DebugDomainSymbol, null)
@@ -363,7 +365,7 @@ const link = computed(
 
 const copyText = (str: string) => {
   scanCodeSuccessRBI()
-  $copyText(str, '链接已复制成功，快分享给你的好友吧！')
+  $copyText(str, '链接已复制成功，快分享给你的好友吧')
 }
 
 watch(isAiGenerate, (v) => v && successRBI() && onAIGenerate())
