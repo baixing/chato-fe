@@ -272,7 +272,6 @@ import DefaultAvatar from '@/assets/img/avatar.png'
 import XHSLogo from '@/assets/img/xhs-logo.png'
 import { currentEnvConfig } from '@/config'
 // import { useDomainStore } from '@/stores/domain'
-import { useInfiniteScroll } from '@vueuse/core'
 import { ElMessageBox } from 'element-plus'
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -371,10 +370,6 @@ const loadMoreContent = () => {
     isLoadingFeed.value = false
   }, 2000)
 }
-
-useInfiniteScroll(refFeedList, () => {
-  loadMoreContent()
-})
 
 function openXHSNote(id) {
   window.open(`https://www.xiaohongshu.com/explore/${id}`, '_blank')
@@ -504,6 +499,8 @@ async function handleCommentButtonClick() {
       domain_slug: selectedDomainSlug.value
     }
   })
+
+  loadMoreContent()
 }
 
 async function getHomeFeed() {
@@ -554,6 +551,7 @@ async function init() {
   isLogin.value = res.data.data.is_login
   getHistory()
   getRobots()
+  loadMoreContent()
   if (isLogin.value) {
     res = await request({
       url: '/chato/api/v1/xhs/get_self_info',
