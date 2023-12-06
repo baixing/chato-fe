@@ -180,7 +180,7 @@ import {
   SymChatDomainDetail,
   SymChatToken
 } from '@/constant/chat'
-import { CHATO_BAIXING_APP_ID } from '@/constant/common'
+import { CHATO_BAIXING_APP_ID, CHATO_SOURCE_APPLET } from '@/constant/common'
 import { DebugDomainSymbol, MidJourneyDomainSlug } from '@/constant/domain'
 import { PaidCommercialTypes } from '@/constant/space'
 import { XSSOptions } from '@/constant/xss'
@@ -237,6 +237,7 @@ import {
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import { BlindWatermark, Watermark } from 'watermark-js-plus'
+import wx from 'weixin-js-sdk'
 import xss from 'xss'
 import ChatMessageMore from './ChatMessageMore.vue'
 import ChatMoreNavigator from './ChatMoreNavigator.vue'
@@ -333,6 +334,8 @@ const chatHistoryParams: ChatHistoryParams = reactive({
   page: 1,
   page_size: 10
 })
+
+const isInApplet = computed(() => source.value === CHATO_SOURCE_APPLET) // 判断是否在小程序环境
 
 const SSEInstance = new SSE()
 const socketStore = useSocketStore()
@@ -496,6 +499,9 @@ async function init() {
     await checkQuotaInPlatformC()
   }
   await getHistoryChat()
+  if (isInApplet.value) {
+    wx.miniProgram.postMessage({ data: true })
+  }
   watermarkFunc()
   if (currentEnvIsWechat && !!detail.value.customer_limit.payment_limit_switch) {
     onWeixinH5DefaultLogin()
