@@ -222,6 +222,7 @@
             <el-button
               type="primary"
               :disabled="modalSubmitDisabled"
+              :loading="modalSubmitLoading"
               data-script="Chato-doc-submit"
               @click="submitInputText()"
             >
@@ -279,7 +280,7 @@ import type {
 } from 'element-plus'
 import { ElLoading, ElMessage, ElNotification as Notification } from 'element-plus'
 import { storeToRefs } from 'pinia'
-import { computed, onUnmounted, reactive, ref, watch } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
@@ -360,7 +361,6 @@ const spliderUrlForm = reactive({
 })
 // 公众号
 const spliderPublicForm = reactive({
-  publicSearchName: '',
   publicName: '',
   content: 10,
   maxContent: 0
@@ -454,6 +454,7 @@ const modalSubmitDisabled = computed(() => {
   }
 })
 
+const modalSubmitLoading = ref(false)
 const spliderWxPublicEl = ref()
 const onFillWXPublic = async () => {
   try {
@@ -522,7 +523,7 @@ async function submitInputText() {
           break
         default:
           requestFunc = 'uploadPublicAsync'
-          requestParams = [spliderPublicForm.publicName || spliderPublicForm.publicSearchName]
+          requestParams = [spliderPublicForm.publicName]
           requestParamsPath = {
             count:
               spliderPublicForm.content === -1
@@ -550,7 +551,6 @@ async function submitInputText() {
           spliderUrlForm.urlData = ''
           spliderPublicForm.publicName = ''
           spliderPublicForm.content = 10
-          spliderPublicForm.publicSearchName = ''
           emit('setSuccess')
         })
         .catch((err) => {})
@@ -558,7 +558,6 @@ async function submitInputText() {
           loading.close()
           spliderPublicForm.publicName = ''
           spliderPublicForm.content = 10
-          spliderPublicForm.publicSearchName = ''
           emit('closeDialogVisble')
         })
     } else {
@@ -568,8 +567,13 @@ async function submitInputText() {
 }
 
 const getPublicContent = async () => {
-  const res = await apiFile.getWXPublicCount({ name: spliderPublicForm.publicName })
-  return Number(res.data.data)
+  try {
+    modalSubmitLoading.value = true
+    const res = await apiFile.getWXPublicCount({ name: spliderPublicForm.publicName })
+    return Number(res.data.data)
+  } finally {
+    modalSubmitLoading.value = false
+  }
 }
 
 const wxPublicListLoading = ref(false)
@@ -709,7 +713,7 @@ async function resetInputTextForm() {
   if (demonstrationNameList.includes(domainName.value)) await getDemonstrationInit()
 }
 
-const watchProps = watch(
+watch(
   props,
   async (v) => {
     console.log(v)
@@ -732,18 +736,14 @@ const watchProps = watch(
   },
   { immediate: true, deep: true }
 )
-const watchActiveName = watch(
+
+watch(
   activeName,
   (v) => {
     showSubmit.value = v === 'upload-doc' ? false : true
   },
   { immediate: true }
 )
-
-onUnmounted(() => {
-  watchProps()
-  watchActiveName()
-})
 </script>
 
 <style lang="scss" scoped>
