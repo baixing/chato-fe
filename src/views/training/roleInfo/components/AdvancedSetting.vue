@@ -422,8 +422,8 @@ const initSystemPromptLimit = async () => {
 
 debouncedWatch(
   [() => currentDomain.llm, () => currentDomain.top_k],
-  ([llm, topK]) => {
-    llm && topK && initSystemPromptLimit()
+  ([llm]) => {
+    llm && initSystemPromptLimit()
   },
   { immediate: true, debounce: 300 }
 )
