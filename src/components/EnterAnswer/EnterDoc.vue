@@ -268,6 +268,7 @@ import { useAuthStore } from '@/stores/auth'
 import { getFileByUrl } from '@/utils/cos'
 import { $notnull } from '@/utils/help'
 import { getStringWidth } from '@/utils/string'
+import { useDebounceFn } from '@vueuse/core'
 import dayjs from 'dayjs'
 import type {
   ElSelect,
@@ -578,7 +579,7 @@ const getPublicContent = async () => {
 
 const wxPublicListLoading = ref(false)
 
-const getWXPublicListByPublicName = async (name: string) => {
+const getWXPublicListByPublicName = useDebounceFn(async (name: string) => {
   if (!name || wxPublicListLoading.value) {
     WXPublicList.value = []
     return
@@ -593,7 +594,7 @@ const getWXPublicListByPublicName = async (name: string) => {
   } finally {
     wxPublicListLoading.value = false
   }
-}
+}, 1000)
 
 function beforeUpload(rawFile: UploadRawFile) {
   const fileType = rawFile.name.substring(rawFile.name.lastIndexOf('.')).toLowerCase()
