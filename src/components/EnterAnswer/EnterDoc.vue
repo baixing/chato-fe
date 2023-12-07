@@ -568,7 +568,7 @@ async function submitInputText() {
 }
 
 const getPublicContent = async () => {
-  const res = await apiFile.getWXPublicCount({ name: spliderPublicForm.publicSearchName })
+  const res = await apiFile.getWXPublicCount({ name: spliderPublicForm.publicName })
   return Number(res.data.data)
 }
 
