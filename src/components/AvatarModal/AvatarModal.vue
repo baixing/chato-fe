@@ -9,12 +9,15 @@
   />
   <Modal v-model:visible="visible" title="选择头像" @submit="onSubmit" width="484px">
     <div class="flex flex-col items-center pb-5">
-      <Avatar
-        :avatar="imgByModal || DefaultAvatar"
-        class="w-14 h-14 cursor-pointer"
-        :size="56"
-        :name="name"
-      />
+      <div class="w-14 h-14 cursor-pointer group/item relative">
+        <Avatar :avatar="imgByModal || DefaultAvatar" :size="56" :name="name" />
+        <div
+          class="text-[#fff] text-base leading-4 hidden w-full h-full absolute rounded-full group-hover/item:bg-[#000]/[0.6] top-0 group-hover/item:flex flex-col justify-around items-center"
+        >
+          <el-icon @click="crop"><Crop /></el-icon>
+        </div>
+      </div>
+
       <div class="pt-1 text-[#9DA3AF]">{{ t('预览头像') }}</div>
     </div>
     <div class="font-medium leading-6 text-[#303133] pb-5">{{ t('自定义头像颜色') }}</div>
@@ -104,7 +107,8 @@ const { t } = useI18n()
 const vueCropperOptions = {
   autoCrop: true,
   fixed: true,
-  fixedNumber: [1, 1]
+  fixedNumber: [1, 1],
+  fillColor: '#ffffff'
 }
 
 const onSubmit = () => {
@@ -143,5 +147,10 @@ const beforeUpload = async (rawFile: UploadRawFile) => {
   reader.readAsDataURL(rawFile)
   imgUploadDialogVisible.value = true
   return false
+}
+
+const crop = async () => {
+  cropImgUrl.value = imgByModal.value
+  imgUploadDialogVisible.value = true
 }
 </script>
