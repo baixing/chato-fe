@@ -38,7 +38,7 @@ export const DomainCategoryOptions = [
   }
 ]
 
-export const MidJourneyDomainSlug = import.meta.env.VITE_APP_MIDJOURNEY_DOMAIN_SLUG
+export const MidJourneyDomainSlug = 'dlj4z52djjmrg031'
 
 export const DomainReplyToneOfVoice = [
   '亲切友好',
