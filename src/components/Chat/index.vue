@@ -1230,7 +1230,7 @@ watch(lastHistory, (v) => {
     const isAnswerDone =
       v.displayType === EMessageDisplayType.answer && ChatMessageFinalStatus.includes(v.status)
     if (isQuestion || isAnswerDone) {
-      wx.miniProgram.postMessage({ data: v })
+      wx.miniProgram.postMessage({ data: { ...v, slug: botSlug.value } })
     }
   }
 })
