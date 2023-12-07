@@ -15,7 +15,7 @@
           :avatar="item.avatar || DefaultAvatar"
           :size="28"
           :name="item.name.slice(0, 2)"
-          class="w-7 h-7 rounded-full shrink-0 overflow-hidden"
+          class="w-7 h-7 shrink-0 overflow-hidden"
         />
         <span class="inline-block truncate">{{ item.name }}</span>
       </li>
