@@ -1226,7 +1226,12 @@ const lastHistory = computed(() => history.value[history.value.length - 1])
 
 watch(lastHistory, (v) => {
   if (isInApplet.value) {
-    wx.miniProgram.postMessage({ data: v })
+    const isQuestion = v.displayType === EMessageDisplayType.question
+    const isAnswerDone =
+      v.displayType === EMessageDisplayType.answer && ChatMessageFinalStatus.includes(v.status)
+    if (isQuestion || isAnswerDone) {
+      wx.miniProgram.postMessage({ data: v })
+    }
   }
 })
 
