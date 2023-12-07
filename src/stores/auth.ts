@@ -4,14 +4,17 @@ import { useCookies } from '@vueuse/integrations/useCookies'
 import { defineStore } from 'pinia'
 import { v4 as uuidv4 } from 'uuid'
 import { computed, ref } from 'vue'
+import { useRoute } from 'vue-router'
 
 export const useAuthStore = defineStore('auth', () => {
+  const route = useRoute()
   const cookieToken = useCookies(['auth_token'])?.get('auth_token') || ''
   const storageToken = useStorage('auth_token', '')
   const $uid = useStorage('uid', '')
   const myUuid = uuidv4()
 
   const uid = computed(() => {
+    $uid.value = route.query.uid as string
     if (!$uid.value || $uid.value === 'undefined') {
       $uid.value = myUuid
     }

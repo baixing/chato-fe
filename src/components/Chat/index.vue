@@ -499,9 +499,6 @@ async function init() {
     await checkQuotaInPlatformC()
   }
   await getHistoryChat()
-  if (isInApplet.value) {
-    wx.miniProgram.postMessage({ data: true })
-  }
   watermarkFunc()
   if (currentEnvIsWechat && !!detail.value.customer_limit.payment_limit_switch) {
     onWeixinH5DefaultLogin()
@@ -1223,6 +1220,14 @@ const onWeixinH5DefaultLogin = async () => {
 
 watch(refChatHistory, (v) => {
   v && v.addEventListener('click', chatHisListener)
+})
+
+const lastHistory = computed(() => history.value[history.value.length - 1])
+
+watch(lastHistory, (v) => {
+  if (isInApplet.value) {
+    wx.miniProgram.postMessage({ data: v })
+  }
 })
 
 watch(
