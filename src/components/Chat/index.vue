@@ -1,7 +1,7 @@
 <template>
   <div
     class="container-preview-page bg-white relative parent-element"
-    :class="[isIphoneBol && 'pb-2']"
+    :class="[isIphoneBol && 'pb-4']"
   >
     <div
       v-if="detail.name_and_avatar_show && avatarShow"
@@ -167,7 +167,6 @@ import ChatEnter from '@/components/Chat/ChatEnter.vue'
 import MessageItem from '@/components/Chat/ChatMessageItem.vue'
 import CustomerFormDialog from '@/components/Customer/CustomerFormDialog.vue'
 import useAudioPlayer from '@/composables/useAudioPlayer'
-import { isIphone } from '@/composables/useBasicLayout'
 import useGlobalProperties from '@/composables/useGlobalProperties'
 import useSSEAudio from '@/composables/useSSEAudio'
 import { useSource } from '@/composables/useSource'
@@ -276,7 +275,6 @@ const base = useBase()
 const isAiGenerate = ref(false)
 const { userInfo } = storeToRefs(base)
 const authStoreI = useAuthStore()
-const isIphoneBol = isIphone()
 const { authToken, uid } = storeToRefs(authStoreI)
 const emit = defineEmits(['showDrawer', 'correctAnswer'])
 const { $sensors, $copyText } = useGlobalProperties()
@@ -323,6 +321,10 @@ const payModalVisible = ref(Boolean(route.query.pay || false))
 
 const redirectCode = computed(() => (route.query.code as string) || '')
 const currentEnvIsWechat = isWechat()
+
+const isIphoneBol = computed(() =>
+  route.query.system ? decodeURIComponent(route.query.system as string).includes('iOS') : false
+)
 
 const DefaultChatHistoryPage = {
   total: 0,
