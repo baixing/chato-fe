@@ -39,7 +39,6 @@
           :autosize="{ maxRows: 5 }"
           v-model="internalValue"
           :placeholder="t(inputPlaceholder)"
-          :disabled="isAiGenerate || internalEnterDisabled"
           @click="emit('inputClick')"
           @keydown.enter="onKeydownEnter"
         />

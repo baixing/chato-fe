@@ -1,6 +1,7 @@
 export const FULL_SITE_NAME = '阿旺'
 export const SITE_NAME = '阿旺'
 export const CHARO_SOURCE_RESOURCE = 'wx_mini_prog' // 资源广场-默认source
+export const AWANG_SOURCE_WEB = 'awang-web' // 阿旺-网页
 export const CHATO_SOURCE_SHARE = '阿旺' // 网页分享
 export const CHATO_SOURCE_SHAKEDOWN = '阿旺' // 调试页面
 export const CHATO_SOURCE_JS = '阿旺' // js嵌入
