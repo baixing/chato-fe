@@ -405,18 +405,6 @@ const watermarkFunc = () => {
     })
     blindWatermark.value.create()
   }
-
-  if (!watermark.value) {
-    watermark.value = new Watermark({
-      parent: '.parent-element',
-      fontColor: '#e4e5e5',
-      fontSize: '12px',
-      rotate: 30,
-      content: '内容由AI生成仅供参考',
-      onSuccess: () => {}
-    })
-    watermark.value.create()
-  }
 }
 
 // 是否是绘画机器人，通过对话的回答是否包含 mjImage 类型的消息
