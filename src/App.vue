@@ -15,8 +15,8 @@ import { useLocales } from '@/stores/locales'
 import { useStorage } from '@vueuse/core'
 import { ElConfigProvider } from 'element-plus'
 import { storeToRefs } from 'pinia'
+import { v4 as uuidv4 } from 'uuid'
 import { computed, onMounted } from 'vue'
-import { randomString } from './utils/help'
 
 // 设置不同环境的 Favicon
 // useFavicon()
@@ -27,7 +27,7 @@ const clocale = computed(() => Elementlocales[locale.value])
 const $uid = useStorage('uid', '')
 const initUid = () => {
   if (!$uid.value || $uid.value === 'undefined') {
-    $uid.value = 'uid' + randomString(32)
+    $uid.value = uuidv4()
   }
 }
 onMounted(() => initUid())
