@@ -232,11 +232,12 @@ import { useAuthStore } from '@/stores/auth'
 import { useBase } from '@/stores/base'
 import { useChatStore } from '@/stores/chat'
 import { useLocales } from '@/stores/locales'
-import { openPreviewUrl, randomString } from '@/utils/help'
+import { openPreviewUrl } from '@/utils/help'
 import { chatoIframe } from '@/utils/iframe'
 import { ArrowDown } from '@element-plus/icons-vue'
 import { useDebounceFn, useStorage } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
+import { v4 as uuidv4 } from 'uuid'
 import type { Ref } from 'vue'
 import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -415,7 +416,7 @@ const onLinkRoute = (key: string) => {
 
 const initUid = () => {
   if (!$uid.value || $uid.value === 'undefined') {
-    $uid.value = 'uid' + randomString(32)
+    $uid.value = uuidv4()
   }
 }
 
