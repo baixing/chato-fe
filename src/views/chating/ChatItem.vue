@@ -89,7 +89,7 @@ const onOpenSource = (question_id, slug) => {
 
 // 抖音api回调
 const onDouyinAPIClick = (id) => {
-  fetch('https://analytics.oceanengine.com/api/v2/conversion', {
+  fetch('/api/v2/conversion', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json' // 告诉服务器我们正在发送JSON数据
