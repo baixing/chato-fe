@@ -14,10 +14,13 @@ export const useAuthStore = defineStore('auth', () => {
   const myUuid = uuidv4()
 
   const uid = computed(() => {
-    $uid.value = route.query.uid as string
-    if (!$uid.value || $uid.value === 'undefined') {
+    const queryUid = route.query.uid as string
+    if (queryUid) {
+      $uid.value = queryUid
+    } else if (!$uid.value) {
       $uid.value = myUuid
     }
+
     return $uid.value
   })
 
