@@ -201,6 +201,7 @@ import type { ITTSParams } from '@/interface/tts'
 import router, { RoutesMap } from '@/router'
 import { useAuthStore } from '@/stores/auth'
 import { useBase } from '@/stores/base'
+import { useChatStore } from '@/stores/chat'
 import { cuserStore } from '@/stores/cuser'
 import { useSocketStore } from '@/stores/socket'
 import { formatChatMessageAnswer } from '@/utils/chat'
@@ -308,6 +309,7 @@ const $isLoading = ref<boolean>(true) // 是否处于全屏加载状态
 const history = ref<IMessageItem[]>([])
 const inputLength = ref<number>(3000)
 const continueTarget = ref<HTMLElement>(null)
+const chatStoreI = useChatStore()
 const socketResult = ref({
   chunk_message: ''
 })
@@ -1233,6 +1235,9 @@ watch(lastHistory, (v) => {
         }
       })
     }
+  }
+  if (v.status === EWsMessageStatus.done) {
+    chatStoreI.initChatList()
   }
 })
 

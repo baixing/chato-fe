@@ -107,10 +107,7 @@
         </div>
       </div>
     </el-tooltip>
-    <div
-      v-show="chatRecordingEnterVisible"
-      :class="['recorder-container', footerBrandShow && '!-bottom-8']"
-    >
+    <div v-show="chatRecordingEnterVisible" :class="['recorder-container']">
       <el-icon size="16" color="#596780" @click="onCloseRecorder" class="close-icon">
         <Close />
       </el-icon>
