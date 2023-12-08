@@ -668,6 +668,10 @@ const submit = async (str = '') => {
     return
   }
 
+  if (isLoadingAnswer.value) {
+    return
+  }
+
   if (getStringWidth(text) > Number(inputLength.value)) {
     Notification.warning(t('问题过长！'))
     return
