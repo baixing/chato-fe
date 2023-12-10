@@ -31,6 +31,12 @@ const initUid = () => {
   }
 }
 onMounted(() => initUid())
+
+const onDisableOverflow = () => {
+  document.body.style.overflow = 'hidden'
+}
+
+onDisableOverflow()
 </script>
 
 <style lang="scss" scoped>
