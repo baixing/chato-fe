@@ -1,6 +1,6 @@
 <template>
   <el-config-provider :locale="clocale">
-    <div class="flex flex-col flex-1 h-full relative pb-2">
+    <div class="flex flex-col flex-1 h-full relative pb-1">
       <router-view />
     </div>
   </el-config-provider>
@@ -30,13 +30,10 @@ const initUid = () => {
     $uid.value = uuidv4()
   }
 }
-onMounted(() => initUid())
-
-const onDisableOverflow = () => {
+onMounted(() => {
+  initUid()
   document.body.style.overflow = 'hidden'
-}
-
-onDisableOverflow()
+})
 </script>
 
 <style lang="scss" scoped>

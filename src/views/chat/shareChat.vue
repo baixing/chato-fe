@@ -39,7 +39,7 @@ import { cuserStore } from '@/stores/cuser'
 import { getMarkDownUrl, replaceMarkdownUrl } from '@/utils/help'
 import { removewRegReplaceA } from '@/utils/reg'
 import * as url from '@/utils/url'
-import { computed, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
 const currentQuestionId = ref<number>()
@@ -82,4 +82,51 @@ const correctAnswer = (e) => {
 // 校验C端登录
 checkUserLoginStatus(currentSlug.value)
 getCuserOrderInfo(currentSlug.value)
+
+const onTopNoPullDown = () => {
+  const overscroll = function (el) {
+    el.addEventListener('touchstart', function () {
+      const top = el.scrollTop
+      const totalScroll = el.scrollHeight
+      const currentScroll = top + el.offsetHeight
+      if (top === 0) {
+        el.scrollTop = 1
+      } else if (currentScroll === totalScroll) {
+        el.scrollTop = top - 1
+      }
+    })
+    el.addEventListener('touchmove', function (evt) {
+      if (el.offsetHeight < el.scrollHeight) evt._isScroller = true
+    })
+  }
+  overscroll(document.querySelector('#app'))
+  document.body.addEventListener(
+    'touchmove',
+    function (evt) {
+      console.log((evt as any)._isScroller)
+      if (!(evt as any)._isScroller) {
+        evt.preventDefault()
+      }
+    },
+    { passive: false }
+  )
+}
+
+onMounted(() => {
+  onTopNoPullDown()
+  document.body.style.overflow = 'auto'
+})
 </script>
+
+<style lang="scss">
+#app {
+  height: 100vh !important;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #fff;
+  padding-bottom: 0;
+}
+</style>
