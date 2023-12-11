@@ -47,7 +47,7 @@
               {{ $t('查看示意图') }}
             </el-button>
           </p>
-          <div class="text-sm font-normal leading-4 flex items-center gap-3">
+          <div class="text-sm font-normal leading-4 flex items-center gap-3 flex-wrap">
             {{ $t('条数') }}
             <el-input-number
               v-model="currentOrderDetail.total_quota"
