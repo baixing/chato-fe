@@ -1,5 +1,9 @@
 import type { TPagingList } from '@/interface/common'
-import type { IQuestionFilter } from '@/interface/question'
+import type {
+  IQuestionFilter,
+  IUserChatMessage,
+  IUserChatMessageFilter
+} from '@/interface/question'
 import type { IFormCollectDetailList, IFormCollectSelect } from '@/interface/report'
 import { paramsSerializer } from '@/utils/help'
 import request from '@/utils/request'
@@ -103,5 +107,12 @@ export function exportFormCollectDetailList(params: TPagingList) {
   return request<ArrayBuffer>({
     url: `/chato/api/v1/graph/export/form_datas?${paramsSerializer(params)}`,
     responseType: 'arraybuffer'
+  })
+}
+
+export function getUserChatMessageByDomainId(data: IUserChatMessageFilter) {
+  return request<IUserChatMessage[]>({
+    url: `/chato/api/v1/statistics/questions/query`,
+    data
   })
 }

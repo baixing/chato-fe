@@ -1,13 +1,12 @@
 <template>
   <div
     v-loading="loading"
-    class="max-w-[680px] w-full mx-auto h-[calc(100vh-186px)] lg:h-[calc(100vh-220px)] relative"
+    class="max-w-[680px] w-full mx-auto h-[calc(100vh-186px)] lg:h-[calc(100vh-220px)]"
   >
     <virtual-list
       ref="virtualRef"
       :list-data="chatList"
       :estimated-item-size="100"
-      height="96%"
       class="flex-1"
       item-class="w-full flex flex-col mb-4"
       @scroll="onHiddenChatMore"
@@ -24,9 +23,6 @@
         />
       </template>
     </virtual-list>
-    <div v-show="!loading" class="absolute text-center -bottom-4 left-1/2 -translate-x-1/2">
-      <el-button type="primary" @click="onExport">{{ $t('导出全部') }}</el-button>
-    </div>
   </div>
   <ChatMessageMore
     :message="currrentMessage"
@@ -53,7 +49,7 @@
 </template>
 <script lang="ts" setup>
 import { getDomainDetailPublic } from '@/api/domain'
-import { exportQuestions, getQuestions } from '@/api/report'
+import { getQuestions } from '@/api/report'
 import DocSourceDrawer from '@/components/Chat/ChatDocSourceDrawer.vue'
 import MessageItem from '@/components/Chat/ChatMessageItem.vue'
 import ChatMessageMore from '@/components/Chat/ChatMessageMore.vue'
@@ -143,26 +139,8 @@ const initQuestions = async () => {
     }
     res.unshift(question, answer)
   }
-  chatList.value = res
-}
-
-const onExport = async () => {
-  try {
-    const res = await exportQuestions({
-      ids: [],
-      domainId: domainInfo.value.id,
-      midQuestionId: midQuestionId.value
-    })
-
-    const blob = new Blob([res.data as unknown as BlobPart], {
-      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8'
-    })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.click()
-    URL.revokeObjectURL(url)
-  } catch (err) {}
+  const newData = res.concat(chatList.value)
+  chatList.value = newData
 }
 
 const init = async () => {
@@ -256,6 +234,7 @@ watch(
       return
     }
 
+    console.log(1111)
     virtualRef.value.setScrollToIndex(route.params.chatId)
   },
   { immediate: true }

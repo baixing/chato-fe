@@ -19,3 +19,16 @@ export interface IRecommendQuestion {
 export interface IRecommendQuestionParams extends IChatCommonParams {
   question: string
 }
+
+export interface IUserChatMessageFilter {
+  domainId: string | number
+}
+
+export interface IUserChatMessage {
+  id: string // 获取用户对话的 id
+  avatar: string // 微信头像
+  nickname: string // 微信昵称
+  source: string // 渠道来源
+  tag: string // 企微 tag
+  last_chat_time: string // 最后一次聊天时间
+}
