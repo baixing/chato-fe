@@ -127,8 +127,8 @@ window.onload = () => {
       let offsetY = 0
       let lastX = 0
       let lastY = 0
-      let newX = 0
-      let newY = 0
+      let newX = window.innerWidth - inframe_container.clientWidth - 44
+      let newY = window.innerHeight - inframe_container.clientHeight - 44
 
       tip_chato?.addEventListener('mousedown', startDrag)
       document.addEventListener('mousemove', drag)
