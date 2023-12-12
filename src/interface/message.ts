@@ -45,6 +45,7 @@ export interface IMessageMoreControl {
   [EMessageActionType.copy]?: boolean // 复制
   [EMessageActionType.delete]?: boolean // 删除
   [EMessageActionType.translate]?: boolean // 翻译
+  [EMessageActionType.share]?: boolean // 分享
   [EMessageActionType.expand]?: boolean // 拓展
   [EMessageActionType.retry]?: boolean // 重试
 }

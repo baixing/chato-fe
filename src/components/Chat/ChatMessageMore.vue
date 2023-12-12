@@ -51,6 +51,7 @@ import {
   Download,
   Edit,
   Refresh,
+  Share,
   Switch
 } from '@element-plus/icons-vue'
 import { ElMessageBox, ElNotification } from 'element-plus'
@@ -74,7 +75,8 @@ const emit = defineEmits([
   'translateSuccess',
   'likeDislikeSuccess',
   'receiveQuestionAnswer',
-  'playAudio'
+  'playAudio',
+  'initShare'
 ])
 
 const ChatMessageMoreAllAction = [
@@ -83,6 +85,7 @@ const ChatMessageMoreAllAction = [
   { title: '踩', icon: '', type: EMessageActionType.dislike },
   { title: '修正', icon: Edit, type: EMessageActionType.fix },
   { title: '翻译', icon: Switch, type: EMessageActionType.translate },
+  { title: '分享', icon: Share, type: EMessageActionType.share },
   { title: '重试', icon: Refresh, type: EMessageActionType.retry },
   { title: '复制', icon: CopyDocument, type: EMessageActionType.copy },
   { title: '删除', icon: Delete, type: EMessageActionType.delete },
@@ -181,6 +184,9 @@ const onMoreAction = (action: EMessageActionType) => {
       break
     case EMessageActionType.delete:
       onDelete(questionId)
+      break
+    case EMessageActionType.share:
+      emit('initShare')
       break
     case EMessageActionType.expand:
       emit('sendMessage', t('请你拓展出更多的回答'))

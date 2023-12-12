@@ -53,6 +53,9 @@
             :isInternal="isInternal && isChatingPractice"
             :is-loading-answer="isLoadingAnswer"
             :correct-visible="isInternal || (detail.qa_modifiable && !correctTicketExpired)"
+            :shareMode="shareMode"
+            :isShareItem="shareList.includes(item.id)"
+            @onShare="onShare(item.id)"
             @evaluate="onEvaluate"
             @send-message="submit"
             @show-more-action="onShowMoreAction"
@@ -103,7 +106,6 @@
           class="absolute top-0 right-0 bottom-0 left-0 cursor-not-allowed bg-[#ffffffa3] z-[1]"
         ></div>
       </div>
-
       <ChatEnter
         v-model:value="inputText"
         :last-question-id="sensorsQuestionId"
@@ -117,6 +119,13 @@
         @submit="submit"
         @onTerminateRetry="onTerminateRetry"
         class="chat-center"
+        v-if="!shareMode"
+      />
+      <ChatShareMode
+        v-else
+        class="chat-center py-5"
+        :shareList="shareList"
+        v-model:shareMode="shareMode"
       />
     </div>
   </div>
@@ -125,6 +134,7 @@
     :actions="currentMoreActions"
     :position="currentMoreActionPosition"
     @send-message="submit"
+    @initShare="initShare(currentMessage.id)"
     @receive-question-answer="(message) => emit('correctAnswer', message)"
     @play-audio="onPlayAudio"
     @delete-success="onDeleteSuccess"
@@ -241,6 +251,7 @@ import wx from 'weixin-js-sdk'
 import xss from 'xss'
 import ChatMessageMore from './ChatMessageMore.vue'
 import ChatMoreNavigator from './ChatMoreNavigator.vue'
+import ChatShareMode from './ChatShareMode.vue'
 
 interface Props {
   internalProps?: boolean
@@ -345,8 +356,17 @@ const SSEInstance = new SSE()
 const socketStore = useSocketStore()
 const socketInstance = useWebSocketConnect(currentEnvConfig.socketURL)
 const { socketResultMap } = storeToRefs(socketStore)
+const shareMode = ref(false)
+const shareList = ref<IMessageItem['id'][]>([])
 
 watch(isAiGenerate, (v) => v && successRBI() && onAIGenerate())
+const onShare = (id: string, arr = shareList.value) =>
+  arr.includes(id) ? arr.splice(arr.indexOf(id), 1) : arr.push(id)
+
+const initShare = (id: string) => {
+  shareMode.value = true
+  shareList.value = [id]
+}
 
 const onAIGenerate = async () => {
   try {
@@ -978,7 +998,7 @@ const currentMoreActions = computed<EMessageActionType[]>(() => {
     return []
   }
 
-  let currentActionType
+  let currentActionType: keyof typeof ChatMessageMoreAction
   if (isMidJourneyDomain.value) {
     currentActionType = 'viewMidjourney'
   } else {

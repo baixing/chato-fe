@@ -21,7 +21,8 @@ export const ChatMessageMoreAction = {
     [EMessageDisplayType.question]: [
       EMessageActionType.retry,
       EMessageActionType.copy,
-      EMessageActionType.delete
+      EMessageActionType.delete,
+      EMessageActionType.share
     ],
     [EMessageDisplayType.answer]: [
       EMessageActionType.like,
@@ -31,7 +32,8 @@ export const ChatMessageMoreAction = {
       EMessageActionType.copy,
       EMessageActionType.delete,
       EMessageActionType.expand,
-      EMessageActionType.audio
+      EMessageActionType.audio,
+      EMessageActionType.share
     ]
   },
   viewDetail: {
@@ -56,7 +58,7 @@ export const ChatMessageMoreAction = {
       EMessageActionType.delete
     ]
   }
-}
+} as const
 
 export const ChatMessageImgLimit_Size_800 = '?imageMogr2/thumbnail/800x800/format/jpg'
 export const ChatMessageImgLimit = '?imageMogr2/format/jpg'

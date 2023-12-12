@@ -34,7 +34,8 @@ export const RoutesMap = {
     c: 'chatC',
     homeC: 'chatHomeC',
     resource: 'resource',
-    navigator: 'navigator'
+    navigator: 'navigator',
+    share: 'share'
   },
   resource: 'resource',
   tranning: {
@@ -119,6 +120,11 @@ const loginedRoutes = [
         ]
       },
       {
+        name: RoutesMap.chat.share,
+        path: '/c/bot/share/:shareId',
+        component: () => import('@/views/share/index.vue')
+      },
+      {
         path: '/',
         component: () => import('@/views/chat/index.vue'),
         meta: {
@@ -126,11 +132,6 @@ const loginedRoutes = [
           requiresAuth: true
         },
         children: [
-          // {
-          //   name: RoutesMap.home.homeResource,
-          //   path: '/c/bot/square',
-          //   component: () => import('@/views/resource/square.vue')
-          // },
           {
             name: RoutesMap.chat.c,
             path: '/c/bot/:botSlug',

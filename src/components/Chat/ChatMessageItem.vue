@@ -23,6 +23,8 @@ const props = defineProps<{
   isLast: boolean
   isLoadingAnswer?: boolean
   correctVisible?: boolean
+  shareMode?: boolean
+  isShareItem?: boolean
 }>()
 
 const bubbleRef = ref<HTMLDivElement>()
@@ -44,7 +46,8 @@ const emit = defineEmits([
   'evaluate',
   'showMoreAction',
   'receiveQuestionAnswer',
-  'sendMessage'
+  'sendMessage',
+  'onShare'
 ])
 
 const messageContent = computed(() => {
@@ -52,6 +55,11 @@ const messageContent = computed(() => {
     return String(props.message.content + '\n翻译:\n' + props.message.translate).trim()
   }
   return (String(props.message.content) || '-').trim()
+})
+
+const isShareItem = computed({
+  get: () => props.isShareItem ?? false,
+  set: () => emit('onShare')
 })
 
 const onMore = (e, message: IMessageItem) => {
@@ -85,10 +93,25 @@ provide(SymChatMessageAudioTTSParams, audioTTSParams)
 
 <template>
   <div
-    :class="['flex flex-col items-start', isQuestionMessage && '!flex-row justify-end']"
+    :class="['flex flex-col items-start relative', isQuestionMessage && '!flex-row justify-end']"
     :data-id="message.id"
     :data-script="isLast ? 'Chato-lastest-message' : ''"
   >
+    <div
+      :class="[
+        'absolute w-4 h-4 bottom-3 items-center flex justify-center text-[#B5BED0] cursor-pointer rounded-full transition-colors hover:text-[#303133]',
+        '-left-10',
+        (message.displayType === EMessageDisplayType.answer &&
+          message.questionId &&
+          !isLoadingAnswer) ||
+        (message.displayType === EMessageDisplayType.question && !isLoadingAnswer)
+          ? 'visible'
+          : 'invisible'
+      ]"
+      v-if="shareMode"
+    >
+      <el-checkbox v-model="isShareItem" />
+    </div>
     <div class="max-w-full" ref="bubbleRef" id="bubbleContainer">
       <div class="flex justify-start items-center">
         <div

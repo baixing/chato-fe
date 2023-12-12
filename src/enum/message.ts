@@ -18,6 +18,7 @@ export const enum EMessageActionType {
   like = 'like', // 赞
   dislike = 'dislike', // 踩
   translate = 'translate', // 翻译
+  share = 'share', // 分享
   expand = 'expand', // 拓展
   fix = 'fix', // 修正
   save = 'save', // 保存
