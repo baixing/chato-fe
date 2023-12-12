@@ -59,6 +59,7 @@ export const cuserStore = defineStore('cuser', () => {
   // 退出登录
   const loginoutCuser = () => {
     authStore.setUid('')
+    authStore.initUid()
     buyOrderInfo.value = []
     loginStatus.value = false
   }

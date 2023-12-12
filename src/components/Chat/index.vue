@@ -18,6 +18,11 @@
       <span
         class="flex w-fit cursor-pointer rounded-full absolute z-[999] top-0 right-0 h-14 items-center text-base pr-5"
       >
+        <svg-icon
+          @click="chatMoreVisible = true"
+          name="more"
+          svg-class="text-[#303133] mt-1 ml-2 w-6 h-6"
+        />
       </span>
     </div>
     <div
@@ -142,6 +147,7 @@
     :domainInfo="detail"
     v-model:value="chatMoreVisible"
     @handleActivatePackage="payModalVisible = true"
+    @handleLoginRouter="routerToLogin(botSlug)"
   />
   <ChatPayModal :domainInfo="detail" v-model:value="payModalVisible" />
   <AudioPlayer />
@@ -268,6 +274,7 @@ const props = withDefaults(defineProps<Props>(), {
 const debugDomain = inject<IDomainInfo>(DebugDomainSymbol, null)
 const { t } = useI18n()
 const userStore = cuserStore()
+const { routerToLogin } = userStore
 const { loginUserId, loginStatus } = storeToRefs(userStore)
 const { source } = useSource()
 const route = useRoute()
@@ -372,6 +379,11 @@ const onAIGenerate = async () => {
   } finally {
     submit()
   }
+}
+
+// 用户登录
+const initUserInfo = () => {
+  userStore.checkUserLoginStatus(botSlug.value)
 }
 
 // ---- 业务打点-----
@@ -489,10 +501,11 @@ async function init() {
     await checkQuotaInPlatformC()
   }
   await getHistoryChat()
-  watermarkFunc()
-  if (currentEnvIsWechat && !!detail.value.customer_limit.payment_limit_switch) {
-    onWeixinH5DefaultLogin()
-  }
+  initUserInfo()
+  // watermarkFunc()
+  // if (currentEnvIsWechat && !!detail.value.customer_limit.payment_limit_switch) {
+  //   onWeixinH5DefaultLogin()
+  // }
 }
 
 function getBotInfo() {
@@ -707,7 +720,7 @@ const chatCommonParams = computed<IChatCommonParams>(() => {
   return {
     domain_slug: detail.value.slug,
     token: chatToken.value,
-    visitor_type: isInternal ? (props.isreadRouteParam ? 'chat' : 'owner') : 'vistor'
+    visitor_type: isInternal ? (props.isreadRouteParam ? 'chat' : 'owner') : 'visitor'
   }
 })
 
@@ -915,7 +928,7 @@ const onEvaluate = async (questionId: number, evValue: EMessageEvalution) => {
 // 清除历史对话记录关联，slug 参数透传基于展馆需求，临时 hard code，后期可直接 del
 const onClearHistoryRelation = async (slug?: string) => {
   const params = {
-    visitor_type: isInternal ? 'owner' : 'vistor',
+    visitor_type: isInternal ? 'owner' : 'visitor',
     domain_slug: slug || detail.value.slug,
     token: chatToken.value
   }
@@ -1254,12 +1267,16 @@ onMounted(() => {
       if (mutation.type === 'childList') {
         const copyBtns = document.querySelectorAll('.copy-btn-code')
         const allLimitElement = document.querySelectorAll('.qa-restrictions')
+        const loginElement = document.querySelectorAll('.login-btn')
         // 移除旧的点击事件监听器
         copyBtns.forEach((btn) => {
           btn.removeEventListener('click', handleCopyButtonClick)
         })
         allLimitElement.forEach((item) => {
           item.removeEventListener('click', onShowPayModalVisible)
+        })
+        loginElement.forEach((item) => {
+          item.removeEventListener('click', () => routerToLogin(botSlug.value))
         })
 
         // 添加新的点击事件监听器
@@ -1269,6 +1286,10 @@ onMounted(() => {
 
         allLimitElement.forEach((item) => {
           item.addEventListener('click', onShowPayModalVisible)
+        })
+
+        loginElement.forEach((item) => {
+          item.addEventListener('click', () => routerToLogin(botSlug.value))
         })
       }
     }

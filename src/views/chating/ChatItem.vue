@@ -37,9 +37,8 @@ import { EDocumentTabType } from '@/enum/knowledge'
 import { useDomainStore } from '@/stores/domain'
 import { replaceMarkdownUrl } from '@/utils/help'
 import { removewRegReplaceA } from '@/utils/reg'
-import dayjs from 'dayjs'
 import { storeToRefs } from 'pinia'
-import { computed, reactive, ref, watch } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
 withDefaults(
@@ -86,34 +85,4 @@ const onOpenSource = (question_id, slug) => {
   currentDrawer.slug = slug
   currentDrawer.visible = true
 }
-
-// 抖音api回调
-const onDouyinAPIClick = (id) => {
-  fetch('/api/v2/conversion', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json' // 告诉服务器我们正在发送JSON数据
-    },
-    body: JSON.stringify({
-      event_type: 'active',
-      context: {
-        ad: {
-          callback: id
-        }
-      },
-      timestamp: dayjs().valueOf()
-    })
-  })
-    .then((response) => response.json())
-    .then((data) => console.log(data))
-    .catch((error) => console.error('Error:', error))
-}
-
-watch(
-  () => route.query.clickid,
-  (v) => {
-    v && onDouyinAPIClick(v)
-  },
-  { immediate: true }
-)
 </script>

@@ -1,3 +1,4 @@
+import useClickId from '@/composables/useClickId'
 import usePageTitle from '@/composables/usePageTitle'
 import useRoleCheck from '@/composables/useRoleCheck'
 import useSidebar from '@/composables/useSidebar'
@@ -92,6 +93,11 @@ const coreRoutes = [
         path: '500',
         component: () => import('@/views/error/Error500.vue')
         // meta: { title: '错误 500' }
+      },
+      {
+        name: RoutesMap.auth.loginInvite,
+        path: '/auth/loginInvite',
+        component: () => import('@/views/auth/LoginInvitationView.vue')
       }
     ]
   }
@@ -166,6 +172,7 @@ router.beforeEach((to) => {
   locationComToCn()
   useRoleCheck(to)
   usePageTitle(to.meta?.title)
+  useClickId(to)
 })
 
 router.afterEach((to) => {
