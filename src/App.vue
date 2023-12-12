@@ -22,6 +22,7 @@ import { Elementlocales } from '@/locales'
 import { useLocales } from '@/stores/locales'
 import { ElConfigProvider } from 'element-plus'
 import { storeToRefs } from 'pinia'
+import { api as viewerApi } from 'v-viewer'
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useBasicLayout } from './composables/useBasicLayout'
@@ -51,6 +52,30 @@ const xnVisible = computed(() => {
 
 const onContactXN = () => {
   window.open(XIAONAQIWEI, '_blank')
+}
+
+// 全局挂载图片预览 api
+window.previewImages = (imageStr: string, imageIndex = 1) => {
+  const imageUrlList = imageStr ? imageStr.split(',') : []
+  viewerApi({
+    options: {
+      inline: true,
+      button: true,
+      navbar: true,
+      title: true,
+      toolbar: true,
+      tooltip: false,
+      movable: true,
+      zoomable: true,
+      rotatable: false,
+      scalable: false,
+      transition: true,
+      fullscreen: false,
+      keyboard: false,
+      initialViewIndex: imageIndex
+    },
+    images: imageUrlList
+  })
 }
 </script>
 

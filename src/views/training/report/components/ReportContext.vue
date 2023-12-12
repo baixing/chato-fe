@@ -50,7 +50,6 @@
     :dialogVisible="dialogVisibleQa"
     @closeDialogVisble="() => (dialogVisibleQa = false)"
   />
-  <el-image-viewer v-if="showPreview" :url-list="[previewImageUrl]" @close="showPreview = false" />
 </template>
 <script lang="ts" setup>
 import { getDomainDetailPublic } from '@/api/domain'
@@ -81,8 +80,6 @@ const chatList = ref([])
 const detail = ref<IDomainInfo>() // 机器人详情
 const loading = ref(false)
 const virtualRef = ref()
-const showPreview = ref(false)
-const previewImageUrl = ref('')
 const baseStoreI = useBase()
 const domainStoreI = useDomainStore()
 const { domainInfo } = storeToRefs(domainStoreI)
@@ -244,10 +241,6 @@ const onHiddenChatMore = () => {
 onMounted(() => {
   init()
   document.addEventListener('click', onHiddenChatMore)
-  window.showPreview = (imageUrl: string) => {
-    previewImageUrl.value = imageUrl
-    showPreview.value = true
-  }
 })
 
 onBeforeUnmount(() => {

@@ -30,7 +30,7 @@ declare module 'vue' {
 
 declare global {
   interface Window {
-    showPreview(url: string): void
+    previewImages(imgStr: string, imgIndex?: number): void
     ChatoBotConfig: {
       wwwBaseURL: string
       baseURL: string

@@ -155,7 +155,6 @@
     :title="customerFormState.title"
     :uid="customerFormState.uId"
   />
-  <el-image-viewer v-if="showPreview" :url-list="[previewImageUrl]" @close="showPreview = false" />
   <ChatMoreNavigator
     :domainInfo="detail"
     v-model:value="chatMoreVisible"
@@ -333,8 +332,6 @@ const socketResult = ref({
 })
 const watermark = ref<Watermark>()
 const blindWatermark = ref<BlindWatermark>()
-const showPreview = ref(false)
-const previewImageUrl = ref('')
 const sensorsQuestionId = computed(() => history.value?.[history.value.length - 1]?.questionId)
 const chatMoreVisible = ref(false)
 const payModalVisible = ref(Boolean(route.query.pay || false))
@@ -1287,11 +1284,6 @@ onMounted(() => {
   })
 
   observer.observe(document.body, { childList: true, subtree: true })
-
-  window.showPreview = (imageUrl: string) => {
-    previewImageUrl.value = imageUrl
-    showPreview.value = true
-  }
 })
 
 onBeforeUnmount(() => {
