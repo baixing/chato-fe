@@ -75,8 +75,10 @@ md.renderer.rules.image = function (tokens, idx, options, env, self) {
   const token = tokens[idx]
   const altText = token.content // 获取图片的alt文本
   const imageUrl = token.attrs[token.attrIndex('src')][1] // 获取图片的src属性值
+  const imageList = tokens.map((item) => item.attrs[0][1])
+  const imageListStr = imageList.length ? imageList.join(',') : ''
 
-  return `<img src="${imageUrl}" alt="${altText}" onclick="showPreview('${imageUrl}')">`
+  return `<img src="${imageUrl}" alt="${altText}" onclick="previewImages('${imageListStr}', '${idx}')">`
 }
 
 export const detectMarkdown = (text) => {

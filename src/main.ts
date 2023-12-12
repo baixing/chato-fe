@@ -1,6 +1,7 @@
 // ----- 确保样式优先级 -----
 import '@/styles/main.scss'
 import 'prismjs/themes/prism.css'
+import 'viewerjs/dist/viewer.css'
 import 'wow.js/css/libs/animate.css'
 //
 import useSensors from '@/composables/useSensors'
@@ -12,6 +13,7 @@ import { copyPaste } from '@/utils/help'
 import ElementPlus from 'element-plus'
 import 'github-markdown-css/github-markdown-light.css'
 import { createPinia } from 'pinia'
+import VueViewer from 'v-viewer'
 import 'virtual:svg-icons-register'
 import { createApp } from 'vue'
 import asyncRegisterGlobalComponents from '../plugins/asyncRegisterGlobalComponents'
@@ -25,6 +27,7 @@ app.use(ElementPlus)
 app.use(createPinia())
 app.use(router)
 app.use(i18n)
+app.use(VueViewer)
 
 app.use(asyncRegisterGlobalComponents, globalComponents)
 app.use(elementIcon)
