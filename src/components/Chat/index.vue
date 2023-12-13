@@ -184,6 +184,8 @@ import ChatEnter from '@/components/Chat/ChatEnter.vue'
 import MessageItem from '@/components/Chat/ChatMessageItem.vue'
 import CustomerFormDialog from '@/components/Customer/CustomerFormDialog.vue'
 import useAudioPlayer from '@/composables/useAudioPlayer'
+import useBdVid from '@/composables/useBdVid'
+import useClickId from '@/composables/useClickId'
 import useGlobalProperties from '@/composables/useGlobalProperties'
 import useSSEAudio from '@/composables/useSSEAudio'
 import { useSource } from '@/composables/useSource'
@@ -234,7 +236,7 @@ import SSE from '@/utils/sse'
 import { getStringWidth } from '@/utils/string'
 import { isURL } from '@/utils/url'
 import shareWeixin from '@/utils/weixinShare'
-import { useDebounceFn } from '@vueuse/core'
+import { useDebounceFn, useStorage } from '@vueuse/core'
 import dayjs from 'dayjs'
 import { ElMessage, ElMessageBox, ElNotification as Notification } from 'element-plus'
 import 'highlight.js/styles/default.css'
@@ -285,6 +287,8 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const debugDomain = inject<IDomainInfo>(DebugDomainSymbol, null)
+const douyinAPI = useStorage('douyinAPI', false)
+const baiduAPI = useStorage('baiduAPI', false)
 const { t } = useI18n()
 const userStore = cuserStore()
 const { routerToLogin } = userStore
@@ -292,6 +296,8 @@ const { loginUserId, loginStatus } = storeToRefs(userStore)
 const { source } = useSource()
 const route = useRoute()
 const base = useBase()
+const { clickId } = useClickId(route)
+const { bdvid } = useBdVid(route)
 const isAiGenerate = ref(false)
 const { userInfo } = storeToRefs(base)
 const authStoreI = useAuthStore()
@@ -666,6 +672,52 @@ const beforeSubmit = async () => {
   return true
 }
 
+// 抖音api回调
+const onDouyinAPIClick = (id) => {
+  douyinAPI.value = true
+  fetch('/api/v2/conversion', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json' // 告诉服务器我们正在发送JSON数据
+    },
+    body: JSON.stringify({
+      event_type: 'active_register',
+      context: {
+        ad: {
+          callback: id
+        }
+      },
+      timestamp: dayjs().valueOf()
+    })
+  })
+    .then((response) => response.json())
+    .then((data) => console.log(data))
+    .catch((error) => console.error('Error:', error))
+}
+
+// 百度api回调
+const onBaiduAPIClick = () => {
+  baiduAPI.value = true
+  fetch('/ocpcapi/api/uploadConvertData', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json' // 告诉服务器我们正在发送JSON数据
+    },
+    body: JSON.stringify({
+      token: 'WHp4OdQwcDQA4OlqFc9sZ63PgKFiCBBI@GqHeOYUewGK8GO4OQuFcXq8uFI8KUcp4',
+      conversionTypes: [
+        {
+          logidUrl: location.href,
+          newType: 25
+        }
+      ]
+    })
+  })
+    .then((response) => response.json())
+    .then((data) => console.log(data))
+    .catch((error) => console.error('Error:', error))
+}
+
 const submit = async (str = '') => {
   const beforeSubmitCheckRes = await beforeSubmit()
   const text = String(str || inputText.value).trim()
@@ -707,6 +759,9 @@ const submit = async (str = '') => {
   socketStore.updatePeddingDomains(botSlug.value)
   // 语音播放重置
   onResetPlayingAudio()
+
+  clickId.value && !douyinAPI.value && onDouyinAPIClick(clickId.value)
+  bdvid.value && !baiduAPI.value && onBaiduAPIClick()
 }
 
 // 是否被终止
@@ -1279,7 +1334,7 @@ onMounted(() => {
           item.removeEventListener('click', onShowPayModalVisible)
         })
         loginElement.forEach((item) => {
-          item.removeEventListener('click', () => routerToLogin(botSlug.value))
+          item.removeEventListener('click', onNavigateLogin)
         })
 
         // 添加新的点击事件监听器
@@ -1292,7 +1347,7 @@ onMounted(() => {
         })
 
         loginElement.forEach((item) => {
-          item.addEventListener('click', () => routerToLogin(botSlug.value))
+          item.addEventListener('click', onNavigateLogin)
         })
       }
     }
@@ -1305,6 +1360,16 @@ onMounted(() => {
     showPreview.value = true
   }
 })
+
+const onNavigateLogin = () => {
+  if (isInApplet.value) {
+    wx.miniProgram.navigateTo({
+      url: '/pages/loginHome/loginHome'
+    })
+  } else {
+    routerToLogin(botSlug.value)
+  }
+}
 
 onBeforeUnmount(() => {
   observer.disconnect()

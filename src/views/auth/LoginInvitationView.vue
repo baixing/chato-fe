@@ -38,7 +38,6 @@
 import { postLoginCAPI } from '@/api/auth'
 import { getDomainDetailPublic } from '@/api/domain'
 import avatar from '@/assets/img/avatar.png'
-import useClickId from '@/composables/useClickId'
 import useGlobalProperties from '@/composables/useGlobalProperties'
 import type { IDomainInfo } from '@/interface/domain'
 import { RoutesMap } from '@/router'
@@ -62,7 +61,6 @@ const { uid } = storeToRefs(authStore)
 const { loginUserId } = storeToRefs(cuser)
 const loading = ref(true)
 const robotDetail = ref<Partial<IDomainInfo>>({})
-const { clickId } = useClickId(route)
 
 const botSlug = computed(() => (route.query.slug as string) || '')
 
@@ -88,31 +86,7 @@ const loginEnterSuccess = async (token: string, channel: string, close?: () => v
       }
     })
     close && close()
-    // 抖音回调
-    clickId.value && onDouyinAPIClick(clickId.value)
   }
-}
-
-// 抖音api回调
-const onDouyinAPIClick = (id) => {
-  fetch('/api/v2/conversion', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json' // 告诉服务器我们正在发送JSON数据
-    },
-    body: JSON.stringify({
-      event_type: 'active_register',
-      context: {
-        ad: {
-          callback: id
-        }
-      },
-      timestamp: dayjs().valueOf()
-    })
-  })
-    .then((response) => response.json())
-    .then((data) => console.log(data))
-    .catch((error) => console.error('Error:', error))
 }
 
 const handleSubmitLogin = async (postData: any) => {

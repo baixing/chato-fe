@@ -1,3 +1,4 @@
+import useBdVid from '@/composables/useBdVid'
 import useClickId from '@/composables/useClickId'
 import usePageTitle from '@/composables/usePageTitle'
 import useRoleCheck from '@/composables/useRoleCheck'
@@ -174,6 +175,7 @@ router.beforeEach((to) => {
   useRoleCheck(to)
   usePageTitle(to.meta?.title)
   useClickId(to)
+  useBdVid(to)
 })
 
 router.afterEach(() => {
