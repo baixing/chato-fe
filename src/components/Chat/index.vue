@@ -54,8 +54,8 @@
             :is-loading-answer="isLoadingAnswer"
             :correct-visible="isInternal || (detail.qa_modifiable && !correctTicketExpired)"
             :shareMode="shareMode"
-            :isShareItem="shareList.includes(item.id)"
-            @onShare="onShare(item.id)"
+            :isShareItem="shareList.includes(item.questionId)"
+            @onShare="onShare(item.questionId)"
             @evaluate="onEvaluate"
             @send-message="submit"
             @show-more-action="onShowMoreAction"
@@ -134,7 +134,7 @@
     :actions="currentMoreActions"
     :position="currentMoreActionPosition"
     @send-message="submit"
-    @initShare="initShare(currentMessage.id)"
+    @initShare="initShare(currentMessage.questionId)"
     @receive-question-answer="(message) => emit('correctAnswer', message)"
     @play-audio="onPlayAudio"
     @delete-success="onDeleteSuccess"
@@ -289,7 +289,7 @@ const { userInfo } = storeToRefs(base)
 const authStoreI = useAuthStore()
 const { authToken, uid } = storeToRefs(authStoreI)
 const emit = defineEmits(['showDrawer', 'correctAnswer'])
-const { $sensors, $copyText } = useGlobalProperties()
+const { $sensors } = useGlobalProperties()
 // 是否正在加载回答的消息内容
 const isLoadingAnswer = ref(false)
 const botSlug = computed(() => {
@@ -357,13 +357,13 @@ const socketStore = useSocketStore()
 const socketInstance = useWebSocketConnect(currentEnvConfig.socketURL)
 const { socketResultMap } = storeToRefs(socketStore)
 const shareMode = ref(false)
-const shareList = ref<IMessageItem['id'][]>([])
+const shareList = ref<IMessageItem['questionId'][]>([])
 
 watch(isAiGenerate, (v) => v && successRBI() && onAIGenerate())
-const onShare = (id: string, arr = shareList.value) =>
+const onShare = (id: number, arr = shareList.value) =>
   arr.includes(id) ? arr.splice(arr.indexOf(id), 1) : arr.push(id)
 
-const initShare = (id: string) => {
+const initShare = (id: number) => {
   shareMode.value = true
   shareList.value = [id]
 }
@@ -396,16 +396,6 @@ const onAIGenerate = async () => {
   }
 }
 
-// ---- 业务打点-----
-const scanCodeSuccessRBI = () => {
-  $sensors?.track('chat_share', {
-    name: t('分享成功'),
-    type: 'chat_share',
-    data: {
-      time: dayjs().format('YYYY-MM-DD HH:mm:ss')
-    }
-  })
-}
 // ----------------
 const successRBI = () => {
   $sensors?.track('automatic_generated', {

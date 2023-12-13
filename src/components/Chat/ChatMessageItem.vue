@@ -12,6 +12,7 @@ import type { IMessageItem } from '@/interface/message'
 import type { ITTSParams } from '@/interface/tts'
 import { generatePreviewImgUrl } from '@/utils/help'
 import { detectMarkdown, renderMarkdown } from '@/utils/markdown'
+import { useIntervalFn } from '@vueuse/core'
 import { computed, inject, provide, ref, type Ref } from 'vue'
 import ChatMessageAudio from './ChatMessageAudio.vue'
 import ChatMessageStatus from './ChatMessageStatus.vue'
@@ -30,7 +31,7 @@ const props = defineProps<{
 const bubbleRef = ref<HTMLDivElement>()
 
 const { checkShowCurrentAudioPlayer } = useAudioPlayer()
-
+const percentage = ref(0)
 const isAnswerMessage = computed(() => props.message.displayType === EMessageDisplayType.answer)
 const isQuestionMessage = computed(() => props.message.displayType === EMessageDisplayType.question)
 const internalCorrectVisible = computed(() => props.correctVisible)
@@ -62,6 +63,10 @@ const isShareItem = computed({
   set: () => emit('onShare')
 })
 
+const { resume } = useIntervalFn(() => {
+  if (percentage.value < 95) percentage.value = percentage.value + 5
+}, 1300)
+resume()
 const onMore = (e, message: IMessageItem) => {
   e.stopPropagation()
 
@@ -99,7 +104,7 @@ provide(SymChatMessageAudioTTSParams, audioTTSParams)
   >
     <div
       :class="[
-        'absolute w-4 h-4 bottom-3 items-center flex justify-center text-[#B5BED0] cursor-pointer rounded-full transition-colors hover:text-[#303133]',
+        'absolute w-4 h-4 -top-4 items-center flex justify-center text-[#B5BED0] cursor-pointer rounded-full transition-colors hover:text-[#303133]',
         '-left-10',
         (message.displayType === EMessageDisplayType.answer &&
           message.questionId &&
@@ -108,7 +113,7 @@ provide(SymChatMessageAudioTTSParams, audioTTSParams)
           ? 'visible'
           : 'invisible'
       ]"
-      v-if="shareMode"
+      v-if="shareMode && !isQuestionMessage"
     >
       <el-checkbox v-model="isShareItem" />
     </div>
@@ -118,7 +123,10 @@ provide(SymChatMessageAudioTTSParams, audioTTSParams)
           v-if="message.status === EWsMessageStatus.pending"
           class="message-box !rounded-tl-none"
         >
-          <div class="cursor-flash"></div>
+          <div v-if="detail.slug === 'dlj4z52djjmrg031' && isAnswerMessage">
+            <el-progress type="dashboard" :percentage="percentage" />
+          </div>
+          <div v-else class="cursor-flash"></div>
         </div>
         <div
           v-else

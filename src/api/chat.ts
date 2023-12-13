@@ -113,3 +113,14 @@ export const getChatRecommendQuestions = (data: IRecommendQuestionParams) => {
     data
   })
 }
+
+// 获取分享
+export const getShareList = (tag: string) => {
+  return request<ChatToBotRes[]>({
+    method: 'get',
+    url: '/chato/api/v1/questions/share',
+    data: {
+      tag
+    }
+  })
+}

@@ -8,11 +8,14 @@
 </template>
 
 <script setup lang="ts">
+import { postShare } from '@/api/share'
+import useGlobalProperties from '@/composables/useGlobalProperties'
 import type { IMessageItem } from '@/interface/message'
+import { ElNotification } from 'element-plus'
 import { computed } from 'vue'
 
 const props = defineProps<{
-  shareList: IMessageItem['id'][]
+  shareList: IMessageItem['questionId'][]
   shareMode: boolean
 }>()
 const emit = defineEmits(['update:shareMode'])
@@ -21,8 +24,13 @@ const shareMode = computed({
   get: () => props.shareMode,
   set: (v) => emit('update:shareMode', v)
 })
+const { $copyText } = useGlobalProperties()
 
-const share = () => console.log(shareList.value)
+const share = async () => {
+  if (shareList.value.length === 0) return ElNotification.error('至少分享一条')
+  const res = await postShare(shareList.value)
+  $copyText(window.location.host + '/c/bot/share/' + res.data.data.tag)
+}
 </script>
 
 <style lang="scss">
