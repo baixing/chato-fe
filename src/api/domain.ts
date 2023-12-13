@@ -146,9 +146,12 @@ export function getDemonstration(type: string) {
   })
 }
 
-export function getAppletLink(slug: string) {
+export function getAppletLink(slug: string, path?: string) {
   return request({
-    url: `/chato/api/v1/publish_channels/wechat/mini_prog/${slug}}/link`
+    url: `/chato/api/v1/publish_channels/wechat/mini_prog/${slug}}/link`,
+    data: {
+      path
+    }
   })
 }
 

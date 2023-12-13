@@ -105,7 +105,7 @@ provide(SymChatMessageAudioTTSParams, audioTTSParams)
     <div
       :class="[
         'absolute w-4 h-4 -top-4 items-center flex justify-center text-[#B5BED0] cursor-pointer rounded-full transition-colors hover:text-[#303133]',
-        '-left-10',
+        '-left-10 lg:left-0',
         (message.displayType === EMessageDisplayType.answer &&
           message.questionId &&
           !isLoadingAnswer) ||

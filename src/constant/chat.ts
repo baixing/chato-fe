@@ -6,7 +6,11 @@ export const SymChatMessageAudioTTSParams = Symbol('chat-message-audio-tts-param
 
 export const ChatMessageMoreAction = {
   viewC: {
-    [EMessageDisplayType.question]: [EMessageActionType.retry, EMessageActionType.copy],
+    [EMessageDisplayType.question]: [
+      EMessageActionType.retry,
+      EMessageActionType.copy,
+      EMessageActionType.share
+    ],
     [EMessageDisplayType.answer]: [
       EMessageActionType.like,
       EMessageActionType.dislike,
@@ -14,7 +18,8 @@ export const ChatMessageMoreAction = {
       EMessageActionType.translate,
       EMessageActionType.copy,
       EMessageActionType.expand,
-      EMessageActionType.audio
+      EMessageActionType.audio,
+      EMessageActionType.share
     ]
   },
   viewTranning: {

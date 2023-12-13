@@ -130,6 +130,7 @@
         v-else
         class="chat-center py-5"
         :shareList="shareList"
+        :detail="detail"
         v-model:shareMode="shareMode"
       />
     </div>
