@@ -1278,7 +1278,7 @@ onMounted(() => {
           item.removeEventListener('click', onShowPayModalVisible)
         })
         loginElement.forEach((item) => {
-          item.removeEventListener('click', () => routerToLogin(botSlug.value))
+          item.removeEventListener('click', onNavigateLogin)
         })
 
         // 添加新的点击事件监听器
@@ -1291,7 +1291,7 @@ onMounted(() => {
         })
 
         loginElement.forEach((item) => {
-          item.addEventListener('click', () => routerToLogin(botSlug.value))
+          item.addEventListener('click', onNavigateLogin)
         })
       }
     }
@@ -1304,6 +1304,16 @@ onMounted(() => {
     showPreview.value = true
   }
 })
+
+const onNavigateLogin = () => {
+  if (isInApplet.value) {
+    wx.miniProgram.navigateTo({
+      url: '/pages/loginHome/loginHome'
+    })
+  } else {
+    routerToLogin(botSlug.value)
+  }
+}
 
 onBeforeUnmount(() => {
   observer.disconnect()
