@@ -35,7 +35,6 @@ import { CHATO_SOURCE_APPLET, USER_ROLES } from '@/constant/common'
 import { ETerminal } from '@/enum/common'
 import { EDocumentTabType } from '@/enum/knowledge'
 import { useBase } from '@/stores/base'
-import { cuserStore } from '@/stores/cuser'
 import { getMarkDownUrl, replaceMarkdownUrl } from '@/utils/help'
 import { removewRegReplaceA } from '@/utils/reg'
 import * as url from '@/utils/url'
@@ -54,7 +53,6 @@ const showDrawer = (question_id, slug) => {
 const route = useRoute()
 const base = useBase()
 const { source } = useSource()
-const { checkUserLoginStatus, getCuserOrderInfo } = cuserStore()
 const domainId = route.params.botId as string
 const currentSlug = ref<string>((route.params.botSlug as string) || '')
 const dialogVisibleQa = ref(false)
@@ -78,10 +76,6 @@ const correctAnswer = (e) => {
   defaultForm.images = getMarkDownUrl(e.content)
   dialogVisibleQa.value = true
 }
-
-// 校验C端登录
-checkUserLoginStatus(currentSlug.value)
-getCuserOrderInfo(currentSlug.value)
 
 const onTopNoPullDown = () => {
   const overscroll = function (el) {

@@ -82,5 +82,5 @@ export interface IChatCitationSource {
 export interface IChatCommonParams {
   domain_slug: string
   token: string
-  visitor_type: 'owner' | 'vistor' | 'chat'
+  visitor_type: 'owner' | 'visitor' | 'chat'
 }

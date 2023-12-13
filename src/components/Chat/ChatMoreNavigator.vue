@@ -34,22 +34,22 @@
         </div>
       </div>
 
-      <div class="w-full">
+      <div class="w-full font-medium">
         <div
-          v-if="!loginStatus"
-          @click="visible = false"
+          @click="$copyText(copyLink)"
           class="theme-color w-full mt-4 mb-3 text-center py-5 md:py-3 rounded-lg px-8 md:px-4 cursor-pointer transition-all hover:scale-105 bg-[#FFFFFF] text-base md:text-sm"
         >
-          {{ $t('对话') }}
+          {{ $t('分享') }}
         </div>
         <div
-          @click="emit('handleActivatePackage')"
+          v-if="!loginStatus"
+          @click="emit('handleLoginRouter')"
           class="theme-color w-full mb-3 text-center py-5 md:py-3 rounded-lg px-8 md:px-4 cursor-pointer transition-all hover:scale-105 bg-[#FFFFFF] text-base md:text-sm"
         >
-          {{ $t('开通套餐') }}
+          {{ $t('登录/注册') }}
         </div>
         <div
-          v-if="loginStatus"
+          v-else
           @click="onHandleLoginout"
           class="theme-color w-full mt-4 mb-3 text-center py-5 md:py-3 rounded-lg px-8 md:px-4 cursor-pointer transition-all hover:scale-105 bg-[#FFFFFF] text-base md:text-sm"
         >
@@ -71,14 +71,12 @@ import { ElNotification } from 'element-plus'
 import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
 import ChatDetailModal from './components/ChatDetailModal.vue'
-import ChatPackageModal from './components/ChatPackageModal.vue'
-import ChatRecordModal from './components/ChatRecordModal.vue'
 
 const props = defineProps<{
   value: boolean
   domainInfo: IDomainInfo
 }>()
-const emit = defineEmits(['update:value', 'handleActivatePackage'])
+const emit = defineEmits(['update:value', 'handleActivatePackage', 'handleLoginRouter'])
 
 const { isMobile } = useBasicLayout()
 const { checkRightsTypeNeedUpgrade } = useSpaceRights()
@@ -91,22 +89,24 @@ const visible = computed({
   set: (v) => emit('update:value', v)
 })
 
+const copyLink = computed(() => `${location.href}`)
+
 const moreList = [
   {
     name: '关于我',
     key: 'ChatDetailModal',
     component: ChatDetailModal
   },
-  {
-    name: '套餐信息',
-    key: 'ChatPackageModal',
-    component: ChatPackageModal
-  },
-  {
-    name: '投喂记录',
-    key: 'ChatRecordModal',
-    component: ChatRecordModal
-  },
+  // {
+  //   name: '套餐信息',
+  //   key: 'ChatPackageModal',
+  //   component: ChatPackageModal
+  // },
+  // {
+  //   name: '投喂记录',
+  //   key: 'ChatRecordModal',
+  //   component: ChatRecordModal
+  // },
   {
     name: '技术支持',
     key: 'technicalSupMore'
@@ -116,7 +116,6 @@ const moreList = [
 const onHandleLoginout = () => {
   authCUserStore.loginoutCuser()
   ElNotification.success('已退出')
-  visible.value = false
 }
 
 const onhandleEventModal = async (item) => {

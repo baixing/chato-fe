@@ -46,12 +46,17 @@ export const useAuthStore = defineStore('auth', () => {
     $uid.value = uid
   }
 
+  const initUid = () => {
+    $uid.value = uuidv4()
+  }
+
   return {
     cookieToken,
     authToken,
     uid,
     logout,
     setToken,
-    setUid
+    setUid,
+    initUid
   }
 })
