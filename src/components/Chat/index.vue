@@ -183,6 +183,7 @@ import ChatEnter from '@/components/Chat/ChatEnter.vue'
 import MessageItem from '@/components/Chat/ChatMessageItem.vue'
 import CustomerFormDialog from '@/components/Customer/CustomerFormDialog.vue'
 import useAudioPlayer from '@/composables/useAudioPlayer'
+import useBdVid from '@/composables/useBdVid'
 import useClickId from '@/composables/useClickId'
 import useGlobalProperties from '@/composables/useGlobalProperties'
 import useSSEAudio from '@/composables/useSSEAudio'
@@ -286,6 +287,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const debugDomain = inject<IDomainInfo>(DebugDomainSymbol, null)
 const douyinAPI = useStorage('douyinAPI', false)
+const baiduAPI = useStorage('baiduAPI', false)
 const { t } = useI18n()
 const userStore = cuserStore()
 const { routerToLogin } = userStore
@@ -294,6 +296,7 @@ const { source } = useSource()
 const route = useRoute()
 const base = useBase()
 const { clickId } = useClickId(route)
+const { bdvid } = useBdVid(route)
 const isAiGenerate = ref(false)
 const { userInfo } = storeToRefs(base)
 const authStoreI = useAuthStore()
@@ -691,6 +694,29 @@ const onDouyinAPIClick = (id) => {
     .catch((error) => console.error('Error:', error))
 }
 
+// 百度api回调
+const onBaiduAPIClick = () => {
+  baiduAPI.value = true
+  fetch('/ocpcapi/api/uploadConvertData', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json' // 告诉服务器我们正在发送JSON数据
+    },
+    body: JSON.stringify({
+      token: 'WHp4OdQwcDQA4OlqFc9sZ63PgKFiCBBI@GqHeOYUewGK8GO4OQuFcXq8uFI8KUcp4',
+      conversionTypes: [
+        {
+          logidUrl: location.href,
+          newType: 25
+        }
+      ]
+    })
+  })
+    .then((response) => response.json())
+    .then((data) => console.log(data))
+    .catch((error) => console.error('Error:', error))
+}
+
 const submit = async (str = '') => {
   const beforeSubmitCheckRes = await beforeSubmit()
   const text = String(str || inputText.value).trim()
@@ -734,6 +760,7 @@ const submit = async (str = '') => {
   onResetPlayingAudio()
 
   clickId.value && !douyinAPI.value && onDouyinAPIClick(clickId.value)
+  bdvid.value && !baiduAPI.value && onBaiduAPIClick()
 }
 
 // 是否被终止
