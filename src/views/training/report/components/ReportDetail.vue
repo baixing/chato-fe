@@ -60,10 +60,10 @@
         <SearchInput v-model:value="keyword" size="large" />
       </div>
       <div v-if="!isMobile" class="button-container">
-        <el-button v-if="multipleSelection.size > 0" type="primary" @click="() => handleExport()">
+        <el-button v-if="multipleSelection.size > 0" type="primary" @click="handleExport">
           {{ $t('导出当前') }}
         </el-button>
-        <el-button type="primary" @click="() => handleExport(true)">
+        <el-button type="primary" @click="handleExport">
           {{ $t(' 导出全部 ') }}
         </el-button>
       </div>
@@ -173,7 +173,6 @@ import { toSimpleDateTime } from '@/utils/formatter'
 import { detectMarkdown, renderMarkdown } from '@/utils/markdown'
 import * as url from '@/utils/url'
 import { debouncedWatch } from '@vueuse/core'
-import { ElNotification as Notification } from 'element-plus'
 import { storeToRefs } from 'pinia'
 import { computed, nextTick, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -394,15 +393,11 @@ function timeChange() {
   updateList(1)
 }
 
-async function handleExport(isAll = false) {
-  const exportArray = isAll ? [] : Array.from(multipleSelection.value)
-  if (exportArray.length === 0 && !isAll) {
-    Notification.error(t('抱歉，未勾选数据，无法导出。请先勾选数据再进行导出操作。'))
-    return
-  }
+async function handleExport() {
+  const exportArray = Array.from(multipleSelection.value)
   isListLoading.value = true
   apiReport
-    .exportQuestions({ id: exportArray, domainId: domainId.value })
+    .exportQuestions({ ids: exportArray, domainId: domainId.value })
     .then((res) => {
       let blob = new Blob([res.data], {
         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8',
