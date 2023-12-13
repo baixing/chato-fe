@@ -8,6 +8,7 @@ import { useAuthStore } from '@/stores/auth'
 import { useLocalStorage } from '@vueuse/core'
 import axios, { AxiosError, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios'
 import { handleRequestError } from './help'
+import { captureErrorMessageToSentry } from './sentry'
 let tokenAbnormal = false
 
 const $t = i18n.global.t
@@ -72,6 +73,7 @@ service.interceptors.response.use(
             }
           })
       }
+      captureErrorMessageToSentry(response)
       if (!tokenAbnormal) {
         tokenAbnormal = true
         !data.notThrowError && handleRequestError(null, data.message)
@@ -93,6 +95,7 @@ service.interceptors.response.use(
       // 对于请求未发送到服务器的错误进行处理，例如网络错误
       err.message = $t('网络异常，请检查后重试')
     }
+    captureErrorMessageToSentry(err)
     // Todo: 避免3s内客户端显示很多报错
     if (!tokenAbnormal) {
       tokenAbnormal = true
