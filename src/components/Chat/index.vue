@@ -183,6 +183,7 @@ import ChatEnter from '@/components/Chat/ChatEnter.vue'
 import MessageItem from '@/components/Chat/ChatMessageItem.vue'
 import CustomerFormDialog from '@/components/Customer/CustomerFormDialog.vue'
 import useAudioPlayer from '@/composables/useAudioPlayer'
+import useClickId from '@/composables/useClickId'
 import useGlobalProperties from '@/composables/useGlobalProperties'
 import useSSEAudio from '@/composables/useSSEAudio'
 import { useSource } from '@/composables/useSource'
@@ -233,7 +234,7 @@ import SSE from '@/utils/sse'
 import { getStringWidth } from '@/utils/string'
 import { isURL } from '@/utils/url'
 import shareWeixin from '@/utils/weixinShare'
-import { useDebounceFn } from '@vueuse/core'
+import { useDebounceFn, useStorage } from '@vueuse/core'
 import dayjs from 'dayjs'
 import { ElMessage, ElMessageBox, ElNotification as Notification } from 'element-plus'
 import 'highlight.js/styles/default.css'
@@ -284,6 +285,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const debugDomain = inject<IDomainInfo>(DebugDomainSymbol, null)
+const douyinAPI = useStorage('douyinAPI', false)
 const { t } = useI18n()
 const userStore = cuserStore()
 const { routerToLogin } = userStore
@@ -291,6 +293,7 @@ const { loginUserId, loginStatus } = storeToRefs(userStore)
 const { source } = useSource()
 const route = useRoute()
 const base = useBase()
+const { clickId } = useClickId(route)
 const isAiGenerate = ref(false)
 const { userInfo } = storeToRefs(base)
 const authStoreI = useAuthStore()
@@ -665,6 +668,29 @@ const beforeSubmit = async () => {
   return true
 }
 
+// 抖音api回调
+const onDouyinAPIClick = (id) => {
+  douyinAPI.value = true
+  fetch('/api/v2/conversion', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json' // 告诉服务器我们正在发送JSON数据
+    },
+    body: JSON.stringify({
+      event_type: 'active_register',
+      context: {
+        ad: {
+          callback: id
+        }
+      },
+      timestamp: dayjs().valueOf()
+    })
+  })
+    .then((response) => response.json())
+    .then((data) => console.log(data))
+    .catch((error) => console.error('Error:', error))
+}
+
 const submit = async (str = '') => {
   const beforeSubmitCheckRes = await beforeSubmit()
   const text = String(str || inputText.value).trim()
@@ -706,6 +732,8 @@ const submit = async (str = '') => {
   socketStore.updatePeddingDomains(botSlug.value)
   // 语音播放重置
   onResetPlayingAudio()
+
+  clickId.value && !douyinAPI.value && onDouyinAPIClick(clickId.value)
 }
 
 // 是否被终止
