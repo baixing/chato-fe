@@ -432,8 +432,7 @@ const isMidJourneyDomain = computed(() => {
   if (!MidJourneyDomainSlug || !detail.value) {
     return false
   }
-
-  return detail.value.slug === MidJourneyDomainSlug
+  return MidJourneyDomainSlug.includes(detail.value.slug)
 })
 
 const scrollHistory = useDebounceFn(() => {

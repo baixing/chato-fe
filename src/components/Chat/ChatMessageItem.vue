@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import useAudioPlayer from '@/composables/useAudioPlayer'
 import { SymChatMessageAudioTTSParams, SymChatToken } from '@/constant/chat'
+import { MidJourneyDomainSlug } from '@/constant/domain'
 import {
   EMessageDisplayType,
   EMessageEvalution,
@@ -123,7 +124,7 @@ provide(SymChatMessageAudioTTSParams, audioTTSParams)
           v-if="message.status === EWsMessageStatus.pending"
           class="message-box !rounded-tl-none"
         >
-          <div v-if="detail.slug === 'dlj4z52djjmrg031' && isAnswerMessage">
+          <div v-if="MidJourneyDomainSlug.includes(detail.slug) && isAnswerMessage">
             <el-progress type="dashboard" :percentage="percentage" />
           </div>
           <div v-else class="cursor-flash"></div>

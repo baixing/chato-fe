@@ -38,7 +38,17 @@ export const DomainCategoryOptions = [
   }
 ]
 
-export const MidJourneyDomainSlug = 'dlj4z52djjmrg031'
+export const MidJourneyDomainSlug = [
+  'dlj4z52djjmrg031',
+  'qzov85n3xqk7mydn',
+  '0yqd3rdk8n05gon8',
+  '21q4l51mevw5nxom',
+  'gwk6d70mnw3rve1o',
+  'zkw4n78zqd676281',
+  '0yqd3rdk8o15gon8',
+  'zk34lrlx2ojr9xnj',
+  'ymk867p43wm7v941'
+]
 
 export const DomainReplyToneOfVoice = [
   '亲切友好',
