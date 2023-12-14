@@ -45,7 +45,7 @@
                   </div>
                 </div>
                 <svg-icon
-                  @click="(e) => onPreviewQRCode(e, c)"
+                  @click="(e) => onPreviewQRCode(e, c, item.type)"
                   name="qr-code"
                   svg-class="w-[30px] h-[30px] lg:mt-2"
                 />
@@ -82,7 +82,7 @@
         </div>
       </div>
     </ContentLayout>
-    <QrCodeRobot v-model:value="visibleQRCode" :slug="currentSlug" />
+    <QrCodeRobot v-model:value="visibleQRCode" :is-internal="isInternal" :slug="currentSlug" />
   </div>
 </template>
 <script lang="ts" setup>
@@ -159,6 +159,7 @@ async function onAddSessionChat(item) {
 }
 
 const initing = ref(false)
+const isInternal = ref(false)
 
 const onGoCreate = async (botSlug: string) => {
   const needUpgrade = await checkRightsTypeNeedUpgrade(ESpaceRightsType.bot)
@@ -191,9 +192,10 @@ const onGoCreate = async (botSlug: string) => {
 const visibleQRCode = ref(false)
 const currentSlug = ref('')
 
-const onPreviewQRCode = (e: Event, item) => {
+const onPreviewQRCode = (e: Event, item, type: string) => {
   e.stopPropagation()
   e.preventDefault()
+  isInternal.value = type === '内部工具'
   currentSlug.value = item.slug
   visibleQRCode.value = true
 }

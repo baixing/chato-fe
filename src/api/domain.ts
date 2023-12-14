@@ -152,8 +152,20 @@ export function getAppletLink(slug: string) {
   })
 }
 
+export function getAppletLink2(slug: string) {
+  return request({
+    url: `/chato/api/v1/publish_channels/wechat/mini_prog/${slug}}/link2`
+  })
+}
+
 export function getAppletQRCode(slug: string) {
   return request({
     url: `/chato/api/v1/publish_channels/wechat/mini_prog/${slug}}/QRCode`
+  })
+}
+
+export function getAppletQRCode2(slug: string) {
+  return request({
+    url: `/chato/api/v1/publish_channels/wechat/mini_prog/${slug}}/QRCode2`
   })
 }

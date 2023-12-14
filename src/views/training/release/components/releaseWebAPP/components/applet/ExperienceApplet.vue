@@ -53,7 +53,7 @@
 </template>
 
 <script setup lang="ts">
-import { getAppletLink, getAppletQRCode } from '@/api/domain'
+import { getAppletLink2, getAppletQRCode2 } from '@/api/domain'
 import { computed, reactive, ref, watch } from 'vue'
 
 const props = defineProps<{
@@ -78,7 +78,10 @@ const visible = computed({
 
 const onInit = async () => {
   loading.value = true
-  const [link, QrCode] = await Promise.all([getAppletLink(props.slug), getAppletQRCode(props.slug)])
+  const [link, QrCode] = await Promise.all([
+    getAppletLink2(props.slug),
+    getAppletQRCode2(props.slug)
+  ])
   appletAddress.link = link.data.data.url_link
   appletAddress.url = QrCode.data.data.QRCode
   loading.value = false
