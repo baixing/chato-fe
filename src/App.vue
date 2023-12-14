@@ -55,7 +55,7 @@ const onContactXN = () => {
 }
 
 // 全局挂载图片预览 api
-window.previewImages = (imageStr: string, imageIndex = 1) => {
+window.previewImages = (imageStr: string, imageIndex = 0) => {
   const imageUrlList = imageStr ? imageStr.split(',') : []
   viewerApi({
     options: {
@@ -72,7 +72,7 @@ window.previewImages = (imageStr: string, imageIndex = 1) => {
       transition: true,
       fullscreen: false,
       keyboard: false,
-      initialViewIndex: imageIndex
+      initialViewIndex: Number(imageIndex)
     },
     images: imageUrlList
   })
