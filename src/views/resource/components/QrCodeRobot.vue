@@ -21,12 +21,13 @@
 </template>
 
 <script setup lang="ts">
-import { getAppletQRCode } from '@/api/domain'
+import { getAppletQRCode, getAppletQRCode2 } from '@/api/domain'
 import { computed, reactive, ref, watch } from 'vue'
 
 const props = defineProps<{
   value: boolean
   slug: string
+  isInternal: boolean
 }>()
 const emit = defineEmits(['update:value'])
 
@@ -43,7 +44,8 @@ const appletAddress = reactive({
 
 const onInit = async () => {
   loading.value = true
-  const QrCode = await getAppletQRCode(props.slug)
+  const callbackFunc = props.isInternal ? getAppletQRCode2 : getAppletQRCode
+  const QrCode = await callbackFunc(props.slug)
   appletAddress.url = QrCode.data.data.QRCode
   loading.value = false
 }
