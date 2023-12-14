@@ -6,6 +6,7 @@
     <div
       class="flex items-center justify-center h-14 bg-white mb-0 text-sm font-medium gap-2 shrink-0"
       style="border-bottom: 1px solid #eee"
+      v-if="!isInApplet"
     >
       <Avatar
         :avatar="detail.avatar || DefaultAvatar"
@@ -46,24 +47,35 @@
 import { getShareList } from '@/api/chat'
 import DefaultAvatar from '@/assets/img/avatar.png'
 import MessageItem from '@/components/Chat/ChatMessageItem.vue'
+import { useSource } from '@/composables/useSource'
+import { CHATO_SOURCE_APPLET } from '@/constant/common'
 import { EMessageDisplayType, EWsMessageStatus } from '@/enum/message'
 import type { IDomainInfo } from '@/interface/domain'
 import type { IMessageItem } from '@/interface/message'
 import { formatChatMessageAnswer } from '@/utils/chat'
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import wx from 'weixin-js-sdk'
 
 const route = useRoute()
 const router = useRouter()
+const { source } = useSource()
 const detail = ref<IDomainInfo>({} as IDomainInfo) // 机器人详情
 const $isLoading = ref(false)
 const history = ref<IMessageItem[]>([])
+const isInApplet = computed(() => source.value === CHATO_SOURCE_APPLET) // 判断是否在小程序环境
 const isIphoneBol = computed(() =>
   route.query.system ? decodeURIComponent(route.query.system as string).includes('iOS') : false
 )
 const shareId = computed(() => route.params.shareId)
 const onLinkToChat = (slug: string) => {
-  router.replace(`/c/bot/${slug}`)
+  if (!isInApplet.value) {
+    router.replace(`/c/bot/${slug}`)
+  } else {
+    wx.miniProgram.navigateTo({
+      url: '/pages/index/index?slug=' + slug
+    })
+  }
 }
 // const getBotInfo = async () => {
 //   await getDomainDetailPublic(botSlug.value).then((res) => (detail.value = res.data?.data || {}))

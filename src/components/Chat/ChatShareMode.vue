@@ -35,12 +35,16 @@ const { $copyText } = useGlobalProperties()
 
 const share = async () => {
   if (shareList.value.length === 0) return ElNotification.error('至少分享一条')
+  const res = await postShare(shareList.value)
   if (isInApplet.value) {
-    const res = await getAppletLink(props.detail.slug, 'pages/share/share')
-    $copyText(res.data.data.url_link)
+    const link = await getAppletLink(
+      props.detail.slug,
+      'pages/share/share?shareId=' + res.data.data.tag
+    )
+    $copyText(link.data.data.url_link)
+    shareMode.value = false
     return
   }
-  const res = await postShare(shareList.value)
   $copyText(window.location.host + '/c/bot/share/' + res.data.data.tag)
   shareMode.value = false
 }
