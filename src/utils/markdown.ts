@@ -80,7 +80,7 @@ md.renderer.rules.image = function (tokens, idx, options, env, self) {
     const itemUrl = item.attrs?.[0]?.[1]
     itemUrl && imageList.push(itemUrl)
   })
-  const previewIndex = idx > imageList.length ? 0 : idx
+  const previewIndex = idx >= imageList.length ? 0 : idx
   const imageListStr = imageList.length ? imageList.join(',') : ''
 
   return `<img src="${imageUrl}" alt="${altText}" onclick="previewImages('${imageListStr}', '${previewIndex}')">`
