@@ -31,7 +31,7 @@ import Chat from '@/components/Chat/index.vue'
 import EnterQa from '@/components/EnterAnswer/EnterQa.vue'
 import { useSource } from '@/composables/useSource'
 import { currentEnvConfig } from '@/config'
-import { CHATO_SOURCE_APPLET, USER_ROLES } from '@/constant/common'
+import { CHATO_SOURCE_APP, CHATO_SOURCE_APPLET, USER_ROLES } from '@/constant/common'
 import { ETerminal } from '@/enum/common'
 import { EDocumentTabType } from '@/enum/knowledge'
 import { useBase } from '@/stores/base'
@@ -67,7 +67,9 @@ const defaultForm = reactive({
   content: '',
   images: []
 })
-const isInApplet = computed(() => source.value === CHATO_SOURCE_APPLET) // 判断是否在小程序环境
+
+const isInAppOrApplet = [CHATO_SOURCE_APP, CHATO_SOURCE_APPLET]
+const isInApplet = computed(() => isInAppOrApplet.includes(source.value)) // 判断是否嵌入到小程序/app
 
 const correctAnswer = (e) => {
   defaultForm.title = e.question
