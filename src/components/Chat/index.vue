@@ -134,7 +134,6 @@
         v-model:shareMode="shareMode"
       />
       <ChatFooter
-        v-if="!isInApplet"
         :name="CHATO_AWANG_BRAND_NAME"
         :logo="CHATO_AWANG_LOGO"
         :class="[
