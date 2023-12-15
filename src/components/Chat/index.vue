@@ -1280,7 +1280,7 @@ watch(lastHistory, (v) => {
       })
     }
   }
-  if (v.status === EWsMessageStatus.done) {
+  if (v && v.status === EWsMessageStatus.done) {
     chatStoreI.initChatList()
   }
 })
