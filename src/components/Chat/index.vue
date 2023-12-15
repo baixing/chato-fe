@@ -223,6 +223,7 @@ import { useBase } from '@/stores/base'
 import { useChatStore } from '@/stores/chat'
 import { cuserStore } from '@/stores/cuser'
 import { useSocketStore } from '@/stores/socket'
+import { baiduCallbackAPI, douYinCallbackAPI } from '@/utils/callback'
 import { formatChatMessageAnswer } from '@/utils/chat'
 import {
   $notnull,
@@ -671,52 +672,6 @@ const beforeSubmit = async () => {
   return true
 }
 
-// 抖音api回调
-const onDouyinAPIClick = (id) => {
-  douyinAPI.value = true
-  fetch('/api/v2/conversion', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json' // 告诉服务器我们正在发送JSON数据
-    },
-    body: JSON.stringify({
-      event_type: 'active_register',
-      context: {
-        ad: {
-          callback: id
-        }
-      },
-      timestamp: dayjs().valueOf()
-    })
-  })
-    .then((response) => response.json())
-    .then((data) => console.log(data))
-    .catch((error) => console.error('Error:', error))
-}
-
-// 百度api回调
-const onBaiduAPIClick = () => {
-  baiduAPI.value = true
-  fetch('/ocpcapi/api/uploadConvertData', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json' // 告诉服务器我们正在发送JSON数据
-    },
-    body: JSON.stringify({
-      token: 'WHp4OdQwcDQA4OlqFc9sZ63PgKFiCBBI@GqHeOYUewGK8GO4OQuFcXq8uFI8KUcp4',
-      conversionTypes: [
-        {
-          logidUrl: location.href,
-          newType: 25
-        }
-      ]
-    })
-  })
-    .then((response) => response.json())
-    .then((data) => console.log(data))
-    .catch((error) => console.error('Error:', error))
-}
-
 const submit = async (str = '') => {
   const beforeSubmitCheckRes = await beforeSubmit()
   const text = String(str || inputText.value).trim()
@@ -759,8 +714,10 @@ const submit = async (str = '') => {
   // 语音播放重置
   onResetPlayingAudio()
 
-  clickId.value && !douyinAPI.value && onDouyinAPIClick(clickId.value)
-  bdvid.value && !baiduAPI.value && onBaiduAPIClick()
+  clickId.value &&
+    !douyinAPI.value &&
+    douYinCallbackAPI(clickId.value, () => (douyinAPI.value = true))
+  bdvid.value && !baiduAPI.value && baiduCallbackAPI(() => (baiduAPI.value = true))
 }
 
 // 是否被终止

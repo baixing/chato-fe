@@ -5,6 +5,7 @@ import useRoleCheck from '@/composables/useRoleCheck'
 import useSidebar from '@/composables/useSidebar'
 import Sensors from '@/utils/sensors'
 import { locationComToCn } from '@/utils/url'
+import Redirect from '@/views/naviagte/Redirect.vue'
 import { nextTick } from 'vue'
 import { RouterView, createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 
@@ -102,6 +103,10 @@ const coreRoutes = [
         component: () => import('@/views/auth/LoginInvitationView.vue')
       }
     ]
+  },
+  {
+    path: '/rx',
+    component: Redirect
   }
 ]
 
