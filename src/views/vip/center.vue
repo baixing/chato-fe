@@ -205,6 +205,9 @@ import type { IOrderPackage } from '@/interface/order'
 import ContentLayout from '@/layout/ContentLayout.vue'
 import router, { RoutesMap } from '@/router'
 import { useAuthStore } from '@/stores/auth'
+import { useBase } from '@/stores/base'
+import { useChatStore } from '@/stores/chat'
+import { useDomainStore } from '@/stores/domain'
 import { useSpaceStore } from '@/stores/space'
 import { isWechat, onRouteWeixinDefaultLogin, openPreviewUrl } from '@/utils/help'
 import { payJSAPI } from '@/utils/pay'
@@ -220,6 +223,9 @@ const HigherCommercialType = [
   ESpaceCommercialType.selfStandard
 ]
 
+const chatStoreI = useChatStore()
+const domainStoreI = useDomainStore()
+const baseStoreI = useBase()
 const route = useRoute()
 const { t } = useI18n()
 const { isMobile } = useBasicLayout()
@@ -373,7 +379,15 @@ const onWeixinH5DefaultLogin = async () => {
       })
     } else {
       authStoreI.setToken(token)
-      window.location.reload()
+      await baseStoreI.getAuthToken()
+      await baseStoreI.getUserInfo()
+      await Promise.all([
+        domainStoreI.initDomainList(route),
+        chatStoreI.initChatList(),
+        spaceStoreI.initSpaceRights()
+      ])
+
+      spaceStoreI.initSpaceQuota()
     }
   } else {
     onRouteWeixinDefaultLogin(window.location.href, CHATO_BAIXING_APP_ID)
