@@ -11,7 +11,6 @@ import {
 import type { IDomainInfo } from '@/interface/domain'
 import type { IMessageItem } from '@/interface/message'
 import type { ITTSParams } from '@/interface/tts'
-import { generatePreviewImgUrl } from '@/utils/help'
 import { detectMarkdown, renderMarkdown } from '@/utils/markdown'
 import { useIntervalFn } from '@vueuse/core'
 import { computed, inject, provide, ref, type Ref } from 'vue'
@@ -95,6 +94,10 @@ const audioTTSParams = computed<ITTSParams>(() => {
 })
 
 provide(SymChatMessageAudioTTSParams, audioTTSParams)
+
+const onPreviewImage = (image: string) => {
+  window.previewImages(image)
+}
 </script>
 
 <template>
@@ -163,14 +166,11 @@ provide(SymChatMessageAudioTTSParams, audioTTSParams)
             "
             class="w-[60vw] h-[60vw] max-w-[400px] max-h-[400px] relative"
           >
-            <el-image
+            <img
               v-loading="message.status === EWsMessageStatus.running"
               class="w-full h-full"
               :src="message.content"
-              :zoom-rate="1.2"
-              :preview-src-list="[generatePreviewImgUrl(message.content)]"
-              fit="cover"
-              style="--el-mask-color: transparent; --el-loading-spinner-size: 80px"
+              @click="onPreviewImage(message.content)"
             />
             <p
               v-show="message.status === EWsMessageStatus.running"

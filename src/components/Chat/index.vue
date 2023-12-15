@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="container-preview-page bg-white relative parent-element"
-    :class="[isIphoneBol && 'pb-4']"
-  >
+  <div class="container-preview-page bg-white relative parent-element">
     <div
       v-if="detail.name_and_avatar_show && avatarShow"
       class="flex items-center justify-center h-14 bg-white mb-0 text-sm font-medium gap-2 shrink-0"
