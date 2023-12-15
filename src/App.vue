@@ -42,8 +42,8 @@ const sensors = () => {
   $sensors?.track('a_wang:' + host, {
     name: '阿旺界面打点',
     type: 'a_wang:' + host,
+    user: $uid,
     data: {
-      user: $uid,
       time: dayjs().format('YYYY-MM-DD HH:mm:ss')
     }
   })
