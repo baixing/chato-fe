@@ -641,7 +641,7 @@ function sayWelcome() {
         isWelcome: true,
         content: String(`<div class='flex flex-col justify-center items-center text-center'>
       <p class='mb-2 font-medium'>关注公众号，免费无限次使用！</p>
-      <img onclick="previewImages('https://afu-1255830993.cos.ap-shanghai.myqcloud.com/chato_image/avater/731bdea46ebc204aa9c601289cd47dfe.jpg', '0')" class='w-full' style="width: 150px; height: 150px;"  src='https://afu-1255830993.cos.ap-shanghai.myqcloud.com/chato_image/avater/731bdea46ebc204aa9c601289cd47dfe.jpg' alt='公众号' />
+      <img onclick="previewImages('https://afu-1255830993.cos.ap-shanghai.myqcloud.com/chato_image/avater/2357c2525b27c232353b8d98dd165924.png', '0')" class='w-full' style="width: 150px; height: 150px;"  src='https://afu-1255830993.cos.ap-shanghai.myqcloud.com/chato_image/avater/2357c2525b27c232353b8d98dd165924.png' alt='公众号' />
     </div>`)
       })
     }
