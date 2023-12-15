@@ -133,6 +133,15 @@
         :detail="detail"
         v-model:shareMode="shareMode"
       />
+      <ChatFooter
+        v-if="!isInApplet"
+        :name="CHATO_AWANG_BRAND_NAME"
+        :logo="CHATO_AWANG_LOGO"
+        :class="[
+          'mb-2 leading-4 text-xs flex justify-center text-[#596780] text-center shrink-0',
+          !isCustomerBrand && 'cursor-pointer'
+        ]"
+      />
     </div>
   </div>
   <ChatMessageMore
@@ -153,7 +162,6 @@
     :title="customerFormState.title"
     :uid="customerFormState.uId"
   />
-  <el-image-viewer v-if="showPreview" :url-list="[previewImageUrl]" @close="showPreview = false" />
   <ChatMoreNavigator
     :domainInfo="detail"
     v-model:value="chatMoreVisible"
@@ -198,7 +206,13 @@ import {
   SymChatDomainDetail,
   SymChatToken
 } from '@/constant/chat'
-import { CHATO_BAIXING_APP_ID, CHATO_SOURCE_APPLET } from '@/constant/common'
+import {
+  CHATO_AWANG_BRAND_NAME,
+  CHATO_AWANG_LOGO,
+  CHATO_AWANG_SLUG,
+  CHATO_BAIXING_APP_ID,
+  CHATO_SOURCE_APPLET
+} from '@/constant/common'
 import { DebugDomainSymbol, MidJourneyDomainSlug } from '@/constant/domain'
 import { PaidCommercialTypes } from '@/constant/space'
 import { XSSOptions } from '@/constant/xss'
@@ -341,8 +355,6 @@ const socketResult = ref({
 })
 const watermark = ref<Watermark>()
 const blindWatermark = ref<BlindWatermark>()
-const showPreview = ref(false)
-const previewImageUrl = ref('')
 const sensorsQuestionId = computed(() => history.value?.[history.value.length - 1]?.questionId)
 const chatMoreVisible = ref(false)
 const payModalVisible = ref(Boolean(route.query.pay || false))
@@ -622,6 +634,19 @@ const getHistoryChat = async (scrollBottomTag = true) => {
 
 function sayWelcome() {
   if (detail.value.welcome) {
+    if (detail.value.slug === CHATO_AWANG_SLUG) {
+      history.value.push({
+        first: true,
+        displayType: EMessageDisplayType.answer,
+        id: `welcome-a`,
+        isWelcome: true,
+        content: String(`<div class='flex flex-col justify-center items-center text-center'>
+      <p class='mb-2 font-medium'>关注公众号，免费无限次使用！</p>
+      <img onclick="previewImages('https://afu-1255830993.cos.ap-shanghai.myqcloud.com/chato_image/avater/731bdea46ebc204aa9c601289cd47dfe.jpg', '0')" class='w-full' style="width: 150px; height: 150px;"  src='https://afu-1255830993.cos.ap-shanghai.myqcloud.com/chato_image/avater/731bdea46ebc204aa9c601289cd47dfe.jpg' alt='公众号' />
+    </div>`)
+      })
+    }
+
     history.value.push({
       first: true,
       displayType: EMessageDisplayType.answer,
@@ -632,6 +657,7 @@ function sayWelcome() {
         id: 'Chato_chat_label_click'
       })
     })
+    // }
   }
 }
 
@@ -1311,21 +1337,16 @@ onMounted(() => {
 
   observer.observe(document.body, { childList: true, subtree: true })
 
-  window.showPreview = (imageUrl: string) => {
-    previewImageUrl.value = imageUrl
-    showPreview.value = true
+  const onNavigateLogin = () => {
+    if (isInApplet.value) {
+      wx.miniProgram.navigateTo({
+        url: '/pages/loginHome/loginHome'
+      })
+    } else {
+      routerToLogin(botSlug.value)
+    }
   }
 })
-
-const onNavigateLogin = () => {
-  if (isInApplet.value) {
-    wx.miniProgram.navigateTo({
-      url: '/pages/loginHome/loginHome'
-    })
-  } else {
-    routerToLogin(botSlug.value)
-  }
-}
 
 onBeforeUnmount(() => {
   observer.disconnect()

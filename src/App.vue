@@ -17,6 +17,7 @@ import dayjs from 'dayjs'
 import { ElConfigProvider } from 'element-plus'
 import { storeToRefs } from 'pinia'
 import { v4 as uuidv4 } from 'uuid'
+import { api as viewerApi } from 'v-viewer'
 import { computed, onMounted } from 'vue'
 import useGlobalProperties from './composables/useGlobalProperties'
 // 设置不同环境的 Favicon
@@ -46,6 +47,30 @@ const sensors = () => {
     data: {
       time: dayjs().format('YYYY-MM-DD HH:mm:ss')
     }
+  })
+}
+
+// 全局挂载图片预览 api
+window.previewImages = (imageStr: string, imageIndex = 0) => {
+  const imageUrlList = imageStr ? imageStr.split(',') : []
+  viewerApi({
+    options: {
+      inline: true,
+      button: true,
+      navbar: true,
+      title: false,
+      toolbar: true,
+      tooltip: false,
+      movable: true,
+      zoomable: true,
+      rotatable: false,
+      scalable: false,
+      transition: true,
+      fullscreen: false,
+      keyboard: false,
+      initialViewIndex: Number(imageIndex)
+    },
+    images: imageUrlList
   })
 }
 </script>
