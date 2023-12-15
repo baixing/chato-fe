@@ -47,7 +47,8 @@ export const MidJourneyDomainSlug = [
   'zkw4n78zqd676281',
   '0yqd3rdk8o15gon8',
   'zk34lrlx2ojr9xnj',
-  'ymk867p43wm7v941'
+  'ymk867p43wm7v941',
+  'zkw4n78z98676281'
 ]
 
 export const DomainReplyToneOfVoice = [
