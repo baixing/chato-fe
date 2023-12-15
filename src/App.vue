@@ -34,8 +34,8 @@ const initUid = () => {
   }
 }
 onMounted(() => {
-  sensors()
   initUid()
+  sensors()
   document.body.style.overflow = 'hidden'
 })
 const sensors = () => {
@@ -43,6 +43,7 @@ const sensors = () => {
     name: '阿旺界面打点',
     type: 'a_wang:' + host,
     data: {
+      user: $uid,
       time: dayjs().format('YYYY-MM-DD HH:mm:ss')
     }
   })
