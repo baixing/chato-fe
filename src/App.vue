@@ -13,27 +13,40 @@ import useByteDancePromotion from '@/composables/useByteDancePromotion'
 import { Elementlocales } from '@/locales'
 import { useLocales } from '@/stores/locales'
 import { useStorage } from '@vueuse/core'
+import dayjs from 'dayjs'
 import { ElConfigProvider } from 'element-plus'
 import { storeToRefs } from 'pinia'
 import { v4 as uuidv4 } from 'uuid'
 import { computed, onMounted } from 'vue'
-
+import useGlobalProperties from './composables/useGlobalProperties'
 // 设置不同环境的 Favicon
 // useFavicon()
 useBaiduPromotion()
 useByteDancePromotion()
 const { locale } = storeToRefs(useLocales())
+const { $sensors } = useGlobalProperties()
 const clocale = computed(() => Elementlocales[locale.value])
 const $uid = useStorage('uid', '')
+const host = window.location.host
 const initUid = () => {
   if (!$uid.value || $uid.value === 'undefined') {
     $uid.value = uuidv4()
   }
 }
 onMounted(() => {
+  sensors()
   initUid()
   document.body.style.overflow = 'hidden'
 })
+const sensors = () => {
+  $sensors?.track('a_wang:' + host, {
+    name: '阿旺界面打点',
+    type: 'a_wang:' + host,
+    data: {
+      time: dayjs().format('YYYY-MM-DD HH:mm:ss')
+    }
+  })
+}
 </script>
 
 <style lang="scss" scoped>
