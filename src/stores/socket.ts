@@ -1,8 +1,8 @@
 import { ChatMessageFinalStatus } from '@/constant/chat'
 import { EMessageType, EWsMessageStatus } from '@/enum/message'
 import { formatChatMessageAnswer } from '@/utils/chat'
-import { ElMessage } from 'element-plus'
 import { defineStore } from 'pinia'
+import { v4 as uuidv4 } from 'uuid'
 import { nextTick, ref } from 'vue'
 
 export const useSocketStore = defineStore('socket', () => {
@@ -10,13 +10,8 @@ export const useSocketStore = defineStore('socket', () => {
   const peddingDomains = ref<string[]>([])
 
   const updateSocketResultMap = (res) => {
-    const msgId = res.msg_id
+    const msgId = res.msg_id || uuidv4()
     const type = res.type
-
-    if (!msgId) {
-      ElMessage.warning('参数丢失: msg_id 丢失')
-      return
-    }
 
     const mergeResult = {
       ...res,

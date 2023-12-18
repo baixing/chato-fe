@@ -169,3 +169,14 @@ export function getAppletQRCode2(slug: string) {
     url: `/chato/api/v1/publish_channels/wechat/mini_prog/${slug}}/QRCode2`
   })
 }
+
+export function updateDomainReplySwitch(data: {
+  domain_id: IDomainInfo['id']
+  human_reply_switch: IDomainInfo['human_reply_switch']
+}) {
+  return request({
+    method: 'post',
+    url: `chato/api/v2/domains/human_reply_switch`,
+    data
+  })
+}

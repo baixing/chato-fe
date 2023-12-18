@@ -48,3 +48,13 @@ export interface IMessageMoreControl {
   [EMessageActionType.expand]?: boolean // 拓展
   [EMessageActionType.retry]?: boolean // 重试
 }
+
+export interface ICRMMessage {
+  id?: string
+  sid?: string
+  sender_uid: string
+  display_type: EMessageDisplayType
+  content: string
+  question_id: string | number
+  source: string
+}

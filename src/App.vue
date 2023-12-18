@@ -7,7 +7,7 @@
         data-sensors-click
         id="Chato_mobile_xiaona_chat_click"
         src="@/assets/img/xiaona.png"
-        class="absolute w-11 h-11 object-cover right-[2px] bottom-20 rounded-full shadow-lg xn-flashing"
+        class="absolute w-11 h-11 object-cover right-[2px] bottom-20 rounded-full shadow-lg z-[99] xn-flashing"
         @click="onContactXN"
       />
     </div>

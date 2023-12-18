@@ -21,7 +21,7 @@ export interface IRecommendQuestionParams extends IChatCommonParams {
 }
 
 export interface IUserChatMessageFilter {
-  domainId: string | number
+  domain_id: string | number
 }
 
 export interface IUserChatMessage {

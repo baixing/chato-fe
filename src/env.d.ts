@@ -13,6 +13,7 @@ interface ImportMetaEnv {
   readonly VITE_APP_WWW_BASE_URL: string
   readonly VITE_APP_SCRIPT_URL: string
   readonly VITE_APP_SOCKET_URL: string
+  readonly VITE_APP_SOCKET_CRM_URL: string
   readonly VITE_APP_ASR_SOCKET_URL: string
   readonly VITE_APP_MIDJOURNEY_DOMAIN_SLUG: string
 }

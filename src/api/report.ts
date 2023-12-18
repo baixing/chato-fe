@@ -1,4 +1,4 @@
-import type { TPagingList } from '@/interface/common'
+import type { IPageFilter, TPagingList } from '@/interface/common'
 import type {
   IQuestionFilter,
   IUserChatMessage,
@@ -110,9 +110,9 @@ export function exportFormCollectDetailList(params: TPagingList) {
   })
 }
 
-export function getUserChatMessageByDomainId(data: IUserChatMessageFilter) {
+export function getUserChatMessageByDomainId(data: IPageFilter<IUserChatMessageFilter>) {
   return request<IUserChatMessage[]>({
-    url: `/chato/api/v1/statistics/questions/query`,
+    url: `chato/api/v1/questions/chat_list_by_user`,
     data
   })
 }

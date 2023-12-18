@@ -56,6 +56,7 @@ export interface IDomainInfo {
   avatar: string
   avatar_show: boolean
   name_show: boolean
+  human_reply_switch: number // CRM 字段，是否人工回复: 1 - 人工 | 0 - 机器人
   message_style: string
   suspend_style: string
   whitelist_sites: string

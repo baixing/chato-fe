@@ -47,7 +47,6 @@ export const RoutesMap = {
     release: 'tranningRelease',
     report: 'tranningReport',
     reportContext: 'tranningReportContext',
-    userMsgContext: 'tranningUserMsgContext',
     botChat: 'tranningBotChat'
   },
   manager: {

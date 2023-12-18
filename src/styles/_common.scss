@@ -229,3 +229,7 @@ body {
     color: #303133;
   }
 }
+
+.chato-chat-center {
+  @apply px-[24%] lg:px-4 xl:px-[12%] 2xl:px-[18%];
+}
