@@ -167,7 +167,7 @@
   />
   <ChatPayModal :domainInfo="detail" v-model:value="payModalVisible" />
   <AudioPlayer />
-  <ChatFollowPublic v-model:value="showVisiblePublic" />
+  <ChatFollowPublic :isEnvWeixin="currentEnvIsWechat" v-model:value="showVisiblePublic" />
 </template>
 
 <script lang="ts" setup>

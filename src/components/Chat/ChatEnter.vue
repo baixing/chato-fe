@@ -62,7 +62,7 @@
             :disabled="internalEnterDisabled"
             @click="() => onSend()"
             data-script="Chato-send-question"
-            class="send-btn transition-colors pl-1"
+            :class="['send-btn transition-colors pl-1', internalValue ? 'default-send-btn' : '']"
           >
             <svg-icon
               :svg-class="[
@@ -404,6 +404,21 @@ onBeforeUnmount(() => {
       svg {
         color: #7c5cfc;
       }
+    }
+  }
+
+  .default-send-btn {
+    @apply w-9 h-9;
+    cursor: pointer;
+    border-radius: 100%;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background-color: #f2f3f5;
+    svg {
+      color: #7c5cfc;
     }
   }
 

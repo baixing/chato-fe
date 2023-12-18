@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import useAudioPlayer from '@/composables/useAudioPlayer'
-import { SymChatMessageAudioTTSParams, SymChatToken } from '@/constant/chat'
+import {
+  ChatMessageAbnormaFinalStatus,
+  SymChatMessageAudioTTSParams,
+  SymChatToken
+} from '@/constant/chat'
 import { MidJourneyDomainSlug } from '@/constant/domain'
 import {
   EMessageDisplayType,
@@ -162,7 +166,8 @@ const onPreviewImage = (image: string) => {
           <div
             v-if="
               (message.type === EMessageType.mjImage || message.type === EMessageType.image) &&
-              isAnswerMessage
+              isAnswerMessage &&
+              !ChatMessageAbnormaFinalStatus.includes(message.status)
             "
             class="w-[60vw] h-[60vw] max-w-[400px] max-h-[400px] relative"
           >

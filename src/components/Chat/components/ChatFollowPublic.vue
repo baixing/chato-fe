@@ -3,11 +3,21 @@
     width="16%"
     mobile-width="95%"
     v-model:visible="visible"
-    :title="$t('关注阿旺机器人公众号')"
+    :title="$t(props.isEnvWeixin ? '长按识别二维码' : '关注阿旺机器人公众号')"
     :footer="false"
     @cancel="() => emit('update:value', false)"
   >
-    <img class="w-full" :src="followImage" alt="阿旺机器人公众号" />
+    <div class="w-full flex flex-col items-center">
+      <img class="w-full" :src="followImage" alt="阿旺机器人公众号" />
+      <a
+        v-if="!props.isEnvWeixin"
+        :href="followImage"
+        class="m-auto theme-color text-base"
+        download="阿旺机器人公众号.png"
+      >
+        下载
+      </a>
+    </div>
   </Modal>
 </template>
 
@@ -18,6 +28,7 @@ import Modal from '../../Modal/index.vue'
 
 const props = defineProps<{
   value: boolean
+  isEnvWeixin: boolean
 }>()
 
 const emit = defineEmits(['update:value'])
