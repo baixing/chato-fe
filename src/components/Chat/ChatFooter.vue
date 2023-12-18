@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex gap-2 items-center justify-center px-5 overflow-hidden h-5"
+    class="flex gap-2 items-center justify-center px-5 overflow-hidden h-5 cursor-pointer"
     @click="() => emit('click')"
   >
     <span class="shrink-0 h-full">

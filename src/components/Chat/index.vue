@@ -137,6 +137,7 @@
           'mb-2 leading-4 text-xs flex justify-center text-[#596780] text-center shrink-0',
           !isCustomerBrand && 'cursor-pointer'
         ]"
+        @click="showVisiblePublic = true"
       />
     </div>
   </div>
@@ -166,6 +167,7 @@
   />
   <ChatPayModal :domainInfo="detail" v-model:value="payModalVisible" />
   <AudioPlayer />
+  <ChatFollowPublic v-model:value="showVisiblePublic" />
 </template>
 
 <script lang="ts" setup>
@@ -186,6 +188,7 @@ import DefaultAvatar from '@/assets/img/avatar.png'
 import AudioPlayer from '@/components/AudioPlayer/index.vue'
 import ChatEnter from '@/components/Chat/ChatEnter.vue'
 import MessageItem from '@/components/Chat/ChatMessageItem.vue'
+import ChatFollowPublic from '@/components/Chat/components/ChatFollowPublic.vue'
 import CustomerFormDialog from '@/components/Customer/CustomerFormDialog.vue'
 import useAudioPlayer from '@/composables/useAudioPlayer'
 import useBdVid from '@/composables/useBdVid'
@@ -354,6 +357,8 @@ const blindWatermark = ref<BlindWatermark>()
 const sensorsQuestionId = computed(() => history.value?.[history.value.length - 1]?.questionId)
 const chatMoreVisible = ref(false)
 const payModalVisible = ref(Boolean(route.query.pay || false))
+// 引导关注公众号
+const showVisiblePublic = ref(false)
 
 const redirectCode = computed(() => (route.query.code as string) || '')
 const currentEnvIsWechat = isWechat()
