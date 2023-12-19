@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="shortcut icon" href="https://file.baixing.net/202303/bda84364890fac50c09c6e64b7dd6d31.jpeg"
+    type="image/x-icon">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, viewport-fit=cover" />
+  <title>阿旺机器人</title>
+  </title>
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      position: relative;
+      font-weight: normal;
+    }
+
+    p,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      overflow-wrap: break-word;
+    }
+
+    a {
+      text-decoration: none;
+      color: #fff;
+    }
+
+    /* 媒体查询 */
+    @media screen and (min-width: 800px) {
+      .header-container .header-image {
+        margin-right: 30px;
+      }
+
+      .download-container {
+        justify-content: center !important;
+      }
+
+      .detail-image-container .detail-image {
+        width: 282px !important;
+      }
+
+      .detail-image-container .common-p {
+        position: absolute;
+        width: 86px;
+      }
+    }
+
+    .detail-image-container .common-p {
+      position: absolute;
+      width: 56px;
+    }
+
+    .detail-image-container .image-p {
+      left: 0;
+      top: 50%;
+      transform: translate(-30%, -50%);
+    }
+
+    .detail-image-container .audio-p {
+      bottom: 0;
+      left: 80%;
+      transform: translateX(-100%);
+    }
+
+    .detail-image-container .text-p {
+      right: 0;
+      top: 50%;
+      transform: translate(30%, -50%);
+    }
+
+    .download-container {
+      overflow-y: auto;
+      overflow-x: hidden;
+      position: relative;
+      width: 100%;
+      min-height: 100vh;
+      padding: 25px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      background: url('https://file.baixing.net/202304/18a9679970177eb83bf8ef6470d70867.png') no-repeat;
+      background-position: 0 0;
+      background-size: cover;
+      background-color: #1d1d21;
+      color: #fff;
+    }
+
+    .download-container::after {
+      content: '';
+      display: inline-block;
+      position: absolute;
+      background-image: url('https://file.baixing.net/202304/13c97bc02b9a5212438ba707e759c16e.png');
+      background-position: 50%;
+      background-size: cover;
+      left: 50%;
+      transform: translateX(-20%);
+      z-index: 1;
+      width: 824px;
+      top: -300px;
+      height: 727px;
+    }
+
+    .download-container .header-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 35px;
+    }
+
+    .header-image {
+      width: 75px;
+      height: 75px;
+      margin-right: 10px;
+      border-radius: 10px;
+    }
+
+    .detail-container {
+      width: 100%;
+      font-family: Source Han Sans CN;
+      font-size: 15px;
+      font-weight: 350;
+      line-height: 18px;
+      text-align: center;
+      letter-spacing: 1px;
+      color: #fff;
+      margin-bottom: 15px;
+    }
+
+    .h-c-right h1 {
+      margin-bottom: 5px;
+    }
+
+    .h-c-right h4 {
+      letter-spacing: 0.5em;
+    }
+
+    .detail-image-container {
+      position: relative;
+      background-color: #fff;
+      padding: 10px;
+      margin-bottom: 55px;
+      border-radius: 30px;
+    }
+
+    .detail-image-container .detail-image {
+      width: 223px;
+    }
+
+    .download-show-btn {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      color: #fff;
+      font-family: Alibaba PuHuiTi 2.0;
+      font-size: 18px;
+      font-weight: normal;
+      line-height: 22px;
+      text-align: center;
+    }
+
+    .download-show-btn a {
+      padding: 13px 20px;
+      background: #724CFF;
+      margin-right: 20px;
+      width: 200px;
+      border-radius: 10px;
+      /* letter-spacing: 0.2em; */
+    }
+
+    .download-show-btn a:last-of-type {
+      margin-right: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="download-container">
+    <div class="header-container">
+      <img class="header-image" src="https://file.baixing.net/202304/bda84364890fac50c09c6e64b7dd6d31.jpeg" />
+      <div class="h-c-right">
+        <h1>阿旺</h1>
+        <h4>AI聊天机器人</h4>
+      </div>
+    </div>
+    <div class="detail-container">支持 图片 | 文本 聊天形式</div>
+    <div class="detail-container">你的工作生活好伙伴</div>
+    <div class="detail-image-container">
+      <img class="detail-image" src="https://file.baixing.net/202304/78a99844d24752a7f2bc264b75f99903.png" />
+      <img class="text-p common-p" src="https://file.baixing.net/202304/c43910b996adff092b8ebc37ff7686e8.png" />
+      <img class="image-p common-p" src="https://file.baixing.net/202304/8063fc2e51011f6706ad0131d5085370.png" />
+      <img class="audio-p common-p" src="https://file.baixing.net/202304/6a35034530868d674b6a78d24bc10040.png" />
+    </div>
+    <div class="download-show-btn">
+      <a href="https://apps.apple.com/app/id1669697942" id="download-btn-ios">ios版</a>
+      <a href="https://ai.baixing.net/ai/baixingAI/app-release_110_59_jiagu_sign.apk"
+        id="download-btn-android">Android版</a>
+    </div>
+  </div>
+  <script type="text/javascript">
+    var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+      document.getElementById("download-btn-ios").href = "https://apps.apple.com/app/id1669697942";
+    } else if (/android/i.test(userAgent)) {
+      document.getElementById("download-btn-android").href = "https://ai.baixing.net/ai/baixingAI/app-release_110_59_jiagu_sign.apk";
+    }
+  </script>
+</body>
+
+</html>
