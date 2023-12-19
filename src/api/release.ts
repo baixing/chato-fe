@@ -192,10 +192,10 @@ export function getTitokServiceConfig(domain_slug: string) {
 }
 
 // 更改抖音配置
-export function updateTiktokConfig(domain_slug: string, data: any) {
+export function updateTiktokConfig(id: number, data: any) {
   return request({
     method: 'post',
-    url: `/chato/api/v1/channel/douyin/account/${domain_slug}/save_additions`,
+    url: `/chato/api/v1/channel/douyin/account/${id}/save_additions`,
     data
   })
 }
