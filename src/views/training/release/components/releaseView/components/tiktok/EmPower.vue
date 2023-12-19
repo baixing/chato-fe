@@ -85,6 +85,7 @@ const props = defineProps<{
   domainSlug: string
 }>()
 const tiktokStatus = ref<{
+  id: number
   s_status: string
   additions?: {
     douyin_im_receive_msg_switch: boolean
@@ -105,7 +106,7 @@ const onChangeTiktokAdditions = async (key: string, val: boolean) => {
       ...tiktokStatus.value.additions,
       [key]: Boolean(val)
     }
-    await updateTiktokConfig(props.domainSlug, params)
+    await updateTiktokConfig(tiktokStatus.value.id, params)
     ElNotification.success(t('操作成功'))
   } catch (e) {}
 }
