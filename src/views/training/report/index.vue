@@ -20,8 +20,8 @@ import { useRoute, useRouter } from 'vue-router'
 import ReportCollect from './components/ReportCollect.vue'
 import ReportContext from './components/ReportContext.vue'
 import ReportDetail from './components/ReportDetail.vue'
-import ReportUserChatCRM from './components/ReportUserChatCRM.vue'
-import ReportUserChatCRMVL from './components/ReportUserChatCRMVL.vue'
+// import ReportUserChatCRM from './components/ReportUserChatCRM.vue'
+// import ReportUserChatCRMVL from './components/ReportUserChatCRMVL.vue'
 import ReportUserMessage from './components/ReportUserMessage.vue'
 import ReportView from './components/ReportView.vue'
 
@@ -42,9 +42,9 @@ const tabComponents = {
   chat: ReportDetail,
   collect: ReportCollect,
   context: ReportContext,
-  userMsg: ReportUserMessage,
-  userChatCRM: ReportUserChatCRM,
-  userChatCRMVL: ReportUserChatCRMVL
+  userMsg: ReportUserMessage
+  // userChatCRM: ReportUserChatCRM,
+  // userChatCRMVL: ReportUserChatCRMVL
 }
 
 const onClickTab = (v) => {

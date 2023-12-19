@@ -1,11 +1,8 @@
 <template>
-  <div
-    v-loading="chatHistoryLoading"
-    class="flex flex-col gap-5 w-full h-[calc(100vh-186px)] lg:h-[calc(100vh-216px)] overflow-hidden"
-  >
+  <div v-loading="chatHistoryLoading" class="flex flex-col gap-3 w-full h-full overflow-hidden">
     <div
       ref="chatHistoryEl"
-      class="w-full flex-1 overflow-auto space-y-6 chato-chat-center"
+      class="w-full flex-1 overflow-auto space-y-6 chat-center"
       @scroll="onChatHistoryScroll"
     >
       <template v-if="chatHistory.length">
@@ -18,7 +15,7 @@
       </template>
       <el-empty v-else :description="$t('暂无聊天记录')" />
     </div>
-    <div class="chato-chat-center flex items-center gap-2 w-full">
+    <div class="chat-center flex items-center gap-2 w-full">
       <el-button round @click="onChangeChatMode" class="!h-full !rounded-3xl">
         {{ $t(domainInfo.human_reply_switch ? '转机器人' : '转人工') }}
       </el-button>
@@ -70,30 +67,34 @@ import { updateDomainReplySwitch } from '@/api/domain'
 import CustomerFormDialog from '@/components/Customer/CustomerFormDialog.vue'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import { useSource } from '@/composables/useSource'
-import { currentEnvConfig } from '@/config'
 import { XSSOptions } from '@/constant/xss'
 import { EMessageDisplayType } from '@/enum/message'
 import type { IPage } from '@/interface/common'
 import type { ICRMMessage } from '@/interface/message'
 import { useAuthStore } from '@/stores/auth'
 import { useDomainStore } from '@/stores/domain'
-import { useDebounceFn, useWebSocket } from '@vueuse/core'
+import { useDebounceFn } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
-import { v4 as uuidv4 } from 'uuid'
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, toRaw, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import xss from 'xss'
 import ChatCRMMessage from './ChatCRMMessage.vue'
 
+const props = defineProps<{
+  uid: string
+}>()
+
+const emit = defineEmits(['send'])
+
 const route = useRoute()
 const { isMobile } = useBasicLayout()
 const { source } = useSource()
 const authStoreI = useAuthStore()
-const domainStoreI = useDomainStore()
 const { authToken } = storeToRefs(authStoreI)
+const domainStoreI = useDomainStore()
 const { domainInfo } = storeToRefs(domainStoreI)
 
-const senderUID = computed(() => route.params.chatId as string)
+const senderUID = computed(() => props.uid)
 const inputPlaceholder = computed(() =>
   isMobile.value ? '请输入回复' : '输入回复内容，换行可通过shift+回车'
 )
@@ -230,23 +231,23 @@ const onKeydownEnter = (e: KeyboardEvent) => {
   }
 }
 
-const socketInstance = useWebSocket(
-  `wss://${currentEnvConfig.socketCRMURL}?token=${authToken.value}`,
-  {
-    autoReconnect: true,
-    onMessage: (ws, msgEvent) => {
-      const { data } = msgEvent
-      if (!data) {
-        return
-      }
-      const chatMsgItem = JSON.parse(msgEvent.data)
-      if (chatMsgItem?.sender_uid !== senderUID.value) {
-        return
-      }
-      chatHistory.value.push({ ...chatMsgItem, id: uuidv4() })
-    }
-  }
-)
+// const socketInstance = useWebSocket(
+//   `wss://${currentEnvConfig.socketCRMURL}?token=${authToken.value}`,
+//   {
+//     autoReconnect: true,
+//     onMessage: (ws, msgEvent) => {
+//       const { data } = msgEvent
+//       if (!data) {
+//         return
+//       }
+//       const chatMsgItem = JSON.parse(msgEvent.data)
+//       if (chatMsgItem?.sender_uid !== senderUID.value) {
+//         return
+//       }
+//       chatHistory.value.push({ ...chatMsgItem, id: uuidv4() })
+//     }
+//   }
+// )
 
 const onSend = async () => {
   const text = String(inputText.value).trim()
@@ -259,11 +260,7 @@ const onSend = async () => {
     source: source.value,
     display_type: EMessageDisplayType.question
   }
-  try {
-    socketInstance.send(JSON.stringify(newChatMessgae))
-  } catch (err) {
-    chatHistory.value[chatHistory.value.length - 1].content = err
-  }
+  emit('send', newChatMessgae)
 }
 
 const onElClick = (event) => {
@@ -278,9 +275,9 @@ const onElClick = (event) => {
 }
 
 watch(
-  () => domainInfo.value.slug,
-  (slug) => {
-    if (slug) {
+  [() => domainInfo.value.slug, senderUID],
+  ([slug, uid]) => {
+    if (slug && uid) {
       chatHistory.value = []
       initChatHistory()
     }
@@ -306,6 +303,10 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="scss" scoped>
+.chat-center {
+  @apply px-3;
+}
+
 .input-container {
   @apply box-border rounded-3xl py-1 pl-4 pr-1 flex-1 flex items-center border border-solid border-[#e4e7ed] min-h-[44px];
 
