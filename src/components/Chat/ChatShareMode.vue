@@ -39,7 +39,8 @@ const share = async () => {
   if (isInApplet.value) {
     const link = await getAppletLink(
       props.detail.slug,
-      'pages/share/share?shareId=' + res.data.data.tag
+      'pages/share/share',
+      'shareId=' + res.data.data.tag
     )
     $copyText(link.data.data.url_link)
     shareMode.value = false
