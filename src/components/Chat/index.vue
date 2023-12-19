@@ -1,7 +1,63 @@
 <template>
   <div class="container-preview-page bg-white relative parent-element">
     <div
-      v-if="detail.name_and_avatar_show && avatarShow"
+      class="flex items-center justify-center h-14 bg-white mb-0 text-sm font-medium gap-2 shrink-0"
+      v-if="botSlug === 'ge9p359y4v27d2oq'"
+    >
+      <el-radio-group v-model="aiType">
+        <el-radio-button label="dialogue" @click="onSetAiType('dialogue')">
+          AI 对话
+          <el-icon class="ml-1">
+            <ArrowUpBold v-if="drawer && aiType === 'dialogue'" />
+            <ArrowDownBold v-else />
+          </el-icon>
+        </el-radio-button>
+        <el-radio-button label="painting" @click="onSetAiType('painting')">
+          AI 绘画
+          <el-icon class="ml-1">
+            <ArrowUpBold v-if="drawer && aiType === 'painting'" />
+            <ArrowDownBold v-else />
+          </el-icon>
+        </el-radio-button>
+      </el-radio-group>
+      <span
+        class="flex w-fit cursor-pointer rounded-full absolute z-[999] top-0 right-0 h-14 items-center text-base pr-5"
+      >
+        <svg-icon
+          @click="chatMoreVisible = true"
+          name="more"
+          svg-class="text-[#303133] mt-1 ml-2 w-6 h-6"
+        />
+      </span>
+    </div>
+    <div
+      v-show="drawer"
+      class="max-h-[485px] overflow-y-auto absolute rounded-b-lg px-3 z-[99] w-full top-14 flex-col flex items-center justify-center bg-[#FaFaFa] pb-3 text-sm font-medium gap-2 shrink-0"
+      v-on-click-outside="drawerVOnClickOutside"
+    >
+      <div
+        v-for="item in aiMap[aiType]"
+        :key="item?.slug"
+        class="flex rounded-lg items-center px-6 mx-6 py-4 justify-between w-full border-0 border-solid bg-white"
+        :class="[item?.slug === 'ge9p359y4v27d2oq' && 'border-[#7C5CFC] !border']"
+        @click="onSetBot(item?.slug)"
+      >
+        <div class="flex items-center">
+          <Avatar
+            :avatar="item.avatar || DefaultAvatar"
+            :size="28"
+            :name="item.name.slice(0, 2)"
+            class="w-7 h-7 rounded-full shrink-0 overflow-hidden mr-2"
+          />
+          <div>{{ item.name }}</div>
+        </div>
+        <div>
+          <el-icon><ArrowRightBold /></el-icon>
+        </div>
+      </div>
+    </div>
+    <div
+      v-if="detail.name_and_avatar_show && avatarShow && botSlug !== 'ge9p359y4v27d2oq'"
       class="flex items-center justify-center h-14 bg-white mb-0 text-sm font-medium gap-2 shrink-0"
       style="border-bottom: 1px solid #eee"
     >
@@ -233,6 +289,7 @@ import type { ITTSParams } from '@/interface/tts'
 import router, { RoutesMap } from '@/router'
 import { useAuthStore } from '@/stores/auth'
 import { useBase } from '@/stores/base'
+//@ts-ignore
 import { useChatStore } from '@/stores/chat'
 import { cuserStore } from '@/stores/cuser'
 import { useSocketStore } from '@/stores/socket'
@@ -250,7 +307,9 @@ import SSE from '@/utils/sse'
 import { getStringWidth } from '@/utils/string'
 import { isURL } from '@/utils/url'
 import shareWeixin from '@/utils/weixinShare'
+import { vOnClickOutside } from '@vueuse/components'
 import { useDebounceFn, useStorage } from '@vueuse/core'
+import { rollTop, useMotion } from '@vueuse/motion'
 import dayjs from 'dayjs'
 import { ElMessage, ElMessageBox, ElNotification as Notification } from 'element-plus'
 import 'highlight.js/styles/default.css'
@@ -304,6 +363,7 @@ const debugDomain = inject<IDomainInfo>(DebugDomainSymbol, null)
 const douyinAPI = useStorage('douyinAPI', false)
 const baiduAPI = useStorage('baiduAPI', false)
 const { t } = useI18n()
+const drawer = ref(false)
 const userStore = cuserStore()
 const { routerToLogin } = userStore
 const { loginUserId, loginStatus } = storeToRefs(userStore)
@@ -377,16 +437,41 @@ const chatHistoryParams: ChatHistoryParams = reactive({
   page: 1,
   page_size: 10
 })
-
+const { chatList } = storeToRefs(chatStoreI)
 const isInApplet = computed(() => source.value === CHATO_SOURCE_APPLET) // 判断是否在小程序环境
-
+const drawerDiv = ref<HTMLDivElement>(null)
 const SSEInstance = new SSE()
 const socketStore = useSocketStore()
 const socketInstance = useWebSocketConnect(currentEnvConfig.socketURL)
 const { socketResultMap } = storeToRefs(socketStore)
 const shareMode = ref(false)
+const aiType = ref('dialogue')
+const AIDialogue = [
+  'ge9p359y4v27d2oq',
+  '392mjrmgmzvrqxep',
+  'ymk867pn429rv941',
+  'q94e6rxnl8q7830m',
+  'l3evn7vnd41rxopq',
+  'ymk867pnzwxrv941'
+].map((dialogue) => chatList.value.find((item) => item.slug === dialogue))
+const AIPainting = [
+  'dlj4z52djjmrg031',
+  'zkw4n78z98676281',
+  'zk34lrlxwnvr9xnj',
+  'qzov85n3xqk7mydn',
+  '0yqd3rdk8n05gon8',
+  '21q4l51mevw5nxom',
+  'gwk6d70mnw3rve1o',
+  'zkw4n78zqd676281',
+  '0yqd3rdk8o15gon8',
+  'zk34lrlx2ojr9xnj',
+  'ymk867p43wm7v941'
+].map((painting) => chatList.value.find((item) => item.slug === painting))
+const aiMap = {
+  dialogue: AIDialogue,
+  painting: AIPainting
+}
 const shareList = ref<IMessageItem['questionId'][]>([])
-
 watch(isAiGenerate, (v) => v && successRBI() && onAIGenerate())
 const onShare = (id: number, arr = shareList.value) =>
   arr.includes(id) ? arr.splice(arr.indexOf(id), 1) : arr.push(id)
@@ -395,6 +480,13 @@ const initShare = (id: number) => {
   shareMode.value = true
   shareList.value = [id]
 }
+
+const onSetAiType = (type: string) => {
+  drawer.value = true
+  aiType.value = type
+}
+
+const drawerVOnClickOutside = () => (drawer.value = false)
 
 const onAIGenerate = async () => {
   try {
@@ -422,6 +514,13 @@ const onAIGenerate = async () => {
   } finally {
     submit()
   }
+}
+
+const onSetBot = (slug: string) => {
+  drawer.value = false
+  aiType.value = 'dialogue'
+  router.push(`/c/bot/${slug}`)
+  chatStoreI.switchChatingInfo(slug)
 }
 
 // 用户登录
@@ -1301,6 +1400,7 @@ watch(
 let observer
 
 onMounted(() => {
+  useMotion(drawerDiv, rollTop)
   document.addEventListener('click', onElClick)
 
   observer = new MutationObserver((mutationsList) => {
@@ -1429,6 +1529,16 @@ defineExpose({
 </script>
 
 <style lang="scss" scoped>
+.v-enter-active,
+.v-leave-active {
+  transition: all 1s;
+}
+.v-enter-from {
+  height: 0px;
+}
+.v-leave-to {
+  height: 20px;
+}
 .chat-history {
   @apply px-1 py-4;
   flex: auto 1 1;
@@ -1524,6 +1634,28 @@ defineExpose({
   color: $color-minor;
   opacity: 0.5;
 }
-.parent-element {
+
+:deep(.el-radio-group) {
+  background: #f2f3f5;
+  padding: 4px;
+  border-radius: 4px;
+  --el-color-primary: white;
+}
+
+:deep(.el-radio-button__inner) {
+  background: none;
+  border: none;
+}
+
+:deep(.el-radio-button__original-radio:checked + .el-radio-button__inner) {
+  color: #606266;
+}
+
+:deep(.el-radio-button:first-child .el-radio-button__inner) {
+  border-radius: 4px;
+}
+
+:deep(.el-radio-button:last-child .el-radio-button__inner) {
+  border-radius: 4px;
 }
 </style>

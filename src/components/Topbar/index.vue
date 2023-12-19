@@ -39,9 +39,7 @@ withDefaults(
     existMenuMore: true
   }
 )
-
 const { isMobile } = useBasicLayout()
 const { drawerVisible } = useSidebar()
-
 const slotExtra = !!useSlots().extra
 </script>
