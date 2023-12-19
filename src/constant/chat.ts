@@ -75,3 +75,9 @@ export const ChatMessageFinalStatus = [
   EWsMessageStatus.forbid,
   EWsMessageStatus.forbid_quota
 ]
+
+export const ChatMessageAbnormaFinalStatus = [
+  EWsMessageStatus.error,
+  EWsMessageStatus.forbid,
+  EWsMessageStatus.forbid_quota
+]
