@@ -18,6 +18,31 @@
           $t('刷新')
         }}</el-button>
       </div>
+      <div v-show="tiktokStatus?.additions">
+        <p class="text-sm mb-2 font-medium text-[#303133]">{{ $t('抖音配置') }}</p>
+        <div class="space-x-3 mb-3">
+          <span class="inline-flex items-center gap-2">
+            {{ $t('回复私信') }}
+            <SwitchWithStateMsg
+              :value="tiktokStatus?.additions?.douyin_im_receive_msg_switch"
+              msg-position="right"
+              open-msg="开启"
+              close-msg="关闭"
+              @change="(v) => onChangeTiktokAdditions('douyin_im_receive_msg_switch', v)"
+            />
+          </span>
+          <span class="inline-flex items-center gap-2">
+            {{ $t('回复评论') }}
+            <SwitchWithStateMsg
+              :value="tiktokStatus?.additions?.douyin_item_comment_reply_switch"
+              msg-position="right"
+              open-msg="开启"
+              close-msg="关闭"
+              @change="(v) => onChangeTiktokAdditions('douyin_item_comment_reply_switch', v)"
+            />
+          </span>
+        </div>
+      </div>
       <p
         class="text-[#EA0000] mb-[16px]"
         v-if="tiktokStatus?.s_status === EAfficialAccountStatusType.deleted"
@@ -40,11 +65,17 @@
 </template>
 
 <script lang="ts" setup>
-import { getChannelType, getTitokServiceConfig, patchChannelType } from '@/api/release'
+import {
+  getChannelType,
+  getTitokServiceConfig,
+  patchChannelType,
+  updateTiktokConfig
+} from '@/api/release'
 import Modal from '@/components/Modal/index.vue'
+import SwitchWithStateMsg from '@/components/SwitchWithStateMsg/index.vue'
 import { ChannelStatusTiktok } from '@/constant/release'
 import { EAfficialAccountStatusType, EChannelType } from '@/enum/release'
-import { ElLoading, ElMessage } from 'element-plus'
+import { ElLoading, ElMessage, ElNotification } from 'element-plus'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
@@ -53,7 +84,13 @@ const props = defineProps<{
   value: boolean
   domainSlug: string
 }>()
-const tiktokStatus = ref({ s_status: '' })
+const tiktokStatus = ref<{
+  s_status: string
+  additions?: {
+    douyin_im_receive_msg_switch: boolean
+    douyin_item_comment_reply_switch: boolean
+  }
+}>()
 const tiktokServiceConfig = ref<string>('') // 抖音配置
 const loading = ref(false)
 
@@ -61,6 +98,17 @@ const internalVisible = computed({
   get: () => props.value,
   set: (v) => emit('update:value', v)
 })
+
+const onChangeTiktokAdditions = async (key: string, val: boolean) => {
+  try {
+    const params = {
+      ...tiktokStatus.value.additions,
+      [key]: Boolean(val)
+    }
+    await updateTiktokConfig(props.domainSlug, params)
+    ElNotification.success(t('操作成功'))
+  } catch (e) {}
+}
 
 // 授权状态
 const initTiktokStatus = async () => {
@@ -118,7 +166,7 @@ watch(
 )
 
 const btnText = computed(() => {
-  if (tiktokStatus.value.s_status) {
+  if (tiktokStatus.value?.s_status) {
     return ChannelStatusTiktok[tiktokStatus.value.s_status]
   } else {
     return t('立即授权')
