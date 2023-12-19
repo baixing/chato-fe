@@ -88,7 +88,7 @@
       </div>
       <div
         v-else
-        class="chat-history chat-center space-y-6"
+        class="chat-history chat-center space-y-6 space-y-reverse flex flex-col-reverse"
         @scroll="onChatHistoryScroll"
         ref="refChatHistory"
       >
@@ -101,6 +101,28 @@
               <span>{{ detail.desc }}</span>
             </div>
           </div>
+        </div>
+        <div
+          v-show="!isLoadingAnswer && recommendQuestions.length"
+          v-loading="recommendQuestionsLoading"
+          class="!mt-4 space-y-2"
+        >
+          <div
+            v-for="(item, index) in recommendQuestions"
+            data-sensors-click
+            id="Chato_chat_recommend_question_click"
+            :data-sensors-recommend-base-question="recommendBaseQuestion"
+            :data-sensors-recommend-click-question="item.question"
+            :key="`rq_${index}`"
+            @click="onClickRecommend(item.question)"
+            class="cursor-pointer px-4 py-1 text-[#2F3447] rounded-3xl text-sm leading-6 tracking-[0.13px] border border-solid border-[#E4E7ED] flex items-center justify-between gap-2 transition-opacity hover:opacity-80"
+          >
+            <span>{{ item.question }}</span>
+            <el-icon :size="16"><Right /></el-icon>
+          </div>
+        </div>
+        <div v-if="quotaUpperLimit" class="divider-desc-seesion">
+          {{ $t('电力值不足，更多电力值请咨询产品顾问') }}
         </div>
         <template v-for="(item, index) in history" :key="item.id">
           <MessageItem
@@ -124,28 +146,6 @@
             <span class="divider-tip">{{ $t('已清除与历史消息的关联，开始全新的会话') }}</span>
           </el-divider>
         </template>
-        <div
-          v-show="!isLoadingAnswer && recommendQuestions.length"
-          v-loading="recommendQuestionsLoading"
-          class="!mt-4 space-y-2"
-        >
-          <div
-            v-for="(item, index) in recommendQuestions"
-            data-sensors-click
-            id="Chato_chat_recommend_question_click"
-            :data-sensors-recommend-base-question="recommendBaseQuestion"
-            :data-sensors-recommend-click-question="item.question"
-            :key="`rq_${index}`"
-            @click="onClickRecommend(item.question)"
-            class="cursor-pointer px-4 py-1 text-[#2F3447] rounded-3xl text-sm leading-6 tracking-[0.13px] border border-solid border-[#E4E7ED] flex items-center justify-between gap-2 transition-opacity hover:opacity-80"
-          >
-            <span>{{ item.question }}</span>
-            <el-icon :size="16"><Right /></el-icon>
-          </div>
-        </div>
-        <div v-if="quotaUpperLimit" class="divider-desc-seesion">
-          {{ $t('电力值不足，更多电力值请咨询产品顾问') }}
-        </div>
       </div>
       <div v-if="detail.shortcuts?.length" class="chat-center quick-message-bottom relative">
         <span
@@ -711,10 +711,10 @@ const getHistoryChat = async (scrollBottomTag = true) => {
       }
 
       if (!list_item.answer_deleted && list_item.status !== EWsMessageStatus.pending) {
-        newHistory.unshift(...[answer])
+        newHistory.push(...[answer])
       }
       if (!list_item.question_deleted) {
-        newHistory.unshift(...[question])
+        newHistory.push(...[question])
       }
     }
 
@@ -723,6 +723,7 @@ const getHistoryChat = async (scrollBottomTag = true) => {
     // 放到 nextTick 更新：为了不影响正常发送消息滚动到底部的控制
     nextTick(() => {
       scrollBottom.value = true
+      // onScrollInit()
     })
 
     return list
@@ -828,7 +829,7 @@ const submit = async (str = '') => {
   const _id = `${Date.now()}-${Math.random()}`
   inputText.value = ''
   const xssFilterText = xss(text, XSSOptions)
-  history.value.push({
+  history.value.unshift({
     displayType: EMessageDisplayType.question,
     msg_id: randomString(32),
     id: `${_id}-q`,
@@ -865,7 +866,7 @@ const chatCommonParams = computed<IChatCommonParams>(() => {
 const onTerminateRetry = async () => {
   if (isLoadingAnswer.value) {
     // 终止
-    const lastAnswer = history.value[history.value.length - 1]
+    const lastAnswer = history.value[0]
     if (lastAnswer.displayType !== EMessageDisplayType.answer) {
       Notification.error(t('终止失败：终止触发时，当前消息是预期以外的消息类型'))
       return
@@ -914,7 +915,7 @@ const onTerminateRetry = async () => {
 
 watch(isTerminated, (v) => {
   if (v) {
-    const optMsg = history.value[history.value.length - 1]
+    const optMsg = history.value[0]
     // 触发了终止且当前机器人不是 MidJourney，消息后接上继续
     if (!isMidJourneyDomain.value) {
       optMsg.content += regReplaceA(t('#继续#'), {
@@ -945,7 +946,7 @@ function doRequest(message) {
   }
 
   // 发送请求重置状态：加载回答为是，终止为否
-  isLoadingAnswer.value = true
+  !isMidJourneyDomain.value ? (isLoadingAnswer.value = true) : null
   isTerminated.value = false
   scrollChatHistory()
   sendMsgRequest(message)
@@ -971,15 +972,15 @@ async function sendMsgRequest(message) {
       submit()
     }
   } catch (err) {
-    history.value[history.value.length - 1].status = EWsMessageStatus.error
-    history.value[history.value.length - 1].content = err
+    history.value[0].status = EWsMessageStatus.error
+    history.value[0].content = err
     isLoadingAnswer.value = false
   }
 }
 
 const generateMessage = (data, key) => {
   const isFinalStatus = ChatMessageFinalStatus.includes(data.status)
-  isLoadingAnswer.value = !isFinalStatus
+  isLoadingAnswer.value = !isFinalStatus && !isMidJourneyDomain.value
   if (continueTarget.value) {
     continueTarget.value.innerText = t('继续')
   }
@@ -1022,14 +1023,14 @@ const generateMessage = (data, key) => {
     checkRightsTypeNeedUpgrade(quotaType)
   }
 
-  history.value[historyIndex !== -1 ? historyIndex : history.value.length] = currentAnswer
+  history.value[historyIndex !== -1 ? historyIndex : 0] = currentAnswer
 }
 
 // 特殊处理：继续
 function commonRequestSocket(text: string, msg_id: string, _id: string) {
   // 先发一条友好的回复
   setTimeout(() => {
-    history.value.push({
+    history.value.unshift({
       displayType: EMessageDisplayType.answer,
       msg_id,
       id: `${_id}-a`,
@@ -1089,7 +1090,7 @@ async function clearChatHistory() {
         )
       }
 
-      newHistory.push({
+      newHistory.unshift({
         id: randomString(32),
         displayType: EMessageDisplayType.remove
       })
@@ -1171,7 +1172,7 @@ function quickAnswerMessage(obj, wel = false) {
   if (isURL(obj.response)) {
     return window.open(`/link?target=${obj.response}`)
   }
-  history.value.push({
+  history.value.unshift({
     displayType: EMessageDisplayType.question,
     msg_id: randomString(32),
     id: `${randomString(32)}-q`,
@@ -1180,7 +1181,7 @@ function quickAnswerMessage(obj, wel = false) {
   if (wel) return
   const timer = setTimeout(() => {
     if (obj.response) {
-      history.value.push({
+      history.value.unshift({
         displayType: EMessageDisplayType.answer,
         msg_id: randomString(32),
         id: `${randomString(32)}-a`,
@@ -1264,11 +1265,11 @@ const chatHisListener = (event) => {
       // 继续加载回答
       target.innerText = '...'
       isLoadingAnswer.value = true
-      history.value[history.value.length - 1].status = EWsMessageStatus.continue
+      history.value[0].status = EWsMessageStatus.continue
       doRequest({
         text: content,
         msg_id,
-        cutoff_continue_qid: history.value[history.value.length - 1].questionId
+        cutoff_continue_qid: history.value[0].questionId
       })
     }
   }
@@ -1362,11 +1363,25 @@ const onWeixinH5DefaultLogin = async () => {
   }
 }
 
+// const onScrollInit = () => {
+// const container = refChatHistory.value
+// // 检查内容高度是否超过了容器高度
+// if (container.scrollHeight > container.clientHeight) {
+//   // 如果内容超过了容器高度，应用 flex-col-reverse
+//   container.classList.add('flex-col-reverse')
+// } else {
+//   // 如果内容没有超过容器高度，从顶部开始排列
+//   container.classList.remove('flex-col-reverse')
+//   container.classList.remove('flex')
+//   container.classList.remove('space-y-reverse')
+// }
+// }
+
 watch(refChatHistory, (v) => {
   v && v.addEventListener('click', chatHisListener)
 })
 
-const lastHistory = computed(() => history.value[history.value.length - 1])
+const lastHistory = computed(() => history.value[0])
 
 watch(lastHistory, (v) => {
   if (isInApplet.value) {
