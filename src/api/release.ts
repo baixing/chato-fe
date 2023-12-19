@@ -191,6 +191,15 @@ export function getTitokServiceConfig(domain_slug: string) {
   })
 }
 
+// 更改抖音配置
+export function updateTiktokConfig(domain_slug: string, data: any) {
+  return request({
+    method: 'post',
+    url: `/chato/api/v1/channel/douyin/account/${domain_slug}/save_additions`,
+    data
+  })
+}
+
 // channel_get
 export function getChannelType(channel_type: EChannelType, domain_slug: string) {
   return request({
