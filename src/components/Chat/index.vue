@@ -4,24 +4,34 @@
       class="flex items-center justify-center h-14 bg-white mb-0 text-sm font-medium gap-2 shrink-0"
       v-if="botSlug === 'ge9p359y4v27d2oq'"
     >
-      <el-radio-group v-model="aiType">
-        <el-radio-button label="dialogue" @click="onSetAiType('dialogue')">
+      <div class="flex bg-[#f2f3f5] p-1 rounded !text-[#606266] gap-2">
+        <div
+          label="dialogue"
+          @click.stop="onSetAiType('dialogue')"
+          class="flex items-center px-[15px] py-2 cursor-pointer select-none"
+          :class="[aiType === 'dialogue' && ' !bg-white !rounded']"
+        >
           AI 对话
           <el-icon class="ml-1">
             <ArrowUpBold v-if="drawer && aiType === 'dialogue'" />
             <ArrowDownBold v-else />
           </el-icon>
-        </el-radio-button>
-        <el-radio-button label="painting" @click="onSetAiType('painting')">
+        </div>
+        <div
+          label="painting"
+          @click.stop="onSetAiType('painting')"
+          class="flex items-center px-[15px] py-2 cursor-pointer select-none"
+          :class="[aiType === 'painting' && '!bg-white !rounded']"
+        >
           AI 绘画
           <el-icon class="ml-1">
             <ArrowUpBold v-if="drawer && aiType === 'painting'" />
             <ArrowDownBold v-else />
           </el-icon>
-        </el-radio-button>
-      </el-radio-group>
+        </div>
+      </div>
       <span
-        v-if="avatarShow"
+        v-if="avatarShow && !isInApplet"
         class="flex w-fit cursor-pointer rounded-full absolute z-[999] top-0 right-0 h-14 items-center text-base pr-5"
       >
         <svg-icon
@@ -32,9 +42,9 @@
       </span>
     </div>
     <div
-      v-show="drawer"
-      class="max-h-[485px] overflow-y-auto absolute rounded-b-lg px-3 z-[99] w-full top-14 flex-col flex items-center justify-center bg-[#FaFaFa] pb-3 text-sm font-medium gap-2 shrink-0"
-      v-on-click-outside="drawerVOnClickOutside"
+      v-if="drawer"
+      class="max-h-[300px] overflow-y-auto absolute rounded-b-lg px-3 z-[99] w-full top-14 flex-col flex items-center bg-[#FaFaFa] pb-3 text-sm font-medium gap-2 shrink-0"
+      v-on-click-outside.bubble="drawerVOnClickOutside"
     >
       <div
         v-for="item in aiMap[aiType]"
@@ -457,7 +467,6 @@ const AIDialogue = [
 const AIPainting = [
   'dlj4z52djjmrg031',
   'zkw4n78z98676281',
-  'zk34lrlxwnvr9xnj',
   'qzov85n3xqk7mydn',
   '0yqd3rdk8n05gon8',
   '21q4l51mevw5nxom',
@@ -466,6 +475,7 @@ const AIPainting = [
   '0yqd3rdk8o15gon8',
   'zk34lrlx2ojr9xnj',
   'ymk867p43wm7v941'
+  // 'zk34lrlxwnvr9xnj'
 ].map((painting) => chatList.value.find((item) => item.slug === painting))
 const aiMap = {
   dialogue: AIDialogue,
@@ -482,11 +492,20 @@ const initShare = (id: number) => {
 }
 
 const onSetAiType = (type: string) => {
-  drawer.value = true
+  console.log('drawer.value:' + drawer.value)
+  if (drawer.value) {
+    drawer.value = aiType.value !== type
+  } else {
+    drawer.value = !drawer.value
+  }
   aiType.value = type
 }
 
-const drawerVOnClickOutside = () => (drawer.value = false)
+const drawerVOnClickOutside = () => {
+  console.log('drawerVOnClickOutside:' + drawer.value)
+  aiType.value = 'dialogue'
+  drawer.value = !drawer.value
+}
 
 const onAIGenerate = async () => {
   try {
@@ -519,7 +538,13 @@ const onAIGenerate = async () => {
 const onSetBot = (slug: string) => {
   drawer.value = false
   aiType.value = 'dialogue'
-  router.push(`/c/bot/${slug}`)
+  if (!isInApplet.value) {
+    router.replace(`/c/bot/${slug}`)
+  } else {
+    wx.miniProgram.navigateTo({
+      url: '/pages/index/index?slug=' + slug
+    })
+  }
   chatStoreI.switchChatingInfo(slug)
 }
 
@@ -1646,6 +1671,11 @@ defineExpose({
 :deep(.el-radio-button__inner) {
   background: none;
   border: none;
+  display: flex;
+  border-left: none !important;
+  &:hover {
+    color: #606266;
+  }
 }
 
 :deep(.el-radio-button__original-radio:checked + .el-radio-button__inner) {
