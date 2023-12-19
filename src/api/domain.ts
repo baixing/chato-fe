@@ -171,6 +171,7 @@ export function getAppletQRCode2(slug: string) {
 }
 
 export function updateDomainReplySwitch(data: {
+  sender_uid: string
   domain_id: IDomainInfo['id']
   human_reply_switch: IDomainInfo['human_reply_switch']
 }) {

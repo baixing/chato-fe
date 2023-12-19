@@ -905,13 +905,11 @@ const generateMessage = (data, key) => {
     checkRightsTypeNeedUpgrade(quotaType)
   }
 
-  // history.value[historyIndex !== -1 ? historyIndex : history.value.length] = currentAnswer
+  const latestHistoryItem = history.value.at(-1)
   if (historyIndex !== -1) {
-    if (history.value.at(-1).status === EWsMessageStatus.pending) {
-      history.value[history.value.length - 1] = currentAnswer
-    } else {
-      history.value[historyIndex] = currentAnswer
-    }
+    history.value[historyIndex] = currentAnswer
+  } else if (latestHistoryItem.status === EWsMessageStatus.pending) {
+    history.value[history.value.length - 1] = currentAnswer
   } else {
     history.value.push(currentAnswer)
   }

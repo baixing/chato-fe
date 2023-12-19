@@ -126,6 +126,7 @@ const latestChatQuestionId = computed(() => chatHistory.value.at(-1)?.question_i
 const onChangeChatMode = async () => {
   try {
     await updateDomainReplySwitch({
+      sender_uid: senderUID.value,
       domain_id: domainInfo.value.id,
       human_reply_switch: domainInfo.value.human_reply_switch ? 0 : 1
     })
@@ -199,11 +200,12 @@ const initChatHistory = async (page = 1) => {
         source: item.source
       }
 
-      if (item.question && !item.question_deleted) {
-        newChatHistory.unshift(question)
-      }
       if (item.answer && !item.answer_deleted) {
         newChatHistory.unshift(answer)
+      }
+
+      if (item.question && !item.question_deleted) {
+        newChatHistory.unshift(question)
       }
     })
     chatHistory.value = newChatHistory
