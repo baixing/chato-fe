@@ -107,6 +107,7 @@ const onChangeTiktokAdditions = async (key: string, val: boolean) => {
       [key]: Boolean(val)
     }
     await updateTiktokConfig(tiktokStatus.value.id, params)
+    tiktokStatus.value.additions[key] = val
     ElNotification.success(t('操作成功'))
   } catch (e) {}
 }
