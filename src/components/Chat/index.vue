@@ -21,6 +21,7 @@
         </el-radio-button>
       </el-radio-group>
       <span
+        v-if="avatarShow"
         class="flex w-fit cursor-pointer rounded-full absolute z-[999] top-0 right-0 h-14 items-center text-base pr-5"
       >
         <svg-icon
@@ -264,7 +265,6 @@ import {
 import {
   CHATO_AWANG_BRAND_NAME,
   CHATO_AWANG_LOGO,
-  CHATO_AWANG_SLUG,
   CHATO_BAIXING_APP_ID,
   CHATO_SOURCE_APPLET
 } from '@/constant/common'
@@ -735,19 +735,6 @@ const getHistoryChat = async (scrollBottomTag = true) => {
 
 function sayWelcome() {
   if (detail.value.welcome) {
-    if (detail.value.slug === CHATO_AWANG_SLUG) {
-      history.value.push({
-        first: true,
-        displayType: EMessageDisplayType.answer,
-        id: `welcome-a`,
-        isWelcome: true,
-        content: String(`<div class='flex flex-col justify-center items-center text-center'>
-      <p class='mb-2 font-medium'>关注公众号，免费无限次使用！</p>
-      <img onclick="previewImages('https://afu-1255830993.cos.ap-shanghai.myqcloud.com/chato_image/avater/2357c2525b27c232353b8d98dd165924.png', '0')" class='w-full' style="width: 150px; height: 150px;"  src='https://afu-1255830993.cos.ap-shanghai.myqcloud.com/chato_image/avater/2357c2525b27c232353b8d98dd165924.png' alt='公众号' />
-    </div>`)
-      })
-    }
-
     history.value.push({
       first: true,
       displayType: EMessageDisplayType.answer,
@@ -758,7 +745,6 @@ function sayWelcome() {
         id: 'Chato_chat_label_click'
       })
     })
-    // }
   }
 }
 
