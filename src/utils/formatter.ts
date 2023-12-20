@@ -31,7 +31,7 @@ export const FILE_TYPE_NAMES = {
   webpage: '网页',
   pdf: 'pdf',
   docx: 'word',
-  text: 'txt',
+  text: 'text',
   txt: 'txt',
   ppt: 'ppt',
   pptx: 'pptx',
