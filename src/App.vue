@@ -1,6 +1,6 @@
 <template>
   <el-config-provider :locale="clocale">
-    <div class="flex flex-col flex-1 h-full relative pb-0">
+    <div class="flex flex-col flex-1 h-full relative pb-1">
       <router-view />
     </div>
   </el-config-provider>
