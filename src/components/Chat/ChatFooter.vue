@@ -6,7 +6,7 @@
     <span class="shrink-0 h-full">
       <img v-if="logo" :src="logo" class="h-full max-w-[66px] object-cover" />
     </span>
-    <p class="text-[#596780] text-xs truncate leading-5">{{ name }}</p>
+    <p class="theme-color text-xs truncate leading-5">{{ name }}</p>
   </div>
 </template>
 

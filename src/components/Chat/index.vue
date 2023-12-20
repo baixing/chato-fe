@@ -201,7 +201,7 @@
         :name="CHATO_AWANG_BRAND_NAME"
         :logo="CHATO_AWANG_LOGO"
         :class="[
-          'mb-2 leading-4 text-xs flex justify-center text-[#596780] text-center shrink-0',
+          'mb-2 leading-4 text-xs flex justify-center theme-color text-center shrink-0',
           !isCustomerBrand && 'cursor-pointer'
         ]"
         @click="onFooterBrandLink"
