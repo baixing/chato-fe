@@ -1,14 +1,12 @@
 <template>
-  <div v-loading="chatHistoryLoading" class="flex flex-col gap-3 w-full h-full overflow-hidden">
-    <div
-      ref="chatHistoryEl"
-      class="w-full flex-1 overflow-auto space-y-6 chat-center"
-      @scroll="onChatHistoryScroll"
-    >
+  <div v-loading="initting" class="flex flex-col gap-3 w-full h-full overflow-hidden">
+    <LoadingMore :visible="!initting && chatHistoryLoading" />
+    <div ref="chatHistoryEl" class="w-full flex-1 overflow-auto space-y-3 chat-center">
       <template v-if="chatHistory.length">
         <ChatCRMMessage
           v-for="(item, index) in chatHistory"
           :key="`chatHistoryItem${index}`"
+          :id="`chat-crm-msg-${index}`"
           :message="item"
           :question-bg="domainInfo.message_style"
         />
@@ -17,9 +15,9 @@
     </div>
     <div class="chat-center flex items-center gap-2 w-full">
       <el-button round @click="onChangeChatMode" class="!h-full !rounded-3xl">
-        {{ $t(domainInfo.human_reply_switch ? '转机器人' : '转人工') }}
+        {{ $t(isHumanReply ? '转机器人' : '转人工') }}
       </el-button>
-      <div v-if="domainInfo.human_reply_switch" class="input-container">
+      <div v-if="isHumanReply" class="input-container">
         <el-input
           resize="none"
           type="textarea"
@@ -63,20 +61,31 @@
 
 <script setup lang="ts">
 import { chatToBotHistoryC } from '@/api/chat'
-import { updateDomainReplySwitch } from '@/api/domain'
+import { getDomainReplySwitch, updateDomainReplySwitch } from '@/api/domain'
 import CustomerFormDialog from '@/components/Customer/CustomerFormDialog.vue'
+import LoadingMore from '@/components/LoadingMore/index.vue'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import { useSource } from '@/composables/useSource'
 import { XSSOptions } from '@/constant/xss'
 import { EMessageDisplayType } from '@/enum/message'
 import type { IPage } from '@/interface/common'
 import type { ICRMMessage } from '@/interface/message'
-import { useAuthStore } from '@/stores/auth'
+import { useChatUserStore } from '@/stores/chatUser'
 import { useDomainStore } from '@/stores/domain'
-import { useDebounceFn } from '@vueuse/core'
+import { useScroll } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
-import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, toRaw, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { v4 as uuidv4 } from 'uuid'
+import {
+  computed,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  reactive,
+  ref,
+  toRaw,
+  toRefs,
+  watch
+} from 'vue'
 import xss from 'xss'
 import ChatCRMMessage from './ChatCRMMessage.vue'
 
@@ -86,11 +95,10 @@ const props = defineProps<{
 
 const emit = defineEmits(['send'])
 
-const route = useRoute()
 const { isMobile } = useBasicLayout()
 const { source } = useSource()
-const authStoreI = useAuthStore()
-const { authToken } = storeToRefs(authStoreI)
+const chatUserStoreI = useChatUserStore()
+const { chatUsersMap } = storeToRefs(chatUserStoreI)
 const domainStoreI = useDomainStore()
 const { domainInfo } = storeToRefs(domainStoreI)
 
@@ -111,44 +119,54 @@ const customerFormState = reactive<{
   title: ''
 })
 
+const initting = ref(false)
 const inputText = ref('')
-const needScrollBottom = ref(true)
+const scrollBottom = ref(true)
 const chatHistoryEl = ref<HTMLDivElement>()
 const chatHistoryLoading = ref(false)
-const chatHistory = ref<ICRMMessage[]>([])
+const chatHistory = computed(() => chatUsersMap.value.get(senderUID.value) || [])
 const chatHistoryPagination = reactive<IPage>({
   page: 1,
   page_count: 1,
-  page_size: 20,
+  page_size: 10,
   total: 0
 })
 const latestChatQuestionId = computed(() => chatHistory.value.at(-1)?.question_id || 0)
 
 const onChangeChatMode = async () => {
   try {
+    const updateHumanReplyValue = !isHumanReply.value
     await updateDomainReplySwitch({
       sender_uid: senderUID.value,
       domain_id: domainInfo.value.id,
-      human_reply_switch: domainInfo.value.human_reply_switch ? 0 : 1
+      human_reply_switch: Number(updateHumanReplyValue)
     })
-    domainStoreI.initDomainList(route)
+    isHumanReply.value = updateHumanReplyValue
   } catch (e) {}
 }
 
-const onChatHistoryScroll = useDebounceFn(() => {
-  if (!chatHistoryEl.value) {
+const { arrivedState } = useScroll(chatHistoryEl, {
+  behavior: 'smooth',
+  offset: { top: 70 }
+})
+const { top: scrollToTop } = toRefs(arrivedState)
+
+const onMoreChatHistory = async () => {
+  if (chatHistoryPagination.page === chatHistoryPagination.page_count) {
     return
   }
-  if (Math.abs(chatHistoryEl.value.scrollTop) <= 90) {
-    // 翻页
-    if (chatHistoryPagination.page === chatHistoryPagination.page_count) {
-      return
-    }
-    needScrollBottom.value = false
-    chatHistoryPagination.page++
-    initChatHistory(chatHistoryPagination.page)
-  }
-}, 100)
+  scrollBottom.value = false
+  chatHistoryPagination.page++
+  const { newCount } = await initChatHistory(chatHistoryPagination.page)
+  document.getElementById(`chat-crm-msg-${newCount}`).scrollIntoView()
+  nextTick(() => {
+    scrollBottom.value = true
+  })
+}
+
+watch(scrollToTop, (v) => {
+  v && onMoreChatHistory()
+})
 
 let latestScrollHeight = 0
 const scrollChatHistoryBottom = () => {
@@ -183,9 +201,10 @@ const initChatHistory = async (page = 1) => {
     })
 
     const newChatHistory = [...toRaw(chatHistory.value)]
+    let newCount = 0
     data.forEach((item, index) => {
       const question: ICRMMessage = {
-        id: `${item.id}_${index}_q`,
+        id: uuidv4(),
         sender_uid: senderUID.value,
         display_type: EMessageDisplayType.question,
         content: item.question,
@@ -193,7 +212,7 @@ const initChatHistory = async (page = 1) => {
         source: item.source
       }
       const answer: ICRMMessage = {
-        id: `${item.id}_${index}_a`,
+        id: uuidv4(),
         sender_uid: senderUID.value,
         display_type: EMessageDisplayType.answer,
         content: item.answer,
@@ -203,19 +222,19 @@ const initChatHistory = async (page = 1) => {
 
       if (item.answer && !item.answer_deleted) {
         newChatHistory.unshift(answer)
+        newCount++
       }
 
       if (item.question && !item.question_deleted) {
         newChatHistory.unshift(question)
+        newCount++
       }
     })
-    chatHistory.value = newChatHistory
+    chatUserStoreI.setUserChatMessages(senderUID.value, newChatHistory)
     chatHistoryPagination.page = pagination.page
     chatHistoryPagination.page_count = pagination.page_count
 
-    nextTick(() => {
-      needScrollBottom.value = true
-    })
+    return { data, newCount }
   } catch (e) {
   } finally {
     chatHistoryLoading.value = false
@@ -230,24 +249,6 @@ const onKeydownEnter = (e: KeyboardEvent) => {
     onSend()
   }
 }
-
-// const socketInstance = useWebSocket(
-//   `wss://${currentEnvConfig.socketCRMURL}?token=${authToken.value}`,
-//   {
-//     autoReconnect: true,
-//     onMessage: (ws, msgEvent) => {
-//       const { data } = msgEvent
-//       if (!data) {
-//         return
-//       }
-//       const chatMsgItem = JSON.parse(msgEvent.data)
-//       if (chatMsgItem?.sender_uid !== senderUID.value) {
-//         return
-//       }
-//       chatHistory.value.push({ ...chatMsgItem, id: uuidv4() })
-//     }
-//   }
-// )
 
 const onSend = async () => {
   const text = String(inputText.value).trim()
@@ -274,13 +275,35 @@ const onElClick = (event) => {
   }
 }
 
+const isHumanReply = ref(false)
+
+const initReplyConfig = async () => {
+  try {
+    const {
+      data: { data }
+    } = await getDomainReplySwitch(domainInfo.value.id, senderUID.value)
+    isHumanReply.value = data
+  } catch (e) {}
+}
+
+const init = async () => {
+  try {
+    initting.value = true
+    chatHistoryPagination.page = 1
+    chatHistoryPagination.page_count = 1
+    chatUserStoreI.setUserChatMessages(senderUID.value, [])
+    initReplyConfig()
+    await initChatHistory()
+  } catch (e) {
+  } finally {
+    initting.value = false
+  }
+}
+
 watch(
   [() => domainInfo.value.slug, senderUID],
   ([slug, uid]) => {
-    if (slug && uid) {
-      chatHistory.value = []
-      initChatHistory()
-    }
+    slug && uid && init()
   },
   { immediate: true }
 )
@@ -288,9 +311,9 @@ watch(
 watch(
   chatHistory,
   () => {
-    needScrollBottom.value && scrollChatHistoryBottom()
+    scrollBottom.value && scrollChatHistoryBottom()
   },
-  { deep: true }
+  { immediate: true, deep: true }
 )
 
 onMounted(() => {
