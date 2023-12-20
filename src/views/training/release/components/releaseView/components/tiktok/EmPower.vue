@@ -18,7 +18,7 @@
           $t('刷新')
         }}</el-button>
       </div>
-      <div v-show="tiktokStatus?.additions">
+      <div v-show="tiktokStatus">
         <p class="text-sm mb-2 font-medium text-[#303133]">{{ $t('抖音配置') }}</p>
         <div class="space-x-3 mb-3">
           <span class="inline-flex items-center gap-2">
@@ -87,7 +87,7 @@ const props = defineProps<{
 const tiktokStatus = ref<{
   id: number
   s_status: string
-  additions?: {
+  additions: {
     douyin_im_receive_msg_switch: boolean
     douyin_item_comment_reply_switch: boolean
   }
@@ -116,7 +116,13 @@ const onChangeTiktokAdditions = async (key: string, val: boolean) => {
 const initTiktokStatus = async () => {
   loading.value = true
   const res = await getChannelType(EChannelType.DOUYIN, props.domainSlug)
-  tiktokStatus.value = res.data.data || {}
+  tiktokStatus.value = res.data.data
+  if (res.data.data && !res.data.data.additions) {
+    tiktokStatus.value.additions = {
+      douyin_im_receive_msg_switch: true,
+      douyin_item_comment_reply_switch: true
+    }
+  }
   loading.value = false
 }
 
