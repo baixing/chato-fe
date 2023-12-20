@@ -204,7 +204,7 @@
           'mb-2 leading-4 text-xs flex justify-center text-[#596780] text-center shrink-0',
           !isCustomerBrand && 'cursor-pointer'
         ]"
-        @click="showVisiblePublic = true"
+        @click="onFooterBrandLink"
       />
     </div>
   </div>
@@ -300,6 +300,7 @@ import router, { RoutesMap } from '@/router'
 import { useAuthStore } from '@/stores/auth'
 import { useBase } from '@/stores/base'
 //@ts-ignore
+import { useIsMobile } from '@/composables/useBasicLayout'
 import { useChatStore } from '@/stores/chat'
 import { cuserStore } from '@/stores/cuser'
 import { useSocketStore } from '@/stores/socket'
@@ -1248,14 +1249,10 @@ const handleCopyButtonClick = (e) => {
 }
 
 const onFooterBrandLink = () => {
-  if (isCustomerBrand.value) {
-    return
-  }
-
-  if (window.self !== window.top) {
-    window.top.location.href = currentEnvConfig.wwwBaseURL
+  if (!currentEnvIsWechat && useIsMobile()) {
+    window.location.href = 'https://s.pdb2.com/l/1paGB4Ifoh1eR5ak?channel=h5'
   } else {
-    router.push('/')
+    showVisiblePublic.value = true
   }
 }
 
