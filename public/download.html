@@ -172,7 +172,6 @@
     .download-show-btn a {
       padding: 13px 20px;
       background: #724CFF;
-      margin-right: 20px;
       width: 200px;
       border-radius: 10px;
       /* letter-spacing: 0.2em; */
@@ -202,17 +201,17 @@
       <img class="audio-p common-p" src="https://file.baixing.net/202304/6a35034530868d674b6a78d24bc10040.png" />
     </div>
     <div class="download-show-btn">
-      <a href="https://apps.apple.com/app/id1669697942" id="download-btn-ios">ios版</a>
-      <a href="https://ai.baixing.net/ai/baixingAI/app-release_110_59_jiagu_sign.apk"
-        id="download-btn-android">Android版</a>
+      <a style="display: none;" href="https://apps.apple.com/app/id1669697942" id="download-btn-ios">IOS 版</a>
+      <a style="display: none;" href="https://ai.baixing.net/ai/baixingAI/app-release_110_59_jiagu_sign.apk"
+        id="download-btn-android">Android 版</a>
     </div>
   </div>
   <script type="text/javascript">
     var userAgent = navigator.userAgent || navigator.vendor || window.opera;
     if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-      document.getElementById("download-btn-ios").href = "https://apps.apple.com/app/id1669697942";
+      document.getElementById("download-btn-ios").style.display = 'block'
     } else if (/android/i.test(userAgent)) {
-      document.getElementById("download-btn-android").href = "https://ai.baixing.net/ai/baixingAI/app-release_110_59_jiagu_sign.apk";
+      document.getElementById("download-btn-android").style.display = 'block'
     }
   </script>
 </body>
