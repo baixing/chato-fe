@@ -465,6 +465,7 @@ const AIDialogue = [
   'ymk867pnzwxrv941'
 ].map((dialogue) => chatList.value.find((item) => item.slug === dialogue))
 const AIPainting = [
+  'zk34lrlxwnvr9xnj',
   'dlj4z52djjmrg031',
   'zkw4n78z98676281',
   'qzov85n3xqk7mydn',
@@ -475,7 +476,6 @@ const AIPainting = [
   '0yqd3rdk8o15gon8',
   'zk34lrlx2ojr9xnj',
   'ymk867p43wm7v941'
-  // 'zk34lrlxwnvr9xnj'
 ].map((painting) => chatList.value.find((item) => item.slug === painting))
 const aiMap = {
   dialogue: AIDialogue,
@@ -492,7 +492,6 @@ const initShare = (id: number) => {
 }
 
 const onSetAiType = (type: string) => {
-  console.log('drawer.value:' + drawer.value)
   if (drawer.value) {
     drawer.value = aiType.value !== type
   } else {
@@ -502,7 +501,6 @@ const onSetAiType = (type: string) => {
 }
 
 const drawerVOnClickOutside = () => {
-  console.log('drawerVOnClickOutside:' + drawer.value)
   aiType.value = 'dialogue'
   drawer.value = !drawer.value
 }
@@ -538,6 +536,7 @@ const onAIGenerate = async () => {
 const onSetBot = (slug: string) => {
   drawer.value = false
   aiType.value = 'dialogue'
+  sensorsOnSetBot()
   if (!isInApplet.value) {
     router.replace(`/c/bot/${slug}`)
   } else {
@@ -551,6 +550,29 @@ const onSetBot = (slug: string) => {
 // 用户登录
 const initUserInfo = () => {
   userStore.checkUserLoginStatus(botSlug.value)
+}
+
+// ----------------
+const sensorsOnSetBot = () => {
+  $sensors?.track('a_wang_polymerization', {
+    name: t('阿旺聚合点击其他机器人'),
+    type: 'a_wang_polymerization',
+    data: {
+      time: dayjs().format('YYYY-MM-DD HH:mm:ss')
+    }
+  })
+  return true
+}
+
+const sensorsRecommendQuestions = () => {
+  $sensors?.track('a_wang_recommend_questions', {
+    name: t('阿旺问题推荐点击'),
+    type: 'a_wang_recommend_questions',
+    data: {
+      time: dayjs().format('YYYY-MM-DD HH:mm:ss')
+    }
+  })
+  return true
 }
 
 // ----------------
@@ -1344,6 +1366,7 @@ const getChatQuestion = async (question: string) =>
   })
 
 const onClickRecommend = (ques: string) => {
+  sensorsRecommendQuestions()
   submit(ques)
   recommendQuestions.value = []
 }

@@ -48,10 +48,29 @@
           placement="top"
           :hide-after="0"
         >
-          <span @click="(e) => !internalEnterDisabled && onRecording(e)" class="send-btn">
+          <span
+            :class="['input-icon-btn', internalHiddenClear && '!hidden']"
+            @click="(e) => !internalEnterDisabled && onRecording(e)"
+            class="send-btn"
+          >
             <svg-icon svg-class="w-6 h-6 text-[#303133]" name="chat-sound" />
           </span>
         </el-tooltip>
+        <!-- <el-tooltip
+          :disabled="isAiGenerate || internalEnterDisabled"
+          :content="t('图片上传')"
+          placement="top"
+          :hide-after="0"
+        >
+          <span
+            :class="['input-icon-btn', domainDetail.slug !== 'zk34lrlxwnvr9xnj' && '!hidden']"
+            @click="(e) => !internalEnterDisabled && onRecording(e)"
+            class="send-btn"
+          >
+            <svg-icon svg-class="w-6 h-6 text-[#303133]" name="chat_picture" />
+          </span>
+        </el-tooltip> -->
+
         <el-tooltip
           v-if="!internalEnterDisabled"
           :content="t(`发送`)"
