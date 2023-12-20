@@ -1,5 +1,18 @@
 <template>
   <div class="input-box" :class="[needAiGenerate ? 'lg:!px-0' : 'lg:!px-3']">
+    <div
+      class="absolute left-0 top-[-104px] w-full px-[12%] lg:!px-0 2xl:px-[18%]"
+      v-if="messageImg"
+    >
+      <div
+        class="w-24 h-24 ml-4 bg-white p-4 rounded-lg flex items-center justify-center relative pt-5 drop-shadow"
+      >
+        <div class="absolute right-[6px] top-[6px] cursor-pointer">
+          <el-icon class="!text-sm" @click="messageImg = null"><Close /></el-icon>
+        </div>
+        <img class="w-auto max-h-full" :src="messageImg" alt="" />
+      </div>
+    </div>
     <el-tooltip
       :disabled="internalEnterDisabled"
       :content="t(`清空历史消息`)"
@@ -56,20 +69,27 @@
             <svg-icon svg-class="w-6 h-6 text-[#303133]" name="chat-sound" />
           </span>
         </el-tooltip>
-        <!-- <el-tooltip
+        <el-tooltip
           :disabled="isAiGenerate || internalEnterDisabled"
           :content="t('图片上传')"
           placement="top"
           :hide-after="0"
         >
-          <span
-            :class="['input-icon-btn', domainDetail.slug !== 'zk34lrlxwnvr9xnj' && '!hidden']"
-            @click="(e) => !internalEnterDisabled && onRecording(e)"
-            class="send-btn"
+          <el-upload
+            action="#"
+            :before-upload="beforeUpload"
+            class="flex rounded-full items-center justify-center"
+            :show-file-list="false"
+            accept="image/png, image/jpeg"
           >
-            <svg-icon svg-class="w-6 h-6 text-[#303133]" name="chat_picture" />
-          </span>
-        </el-tooltip> -->
+            <span
+              :class="['input-icon-btn', domainDetail.slug !== 'zk34lrlxwnvr9xnj' && '!hidden']"
+              class="send-btn"
+            >
+              <svg-icon svg-class="w-6 h-6 text-[#B5BED0]" name="chat_picture" />
+            </span>
+          </el-upload>
+        </el-tooltip>
 
         <el-tooltip
           v-if="!internalEnterDisabled"
@@ -183,6 +203,7 @@
 </template>
 
 <script setup lang="ts">
+import { getFileUrl } from '@/api/file'
 import WaterRipples from '@/components/Animations/WaterRipples.vue'
 import useAudioPlayer from '@/composables/useAudioPlayer'
 import { useBasicLayout } from '@/composables/useBasicLayout'
@@ -192,6 +213,7 @@ import { PaidCommercialTypes } from '@/constant/space'
 import { EDomainConversationMode, EDomainConversationModeArousalMethod } from '@/enum/domain'
 import type { IDomainInfo } from '@/interface/domain'
 import { RoutesMap } from '@/router'
+import type { UploadRawFile } from 'element-plus'
 import { debounce } from 'lodash'
 import { computed, inject, nextTick, onBeforeUnmount, ref, watch, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -212,7 +234,7 @@ const emit = defineEmits(['update:value', 'inputClick', 'clear', 'submit', 'onTe
 const { t } = useI18n()
 const route = useRoute()
 const { isMobile } = useBasicLayout()
-
+const messageImg = ref<string>()
 const domainDetail = inject<Ref<IDomainInfo>>(SymChatDomainDetail)
 
 const chatRecordingEnterVisible = ref(false)
@@ -300,6 +322,13 @@ const { startRecording, stopRecording, resetAsr, isRecording } = useRecognizer({
   checkNeedReopen: onRecorderNeedReopen
 })
 
+const beforeUpload = async (rawFile: UploadRawFile) => {
+  const formData = new FormData()
+  formData.append('file', rawFile)
+  const res = await getFileUrl(formData)
+  messageImg.value = res.data.data.url
+}
+
 // 触发录音
 const onRecording = (_: MouseEvent, str?: string) => {
   internalValue.value = str || ''
@@ -339,6 +368,11 @@ const onSendRecorder = () => {
 
 // 消息发送
 const onSend = (val?: string) => {
+  if (messageImg.value) {
+    val = `**${internalValue.value}**
+![图片.png](${messageImg.value})`
+    messageImg.value = null
+  }
   !isAiGenerate.value && emit('submit', val)
 }
 
