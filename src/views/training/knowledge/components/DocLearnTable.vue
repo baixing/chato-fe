@@ -323,10 +323,7 @@ onUnmounted(() => {
               {{ $t('重试') }}
             </el-button>
             <el-button
-              v-else-if="
-                FILE_TYPE_NAMES[scope.row.type] === 'txt' ||
-                FILE_TYPE_NAMES[scope.row.type] === 'url'
-              "
+              v-else-if="scope.row.type === 'text' || scope.row.type === 'url'"
               @click.prevent="editFile(scope.row, EDocumentOperateType.update)"
               :disabled="scope.row.status !== LearningStatesPerformanceType.learned"
               type="primary"
