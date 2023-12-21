@@ -16,7 +16,6 @@
   <EnterQa
     :activeNames="EDocumentTabType.inputText"
     :defaultForm="defaultForm"
-    :sizeLimit="sizeLimit"
     :qtyLimit="qtyLimit"
     :apiUpload="apiUpload"
     :dialogVisible="dialogVisibleQa"
@@ -63,7 +62,6 @@ const baseURL = currentEnvConfig.uploadBaseURL
 const apiUploadPath = `/chato/api/domains/${domainId}/files/upload/qa`
 const apiUpload = url.join(baseURL, apiUploadPath)
 const qtyLimit = base.userInfo.role === USER_ROLES.SUPERMAN ? 1000 : 20 // 同时上传的文件数量限制
-const sizeLimit = 30 // 单个文件的体积限制（MB）
 const defaultForm = reactive({
   title: '',
   question_id: 0,

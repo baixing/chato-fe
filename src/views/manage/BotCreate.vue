@@ -58,7 +58,6 @@
     :domain-id="(formState.id as unknown as string)"
     :domain-name="formState.name"
     :defaultForm="DOCFormState"
-    :sizeLimit="30"
     :qtyLimit="qtyLimit"
     :apiUpload="apiUploadPath.doc"
     :dialogVisible="DOCModalVisible"
