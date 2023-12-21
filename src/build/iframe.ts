@@ -75,6 +75,7 @@ window.onload = () => {
 
       inframe_container.id = 'inframe_container'
       iframe_chato.id = 'iframe_chato'
+      iframe_chato.allow = 'microphone *;camera *'
       iframe_chato.src = createChatoConfig.chatoIframeSrc
 
       inframe_container.setAttribute(
