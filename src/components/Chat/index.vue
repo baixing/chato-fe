@@ -1251,7 +1251,7 @@ const handleCopyButtonClick = (e) => {
 
 const onFooterBrandLink = () => {
   if (!currentEnvIsWechat && useIsMobile()) {
-    window.location.href = 'https://s.pdb2.com/l/1paGB4Ifoh1eR5ak?channel=h5'
+    window.location.href = 'https://wxaurl.cn/lqvhSh15sIm'
   } else {
     showVisiblePublic.value = true
   }
