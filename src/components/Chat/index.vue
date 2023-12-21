@@ -200,7 +200,7 @@
         :name="CHATO_AWANG_BRAND_NAME"
         :logo="CHATO_AWANG_LOGO"
         :class="[
-          'mb-2 leading-4 text-xs flex justify-center theme-color text-center shrink-0',
+          'mb-2 leading-4 text-xs flex justify-center text-center shrink-0',
           !isCustomerBrand && 'cursor-pointer'
         ]"
         @click="onFooterBrandLink"
@@ -1245,7 +1245,7 @@ const handleCopyButtonClick = (e) => {
 
 const onFooterBrandLink = () => {
   if (!currentEnvIsWechat && useIsMobile()) {
-    window.location.href = 'https://s.pdb2.com/l/1paGB4Ifoh1eR5ak?channel=h5'
+    window.location.href = 'https://wxaurl.cn/lqvhSh15sIm'
   } else {
     showVisiblePublic.value = true
   }
