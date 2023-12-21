@@ -201,16 +201,22 @@
       <img class="audio-p common-p" src="https://file.baixing.net/202304/6a35034530868d674b6a78d24bc10040.png" />
     </div>
     <div class="download-show-btn">
-      <a style="display: none;" href="https://apps.apple.com/app/id1669697942" id="download-btn-ios">立即下载</a>
+      <a style="display: none; margin-right: 10px;" href="https://apps.apple.com/app/id1669697942"
+        id="download-btn-ios">ios下载</a>
       <a style="display: none;" href="https://ai.baixing.net/ai/baixingAI/app-release_110_59_jiagu_sign.apk"
-        id="download-btn-android">立即下载</a>
+        id="download-btn-android">安卓下载</a>
     </div>
   </div>
   <script type="text/javascript">
     var userAgent = navigator.userAgent || navigator.vendor || window.opera;
     if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
       document.getElementById("download-btn-ios").style.display = 'block'
+      document.getElementById("download-btn-ios").innerText = '立即下载'
     } else if (/android/i.test(userAgent)) {
+      document.getElementById("download-btn-android").style.display = 'block'
+      document.getElementById("download-btn-android").innerText = '立即下载'
+    } else {
+      document.getElementById("download-btn-ios").style.display = 'block'
       document.getElementById("download-btn-android").style.display = 'block'
     }
   </script>
