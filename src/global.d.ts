@@ -41,6 +41,7 @@ declare global {
       invoke(action: string, data: any, callback: (res: any) => void): void
     }
     previewImages(imageStr: string, imageIndex = 0): void
+    BXJSBridge: any
   }
   interface Array<T> {
     findLastIndex(predicate: (value: T, index: number, obj: T[]) => unknown, thisArg?: any): number

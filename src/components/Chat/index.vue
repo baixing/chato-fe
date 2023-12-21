@@ -304,7 +304,7 @@ import { useIsMobile } from '@/composables/useBasicLayout'
 import { useChatStore } from '@/stores/chat'
 import { cuserStore } from '@/stores/cuser'
 import { useSocketStore } from '@/stores/socket'
-import { baiduCallbackAPI, douYinCallbackAPI } from '@/utils/callback'
+import { baiduCallbackAPI, douYinCallbackAPI, douyinApplicationCallbackAPI } from '@/utils/callback'
 import { formatChatMessageAnswer } from '@/utils/chat'
 import {
   $notnull,
@@ -890,10 +890,14 @@ const submit = async (str = '') => {
   // 语音播放重置
   onResetPlayingAudio()
 
+  // 抖音落地页上报
   clickId.value &&
     !douyinAPI.value &&
     douYinCallbackAPI(clickId.value, () => (douyinAPI.value = true))
+  // 百度落地页上报
   bdvid.value && !baiduAPI.value && baiduCallbackAPI(() => (baiduAPI.value = true))
+  // 抖音app上报
+  douyinApplicationCallbackAPI('active_register')
 }
 
 // 是否被终止
