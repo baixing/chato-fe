@@ -1,4 +1,5 @@
-import { getChatSessionListB, getChatSessionListC } from '@/api/chatList'
+import { getChatList } from '@/api/aWang'
+import { getChatSessionListB } from '@/api/chatList'
 import type { IDomainInfo } from '@/interface/domain'
 import { useStorage } from '@vueuse/core'
 import { defineStore, storeToRefs } from 'pinia'
@@ -15,7 +16,7 @@ export const useChatStore = defineStore('chat', () => {
   const initChatList = async () => {
     const getChatSessionListFunc = authToken.value
       ? getChatSessionListB
-      : (uid: string) => getChatSessionListC(uid)
+      : (uid: string) => getChatList(uid, 'default:bots')
     const res = await getChatSessionListFunc($uid.value)
     chatList.value = res.data.data
     chatingInfo.value = chatList.value[0] || {}

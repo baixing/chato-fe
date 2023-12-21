@@ -47,22 +47,21 @@
       v-on-click-outside.bubble="drawerVOnClickOutside"
     >
       <div
-        v-for="item in aiMap[aiType]"
+        v-for="item in aiMap[aiType].value"
         :key="item?.slug"
-        class="flex rounded-lg items-center px-6 mx-6 py-4 justify-between w-full border-0 border-solid bg-white"
+        class="flex rounded-lg items-center px-6 mx-6 py-4 cursor-pointer justify-between w-full border-0 border-solid bg-white"
         :class="[item?.slug === 'ge9p359y4v27d2oq' && 'border-[#7C5CFC] !border']"
         @click="onSetBot(item?.slug)"
       >
-        <div class="flex items-center">
+        <div class="flex items-center" v-if="item">
           <Avatar
-            :avatar="item.avatar || DefaultAvatar"
+            :avatar="item?.avatar || DefaultAvatar"
             :size="28"
-            :name="item.name.slice(0, 2)"
             class="w-7 h-7 rounded-full shrink-0 overflow-hidden mr-2"
           />
-          <div>{{ item.name }}</div>
+          <div>{{ item?.name }}</div>
         </div>
-        <div>
+        <div v-if="item">
           <el-icon><ArrowRightBold /></el-icon>
         </div>
       </div>
@@ -300,6 +299,7 @@ import router, { RoutesMap } from '@/router'
 import { useAuthStore } from '@/stores/auth'
 import { useBase } from '@/stores/base'
 //@ts-ignore
+import { getCategoryList } from '@/api/aWang'
 import { useIsMobile } from '@/composables/useBasicLayout'
 import { useChatStore } from '@/stores/chat'
 import { cuserStore } from '@/stores/cuser'
@@ -433,7 +433,8 @@ const showVisiblePublic = ref(false)
 
 const redirectCode = computed(() => (route.query.code as string) || '')
 const currentEnvIsWechat = isWechat()
-
+const AIDialogue = ref<IDomainInfo[]>([])
+const AIPainting = ref<IDomainInfo[]>([])
 const isIphoneBol = computed(() =>
   route.query.system ? decodeURIComponent(route.query.system as string).includes('iOS') : false
 )
@@ -457,33 +458,26 @@ const socketInstance = useWebSocketConnect(currentEnvConfig.socketURL)
 const { socketResultMap } = storeToRefs(socketStore)
 const shareMode = ref(false)
 const aiType = ref('dialogue')
-const AIDialogue = [
-  'ge9p359y4v27d2oq',
-  '392mjrmgmzvrqxep',
-  'ymk867pn429rv941',
-  'q94e6rxnl8q7830m',
-  'l3evn7vnd41rxopq',
-  'ymk867pnzwxrv941'
-].map((dialogue) => chatList.value.find((item) => item.slug === dialogue))
-const AIPainting = [
-  'zk34lrlxwnvr9xnj',
-  'dlj4z52djjmrg031',
-  'zkw4n78z98676281',
-  'qzov85n3xqk7mydn',
-  '0yqd3rdk8n05gon8',
-  '21q4l51mevw5nxom',
-  'gwk6d70mnw3rve1o',
-  'zkw4n78zqd676281',
-  '0yqd3rdk8o15gon8',
-  'zk34lrlx2ojr9xnj',
-  'ymk867p43wm7v941'
-].map((painting) => chatList.value.find((item) => item.slug === painting))
 const aiMap = {
   dialogue: AIDialogue,
   painting: AIPainting
 }
 const shareList = ref<IMessageItem['questionId'][]>([])
 watch(isAiGenerate, (v) => v && successRBI() && onAIGenerate())
+// 清除历史对话记录关联，slug 参数透传基于展馆需求，临时 hard code，后期可直接 del
+const onClearHistoryRelation = async (slug?: string) => {
+  const params = {
+    visitor_type: isInternal ? 'owner' : 'visitor',
+    domain_slug: slug || detail.value.slug,
+    token: chatToken.value
+  }
+  const res = await clearSession(params)
+
+  return res
+}
+defineExpose({
+  onClearHistoryRelation
+})
 const onShare = (id: number, arr = shareList.value) =>
   arr.includes(id) ? arr.splice(arr.indexOf(id), 1) : arr.push(id)
 
@@ -553,6 +547,18 @@ const initUserInfo = () => {
   userStore.checkUserLoginStatus(botSlug.value)
 }
 
+const getCategory = async () => {
+  const dialogueList = await getCategoryList('ai_chat')
+  AIDialogue.value = dialogueList.data.data.map((dialogue) =>
+    chatList.value.find((item) => item.slug === dialogue)
+  )
+  const drawList = await getCategoryList('ai_draw')
+  AIPainting.value = drawList.data.data.map((painting) => {
+    console.log(painting)
+    return chatList.value.find((item) => item.slug === painting)
+  })
+  console.log(AIPainting.value[0])
+}
 // ----------------
 const sensorsOnSetBot = () => {
   $sensors?.track('a_wang_polymerization', {
@@ -1098,18 +1104,6 @@ const onEvaluate = async (questionId: number, evValue: EMessageEvalution) => {
   } catch (e) {}
 }
 
-// 清除历史对话记录关联，slug 参数透传基于展馆需求，临时 hard code，后期可直接 del
-const onClearHistoryRelation = async (slug?: string) => {
-  const params = {
-    visitor_type: isInternal ? 'owner' : 'visitor',
-    domain_slug: slug || detail.value.slug,
-    token: chatToken.value
-  }
-  const res = await clearSession(params)
-
-  return res
-}
-
 // 清除会话记录
 async function clearChatHistory() {
   const lastHistory = history.value.slice(-1)
@@ -1447,6 +1441,7 @@ watch(
 let observer
 
 onMounted(() => {
+  getCategory()
   useMotion(drawerDiv, rollTop)
   document.addEventListener('click', onElClick)
 
@@ -1569,10 +1564,6 @@ watch(
 
 provide(SymChatDomainDetail, detail)
 provide(SymChatToken, chatToken)
-
-defineExpose({
-  onClearHistoryRelation
-})
 </script>
 
 <style lang="scss" scoped>
