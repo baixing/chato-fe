@@ -65,3 +65,9 @@ export const MOBILE_REG =
   /^(?:(?:\+|00)86)?1(?:(?:3[\d])|(?:4[5-79])|(?:5[0-35-9])|(?:6[5-7])|(?:7[0-8])|(?:8[\d])|(?:9[1589]))\d{8}$/
 
 export const XIAONAQIWEI = 'https://work.weixin.qq.com/kfid/kfcc52fa33ded8ca483'
+
+export const BAIDU_TOKEN = {
+  'awang.baixing.com': 'nwrqULxi8sDRdZcEZGqxzX7rXPyDMtDF@hmLmhwvDOGGE7aVHcDdGTcy4g3tLVvrK',
+  'awang.chato.cn': 'WHp4OdQwcDQA4OlqFc9sZ63PgKFiCBBI@GqHeOYUewGK8GO4OQuFcXq8uFI8KUcp4',
+  'zhinenghao.cn': 'WHp4OdQwcDQA4OlqFc9sZ63PgKFiCBBI@GqHeOYUewGK8GO4OQuFcXq8uFI8KUcp4'
+}
