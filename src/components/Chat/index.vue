@@ -2,7 +2,7 @@
   <div class="container-preview-page bg-white relative parent-element">
     <div
       class="flex items-center justify-center h-14 bg-white mb-0 text-sm font-medium gap-2 shrink-0"
-      v-if="botSlug === 'ge9p359y4v27d2oq'"
+      v-if="botSlug === '-1'"
     >
       <div class="flex bg-[#f2f3f5] p-1 rounded !text-[#606266] gap-2">
         <div
@@ -50,7 +50,7 @@
         v-for="item in aiMap[aiType].value"
         :key="item?.slug"
         class="flex rounded-lg items-center px-6 mx-6 py-4 cursor-pointer justify-between w-full border-0 border-solid bg-white"
-        :class="[item?.slug === 'ge9p359y4v27d2oq' && 'border-[#7C5CFC] !border']"
+        :class="[item?.slug === homeSlug && 'border-[#7C5CFC] !border']"
         @click="onSetBot(item?.slug)"
       >
         <div class="flex items-center" v-if="item">
@@ -67,7 +67,7 @@
       </div>
     </div>
     <div
-      v-if="detail.name_and_avatar_show && avatarShow && botSlug !== 'ge9p359y4v27d2oq'"
+      v-if="detail.name_and_avatar_show && avatarShow && botSlug !== '-1'"
       class="flex items-center justify-center h-14 bg-white mb-0 text-sm font-medium gap-2 shrink-0"
       style="border-bottom: 1px solid #eee"
     >
@@ -402,7 +402,6 @@ const botSlug = computed(() => {
     : (route.params.botSlug as string)
 })
 const isInternal = props.internalProps || false // 是否处于 Chato 内部环境
-const query_p = (route.query.p as string) || ''
 const detail = ref<IDomainInfo>({} as IDomainInfo) // 机器人详情
 const detailShortcutsArr = computed(() => {
   if (detail.value?.shortcuts) {
@@ -432,6 +431,7 @@ const payModalVisible = ref(Boolean(route.query.pay || false))
 const showVisiblePublic = ref(false)
 
 const redirectCode = computed(() => (route.query.code as string) || '')
+const homeSlug = ref(route.query.homeSlug || 'ge9p359y4v27d2oq')
 const currentEnvIsWechat = isWechat()
 const AIDialogue = ref<IDomainInfo[]>([])
 const AIPainting = ref<IDomainInfo[]>([])
@@ -457,7 +457,7 @@ const socketStore = useSocketStore()
 const socketInstance = useWebSocketConnect(currentEnvConfig.socketURL)
 const { socketResultMap } = storeToRefs(socketStore)
 const shareMode = ref(false)
-const aiType = ref('dialogue')
+const aiType = ref((route.query.aiType as string) || 'dialogue')
 const aiMap = {
   dialogue: AIDialogue,
   painting: AIPainting
@@ -530,15 +530,9 @@ const onAIGenerate = async () => {
 
 const onSetBot = (slug: string) => {
   drawer.value = false
-  aiType.value = 'dialogue'
   sensorsOnSetBot()
-  if (!isInApplet.value) {
-    router.replace(`/c/bot/${slug}`)
-  } else {
-    wx.miniProgram.navigateTo({
-      url: '/pages/index/index?slug=' + slug
-    })
-  }
+  homeSlug.value = slug
+  init()
   chatStoreI.switchChatingInfo(slug)
 }
 
@@ -671,7 +665,7 @@ async function init() {
   })
   await getBotInfo()
   if (!isInternal) {
-    await checkQuotaInPlatformC()
+    // await checkQuotaInPlatformC()
   }
   await getHistoryChat()
   initUserInfo()
@@ -682,7 +676,7 @@ async function init() {
 }
 
 function getBotInfo() {
-  getDomainDetailPublic(botSlug.value)
+  getDomainDetailPublic(botSlug.value === '-1' ? homeSlug.value : botSlug.value)
     .then((res) => {
       detail.value = res.data?.data || {}
       document.title = detail.value.name
@@ -714,7 +708,8 @@ function getBotInfo() {
       !socketStore.isExistInPeddingDomains(botSlug.value) && sayWelcome()
       shareWeixinInit(detail.value)
       // 健硕需求p参数
-      $notnull(query_p) ? submit(query_p) : ''
+      console.log(route.query.p)
+      $notnull(route.query.p) ? submit(route.query.p as string) : ''
     })
     .catch(() => {})
     .finally(() => {})
@@ -723,6 +718,7 @@ function getBotInfo() {
 const scrollBottom = ref(true)
 
 const getHistoryChat = async (scrollBottomTag = true) => {
+  if (botSlug.value === '-1') return ($isLoading.value = false)
   scrollBottom.value = scrollBottomTag
   isLoadingAnswer.value = false
   if (isInternal) {
@@ -841,6 +837,21 @@ const beforeSubmit = async () => {
 }
 
 const submit = async (str = '') => {
+  if (botSlug.value === '-1') {
+    if (!isInApplet.value) {
+      router.replace({
+        path: `/c/bot/${homeSlug.value}`,
+        query: {
+          p: inputText.value
+        }
+      })
+    } else {
+      wx.miniProgram.navigateTo({
+        url: '/pages/index/index?slug=' + homeSlug.value
+      })
+    }
+    return
+  }
   const beforeSubmitCheckRes = await beforeSubmit()
   const text = String(str || inputText.value).trim()
 

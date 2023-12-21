@@ -22,6 +22,7 @@ export const cuserStore = defineStore('cuser', () => {
 
   // 校验C端用户是否登录、是否在白名单中
   const checkUserLoginStatus = async (slug: string) => {
+    if (slug === '-1') return
     const res = await postCheckLoginCAPI(slug, uid.value)
     const { login, usable } = res.data.data
     loginStatus.value = login

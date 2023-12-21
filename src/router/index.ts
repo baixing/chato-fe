@@ -146,9 +146,17 @@ const loginedRoutes = [
         children: [
           {
             name: RoutesMap.chat.c,
+            path: '/c/bot/-1',
+            // meta: { title: '聊天' },
+            component: () => import('@/views/chating/ChatItem.vue'),
+            props: (route) => ({ aiType: route.query.aiType })
+          },
+          {
+            name: RoutesMap.chat.c,
             path: '/c/bot/:botSlug',
             // meta: { title: '聊天' },
-            component: () => import('@/views/chating/ChatItem.vue')
+            component: () => import('@/views/chating/ChatItem.vue'),
+            props: (route) => ({ p: route.query.p })
           }
         ]
       },
