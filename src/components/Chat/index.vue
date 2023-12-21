@@ -558,6 +558,7 @@ const sensorsOnSetBot = () => {
   $sensors?.track('a_wang_polymerization', {
     name: t('阿旺聚合点击其他机器人'),
     type: 'a_wang_polymerization',
+    sulg: botSlug.value,
     data: {
       time: dayjs().format('YYYY-MM-DD HH:mm:ss')
     }
