@@ -72,6 +72,7 @@ import type { IPage } from '@/interface/common'
 import type { IUserChat } from '@/interface/question'
 import { useAuthStore } from '@/stores/auth'
 import { useChatUserStore } from '@/stores/chatUser'
+import { useDomainStore } from '@/stores/domain'
 import { UserFilled } from '@element-plus/icons-vue'
 import { useWebSocket } from '@vueuse/core'
 import dayjs from 'dayjs'
@@ -101,6 +102,8 @@ const hasMoreChatUsers = computed(
 const scrollDisabled = computed(() => loading.value || !hasMoreChatUsers.value)
 const activeChatUser = ref('')
 
+const domainStoreI = useDomainStore()
+const { domainInfo } = storeToRefs(domainStoreI)
 const chatUserStoreI = useChatUserStore()
 const authStoreI = useAuthStore()
 const { authToken } = storeToRefs(authStoreI)
@@ -115,6 +118,9 @@ const socketInstance = useWebSocket(
         return
       }
       const chatMsgItem = JSON.parse(msgEvent.data)
+      if (domainInfo.value.slug !== chatMsgItem?.domain_slug) {
+        return
+      }
       chatUserStoreI.addUserChatMessage(chatMsgItem.sender_uid, { ...chatMsgItem, id: uuidv4() })
       refreshChatUsersOrder(chatMsgItem)
     }
@@ -141,7 +147,8 @@ const refreshChatUsersOrder = (chatMsgItem) => {
     const newChatItem: IUserChat = {
       ...spliceArr[0],
       new_count: chatMsgItem.sender_uid === activeChatUser.value ? 0 : spliceArr[0].new_count + 1,
-      last_msg: chatMsgItem.content
+      last_msg: chatMsgItem.content,
+      modified: now
     }
     newChatUsers.unshift(newChatItem)
   }
@@ -204,6 +211,10 @@ const initChatUsers = async () => {
 const init = async () => {
   try {
     initting.value = true
+    chatUsers.value = []
+    activeChatUser.value = ''
+    pagination.page = 1
+    pagination.page_count = 1
     await initChatUsers()
   } catch (e) {
   } finally {
