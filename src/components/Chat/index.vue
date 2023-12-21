@@ -844,7 +844,7 @@ const submit = async (str = '') => {
       })
     } else {
       wx.miniProgram.navigateTo({
-        url: '/pages/index/index?slug=' + homeSlug.value
+        url: '/pages/index/index?slug=' + homeSlug.value + '&p=' + inputText.value
       })
     }
     return
