@@ -13,7 +13,8 @@ export const CHATO_BAIXING_APP_ID = 'wx3e83c7262c068c6c' // Baixing AI 公众号
 export const CHATO_AWANG_SLUG = 'ge9p359y4v27d2oq' // 阿旺机器人
 export const CHATO_AWANG_LOGO =
   'https://afu-1255830993.cos.ap-shanghai.myqcloud.com/chato_image/avater/40f870efd546f01feffd2c55d0d75c35.png' // 阿旺logo
-export const CHATO_AWANG_BRAND_NAME = '关注阿旺机器人公众号，免费无限次使用！'
+export const CHATO_AWANG_BRAND_NAME =
+  "关注<a src='javascript:;' class='theme-color'> 阿旺机器人 </a>公众号，免费无限次使用！"
 
 export const UPLOAD_FILE_VIDEO_AUDIO_TYPES = [
   '.mp3',
