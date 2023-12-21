@@ -1,4 +1,6 @@
+import { postDouyinApplicationAPI } from '@/api/callback'
 import { BAIDU_TOKEN } from '@/constant/common'
+import { useStorage } from '@vueuse/core'
 import dayjs from 'dayjs'
 
 // 抖音回传
@@ -45,4 +47,19 @@ export const baiduCallbackAPI = (callback) => {
     .then((response) => response.json())
     .then((data) => console.log(data))
     .catch((error) => console.error('Error:', error))
+}
+
+// 抖音应用回传
+export const douyinApplicationCallbackAPI = async (event_type) => {
+  const appDouyinUp = useStorage('appDouyinUp', false)
+  // 判断是否在app环境
+  if (window.BXJSBridge && !appDouyinUp.value) {
+    try {
+      const deviceInfo = await window.BXJSBridge.getDeviceInfo()
+      await postDouyinApplicationAPI(deviceInfo.id, deviceInfo.platform, event_type)
+      appDouyinUp.value = true
+    } catch (error) {
+      console.error('Error:', error)
+    }
+  }
 }
