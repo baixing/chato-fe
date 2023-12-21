@@ -178,9 +178,10 @@ const router = createRouter({
 })
 
 router.beforeEach((to) => {
-  if (to.fullPath === '/')
+  if (to.path === '/')
     return {
-      path: '/c/bot/ge9p359y4v27d2oq'
+      path: '/c/bot/-1',
+      query: to.query
     }
   const { drawerVisible } = useSidebar()
   drawerVisible.value = false

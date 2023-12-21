@@ -548,10 +548,8 @@ const getCategory = async () => {
   )
   const drawList = await getCategoryList('ai_draw')
   AIPainting.value = drawList.data.data.map((painting) => {
-    console.log(painting)
     return chatList.value.find((item) => item.slug === painting)
   })
-  console.log(AIPainting.value[0])
 }
 // ----------------
 const sensorsOnSetBot = () => {
@@ -664,8 +662,8 @@ async function init() {
     ...DefaultChatHistoryPage
   })
   await getBotInfo()
-  if (!isInternal) {
-    // await checkQuotaInPlatformC()
+  if (!isInternal && botSlug.value !== '-1') {
+    await checkQuotaInPlatformC()
   }
   await getHistoryChat()
   initUserInfo()
@@ -708,7 +706,6 @@ function getBotInfo() {
       !socketStore.isExistInPeddingDomains(botSlug.value) && sayWelcome()
       shareWeixinInit(detail.value)
       // 健硕需求p参数
-      console.log(route.query.p)
       $notnull(route.query.p) ? submit(route.query.p as string) : ''
     })
     .catch(() => {})
