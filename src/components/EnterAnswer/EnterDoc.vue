@@ -300,7 +300,7 @@ interface Props {
 type uploadingListType = UploadRawFile & { startTime: string }
 
 const props = withDefaults(defineProps<Props>(), {
-  sizeLimit: 30,
+  sizeLimit: 25,
   qtyLimit: 20,
   mediaLimit: 25
 })

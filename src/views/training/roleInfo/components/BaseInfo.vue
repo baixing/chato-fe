@@ -145,7 +145,6 @@
     :domain-id="(currentDomain.id as unknown as string)"
     :domain-name="currentDomain.name"
     :defaultForm="DOCFormState"
-    :sizeLimit="30"
     :qtyLimit="qtyLimit"
     :apiUpload="apiUploadPath.doc"
     :dialogVisible="DOCModalVisible"
