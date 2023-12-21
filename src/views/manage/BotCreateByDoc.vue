@@ -101,7 +101,7 @@
 
 <script setup lang="ts">
 import { createDraftDomain, updateDomain } from '@/api/domain'
-import { deleteFile, uploadText, uploadURL } from '@/api/file'
+import { deleteFile, uploadPublicAsync, uploadText, uploadURL } from '@/api/file'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
 import Topbar from '@/components/Topbar/index.vue'
 import { currentEnvConfig } from '@/config'
@@ -124,7 +124,7 @@ import { computed, onMounted, reactive, ref, toRaw } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 
-const sizeLimit = 25
+const sizeLimit = 30
 const qtyLimit = 20
 const mediaLimit = 25
 

@@ -68,6 +68,7 @@
     <EnterDoc
       :domainId="domainId"
       :defaultForm="currentEdit"
+      :sizeLimit="sizeLimit"
       :qtyLimit="qtyLimit"
       :apiUpload="apiUpload"
       :dialogVisible="dialogVisible"
@@ -146,6 +147,7 @@ const { domainInfo } = storeToRefs(domainStoreI)
 const { userInfo } = storeToRefs(base)
 const domainId = computed(() => domainInfo.value.id || (route.params.botId as string))
 const qtyLimit = base.userInfo.role === USER_ROLES.SUPERMAN ? 1000 : 20 // 同时上传的文件数量限制
+const sizeLimit = 30 // 单个文件的体积限制（MB）
 const apiUpload = computed(() =>
   url.join(
     currentEnvConfig.uploadBaseURL,

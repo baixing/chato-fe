@@ -44,6 +44,7 @@
   <EnterQa
     :activeNames="EDocumentTabType.inputText"
     :defaultForm="defaultForm"
+    :sizeLimit="30"
     :qtyLimit="qtyLimit"
     :apiUpload="apiUpload"
     :dialogVisible="dialogVisibleQa"
