@@ -1,3 +1,4 @@
+import { BAIDU_TOKEN } from '@/constant/common'
 import dayjs from 'dayjs'
 
 // 抖音回传
@@ -32,7 +33,7 @@ export const baiduCallbackAPI = (callback) => {
       'Content-Type': 'application/json' // 告诉服务器我们正在发送JSON数据
     },
     body: JSON.stringify({
-      token: 'WHp4OdQwcDQA4OlqFc9sZ63PgKFiCBBI@GqHeOYUewGK8GO4OQuFcXq8uFI8KUcp4',
+      token: BAIDU_TOKEN[location.hostname],
       conversionTypes: [
         {
           logidUrl: location.href,
