@@ -55,8 +55,8 @@ export const douyinApplicationCallbackAPI = async (event_type) => {
   // 判断是否在app环境
   if (window.BXJSBridge && !appDouyinUp.value) {
     try {
-      const deviceInfo = await window.BXJSBridge.getDeviceInfo()
-      await postDouyinApplicationAPI(deviceInfo.id, deviceInfo.platform, event_type)
+      const { data } = await window.BXJSBridge.getDeviceInfo()
+      await postDouyinApplicationAPI(data.id, data.platform, event_type)
       appDouyinUp.value = true
     } catch (error) {
       console.error('Error:', error)
