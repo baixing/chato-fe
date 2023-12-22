@@ -839,7 +839,7 @@ const submit = async (str = '') => {
       router.replace({
         path: `/c/bot/${homeSlug.value}`,
         query: {
-          p: inputText.value
+          p: str != '' ? str : inputText.value
         }
       })
     } else {
@@ -1289,8 +1289,9 @@ const chatHisListener = (event) => {
   if (target instanceof HTMLElement) {
     const content = target.getAttribute('data-chref')
     const msg_id = target.getAttribute('data-cid')
-
+    console.log(content, 1)
     if (target.classList.contains('welcome-a') && $notnull(content) && !isLoadingAnswer.value) {
+      console.log(content, 2)
       submit(content)
     }
     if (
