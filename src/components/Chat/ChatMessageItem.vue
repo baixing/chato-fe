@@ -20,7 +20,6 @@ import { detectMarkdown, renderMarkdown } from '@/utils/markdown'
 import { useIntervalFn } from '@vueuse/core'
 import { computed, inject, provide, ref, type Ref } from 'vue'
 import ChatMessageAudio from './ChatMessageAudio.vue'
-import ChatMessageStatus from './ChatMessageStatus.vue'
 
 const props = defineProps<{
   message: IMessageItem
@@ -219,11 +218,11 @@ const onPreviewImage = (image: string) => {
       <!-- TODO: 考虑放消息外层 -->
       <!-- 消息底部逻辑（文档来源、赞踩与修正、消息状态） -->
       <!-- 消息状态：思考中、回答中 -->
-      <ChatMessageStatus
+      <!-- <ChatMessageStatus
         v-if="isAnswerMessage && isLast && message.status"
         :message="message"
         :is-loading-answer="isLoadingAnswer"
-      />
+      /> -->
       <!-- 绘画图片的相关操作 -->
       <div
         v-if="isAnswerMessage && !isLoadingAnswer && message.command?.length"
