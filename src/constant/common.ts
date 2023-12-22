@@ -58,3 +58,13 @@ export const MOBILE_REG =
   /^(?:(?:\+|00)86)?1(?:(?:3[\d])|(?:4[5-79])|(?:5[0-35-9])|(?:6[5-7])|(?:7[0-8])|(?:8[\d])|(?:9[1589]))\d{8}$/
 
 export const XIAONAQIWEI = 'https://work.weixin.qq.com/kfid/kfcc52fa33ded8ca483'
+
+export const RGBList = [
+  'rgb(251,144,120)',
+  'rgb(167,171,176)',
+  'rgb(252 211 77)',
+  'rgb(45 212 191)',
+  'rgb(147 197 253)',
+  'rgb(129 140 248)',
+  'rgb(167 139 250)'
+]

@@ -8,7 +8,7 @@
   >
     <template v-if="activeChatUser">
       <div
-        class="w-2/5 lg:w-1/2 max-w-[240px] border-r border-t-0 border-b-0 border-l-0 border-solid border-[#E4E7ED] overflow-auto py-2 px-2"
+        class="w-2/5 max-w-[360px] lg:w-1/2 xl:w-1/2 xl:max-w-[300px] border-r border-t-0 border-b-0 border-l-0 border-solid border-[#E4E7ED] overflow-auto py-2 px-2"
       >
         <ul
           v-infinite-scroll="onMoreChatUsers"
@@ -37,13 +37,22 @@
                 :max="99"
                 class="msg-count"
               >
-                <el-avatar :icon="UserFilled" :size="isMobile ? 32 : 36" class="shrink-0" />
+                <el-avatar
+                  :size="isMobile ? 32 : 36"
+                  class="shrink-0 font-medium text-lg"
+                  :style="{
+                    '--el-avatar-text-size': '18px',
+                    '--el-avatar-bg-color': item.avatar
+                  }"
+                >
+                  {{ item.nickname.slice(-1).toLocaleUpperCase() }}
+                </el-avatar>
               </el-badge>
             </el-tooltip>
             <div class="text-xs lg:text-xs text-gray-400 leading-5 flex-1 overflow-hidden">
               <div class="flex items-center gap-2 overflow-hidden">
-                <span class="text-[#303133] font-medium truncate text-sm">
-                  {{ item.sender_uid }}
+                <span class="text-[#303133] font-medium truncate text-sm flex-1">
+                  {{ item.nickname }}
                 </span>
                 <span class="truncate shrink-0">
                   {{ dayjs(item.modified).format('MM-DD HH:mm') }}
@@ -73,7 +82,7 @@ import type { IUserChat } from '@/interface/question'
 import { useAuthStore } from '@/stores/auth'
 import { useChatUserStore } from '@/stores/chatUser'
 import { useDomainStore } from '@/stores/domain'
-import { UserFilled } from '@element-plus/icons-vue'
+import { generateRandomRGB, isPhoneNum } from '@/utils/help'
 import { useWebSocket } from '@vueuse/core'
 import dayjs from 'dayjs'
 import { storeToRefs } from 'pinia'
@@ -134,8 +143,9 @@ const refreshChatUsersOrder = (chatMsgItem) => {
   if (findIndex === -1) {
     const newChatItem = {
       sender_uid: chatMsgItem.sender_uid,
-      avatar: '',
+      avatar: generateRandomRGB(),
       source: chatMsgItem.source,
+      nickname: rednerUserName(chatMsgItem.sender_uid),
       tag: '',
       modified: now,
       new_count: chatMsgItem.sender_uid === activeChatUser.value ? 0 : 1,
@@ -154,6 +164,14 @@ const refreshChatUsersOrder = (chatMsgItem) => {
   }
 
   chatUsers.value = newChatUsers
+}
+
+const rednerUserName = (str: string) => {
+  if (isPhoneNum(str)) {
+    return str
+  } else {
+    return `未知用户-${str.slice(-6)}`
+  }
 }
 
 const onSend = (params: Record<string, any>) => {
@@ -192,11 +210,12 @@ const initChatUsers = async () => {
     data.forEach((item) => {
       const userChatItem = {
         sender_uid: item.sender_uid,
-        avatar: '',
+        avatar: generateRandomRGB(),
         new_count: 0,
         source: item.source,
         tag: item.tags_str,
         modified: item.modified,
+        nickname: rednerUserName(item.sender_uid),
         last_msg: item.answer || item.question
       }
       chatUsersData.push(userChatItem)
