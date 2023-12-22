@@ -17,6 +17,31 @@ export function regReplaceA(str: string, properties?: Record<string, string | nu
   })
 }
 
+export function regReplaceToNull(str: string) {
+  const regex = /#\s*([^#\s]+)\s*#/g
+  return str.replace(regex, (match, content) => {
+    if (content.trim() === '') {
+      // 如果# #中间只有空格，则直接返回空字符串，不进行替换
+      return ''
+    } else {
+      return ``
+    }
+  })
+}
+
+export const regReplaceToArr = (str: string) => {
+  const regex = /#\s*([^#\s]+)\s*#/g
+  const matches = []
+  let match
+  while ((match = regex.exec(str)) !== null) {
+    matches.push({
+      question: match[1]
+    })
+  }
+  console.log(matches)
+  return matches
+}
+
 export function removewRegReplaceA(str: string) {
   return str.replace(/<a\b[^>]*>(.*?)继续<\/a>/g, '')
 }

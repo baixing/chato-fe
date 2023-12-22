@@ -14,6 +14,7 @@ import {
 } from '@/enum/message'
 import type { IDomainInfo } from '@/interface/domain'
 import type { IMessageItem } from '@/interface/message'
+import type { IRecommendQuestion } from '@/interface/question'
 import type { ITTSParams } from '@/interface/tts'
 import { detectMarkdown, renderMarkdown } from '@/utils/markdown'
 import { useIntervalFn } from '@vueuse/core'
@@ -30,12 +31,14 @@ const props = defineProps<{
   correctVisible?: boolean
   shareMode?: boolean
   isShareItem?: boolean
+  recommendQuestions?: IRecommendQuestion[]
 }>()
 
 const bubbleRef = ref<HTMLDivElement>()
 
 const { checkShowCurrentAudioPlayer } = useAudioPlayer()
 const percentage = ref(0)
+const isLast = computed(() => props.isLast)
 const isAnswerMessage = computed(() => props.message.displayType === EMessageDisplayType.answer)
 const isQuestionMessage = computed(() => props.message.displayType === EMessageDisplayType.question)
 const internalCorrectVisible = computed(() => props.correctVisible)
@@ -131,8 +134,21 @@ const onPreviewImage = (image: string) => {
           v-if="message.status === EWsMessageStatus.pending"
           class="message-box !rounded-tl-none"
         >
-          <div v-if="MidJourneyDomainSlug.includes(detail.slug) && isAnswerMessage">
-            <el-progress type="dashboard" :percentage="percentage" />
+          <div
+            v-if="MidJourneyDomainSlug.includes(detail.slug) && isAnswerMessage"
+            class="px-4 py-3 flex flex-col"
+          >
+            <div class="dot-spinner mx-auto mb-4">
+              <div class="dot-spinner__dot"></div>
+              <div class="dot-spinner__dot"></div>
+              <div class="dot-spinner__dot"></div>
+              <div class="dot-spinner__dot"></div>
+              <div class="dot-spinner__dot"></div>
+              <div class="dot-spinner__dot"></div>
+              <div class="dot-spinner__dot"></div>
+              <div class="dot-spinner__dot"></div>
+            </div>
+            <div class="">生成中{{ percentage }}%...</div>
           </div>
           <div v-else class="cursor-flash"></div>
         </div>
@@ -143,7 +159,7 @@ const onPreviewImage = (image: string) => {
             !message.first && (isQuestionMessage ? 'ml-12 !rounded-br-sm !rounded-tl-2xl' : 'mr-12')
           ]"
           :style="{
-            backgroundColor: isQuestionMessage ? detail.message_style : 'auto',
+            backgroundColor: isQuestionMessage ? 'rgb(124, 92, 252)' : 'auto',
             color: isQuestionMessage ? '#fff' : 'auto'
           }"
         >
@@ -317,6 +333,109 @@ const onPreviewImage = (image: string) => {
 
   100% {
     opacity: 0;
+  }
+}
+.dot-spinner {
+  --uib-size: 2.8rem;
+  --uib-speed: 0.9s;
+  --uib-color: #183153;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: var(--uib-size);
+  width: var(--uib-size);
+}
+
+.dot-spinner__dot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%;
+  width: 100%;
+}
+
+.dot-spinner__dot::before {
+  content: '';
+  height: 20%;
+  width: 20%;
+  border-radius: 50%;
+  background-color: var(--uib-color);
+  transform: scale(0);
+  opacity: 0.5;
+  animation: pulse0112 calc(var(--uib-speed) * 1.111) ease-in-out infinite;
+  box-shadow: 0 0 20px rgba(18, 31, 53, 0.3);
+}
+
+.dot-spinner__dot:nth-child(2) {
+  transform: rotate(45deg);
+}
+
+.dot-spinner__dot:nth-child(2)::before {
+  animation-delay: calc(var(--uib-speed) * -0.875);
+}
+
+.dot-spinner__dot:nth-child(3) {
+  transform: rotate(90deg);
+}
+
+.dot-spinner__dot:nth-child(3)::before {
+  animation-delay: calc(var(--uib-speed) * -0.75);
+}
+
+.dot-spinner__dot:nth-child(4) {
+  transform: rotate(135deg);
+}
+
+.dot-spinner__dot:nth-child(4)::before {
+  animation-delay: calc(var(--uib-speed) * -0.625);
+}
+
+.dot-spinner__dot:nth-child(5) {
+  transform: rotate(180deg);
+}
+
+.dot-spinner__dot:nth-child(5)::before {
+  animation-delay: calc(var(--uib-speed) * -0.5);
+}
+
+.dot-spinner__dot:nth-child(6) {
+  transform: rotate(225deg);
+}
+
+.dot-spinner__dot:nth-child(6)::before {
+  animation-delay: calc(var(--uib-speed) * -0.375);
+}
+
+.dot-spinner__dot:nth-child(7) {
+  transform: rotate(270deg);
+}
+
+.dot-spinner__dot:nth-child(7)::before {
+  animation-delay: calc(var(--uib-speed) * -0.25);
+}
+
+.dot-spinner__dot:nth-child(8) {
+  transform: rotate(315deg);
+}
+
+.dot-spinner__dot:nth-child(8)::before {
+  animation-delay: calc(var(--uib-speed) * -0.125);
+}
+
+@keyframes pulse0112 {
+  0%,
+  100% {
+    transform: scale(0);
+    opacity: 0.5;
+  }
+
+  50% {
+    transform: scale(1);
+    opacity: 1;
   }
 }
 </style>

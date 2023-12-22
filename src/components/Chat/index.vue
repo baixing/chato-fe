@@ -43,7 +43,7 @@
     </div>
     <div
       v-if="drawer"
-      class="max-h-[300px] overflow-y-auto absolute rounded-b-lg px-3 z-[99] w-full top-14 flex-col flex items-center bg-[#FaFaFa] pb-3 text-sm font-medium gap-2 shrink-0"
+      class="max-h-[300px] select-none touch-pan-y overflow-y-auto absolute rounded-b-lg px-3 z-[99] w-full top-14 flex-col flex items-center bg-[#FaFaFa] pb-3 text-sm font-medium gap-2 shrink-0"
       v-on-click-outside.bubble="drawerVOnClickOutside"
     >
       <div
@@ -137,7 +137,7 @@
         <template v-for="(item, index) in history" :key="item.id">
           <MessageItem
             v-if="item.displayType !== 'remove'"
-            :isLast="index === history.length - 1 && !isLoadingAnswer"
+            :isLast="index === 0 && !isLoadingAnswer"
             :message="item"
             :detail="detail"
             :isInternal="isInternal && isChatingPractice"
