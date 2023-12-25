@@ -229,7 +229,7 @@
     :domainInfo="detail"
     v-model:value="chatMoreVisible"
     @handleActivatePackage="payModalVisible = true"
-    @handleLoginRouter="routerToLogin(botSlug)"
+    @handleLoginRouter="routerToLogin(botSlug == '-1' ? CHATO_AWANG_SLUG : botSlug)"
   />
   <ChatPayModal :domainInfo="detail" v-model:value="payModalVisible" />
   <AudioPlayer />
@@ -274,6 +274,7 @@ import {
 import {
   CHATO_AWANG_BRAND_NAME,
   CHATO_AWANG_LOGO,
+  CHATO_AWANG_SLUG,
   CHATO_BAIXING_APP_ID,
   CHATO_SOURCE_APPLET
 } from '@/constant/common'
