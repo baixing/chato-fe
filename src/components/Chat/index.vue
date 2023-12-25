@@ -93,8 +93,6 @@
       v-loading="$isLoading"
       element-loading-background="#fffc"
     >
-      {{ !isLoadingAnswer }}{{ recommendQuestions.length }}
-      {{ !isLoadingAnswer && recommendQuestions.length }}
       <div v-if="!history.length" class="empty h-full">
         {{ $t('请在下方输入框提问吧～') }}
       </div>
@@ -198,6 +196,7 @@
         :needAiGenerate="needAiGenerate"
         :is-ai-generate="isAiGenerate"
         :on-is-ai-generate="(v) => (isAiGenerate = v)"
+        :botSlug="botSlug"
         @input-click="scrollChatHistory"
         @clear="clearChatHistory"
         @submit="submit"
@@ -686,6 +685,7 @@ async function init() {
   chatHistoryPage = Object.assign(chatHistoryPage, {
     ...DefaultChatHistoryPage
   })
+  isLoadingAnswer.value = false
   await getBotInfo()
   if (!isInternal && botSlug.value !== '-1') {
     await checkQuotaInPlatformC()

@@ -23,7 +23,7 @@
         data-sensors-click
         id="Chato_chat_delete_click"
         :data-sensors-question-id="internalLastQuestionId"
-        :class="['input-icon-btn', internalHiddenClear && '!hidden']"
+        :class="['input-icon-btn', (internalHiddenClear || botSlug === '-1') && '!hidden']"
         @click="() => !internalEnterDisabled && emit('clear')"
       >
         <svg-icon name="chat-clear" svg-class="w-6 h-6 text-[#303133]" />
@@ -225,6 +225,7 @@ const props = defineProps<{
   lastQuestionId?: number
   hiddenClear?: boolean
   isAiGenerate: boolean
+  botSlug: string
   onIsAiGenerate: (v) => void
   needAiGenerate: boolean
 }>()
@@ -240,7 +241,7 @@ const domainDetail = inject<Ref<IDomainInfo>>(SymChatDomainDetail)
 const chatRecordingEnterVisible = ref(false)
 
 const chatEnterType = ref<EDomainConversationMode>(EDomainConversationMode.text)
-
+const botSlug = computed(() => props.botSlug)
 const internalValue = computed({
   get: () => props.value,
   set: (v) => emit('update:value', v)
