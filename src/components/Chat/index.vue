@@ -188,7 +188,7 @@
           }"
           @click="isShortcuts = !isShortcuts"
         >
-          <el-icon><ArrowUpBold /></el-icon>
+          <el-icon><ArrowDownBold /></el-icon>
         </div>
         <div
           v-show="isLoadingAnswer"
@@ -352,7 +352,6 @@ import { isURL } from '@/utils/url'
 import shareWeixin from '@/utils/weixinShare'
 import { vOnClickOutside } from '@vueuse/components'
 import { useDebounceFn, useStorage } from '@vueuse/core'
-import { rollTop, useMotion } from '@vueuse/motion'
 import dayjs from 'dayjs'
 import { ElMessage, ElMessageBox, ElNotification as Notification } from 'element-plus'
 import 'highlight.js/styles/default.css'
@@ -483,7 +482,6 @@ const chatHistoryParams: ChatHistoryParams = reactive({
 })
 const { chatList } = storeToRefs(chatStoreI)
 const isInApplet = computed(() => source.value === CHATO_SOURCE_APPLET) // 判断是否在小程序环境
-const drawerDiv = ref<HTMLDivElement>(null)
 const SSEInstance = new SSE()
 const socketStore = useSocketStore()
 const socketInstance = useWebSocketConnect(currentEnvConfig.socketURL)
@@ -1541,7 +1539,6 @@ let observer
 
 onMounted(() => {
   getCategory()
-  useMotion(drawerDiv, rollTop)
   document.addEventListener('click', onElClick)
 
   observer = new MutationObserver((mutationsList) => {
