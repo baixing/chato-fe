@@ -428,7 +428,7 @@ onBeforeUnmount(() => {
   position: relative;
   box-sizing: border-box;
   .input-icon-btn {
-    @apply w-12 h-12 flex items-center justify-center rounded-full shrink-0 cursor-pointer transition-colors hover:bg-[#f2f3f5] lg:w-8 lg:h-8;
+    @apply w-9 h-9 flex items-center justify-center rounded-full shrink-0 cursor-pointer transition-colors hover:bg-[#f2f3f5] lg:w-8 lg:h-8;
   }
 
   .input-box-content {
@@ -437,12 +437,12 @@ onBeforeUnmount(() => {
     display: flex;
     align-items: center;
     border: 1px solid #e4e7ed;
-    min-height: 44px;
+    min-height: 32px;
     box-sizing: border-box;
   }
 
   .send-btn {
-    @apply w-9 h-9;
+    @apply w-6 h-6;
     cursor: pointer;
     border-radius: 100%;
     box-sizing: border-box;
@@ -461,7 +461,7 @@ onBeforeUnmount(() => {
   }
 
   .default-send-btn {
-    @apply w-9 h-9;
+    @apply w-6 h-6;
     cursor: pointer;
     border-radius: 100%;
     box-sizing: border-box;
@@ -486,7 +486,7 @@ onBeforeUnmount(() => {
     flex: 1;
     color: #303133;
     padding: 0 12px 0 0;
-    font-size: 15px;
+    font-size: 13px;
     line-height: 15px;
     min-height: 15px !important;
 

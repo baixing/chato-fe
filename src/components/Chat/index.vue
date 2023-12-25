@@ -1,7 +1,7 @@
 <template>
   <div class="container-preview-page bg-white relative parent-element">
     <div
-      class="flex items-center justify-center h-14 bg-white mb-0 text-sm font-medium gap-2 shrink-0"
+      class="flex items-center justify-center h-14 bg-white mb-0 text-xs font-medium gap-2 shrink-0"
       v-if="botSlug === '-1'"
     >
       <div class="flex bg-[#f2f3f5] p-1 rounded !text-[#606266] gap-2">
@@ -43,7 +43,7 @@
     </div>
     <div
       v-if="drawer"
-      class="max-h-[300px] shadow select-none touch-pan-y overflow-y-auto absolute rounded-b-lg px-3 z-[99] w-full top-14 flex-col flex items-center bg-[#FaFaFa] pb-3 text-sm font-medium gap-2 shrink-0"
+      class="max-h-[300px] shadow select-none touch-pan-y overflow-y-auto absolute rounded-b-lg px-3 z-[99] w-full top-14 flex-col flex items-center bg-[#FaFaFa] pb-3 text-xs font-medium gap-2 shrink-0"
       v-on-click-outside.bubble="drawerVOnClickOutside"
     >
       <div
@@ -68,7 +68,7 @@
     </div>
     <div
       v-if="detail.name_and_avatar_show && avatarShow && botSlug !== '-1'"
-      class="flex items-center justify-center h-14 bg-white mb-0 text-sm font-medium gap-2 shrink-0"
+      class="flex items-center justify-center h-14 bg-white mb-0 text-xs font-medium gap-2 shrink-0"
       style="border-bottom: 1px solid #eee"
     >
       <Avatar
@@ -125,7 +125,7 @@
             :data-sensors-recommend-click-question="item.question"
             :key="`rq_${index}`"
             @click="onClickRecommend(item.question)"
-            class="cursor-pointer px-4 py-1 text-[#2F3447] rounded-3xl text-sm leading-6 tracking-[0.13px] border border-solid border-[#E4E7ED] flex items-center justify-between gap-2 transition-opacity hover:opacity-80"
+            class="cursor-pointer px-4 py-1 text-[#2F3447] rounded-3xl text-xs leading-6 tracking-[0.13px] border border-solid border-[#E4E7ED] flex items-center justify-between gap-2 transition-opacity hover:opacity-80"
           >
             <span>{{ item.question }}</span>
             <el-icon :size="16"><Right /></el-icon>
@@ -157,7 +157,11 @@
           </el-divider>
         </template>
       </div>
-      <div v-if="detail.shortcuts?.length" class="chat-center quick-message-bottom relative">
+      <div
+        v-if="detail.shortcuts?.length"
+        :class="[!isShortcuts ? 'h-11' : 'h-[180px]']"
+        class="chat-center quick-message-bottom gap-2 relative overflow-hidden"
+      >
         <span
           v-for="(item, index) in detailShortcutsArr"
           :key="index"
@@ -169,6 +173,16 @@
         >
           {{ item.title }}
         </span>
+        <div
+          class="absolute right-4 top-2 h-8 flex items-center"
+          :class="{
+            'transform rotate-180': isShortcuts,
+            'transition-transform duration-500': true
+          }"
+          @click="isShortcuts = !isShortcuts"
+        >
+          <el-icon><ArrowUpBold /></el-icon>
+        </div>
         <div
           v-show="isLoadingAnswer"
           class="absolute top-0 right-0 bottom-0 left-0 cursor-not-allowed bg-[#ffffffa3] z-[1]"
@@ -200,7 +214,7 @@
         :name="CHATO_AWANG_BRAND_NAME"
         :logo="CHATO_AWANG_LOGO"
         :class="[
-          'mb-2 leading-4 text-xs flex justify-center text-center shrink-0',
+          'mb-2 leading-4 text-[10px] flex justify-center text-center shrink-0',
           !isCustomerBrand && 'cursor-pointer'
         ]"
         @click="onFooterBrandLink"
@@ -301,7 +315,7 @@ import { useAuthStore } from '@/stores/auth'
 import { useBase } from '@/stores/base'
 //@ts-ignore
 import { getCategoryList } from '@/api/aWang'
-import { useIsMobile } from '@/composables/useBasicLayout'
+import { useBasicLayout, useIsMobile } from '@/composables/useBasicLayout'
 import { useChatStore } from '@/stores/chat'
 import { cuserStore } from '@/stores/cuser'
 import { useSocketStore } from '@/stores/socket'
@@ -383,6 +397,7 @@ const baiduAPI = useStorage('baiduAPI', false)
 const { t } = useI18n()
 const drawer = ref(false)
 const userStore = cuserStore()
+const { isMobile } = useBasicLayout()
 const { routerToLogin } = userStore
 const { loginUserId, loginStatus } = storeToRefs(userStore)
 const { source } = useSource()
@@ -393,6 +408,7 @@ const { bdvid } = useBdVid(route)
 const isAiGenerate = ref(false)
 const { userInfo } = storeToRefs(base)
 const authStoreI = useAuthStore()
+const isShortcuts = ref<boolean>(false)
 const { authToken, uid } = storeToRefs(authStoreI)
 const emit = defineEmits(['showDrawer', 'correctAnswer'])
 const { $sensors } = useGlobalProperties()
@@ -709,6 +725,24 @@ function getBotInfo() {
         $notnull(res.data.data) && res.data.data.shortcuts
           ? JSON.parse(res.data.data.shortcuts)
           : []
+      if (botSlug.value === '-1' && isMobile)
+        detail.value.shortcuts = JSON.stringify([
+          { title: '艾瑞尼亚的冒险', value: 'l3evn7vjnz07xopq' },
+          { title: '四六级闯关游戏', value: 'v1xje74m3ke7m24y' },
+          { title: '创意写作', value: 'q3p4g76mzpdr62k1' },
+          { title: '约会演练', value: '64q805zzwzl59y31' },
+          { title: '朋友圈神器', value: '392mjrm3op27qxep' },
+          { title: '短视频脚本', value: 'n081w73vk2erxdm2' },
+          { title: '文案润色', value: '64q805zo2v79y31g' },
+          { title: '心理咨询', value: 'gwk6d70wo905ve1o' },
+          { title: '高情商回复', value: 'zkw4n78zvwy76281' },
+          { title: '工作汇报', value: 'kv9ez5yvxv5l3m46' },
+          { title: 'PPT大纲', value: 'v1xje74p2w37m24y' },
+          { title: 'Excel懂王', value: 'p8eldrky6vy7nky0' },
+          { title: '数据分析师', value: '21q4l51mx3k5nxom' },
+          { title: 'Bug终结者大师', value: 'dzwgq5o4okd73yp2' },
+          { title: '营销策划', value: 'q3p4g76md0or62k1' }
+        ])
       inputLength.value = detail.value.question_max_length
       !socketStore.isExistInPeddingDomains(botSlug.value) && sayWelcome()
       shareWeixinInit(detail.value)
@@ -1215,6 +1249,21 @@ const onShowMoreAction = (message: IMessageItem, position) => {
 }
 
 function quickAnswerMessage(obj, wel = false) {
+  if (botSlug.value === '-1') {
+    if (!isInApplet.value) {
+      router.replace({
+        path: `/c/bot/${obj.value}`,
+        query: {
+          p: inputText.value
+        }
+      })
+    } else {
+      wx.miniProgram.navigateTo({
+        url: '/pages/index/index?slug=' + obj.value + '&p=' + inputText.value
+      })
+    }
+    return
+  }
   if (isURL(obj.response)) {
     return window.open(`/link?target=${obj.response}`)
   }
@@ -1625,7 +1674,7 @@ provide(SymChatToken, chatToken)
   padding-top: 8px;
 
   .quick-item {
-    @apply rounded-2xl leading-4 text-xs px-3 py-2 mr-1;
+    @apply rounded-2xl leading-4 text-[10px] px-3 py-2 mr-1;
     background: #f2f3f5;
     cursor: pointer;
 
