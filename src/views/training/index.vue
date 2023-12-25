@@ -16,6 +16,7 @@
           class="flex gap-2 items-center cursor-pointer lg:-translate-x-1/2 lg:absolute lg:left-1/2"
         >
           <Avatar
+            class="shrink-0"
             :avatar="domainInfo.avatar || DefaultAvatar"
             :size="28"
             :name="domainInfo.name?.slice(0, 2)"
@@ -32,11 +33,16 @@
           :key="item.id"
           @click="changeCurrentBot(item)"
           :class="[
-            domainInfo.id === item.id && 'current-select-li',
-            'flex gap-2 items-center text-[#606266] text-sm cursor-pointer p-2 rounded-lg transition-colors hover:text-[#7c5cfc] hover:bg-[#f4f1ff]'
+            domainInfo.id === item.id && 'bg-[#f2f3f57a] text-[#7c5cfc]',
+            'flex gap-2 items-center text-[#606266] text-sm cursor-pointer p-2 rounded-lg transition-colors hover:bg-[#f2f3f57a]'
           ]"
         >
-          <Avatar :avatar="item.avatar || DefaultAvatar" :name="item.name.slice(0, 2)" :size="24" />
+          <Avatar
+            :avatar="item.avatar || DefaultAvatar"
+            :name="item.name.slice(0, 2)"
+            :size="24"
+            class="shrink-0"
+          />
           <p class="truncate">{{ item.name }}</p>
         </li>
       </ul>

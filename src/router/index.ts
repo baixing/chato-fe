@@ -38,6 +38,10 @@ export const RoutesMap = {
     resource: 'resource',
     navigator: 'navigator'
   },
+  flow: {
+    index: 'flowIndex',
+    intention: 'flowIntention'
+  },
   resource: 'resource',
   tranning: {
     bot: 'tranningBot',
@@ -344,6 +348,26 @@ const managerRoutes = [
   }
 ]
 
+// 工作流
+const flowManager = [
+  {
+    path: 'flow',
+    component: RouterView,
+    children: [
+      {
+        name: RoutesMap.flow.index,
+        path: '',
+        component: () => import('@/views/flow/index.vue')
+      },
+      {
+        name: RoutesMap.flow.intention,
+        path: ':flowId/intention',
+        component: () => import('@/views/flow/intention.vue')
+      }
+    ]
+  }
+]
+
 // 空间
 const spaceManager = [
   {
@@ -433,6 +457,7 @@ const loginedRoutes = [
       ...resourceSquareRoutes, // 资源广场
       ...aiPluginSquareRoutes, // AI插件库
       ...spaceManager,
+      ...flowManager,
       ...vipManager
       // ...guideRoutes // 引导
     ]
