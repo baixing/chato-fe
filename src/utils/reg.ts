@@ -34,11 +34,11 @@ export const regReplaceToArr = (str: string) => {
   const matches = []
   let match
   while ((match = regex.exec(str)) !== null) {
-    matches.push({
-      question: match[1]
-    })
+    if (match[1] != '')
+      matches.push({
+        question: match[1]
+      })
   }
-  console.log(matches)
   return matches
 }
 

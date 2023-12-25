@@ -43,7 +43,7 @@
     </div>
     <div
       v-if="drawer"
-      class="max-h-[300px] select-none touch-pan-y overflow-y-auto absolute rounded-b-lg px-3 z-[99] w-full top-14 flex-col flex items-center bg-[#FaFaFa] pb-3 text-sm font-medium gap-2 shrink-0"
+      class="max-h-[300px] shadow select-none touch-pan-y overflow-y-auto absolute rounded-b-lg px-3 z-[99] w-full top-14 flex-col flex items-center bg-[#FaFaFa] pb-3 text-sm font-medium gap-2 shrink-0"
       v-on-click-outside.bubble="drawerVOnClickOutside"
     >
       <div
@@ -313,7 +313,13 @@ import {
   onRouteWeixinDefaultLogin,
   randomString
 } from '@/utils/help'
-import { convertToMarkdown, regReplaceA, removewRegReplaceA } from '@/utils/reg'
+import {
+  convertToMarkdown,
+  regReplaceA,
+  regReplaceToArr,
+  regReplaceToNull,
+  removewRegReplaceA
+} from '@/utils/reg'
 import SSE from '@/utils/sse'
 import { getStringWidth } from '@/utils/string'
 import { isURL } from '@/utils/url'
@@ -788,11 +794,9 @@ function sayWelcome() {
       displayType: EMessageDisplayType.answer,
       id: `welcome-a`,
       isWelcome: true,
-      content: regReplaceA(detail.value.welcome, {
-        class: 'welcome-a',
-        id: 'Chato_chat_label_click'
-      })
+      content: regReplaceToNull(detail.value.welcome)
     })
+    recommendQuestions.value = regReplaceToArr(detail.value.welcome)
   }
 }
 
@@ -1349,7 +1353,7 @@ const initRecommendQuestions = async (question: string) => {
     const {
       data: { data }
     } = await getChatRecommendQuestions({ ...chatCommonParams.value, question })
-    recommendQuestions.value = data.recommends
+    recommendQuestions.value = data.recommends.filter((item) => item.question != '')
     scrollChatHistory()
   } catch (e) {
   } finally {
