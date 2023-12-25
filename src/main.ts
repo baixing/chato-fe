@@ -5,7 +5,7 @@ import 'viewerjs/dist/viewer.css'
 import 'wow.js/css/libs/animate.css'
 //
 import useSensors from '@/composables/useSensors'
-import useSentry from '@/composables/useSentry'
+// import useSentry from '@/composables/useSentry'
 import elementIcon from '@/utils/elementIcon'
 import { globalComponents } from '@/utils/globalComponents'
 import { copyPaste } from '@/utils/help'
@@ -37,7 +37,7 @@ app.config.globalProperties.$copyText = (text: string, successMessage?: string) 
   copyPaste(text, successMessage)
 app.mount('#app')
 
-useSentry(app, router)
+// useSentry(app, router)
 
 // 删除语音缓存，运行一段时候后删除
 localStorage.removeItem('localAudioUrl')

@@ -10,8 +10,8 @@ import Components from 'unplugin-vue-components/vite'
 import { defineConfig, loadEnv } from 'vite'
 import eslintPlugin from 'vite-plugin-eslint'
 import { prismjsPlugin } from 'vite-plugin-prismjs'
-import type { ViteSentryPluginOptions } from 'vite-plugin-sentry'
-import viteSentry from 'vite-plugin-sentry'
+// import type { ViteSentryPluginOptions } from 'vite-plugin-sentry'
+// import viteSentry from 'vite-plugin-sentry'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import buildConfig from './plugins/build-id'
 
@@ -23,23 +23,23 @@ export default defineConfig(({ command, mode }) => {
   const devWithHttps = Boolean(env?.HTTPS || false)
   const isProd = env.VITE_APP_ENV === 'prod'
 
-  const sentryConfig: ViteSentryPluginOptions = {
-    authToken: env.VITE_APP_SENTRY_TOKEN,
-    url: env.VITE_APP_SENTRY_URL,
-    org: env.VITE_APP_SENTRY_ORG,
-    project: env.VITE_APP_SENTRY_PROJECT,
-    release: '1.0', // TODO: package.json version 保持同步
-    deploy: {
-      env: 'production'
-    },
-    skipEnvironmentCheck: true, // 可以跳过环境检查
-    cleanSourcemapsAfterUpload: true,
-    sourceMaps: {
-      include: ['./dist/assets'],
-      ignore: ['node_modules'],
-      urlPrefix: '~/assets'
-    }
-  }
+  // const sentryConfig: ViteSentryPluginOptions = {
+  //   authToken: env.VITE_APP_SENTRY_TOKEN,
+  //   url: env.VITE_APP_SENTRY_URL,
+  //   org: env.VITE_APP_SENTRY_ORG,
+  //   project: env.VITE_APP_SENTRY_PROJECT,
+  //   release: '1.0', // TODO: package.json version 保持同步
+  //   deploy: {
+  //     env: 'production'
+  //   },
+  //   skipEnvironmentCheck: true, // 可以跳过环境检查
+  //   cleanSourcemapsAfterUpload: true,
+  //   sourceMaps: {
+  //     include: ['./dist/assets'],
+  //     ignore: ['node_modules'],
+  //     urlPrefix: '~/assets'
+  //   }
+  // }
 
   return {
     server: {
@@ -103,8 +103,8 @@ export default defineConfig(({ command, mode }) => {
           'esnext.global-this',
           'esnext.string.match-all'
         ]
-      }),
-      isProd ? viteSentry(sentryConfig) : null
+      })
+      // isProd ? viteSentry(sentryConfig) : null
     ],
     resolve: {
       alias: {
@@ -136,11 +136,23 @@ export default defineConfig(({ command, mode }) => {
           entryFileNames: (chunkInfo: any) =>
             chunkInfo.name.includes('iframe') ? 'assets/iframe.min.js' : 'assets/[name].[hash].js', // 入口文件名打包出来文件名
           assetFileNames: 'assets/[ext]/[name].[hash].[ext]',
-          manualChunks: {
-            'markdown-it': ['markdown-it'],
-            'markdown-it-highlightjs': ['markdown-it-highlightjs'],
-            'wow.js': ['wow.js'],
-            lodash: ['lodash']
+          manualChunks(id) {
+            if (id.includes('node_modules')) {
+              const modules = [
+                'element-plus',
+                'axios',
+                'markdown-it',
+                'markdown-it-highlightjs',
+                'wow.js',
+                'lodash',
+                'highlight.js',
+                'prismjs',
+                '@sentry/vue',
+                'vite-plugin-svg-icons'
+              ]
+              const chunk = modules.find((module) => id.includes(module))
+              return chunk ? `vendor_${chunk}` : 'vendor_others'
+            }
           }
         }
       }

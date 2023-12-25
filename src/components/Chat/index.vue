@@ -253,7 +253,6 @@
     @handleActivatePackage="payModalVisible = true"
     @handleLoginRouter="routerToLogin(botSlug == '-1' ? CHATO_AWANG_SLUG : botSlug)"
   />
-  <ChatPayModal :domainInfo="detail" v-model:value="payModalVisible" />
   <AudioPlayer />
   <ChatFollowPublic :isEnvWeixin="currentEnvIsWechat" v-model:value="showVisiblePublic" />
 </template>
@@ -276,8 +275,6 @@ import DefaultAvatar from '@/assets/img/avatar.png'
 import AudioPlayer from '@/components/AudioPlayer/index.vue'
 import ChatEnter from '@/components/Chat/ChatEnter.vue'
 import MessageItem from '@/components/Chat/ChatMessageItem.vue'
-import ChatFollowPublic from '@/components/Chat/components/ChatFollowPublic.vue'
-import CustomerFormDialog from '@/components/Customer/CustomerFormDialog.vue'
 import useAudioPlayer from '@/composables/useAudioPlayer'
 import useBdVid from '@/composables/useBdVid'
 import useClickId from '@/composables/useClickId'
@@ -359,6 +356,7 @@ import { random, remove } from 'lodash'
 import { storeToRefs } from 'pinia'
 import {
   computed,
+  defineAsyncComponent,
   inject,
   nextTick,
   onBeforeUnmount,
@@ -368,14 +366,9 @@ import {
   ref,
   watch
 } from 'vue'
-import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
-import type { BlindWatermark, Watermark } from 'watermark-js-plus'
 import wx from 'weixin-js-sdk'
 import xss from 'xss'
-import ChatMessageMore from './ChatMessageMore.vue'
-import ChatMoreNavigator from './ChatMoreNavigator.vue'
-import ChatShareMode from './ChatShareMode.vue'
 
 interface Props {
   internalProps?: boolean
@@ -401,11 +394,18 @@ const props = withDefaults(defineProps<Props>(), {
   needAiGenerate: false
 })
 
+const ChatFollowPublic = defineAsyncComponent(() => import('./components/ChatFollowPublic.vue'))
+const ChatMoreNavigator = defineAsyncComponent(() => import('./ChatMoreNavigator.vue'))
+const CustomerFormDialog = defineAsyncComponent(
+  () => import('@/components/Customer/CustomerFormDialog.vue')
+)
+const ChatMessageMore = defineAsyncComponent(() => import('./ChatMessageMore.vue'))
+const ChatShareMode = defineAsyncComponent(() => import('./ChatShareMode.vue'))
+
 const debugDomain = inject<IDomainInfo>(DebugDomainSymbol, null)
 const douyinAPI = useStorage('douyinAPI', false)
 const baiduAPI = useStorage('baiduAPI', false)
 const { ios, android, weixin } = usePlatform()
-const { t } = useI18n()
 const drawer = ref(false)
 const userStore = cuserStore()
 const { isMobile } = useBasicLayout()
@@ -456,8 +456,6 @@ const chatStoreI = useChatStore()
 const socketResult = ref({
   chunk_message: ''
 })
-const watermark = ref<Watermark>()
-const blindWatermark = ref<BlindWatermark>()
 const sensorsQuestionId = computed(() => history.value?.[history.value.length - 1]?.questionId)
 const chatMoreVisible = ref(false)
 const payModalVisible = ref(Boolean(route.query.pay || false))
@@ -606,7 +604,7 @@ const getCategory = async () => {
 // ----------------
 const sensorsOnSetBot = () => {
   $sensors?.track('a_wang_polymerization', {
-    name: t('阿旺聚合点击其他机器人'),
+    name: '阿旺聚合点击其他机器人',
     type: 'a_wang_polymerization',
     sulg: botSlug.value,
     data: {
@@ -618,7 +616,7 @@ const sensorsOnSetBot = () => {
 
 const sensorsRecommendQuestions = () => {
   $sensors?.track('a_wang_recommend_questions', {
-    name: t('阿旺问题推荐点击'),
+    name: '阿旺问题推荐点击',
     type: 'a_wang_recommend_questions',
     data: {
       time: dayjs().format('YYYY-MM-DD HH:mm:ss')
@@ -630,7 +628,7 @@ const sensorsRecommendQuestions = () => {
 // ----------------
 const successRBI = () => {
   $sensors?.track('automatic_generated', {
-    name: t('自动生成'),
+    name: '自动生成',
     type: 'automatic_generated',
     data: {
       time: dayjs().format('YYYY-MM-DD HH:mm:ss')
@@ -737,16 +735,12 @@ function getBotInfo() {
         EDomainConversationModeArousalMethod.AutomaticSpeechRecognition ===
           detail.value.conversation_arouse_mode
       ) {
-        ElMessageBox.confirm(
-          t('当前机器人开启了自动语音对话，将会实时主动检索声音'),
-          t('温馨提示'),
-          {
-            confirmButtonText: t('知道了'),
-            showCancelButton: false,
-            type: 'warning',
-            customClass: '!max-w-[470px]'
-          }
-        )
+        ElMessageBox.confirm('当前机器人开启了自动语音对话，将会实时主动检索声音', '温馨提示', {
+          confirmButtonText: '知道了',
+          showCancelButton: false,
+          type: 'warning',
+          customClass: '!max-w-[470px]'
+        })
       }
       if (props.chatByAudio) {
         detail.value.conversation_mode = EDomainConversationMode.audio
@@ -883,9 +877,9 @@ const onPlayAudio = async (text: string, playerId: string) => {
 const beforeSubmit = async () => {
   // 未登录状态资源广场对话数限制
   if (props.authLogin && !isInternal && history.value.length >= 6) {
-    ElMessage.warning(t('对话次数已用完，请登录后继续'))
+    ElMessage.warning('对话次数已用完，请登录后继续')
     $sensors?.track('square_chat_login', {
-      name: t('资源广场跳转登录'),
+      name: '资源广场跳转登录',
       type: 'square_chat_login',
       data: {
         time: dayjs().format('YYYY-MM-DD HH:mm:ss')
@@ -896,7 +890,7 @@ const beforeSubmit = async () => {
   }
   // C 端对话额度限制，B 端对话额度限制走流式
   if (!isInternal && quotaUpperLimit.value) {
-    ElMessage.warning(t('电力值不足，更多电力值请咨询产品顾问'))
+    ElMessage.warning('电力值不足，更多电力值请咨询产品顾问')
     return false
   }
   return true
@@ -937,7 +931,7 @@ const submit = async (str = '') => {
   }
 
   if (getStringWidth(text) > Number(inputLength.value)) {
-    Notification.warning(t('问题过长！'))
+    Notification.warning('问题过长！')
     return
   }
 
@@ -990,13 +984,13 @@ const onTerminateRetry = async () => {
     // 终止
     const lastAnswer = history.value[0]
     if (lastAnswer.displayType !== EMessageDisplayType.answer) {
-      Notification.error(t('终止失败：终止触发时，当前消息是预期以外的消息类型'))
+      Notification.error('终止失败：终止触发时，当前消息是预期以外的消息类型')
       return
     }
 
     const content =
       lastAnswer.content +
-      regReplaceA(t('#继续#'), {
+      regReplaceA('#继续#', {
         class: 'answer-continue',
         'data-cid': lastAnswer.msg_id || lastAnswer.questionId
       })
@@ -1024,7 +1018,7 @@ const onTerminateRetry = async () => {
       }))
 
     if (!lastAnswer.questionId) {
-      lastAnswer.content = t('回答已终止')
+      lastAnswer.content = '回答已终止'
       lastAnswer.status = EWsMessageStatus.done
       isLoadingAnswer.value = false
       return
@@ -1040,7 +1034,7 @@ watch(isTerminated, (v) => {
     const optMsg = history.value[0]
     // 触发了终止且当前机器人不是 MidJourney，消息后接上继续
     if (!isMidJourneyDomain.value) {
-      optMsg.content += regReplaceA(t('#继续#'), {
+      optMsg.content += regReplaceA('#继续#', {
         class: 'answer-continue',
         'data-cid': optMsg.msg_id || optMsg.questionId
       })
@@ -1104,7 +1098,7 @@ const generateMessage = (data, key) => {
   const isFinalStatus = ChatMessageFinalStatus.includes(data.status)
   isLoadingAnswer.value = !isFinalStatus && !isMidJourneyDomain.value
   if (continueTarget.value) {
-    continueTarget.value.innerText = t('继续')
+    continueTarget.value.innerText = '继续'
   }
 
   const defaulthHistoryItem: IMessageItem = {
@@ -1132,7 +1126,7 @@ const generateMessage = (data, key) => {
   }
 
   if (data.finish_reason === 'length') {
-    currentAnswer.content += regReplaceA(t('#继续#'), {
+    currentAnswer.content += regReplaceA('#继续#', {
       class: 'answer-continue',
       'data-cid': data.msg_id
     })
@@ -1591,8 +1585,6 @@ onBeforeUnmount(() => {
   observer.disconnect()
   document.removeEventListener('click', onElClick)
   refChatHistory.value?.removeEventListener('click', chatHisListener)
-  watermark.value && watermark.value.destroy()
-  blindWatermark.value && blindWatermark.value.destroy()
 })
 
 watch(
@@ -1796,5 +1788,9 @@ provide(SymChatToken, chatToken)
 
 :deep(.el-radio-button:last-child .el-radio-button__inner) {
   border-radius: 4px;
+}
+
+.btn-grad {
+  background: linear-gradient(117deg, #0547ff -84%, #d683ff 125%);
 }
 </style>

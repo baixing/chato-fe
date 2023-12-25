@@ -3,7 +3,7 @@ import { getOrgUserList } from '@/api/user'
 import useLocationDvid from '@/composables/useLocationDvid'
 import { ESpaceCommercialType } from '@/enum/space'
 import type { IOrg, IUserInfo } from '@/interface/user'
-import * as Sentry from '@sentry/vue'
+// import * as Sentry from '@sentry/vue'
 import { useStorage } from '@vueuse/core'
 import { defineStore } from 'pinia'
 
@@ -51,7 +51,7 @@ export const useBase = defineStore('base', {
         this.orgInfoList = all
         this.userInfo = current
         this.userCommercialType = current.org.type || ESpaceCommercialType.free
-        Sentry.setUser({ user: JSON.stringify(current) })
+        // Sentry.setUser({ user: JSON.stringify(current) })
         return Promise.resolve(this.userInfo)
       } catch (e) {}
     },
