@@ -1,7 +1,7 @@
 <template>
   <div class="container-preview-page bg-white relative parent-element">
     <div
-      class="flex items-center justify-center h-14 bg-white mb-0 text-xs font-medium gap-2 shrink-0"
+      class="relative flex items-center justify-center h-14 bg-white mb-0 text-xs font-medium gap-2 shrink-0"
       v-if="botSlug === '-1'"
     >
       <div class="flex bg-[#f2f3f5] p-1 rounded !text-[#606266] gap-2">
@@ -30,16 +30,13 @@
           </el-icon>
         </div>
       </div>
-      <span
-        v-if="avatarShow && !isInApplet"
-        class="flex w-fit cursor-pointer rounded-full absolute z-[999] top-0 right-0 h-14 items-center text-base pr-5"
+      <el-button
+        class="absolute right-[20px] md:right-[10px] top-[50%] translate-y-[-50%] !rounded-full md:!h-[26px] h-[32px] md:!px-2 !py-1 md:!text-xs btn-grad !border-none"
+        type="primary"
+        @click="onDownloadApp"
       >
-        <svg-icon
-          @click="chatMoreVisible = true"
-          name="more"
-          svg-class="text-[#303133] mt-1 ml-2 w-6 h-6"
-        />
-      </span>
+        {{ isMobile ? '打开App' : '下载App' }}
+      </el-button>
     </div>
     <div
       v-if="drawer"
@@ -75,18 +72,28 @@
         :avatar="detail.avatar || DefaultAvatar"
         :size="28"
         :name="detail.name.slice(0, 2)"
-        class="w-7 h-7 rounded-full shrink-0 overflow-hidden"
+        class="w-7 h-7 rounded-full shrink-0 overflow-hidden ml-[-12px]"
       />
       <span>{{ detail.name.slice(0, 11) || '...' }}</span>
-      <span
-        class="flex w-fit cursor-pointer rounded-full absolute z-[999] top-0 right-0 h-14 items-center text-base pr-5"
-      >
-        <svg-icon
-          @click="chatMoreVisible = true"
-          name="more"
-          svg-class="text-[#303133] mt-1 ml-2 w-6 h-6"
-        />
-      </span>
+
+      <div class="absolute z-[999] top-0 right-0 flex items-center md:pr-3 pr-9">
+        <el-button
+          class="!rounded-full md:!h-[26px] h-[32px] md:!px-2 !py-1 md:!text-xs btn-grad !border-none"
+          type="primary"
+          @click="onDownloadApp"
+        >
+          {{ isMobile ? '打开App' : '下载App' }}
+        </el-button>
+        <span
+          class="ml-8 md:ml-3 flex w-fit cursor-pointer rounded-full h-14 items-center text-base"
+        >
+          <svg-icon
+            @click="chatMoreVisible = true"
+            name="more"
+            svg-class="text-[#303133] w-6 h-6"
+          />
+        </span>
+      </div>
     </div>
     <div
       :class="['flex flex-col h-full w-full overflow-hidden', chatClassName]"
@@ -287,6 +294,8 @@ import {
   SymChatToken
 } from '@/constant/chat'
 import {
+  AWANG_APP_DOWNLOAD_ANDROID,
+  AWANG_APP_DOWNLOAD_IOS,
   CHATO_AWANG_BRAND_NAME,
   CHATO_AWANG_LOGO,
   CHATO_AWANG_SLUG,
@@ -316,7 +325,8 @@ import { useAuthStore } from '@/stores/auth'
 import { useBase } from '@/stores/base'
 //@ts-ignore
 import { getCategoryList } from '@/api/aWang'
-import { useBasicLayout, useIsMobile } from '@/composables/useBasicLayout'
+import { useBasicLayout } from '@/composables/useBasicLayout'
+import usePlatform from '@/composables/usePlatform'
 import { useChatStore } from '@/stores/chat'
 import { cuserStore } from '@/stores/cuser'
 import { useSocketStore } from '@/stores/socket'
@@ -395,6 +405,7 @@ const props = withDefaults(defineProps<Props>(), {
 const debugDomain = inject<IDomainInfo>(DebugDomainSymbol, null)
 const douyinAPI = useStorage('douyinAPI', false)
 const baiduAPI = useStorage('baiduAPI', false)
+const { ios, android, weixin } = usePlatform()
 const { t } = useI18n()
 const drawer = ref(false)
 const userStore = cuserStore()
@@ -459,9 +470,6 @@ const homeSlug = ref(route.query.homeSlug || 'ge9p359y4v27d2oq')
 const currentEnvIsWechat = isWechat()
 const AIDialogue = ref<IDomainInfo[]>([])
 const AIPainting = ref<IDomainInfo[]>([])
-const isIphoneBol = computed(() =>
-  route.query.system ? decodeURIComponent(route.query.system as string).includes('iOS') : false
-)
 
 const DefaultChatHistoryPage = {
   total: 0,
@@ -558,6 +566,28 @@ const onSetBot = (slug: string) => {
   homeSlug.value = slug
   init()
   chatStoreI.switchChatingInfo(slug)
+}
+
+// 下载App
+const onDownloadApp = () => {
+  if (!isMobile.value || weixin)
+    return (window.location.href = `${window.location.origin}/download`)
+  window.location.href =
+    botSlug.value !== '-1'
+      ? `bxwang://webview?url=https://zhinenghao.cn/b/${botSlug.value}?source=app_mini_prop`
+      : 'bxwang://'
+  const timeout = setTimeout(function () {
+    if (ios) {
+      window.location.href = AWANG_APP_DOWNLOAD_IOS
+    } else if (android) {
+      window.location.href = AWANG_APP_DOWNLOAD_ANDROID
+    }
+  }, 2500)
+
+  // 清除定时器，如果应用已经打开
+  window.onblur = function () {
+    clearTimeout(timeout)
+  }
 }
 
 // 用户登录
@@ -687,9 +717,9 @@ async function init() {
   })
   isLoadingAnswer.value = false
   await getBotInfo()
-  if (!isInternal && botSlug.value !== '-1') {
-    await checkQuotaInPlatformC()
-  }
+  // if (!isInternal && botSlug.value !== '-1') {
+  //   await checkQuotaInPlatformC()
+  // }
   await getHistoryChat()
   initUserInfo()
   // watermarkFunc()
@@ -727,7 +757,7 @@ function getBotInfo() {
         $notnull(res.data.data) && res.data.data.shortcuts
           ? JSON.parse(res.data.data.shortcuts)
           : []
-      if (botSlug.value === '-1' && isMobile)
+      if (botSlug.value === '-1' && isMobile.value)
         detail.value.shortcuts = JSON.stringify([
           { title: '创意写作', value: 'q3p4g76mzpdr62k1' },
           { title: '四六级闯关游戏', value: 'v1xje74m3ke7m24y' },
@@ -747,7 +777,7 @@ function getBotInfo() {
         ])
       inputLength.value = detail.value.question_max_length
       !socketStore.isExistInPeddingDomains(botSlug.value) && sayWelcome()
-      shareWeixinInit(detail.value)
+      // shareWeixinInit(detail.value)
       // 健硕需求p参数
       $notnull(route.query.p) ? submit(route.query.p as string) : ''
     })
@@ -936,7 +966,7 @@ const submit = async (str = '') => {
     !douyinAPI.value &&
     douYinCallbackAPI(clickId.value, () => (douyinAPI.value = true))
   // 百度落地页上报
-  bdvid.value && !baiduAPI.value && baiduCallbackAPI(() => (baiduAPI.value = true))
+  bdvid.value && !baiduAPI.value && baiduCallbackAPI(bdvid.value, () => (baiduAPI.value = true))
   // 抖音app上报
   douyinApplicationCallbackAPI('active_register')
 }
@@ -1312,7 +1342,7 @@ const handleCopyButtonClick = (e) => {
 }
 
 const onFooterBrandLink = () => {
-  if (!currentEnvIsWechat && useIsMobile()) {
+  if (!currentEnvIsWechat && isMobile.value) {
     window.location.href = 'https://wxaurl.cn/lqvhSh15sIm'
   } else {
     showVisiblePublic.value = true
