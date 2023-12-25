@@ -1,5 +1,5 @@
 import { ChatMessageImgLimit, ChatMessageImgLimit_Size_800 } from '@/constant/chat'
-import { MANGER_ROLES } from '@/constant/common'
+import { MANGER_ROLES, RGBList } from '@/constant/common'
 import router from '@/router'
 import { useClipboard } from '@vueuse/core'
 import type { Action } from 'element-plus'
@@ -224,4 +224,12 @@ export const onRouteWeixinDefaultLogin = (href: string, appId) => {
   window.location.href = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appId}&redirect_uri=${encodeURIComponent(
     href
   )}&response_type=code&scope=snsapi_base#wechat_redirect`
+}
+
+export const isPhoneNum = (str) => /^1[0-9]{10}/.test(str)
+
+export const generateRandomRGB = () => {
+  const max = RGBList.length
+  const randomIndex = Math.floor(Math.random() * max)
+  return RGBList[randomIndex]
 }

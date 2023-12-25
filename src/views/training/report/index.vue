@@ -20,6 +20,7 @@ import { useRoute, useRouter } from 'vue-router'
 import ReportCollect from './components/ReportCollect.vue'
 import ReportContext from './components/ReportContext.vue'
 import ReportDetail from './components/ReportDetail.vue'
+import ReportUserMessage from './components/ReportUserMessage.vue'
 import ReportView from './components/ReportView.vue'
 
 const route = useRoute()
@@ -30,14 +31,16 @@ const activeTab = computed(() => (route.params?.type as string) || 'overview')
 const tabs = [
   { key: 'overview', title: '数据概览' },
   { key: 'chat', title: '对话消息明细' },
-  { key: 'collect', title: '收集表单明细' }
+  { key: 'collect', title: '收集表单明细' },
+  { key: 'userMsg', title: '用户消息明细' }
 ]
 
 const tabComponents = {
   overview: ReportView,
   chat: ReportDetail,
   collect: ReportCollect,
-  context: ReportContext
+  context: ReportContext,
+  userMsg: ReportUserMessage
 }
 
 const onClickTab = (v) => {

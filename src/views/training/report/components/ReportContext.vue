@@ -1,15 +1,15 @@
 <template>
   <div
     v-loading="loading"
-    class="max-w-[680px] w-full mx-auto overflow-hidden flex flex-col gap-2 h-[calc(100vh-200px)] lg:h-[calc(100vh-220px)]"
+    class="max-w-[680px] w-full mx-auto h-[calc(100vh-186px)] lg:h-[calc(100vh-220px)] relative"
   >
     <virtual-list
       ref="virtualRef"
       :list-data="chatList"
       :estimated-item-size="100"
-      height="85%"
+      height="96%"
       class="flex-1"
-      item-class="w-full flex flex-col"
+      item-class="w-full flex flex-col mb-4"
       @scroll="onHiddenChatMore"
     >
       <template #default="{ rowData }">
@@ -24,7 +24,7 @@
         />
       </template>
     </virtual-list>
-    <div class="text-center flex items-end justify-center">
+    <div v-show="!loading" class="absolute text-center -bottom-4 left-1/2 -translate-x-1/2">
       <el-button type="primary" @click="onExport">{{ $t('导出全部') }}</el-button>
     </div>
   </div>

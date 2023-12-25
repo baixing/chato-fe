@@ -2,6 +2,7 @@
   <div ref="containerEl" class="infinite-list-container" :style="{ height }" @scroll="scrollEvent">
     <div ref="phantomEl" class="infinite-list-phantom"></div>
     <div ref="contentEl" :class="['infinite-list', listClass]">
+      <slot name="more"></slot>
       <div
         ref="itemsEl"
         v-for="item in visibleData"
@@ -34,6 +35,8 @@ const props = withDefaults(
     estimatedItemSize: 80
   }
 )
+
+const emit = defineEmits(['scrollTop'])
 
 const containerEl = ref()
 const contentEl = ref()
@@ -127,6 +130,9 @@ const setStartOffset = () => {
 const scrollEvent = () => {
   // 当前滚动位置
   let scrollTop = containerEl.value.scrollTop
+  if (scrollTop < 90) {
+    emit('scrollTop')
+  }
   // 此时的开始索引
   start.value = getStartIndex(scrollTop)
   // 此时的偏移量

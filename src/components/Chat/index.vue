@@ -327,9 +327,9 @@ const $isLoading = ref<boolean>(true) // 是否处于全屏加载状态
 const history = ref<IMessageItem[]>([])
 const inputLength = ref<number>(3000)
 const continueTarget = ref<HTMLElement>(null)
-const socketResult = ref({
-  chunk_message: ''
-})
+// const socketResult = ref({
+//   chunk_message: ''
+// })
 const watermark = ref<Watermark>()
 const blindWatermark = ref<BlindWatermark>()
 const sensorsQuestionId = computed(() => history.value?.[history.value.length - 1]?.questionId)
@@ -352,7 +352,11 @@ const chatHistoryParams: ChatHistoryParams = reactive({
 
 const SSEInstance = new SSE()
 const socketStore = useSocketStore()
-const socketInstance = useWebSocketConnect(currentEnvConfig.socketURL)
+// JS 嵌入转人工客服：未登录时，增加 uid 为 token 标识
+const socketURL = computed(() =>
+  authToken.value ? currentEnvConfig.socketURL : `${currentEnvConfig.socketURL}?token=${uid.value}`
+)
+const socketInstance = useWebSocketConnect(socketURL.value)
 const { socketResultMap } = storeToRefs(socketStore)
 
 const link = computed(
@@ -819,9 +823,9 @@ function doRequest(message) {
   // - 内部走 authToken；在外部使用 uid
   // - 内部和外部使用不同接口
   // - 内部使用 id 来确定机器人，外部使用 slug 来确定机器人
-  socketResult.value = {
-    chunk_message: ''
-  }
+  // socketResult.value = {
+  //   chunk_message: ''
+  // }
 
   // 发送请求重置状态：加载回答为是，终止为否
   isLoadingAnswer.value = true
@@ -901,7 +905,14 @@ const generateMessage = (data, key) => {
     checkRightsTypeNeedUpgrade(quotaType)
   }
 
-  history.value[historyIndex !== -1 ? historyIndex : history.value.length] = currentAnswer
+  const latestHistoryItem = history.value.at(-1)
+  if (historyIndex !== -1) {
+    history.value[historyIndex] = currentAnswer
+  } else if (latestHistoryItem.status === EWsMessageStatus.pending) {
+    history.value[history.value.length - 1] = currentAnswer
+  } else {
+    history.value.push(currentAnswer)
+  }
 }
 
 // 特殊处理：继续

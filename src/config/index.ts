@@ -8,5 +8,6 @@ export const currentEnvConfig = {
   wwwBaseURL: import.meta.env.VITE_APP_WWW_BASE_URL,
   scriptURL: import.meta.env.VITE_APP_SCRIPT_URL,
   socketURL: import.meta.env.VITE_APP_SOCKET_URL,
+  socketCRMURL: import.meta.env.VITE_APP_SOCKET_CRM_URL,
   asrSocketURL: import.meta.env.VITE_APP_ASR_SOCKET_URL
 }
