@@ -1,4 +1,5 @@
 import { postDouyinApplicationAPI } from '@/api/callback'
+import useChannel from '@/composables/useChannel'
 import { BAIDU_TOKEN } from '@/constant/common'
 import { useStorage } from '@vueuse/core'
 import dayjs from 'dayjs'
@@ -27,7 +28,8 @@ export const douYinCallbackAPI = (id, callback) => {
 }
 
 // 百度api回调
-export const baiduCallbackAPI = (callback) => {
+export const baiduCallbackAPI = (bxId: string, callback) => {
+  const { shareChannel } = useChannel()
   callback()
   fetch('/ocpcapi/api/uploadConvertData', {
     method: 'POST',
@@ -38,7 +40,7 @@ export const baiduCallbackAPI = (callback) => {
       token: BAIDU_TOKEN[location.hostname],
       conversionTypes: [
         {
-          logidUrl: location.href,
+          logidUrl: `https://${location.hostname}?channel=${shareChannel.value}&bd_vid=${bxId}`,
           newType: 25
         }
       ]

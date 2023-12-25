@@ -936,7 +936,7 @@ const submit = async (str = '') => {
     !douyinAPI.value &&
     douYinCallbackAPI(clickId.value, () => (douyinAPI.value = true))
   // 百度落地页上报
-  bdvid.value && !baiduAPI.value && baiduCallbackAPI(() => (baiduAPI.value = true))
+  bdvid.value && !baiduAPI.value && baiduCallbackAPI(bdvid.value, () => (baiduAPI.value = true))
   // 抖音app上报
   douyinApplicationCallbackAPI('active_register')
 }
