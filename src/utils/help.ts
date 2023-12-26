@@ -1,7 +1,6 @@
 import { ChatMessageImgLimit, ChatMessageImgLimit_Size_800 } from '@/constant/chat'
 import { MANGER_ROLES, RGBList } from '@/constant/common'
 import router from '@/router'
-import { useClipboard } from '@vueuse/core'
 import type { Action } from 'element-plus'
 import { ElMessageBox, ElNotification } from 'element-plus'
 import { isEqual } from 'lodash-es'
@@ -73,25 +72,34 @@ export function removeCookie(name: string) {
 
 // 复制粘贴
 export const copyPaste = (text: string, successMessage?: string) => {
+  const handleSuccess = () => {
+    ElNotification.success(successMessage || '复制成功')
+  }
+
+  const handleError = (error: any) => {
+    console.error('Copy failed', error)
+    alert(`复制失败，请手动复制：${text}`)
+  }
+
   try {
     if (navigator.clipboard) {
-      const { copy, isSupported } = useClipboard({ legacy: true })
-      if (!isSupported.value) {
-        ElNotification.warning('当前浏览器不支持复制，请切换或升级浏览器！')
-      }
-      copy(text)
+      navigator.clipboard.writeText(text).then(handleSuccess).catch(handleError)
     } else {
-      const input = document.createElement('textarea')
-      input.setAttribute('value', text)
-      document.body.appendChild(input)
-      input.select()
-      document.execCommand('copy')
-      document.body.removeChild(input)
-    }
+      const textarea = document.createElement('textarea')
+      textarea.value = text
+      document.body.appendChild(textarea)
+      textarea.select()
+      const successful = document.execCommand('copy')
+      document.body.removeChild(textarea)
 
-    ElNotification.success(successMessage || '复制成功')
+      if (successful) {
+        handleSuccess()
+      } else {
+        handleError(new Error('execCommand failed'))
+      }
+    }
   } catch (error) {
-    alert(JSON.stringify(error))
+    handleError(error)
   }
 }
 

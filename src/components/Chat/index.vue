@@ -60,7 +60,9 @@
             :detail="detail"
             :isInternal="isInternal && isChatingPractice"
             :is-loading-answer="isLoadingAnswer"
-            :correct-visible="isInternal || (detail.qa_modifiable && !correctTicketExpired)"
+            :correct-visible="
+              (!isResource && isInternal) || (detail.qa_modifiable && !correctTicketExpired)
+            "
             @evaluate="onEvaluate"
             @send-message="submit"
             @show-more-action="onShowMoreAction"

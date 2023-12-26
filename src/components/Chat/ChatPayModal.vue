@@ -218,7 +218,10 @@ const onHandlePay = async () => {
   }
 
   if (isAppletEnv.value) {
-    return copyPaste(window.location.href, '链接已复制，请在网页中打开进行支付')
+    return copyPaste(
+      `https://chato.cn/b/${props.domainInfo.slug}?source=Chato_share_web`,
+      '链接已复制，请在网页中打开进行支付'
+    )
   }
 
   if (!orderInfo.value.length) {
