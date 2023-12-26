@@ -1,7 +1,6 @@
 import { ChatMessageImgLimit, ChatMessageImgLimit_Size_800 } from '@/constant/chat'
 import { MANGER_ROLES } from '@/constant/common'
 import router from '@/router'
-import { useClipboard } from '@vueuse/core'
 import type { Action } from 'element-plus'
 import { ElMessageBox, ElNotification } from 'element-plus'
 import { isEqual } from 'lodash-es'
@@ -73,25 +72,26 @@ export function removeCookie(name: string) {
 
 // 复制粘贴
 export const copyPaste = (text: string, successMessage?: string) => {
-  try {
-    if (navigator.clipboard) {
-      const { copy, isSupported } = useClipboard({ legacy: true })
-      if (!isSupported) {
-        ElNotification.warning('当前浏览器不支持复制，请切换或升级浏览器！')
-      }
-      copy(text)
-    } else {
-      const input = document.createElement('textarea')
-      input.setAttribute('value', text)
-      document.body.appendChild(input)
-      input.select()
-      document.execCommand('copy')
-      document.body.removeChild(input)
-    }
+  const isSafari = navigator.userAgent.match(/iPad|iPhone|iPod|Macintosh/i)
 
-    ElNotification.success(successMessage || '复制成功')
-  } catch (error) {
-    alert(JSON.stringify(error))
+  // iOS 才用现代的方法复制，因为微信小程序安卓 webview 上用这个方法会报错
+  if (navigator.clipboard && isSafari) {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        ElNotification.success(successMessage || '复制成功')
+      })
+      .catch(() => {
+        ElNotification.error('复制失败请重新尝试！')
+      })
+  } else {
+    import('copy-to-clipboard').then(({ default: copy }) => {
+      copy(text, {
+        format: 'text/plain',
+        message: '请点击确定按钮复制链接'
+      })
+      ElNotification.success(successMessage || '复制成功')
+    })
   }
 }
 
