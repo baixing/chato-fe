@@ -66,7 +66,7 @@
             @click="(e) => !internalEnterDisabled && onRecording(e)"
             class="send-btn"
           >
-            <svg-icon svg-class="w-6 h-6 text-[#303133]" name="chat-sound" />
+            <svg-icon svg-class="w-5 h-5 text-[#303133]" name="chat-sound" />
           </span>
         </el-tooltip>
         <el-tooltip
@@ -443,7 +443,7 @@ onBeforeUnmount(() => {
   }
 
   .send-btn {
-    @apply w-6 h-6;
+    @apply w-7 md:h-7 h-8 mr-1;
     cursor: pointer;
     border-radius: 100%;
     box-sizing: border-box;
@@ -462,7 +462,7 @@ onBeforeUnmount(() => {
   }
 
   .default-send-btn {
-    @apply w-6 h-6;
+    @apply w-7 md:h-7 h-8;
     cursor: pointer;
     border-radius: 100%;
     box-sizing: border-box;
