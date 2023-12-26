@@ -196,7 +196,7 @@ const onWeixinPay = async (id: string) => {
   const { data, sign_str } = res.data.data
   const params = {
     appId: data.app_id,
-    timeStamp: Number(data.timestamp),
+    timeStamp: data.timestamp,
     nonceStr: data.nonce_str,
     package: data.package,
     paySign: sign_str,
