@@ -73,23 +73,26 @@ export function removeCookie(name: string) {
 
 // 复制粘贴
 export const copyPaste = (text: string, successMessage?: string) => {
-  if (navigator.clipboard) {
-    const { copy, isSupported } = useClipboard({ legacy: true })
-
-    if (!isSupported) {
-      ElNotification.warning('当前浏览器不支持复制，请切换或升级浏览器！')
+  try {
+    if (navigator.clipboard) {
+      const { copy, isSupported } = useClipboard({ legacy: true })
+      if (!isSupported.value) {
+        ElNotification.warning('当前浏览器不支持复制，请切换或升级浏览器！')
+      }
+      copy(text)
+    } else {
+      const input = document.createElement('textarea')
+      input.setAttribute('value', text)
+      document.body.appendChild(input)
+      input.select()
+      document.execCommand('copy')
+      document.body.removeChild(input)
     }
-    copy(text)
-  } else {
-    const input = document.createElement('input')
-    input.setAttribute('value', text)
-    document.body.appendChild(input)
-    input.select()
-    document.execCommand('copy')
-    document.body.removeChild(input)
-  }
 
-  ElNotification.success(successMessage || '复制成功')
+    ElNotification.success(successMessage || '复制成功')
+  } catch (error) {
+    alert(JSON.stringify(error))
+  }
 }
 
 export const downloadImg = async (fileUrl: string) => {
