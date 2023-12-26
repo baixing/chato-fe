@@ -82,7 +82,8 @@ const props = defineProps<{
 
 const emit = defineEmits(['update:value'])
 
-const currentEnvIsWechat = isWechat()
+const isAppletEnv = ref(false)
+const currentEnvIsWechat = computed(() => isWechat() && !isAppletEnv.value)
 const { t } = useI18n()
 const { isMobile: mobile } = useBasicLayout()
 const cuser = cuserStore()
@@ -93,7 +94,6 @@ const { loginStatus } = storeToRefs(cuser)
 const agreeBtn = ref(true)
 const paymentQrCode = ref('')
 const loading = ref(true)
-const isAppletEnv = ref(false)
 
 const isMobile = computed(() => mobile.value)
 
@@ -146,6 +146,10 @@ const handlePayment = (isMobile, isWechatEnvironment, paymentData) => {
   if (isMobile) {
     if (isWechatEnvironment) {
       return onWeixinPay(payment_code_url)
+    }
+
+    if (isAppletEnv.value) {
+      return copyPaste(payment_code_url, '链接已复制，请在网页中打开进行支付')
     }
     return (window.location.href = payment_code_url)
   } else {
@@ -215,13 +219,6 @@ const onWeixinPay = async (id: string) => {
 const onHandlePay = async () => {
   if (!loginStatus.value) {
     return cuser.routerToLogin(props.domainInfo.slug, { pay: '1' })
-  }
-
-  if (isAppletEnv.value) {
-    return copyPaste(
-      `https://chato.cn/b/${props.domainInfo.slug}?source=Chato_share_web`,
-      '链接已复制，请在网页中打开进行支付'
-    )
   }
 
   if (!orderInfo.value.length) {

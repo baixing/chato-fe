@@ -255,6 +255,7 @@ import {
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import { BlindWatermark, Watermark } from 'watermark-js-plus'
+import wx from 'weixin-js-sdk'
 import xss from 'xss'
 import ChatFooter from './ChatFooter.vue'
 import ChatMessageMore from './ChatMessageMore.vue'
@@ -530,7 +531,11 @@ async function init() {
   await getHistoryChat()
   watermarkFunc()
   if (currentEnvIsWechat && !!detail.value.customer_limit.payment_limit_switch) {
-    onWeixinH5DefaultLogin()
+    wx.miniProgram.getEnv(function (res) {
+      if (!res.miniprogram) {
+        onWeixinH5DefaultLogin()
+      }
+    })
   }
 }
 
