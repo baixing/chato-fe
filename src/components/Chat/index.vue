@@ -1,9 +1,11 @@
 <template>
   <div class="container-preview-page bg-white relative parent-element">
+    <!-- 聚合页 -->
     <div
       class="relative flex items-center justify-center h-14 bg-white mb-0 text-xs font-medium gap-2 shrink-0"
       v-if="botSlug === '-1'"
     >
+      <!-- AI机器人导航 -->
       <div class="flex bg-[#f2f3f5] p-1 rounded !text-[#606266] gap-2">
         <div
           label="dialogue"
@@ -38,6 +40,7 @@
         {{ isMobile ? '打开App' : '下载App' }}
       </el-button>
     </div>
+
     <div
       v-if="drawer"
       class="max-h-[300px] shadow select-none touch-pan-y overflow-y-auto absolute rounded-b-lg px-3 z-[99] w-full top-14 flex-col flex items-center bg-[#FaFaFa] pb-3 text-xs font-medium gap-2 shrink-0"
@@ -63,6 +66,9 @@
         </div>
       </div>
     </div>
+    <!-- ----- -->
+
+    <!-- 头像、下载app、更多相关 -->
     <div
       v-if="detail.name_and_avatar_show && avatarShow && botSlug !== '-1'"
       class="flex items-center justify-center h-14 bg-white mb-0 text-xs font-medium gap-2 shrink-0"
@@ -95,6 +101,8 @@
         </span>
       </div>
     </div>
+    <!-- ---- -->
+
     <div
       :class="['flex flex-col h-full w-full overflow-hidden', chatClassName]"
       v-loading="$isLoading"
@@ -103,6 +111,8 @@
       <div v-if="!history.length" class="empty h-full">
         {{ $t('请在下方输入框提问吧～') }}
       </div>
+
+      <!-- 聊天记录 -->
       <div
         v-else
         class="chat-history chat-center space-y-6 space-y-reverse flex flex-col-reverse"
@@ -164,6 +174,9 @@
           </el-divider>
         </template>
       </div>
+      <!-- --- -->
+
+      <!-- 提问示例-问题推荐 -->
       <div
         v-if="detail.shortcuts?.length"
         :class="[!isShortcuts ? 'h-11' : 'h-[180px]']"
@@ -193,8 +206,11 @@
         <div
           v-show="isLoadingAnswer"
           class="absolute top-0 right-0 bottom-0 left-0 cursor-not-allowed bg-[#ffffffa3] z-[1]"
-        ></div>
+        />
       </div>
+      <!-- ---- -->
+
+      <!-- 发送框 -->
       <ChatEnter
         v-model:value="inputText"
         :last-question-id="sensorsQuestionId"
@@ -211,6 +227,9 @@
         class="chat-center"
         v-if="!shareMode"
       />
+      <!-- ---- -->
+
+      <!-- 分享按钮 -->
       <ChatShareMode
         v-else
         class="chat-center py-5"
@@ -218,6 +237,9 @@
         :detail="detail"
         v-model:shareMode="shareMode"
       />
+      <!-- --- -->
+
+      <!-- 品牌域名 -->
       <ChatFooter
         :name="CHATO_AWANG_BRAND_NAME"
         :logo="CHATO_AWANG_LOGO"
@@ -227,8 +249,10 @@
         ]"
         @click="onFooterBrandLink"
       />
+      <!-- --- -->
     </div>
   </div>
+  <!-- 问答操作项 -->
   <ChatMessageMore
     :message="currentMessage"
     :actions="currentMoreActions"
@@ -241,20 +265,33 @@
     @translate-success="onTranslateSuccess"
     @like-dislike-success="onLikeDislikeSuccess"
   />
+  <!-- --- -->
+
+  <!-- 客户收集表单 -->
   <CustomerFormDialog
     v-model:visible="customerFormState.visible"
     :form-id="customerFormState.formId"
     :title="customerFormState.title"
     :uid="customerFormState.uId"
   />
+  <!-- --- -->
+
+  <!-- 右上角... -->
   <ChatMoreNavigator
     :domainInfo="detail"
     v-model:value="chatMoreVisible"
     @handleActivatePackage="payModalVisible = true"
     @handleLoginRouter="routerToLogin(botSlug == '-1' ? CHATO_AWANG_SLUG : botSlug)"
   />
+  <!-- --- -->
+
+  <!-- 语音对话框 -->
   <AudioPlayer />
+  <!-- --- -->
+
+  <!-- 关注公众号 -->
   <ChatFollowPublic :isEnvWeixin="currentEnvIsWechat" v-model:value="showVisiblePublic" />
+  <!-- ---- -->
 </template>
 
 <script lang="ts" setup>
@@ -272,7 +309,6 @@ import {
   getDomainQuotaInPlatformC
 } from '@/api/domain'
 import DefaultAvatar from '@/assets/img/avatar.png'
-import AudioPlayer from '@/components/AudioPlayer/index.vue'
 import ChatEnter from '@/components/Chat/ChatEnter.vue'
 import MessageItem from '@/components/Chat/ChatMessageItem.vue'
 import useAudioPlayer from '@/composables/useAudioPlayer'
@@ -401,6 +437,7 @@ const CustomerFormDialog = defineAsyncComponent(
 )
 const ChatMessageMore = defineAsyncComponent(() => import('./ChatMessageMore.vue'))
 const ChatShareMode = defineAsyncComponent(() => import('./ChatShareMode.vue'))
+const AudioPlayer = defineAsyncComponent(() => import('@/components/AudioPlayer/index.vue'))
 
 const debugDomain = inject<IDomainInfo>(DebugDomainSymbol, null)
 const douyinAPI = useStorage('douyinAPI', false)
