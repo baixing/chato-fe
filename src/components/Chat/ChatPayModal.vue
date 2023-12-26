@@ -67,7 +67,7 @@ import { EOrderPaymentStatus } from '@/enum/order'
 import type { IDomainInfo } from '@/interface/domain'
 import { useAuthStore } from '@/stores/auth'
 import { cuserStore } from '@/stores/cuser'
-import { isWechat, openPreviewUrl } from '@/utils/help'
+import { copyPaste, isWechat, openPreviewUrl } from '@/utils/help'
 import { payJSAPI } from '@/utils/pay'
 import { ElNotification as Notification } from 'element-plus'
 import { storeToRefs } from 'pinia'
@@ -122,7 +122,7 @@ const orderDetail = computed(() => {
 })
 
 const determinePayType = (isMobile, isWechatEnvironment) => {
-  if (isWechatEnvironment && isMobile && !isAppletEnv.value) return 0
+  if (isWechatEnvironment && isMobile) return 0
   return isMobile ? 2 : 3
 }
 
@@ -144,9 +144,6 @@ const handlePayment = (isMobile, isWechatEnvironment, paymentData) => {
   const { order_id, payment_code_url, payment_qr_code } = paymentData
 
   if (isMobile) {
-    if (isAppletEnv.value) {
-      return (window.location.href = payment_code_url)
-    }
     if (isWechatEnvironment) {
       return onWeixinPay(payment_code_url)
     }
@@ -218,6 +215,10 @@ const onWeixinPay = async (id: string) => {
 const onHandlePay = async () => {
   if (!loginStatus.value) {
     return cuser.routerToLogin(props.domainInfo.slug, { pay: '1' })
+  }
+
+  if (isAppletEnv.value) {
+    return copyPaste(window.location.href, '链接已复制，请在网页中打开进行支付')
   }
 
   if (!orderInfo.value.length) {
