@@ -129,6 +129,8 @@
             </div>
           </div>
         </div>
+
+        <!-- 问题推荐-提问示例 -->
         <div
           v-if="!isLoadingAnswer && recommendQuestions.length"
           v-loading="recommendQuestionsLoading"
@@ -176,7 +178,7 @@
       </div>
       <!-- --- -->
 
-      <!-- 提问示例-问题推荐 -->
+      <!-- 聚合页底部 -->
       <div
         v-if="detail.shortcuts?.length"
         :class="[!isShortcuts ? 'h-11' : 'h-[180px]']"
@@ -203,10 +205,10 @@
         >
           <el-icon><ArrowDownBold /></el-icon>
         </div>
-        <div
+        <!-- <div
           v-show="isLoadingAnswer"
           class="absolute top-0 right-0 bottom-0 left-0 cursor-not-allowed bg-[#ffffffa3] z-[1]"
-        />
+        /> -->
       </div>
       <!-- ---- -->
 
@@ -807,7 +809,6 @@ function getBotInfo() {
       inputLength.value = detail.value.question_max_length
       !socketStore.isExistInPeddingDomains(botSlug.value) && sayWelcome()
       // shareWeixinInit(detail.value)
-      // 健硕需求p参数
       $notnull(route.query.p) ? submit(route.query.p as string) : ''
     })
     .catch(() => {})
@@ -893,6 +894,7 @@ function sayWelcome() {
       content: regReplaceToNull(detail.value.welcome)
     })
     recommendQuestions.value = regReplaceToArr(detail.value.welcome)
+    welcomeRecommendQuestions.value = regReplaceToArr(detail.value.welcome)
   }
 }
 
@@ -1455,6 +1457,7 @@ const onElClick = (event) => {
 const recommendQuestionsLoading = ref(false)
 const recommendBaseQuestion = ref('')
 const recommendQuestions = ref<IRecommendQuestion[]>([])
+const welcomeRecommendQuestions = ref<IRecommendQuestion[]>([])
 
 const initRecommendQuestions = async (question: string) => {
   try {
@@ -1464,7 +1467,9 @@ const initRecommendQuestions = async (question: string) => {
     const {
       data: { data }
     } = await getChatRecommendQuestions({ ...chatCommonParams.value, question })
-    recommendQuestions.value = data.recommends.filter((item) => item.question != '')
+    recommendQuestions.value = isMidJourneyDomain.value
+      ? welcomeRecommendQuestions.value
+      : data.recommends.filter((item) => item.question != '')
     scrollChatHistory()
   } catch (e) {
   } finally {
