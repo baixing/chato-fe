@@ -72,34 +72,26 @@ export function removeCookie(name: string) {
 
 // 复制粘贴
 export const copyPaste = (text: string, successMessage?: string) => {
-  const handleSuccess = () => {
-    ElNotification.success(successMessage || '复制成功')
-  }
+  const isSafari = navigator.userAgent.match(/iPad|iPhone|iPod|Macintosh/i)
 
-  const handleError = (error: any) => {
-    console.error('Copy failed', error)
-    alert(`复制失败，请手动复制：${text}`)
-  }
-
-  try {
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(text).then(handleSuccess).catch(handleError)
-    } else {
-      const textarea = document.createElement('textarea')
-      textarea.value = text
-      document.body.appendChild(textarea)
-      textarea.select()
-      const successful = document.execCommand('copy')
-      document.body.removeChild(textarea)
-
-      if (successful) {
-        handleSuccess()
-      } else {
-        handleError(new Error('execCommand failed'))
-      }
-    }
-  } catch (error) {
-    handleError(error)
+  // iOS 才用现代的方法复制，因为微信小程序安卓 webview 上用这个方法会报错
+  if (navigator.clipboard && isSafari) {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        ElNotification.success(successMessage || '复制成功')
+      })
+      .catch(() => {
+        ElNotification.error('复制失败请重新尝试！')
+      })
+  } else {
+    import('copy-to-clipboard').then(({ default: copy }) => {
+      copy(text, {
+        format: 'text/plain',
+        message: '请点击确定按钮复制链接'
+      })
+      ElNotification.success(successMessage || '复制成功')
+    })
   }
 }
 
