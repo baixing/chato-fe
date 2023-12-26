@@ -135,6 +135,7 @@ export default defineConfig(({ command, mode }) => {
       rollupOptions: {
         input: {
           index: resolve(__dirname, 'index.html'),
+          chat: resolve(__dirname, 'chat.html'),
           iframe: resolve(__dirname, 'src/build/iframe.ts')
         },
         output: {
