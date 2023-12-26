@@ -73,6 +73,7 @@ import { ElNotification as Notification } from 'element-plus'
 import { storeToRefs } from 'pinia'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import wx from 'weixin-js-sdk'
 
 const props = defineProps<{
   value: boolean
@@ -92,6 +93,7 @@ const { loginStatus } = storeToRefs(cuser)
 const agreeBtn = ref(true)
 const paymentQrCode = ref('')
 const loading = ref(true)
+const isAppletEnv = ref(false)
 
 const isMobile = computed(() => mobile.value)
 
@@ -120,7 +122,7 @@ const orderDetail = computed(() => {
 })
 
 const determinePayType = (isMobile, isWechatEnvironment) => {
-  if (isWechatEnvironment && isMobile) return 0
+  if (isWechatEnvironment && isMobile && !isAppletEnv.value) return 0
   return isMobile ? 2 : 3
 }
 
@@ -142,11 +144,13 @@ const handlePayment = (isMobile, isWechatEnvironment, paymentData) => {
   const { order_id, payment_code_url, payment_qr_code } = paymentData
 
   if (isMobile) {
-    if (isWechatEnvironment) {
-      onWeixinPay(payment_code_url)
-    } else {
-      window.location.href = payment_code_url
+    if (isAppletEnv.value) {
+      return (window.location.href = payment_code_url)
     }
+    if (isWechatEnvironment) {
+      return onWeixinPay(payment_code_url)
+    }
+    return (window.location.href = payment_code_url)
   } else {
     paymentQrCode.value = `data:image/png;base64,${payment_qr_code}`
     loading.value = false
@@ -222,6 +226,15 @@ const onHandlePay = async () => {
 
   initPayCode()
 }
+
+// 检测是否在小程序环境
+const onCheckPayEnv = () => {
+  wx.miniProgram.getEnv(function (res) {
+    isAppletEnv.value = res.miniprogram
+  })
+}
+
+onCheckPayEnv()
 
 watch(
   visible,
