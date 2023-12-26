@@ -5,10 +5,12 @@
   "scripts": {
     "dev": "vite",
     "dev:https": "HTTPS=true vite",
+    "upload": "upyun-upload -c tool/upyun.config.js -v",
     "build": "run-p type-check build-only",
     "build:test": "vite build --mode test",
     "build:pre": "vite build --mode pre",
-    "build:prod": "vite build --mode production && ./deploy.sh",
+    "build:prod": "vite build --mode production",
+    "release": "npm run build:prod &&  npm run upload && ./deploy.sh",
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit",

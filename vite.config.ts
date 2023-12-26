@@ -22,6 +22,7 @@ export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
   const devWithHttps = Boolean(env?.HTTPS || false)
   const isProd = env.VITE_APP_ENV === 'prod'
+  const isPro = command === 'build'
 
   // const sentryConfig: ViteSentryPluginOptions = {
   //   authToken: env.VITE_APP_SENTRY_TOKEN,
@@ -118,7 +119,7 @@ export default defineConfig(({ command, mode }) => {
         }
       }
     },
-    base: '/',
+    base: isPro ? '//file.baixing.net/chato-fe/static/' : '/',
     build: {
       sourcemap: isProd,
       target: 'modules',

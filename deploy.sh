@@ -21,7 +21,7 @@ DEST_DIR="/opt/case/${APP_NAME}"
 #  exit 1
 # fi
 
-SVR=124.223.87.180 # test2.chato.cn 机器 - 国内
+SVR=124.223.87.180 #  国内
 USER="ubuntu"
 
 echo "[Deploy] Target env is: $SVR ($APP_NAME)"
@@ -30,4 +30,5 @@ echo "[Deploy] Dest dir is: $DEST_DIR"
 # 部署目标目录
 SERVER_DIR="$USER@$SVR:$DEST_DIR"
 
-scp -r $DIST_DIR $SERVER_DIR
+# 使用rsync命令上传，排除dist/assets目录
+rsync -av --exclude 'assets/' $DIST_DIR $SERVER_DIR
