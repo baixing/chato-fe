@@ -172,7 +172,7 @@
             @click-source="(questionId) => emit('showDrawer', questionId, botSlug)"
           />
           <el-divider v-else-if="item.displayType === 'remove'">
-            <span class="divider-tip"> 已清除与历史消息的关联，开始全新的会话 </span>
+            <span class="divider-tip"> 已开始全新的会话 </span>
           </el-divider>
         </template>
       </div>
@@ -973,7 +973,7 @@ const submit = async (str = '') => {
     content: xssFilterText
   })
   detail.value.show_recommend_question && initRecommendQuestions(xssFilterText)
-  isLoadingAnswer.value = true
+  // isLoadingAnswer.value = true
   commonRequestSocket(xssFilterText, msg_id, _id)
   socketStore.updatePeddingDomains(botSlug.value)
   // 语音播放重置
