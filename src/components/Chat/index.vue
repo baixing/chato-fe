@@ -806,7 +806,9 @@ function getBotInfo() {
       $notnull(route.query.p) ? submit(route.query.p as string) : ''
     })
     .catch(() => {})
-    .finally(() => {})
+    .finally(() => {
+      $isLoading.value = false
+    })
 }
 
 const scrollBottom = ref(true)
