@@ -172,7 +172,7 @@
             @click-source="(questionId) => emit('showDrawer', questionId, botSlug)"
           />
           <el-divider v-else-if="item.displayType === 'remove'">
-            <span class="divider-tip">{{ $t('已清除与历史消息的关联，开始全新的会话') }}</span>
+            <span class="divider-tip"> 已清除与历史消息的关联，开始全新的会话 </span>
           </el-divider>
         </template>
       </div>
@@ -359,7 +359,6 @@ import router, { RoutesMap } from '@/router'
 import { useAuthStore } from '@/stores/auth'
 import { useBase } from '@/stores/base'
 //@ts-ignore
-import { getCategoryList } from '@/api/aWang'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import usePlatform from '@/composables/usePlatform'
 import { useChatStore } from '@/stores/chat'
@@ -498,8 +497,6 @@ const showVisiblePublic = ref(false)
 const redirectCode = computed(() => (route.query.code as string) || '')
 const homeSlug = ref(route.query.homeSlug || 'ge9p359y4v27d2oq')
 const currentEnvIsWechat = isWechat()
-const AIDialogue = ref<IDomainInfo[]>()
-const AIPainting = ref<IDomainInfo[]>()
 
 const DefaultChatHistoryPage = {
   total: 0,
@@ -511,7 +508,7 @@ const chatHistoryParams: ChatHistoryParams = reactive({
   page: 1,
   page_size: 10
 })
-const { chatList } = storeToRefs(chatStoreI)
+const { chatList, AIDialogue, AIPainting } = storeToRefs(chatStoreI)
 const isInApplet = computed(() => source.value === CHATO_SOURCE_APPLET) // 判断是否在小程序环境
 const SSEInstance = new SSE()
 const socketStore = useSocketStore()
@@ -624,16 +621,6 @@ const initUserInfo = () => {
   userStore.checkUserLoginStatus(botSlug.value)
 }
 
-const getCategory = async () => {
-  const dialogueList = await getCategoryList('ai_chat')
-  AIDialogue.value = dialogueList.data.data.map((dialogue) =>
-    chatList.value.find((item) => item.slug === dialogue)
-  )
-  const drawList = await getCategoryList('ai_draw')
-  AIPainting.value = drawList.data.data.map((painting) => {
-    return chatList.value.find((item) => item.slug === painting)
-  })
-}
 // ----------------
 const sensorsOnSetBot = () => {
   $sensors?.track('a_wang_polymerization', {
@@ -1574,18 +1561,6 @@ watch(
 let observer
 
 onMounted(() => {
-  AIDialogue.value = [
-    'ge9p359y4v27d2oq',
-    '392mjrmgmzvrqxep',
-    'ymk867pn429rv941',
-    'q94e6rxnl8q7830m',
-    'l3evn7vnd41rxopq',
-    'ymk867pnzwxrv941'
-  ].map((dialogue) => chatList?.value.find((item) => item.slug === dialogue))
-  AIPainting.value = ['zk34lrlxwnvr9xnj'].map((dialogue) =>
-    chatList?.value.find((item) => item.slug === dialogue)
-  )
-  getCategory()
   document.addEventListener('click', onElClick)
 
   observer = new MutationObserver((mutationsList) => {
@@ -1798,6 +1773,7 @@ provide(SymChatToken, chatToken)
 
 .divider-tip {
   @apply text-xs;
+  white-space: nowrap;
   color: #dcdfe6;
 }
 
