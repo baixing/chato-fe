@@ -436,6 +436,21 @@ const loginedRoutes = [
   }
 ]
 
+// pay redirect
+const payRedirect = [
+  {
+    path: '/pay/redirect',
+    beforeEnter: (to, from, next) => {
+      const redirectUrl = to.query.redirect
+      if (redirectUrl) {
+        window.location.href = redirectUrl
+      } else {
+        next('/error/404') // 或者 next(Error('redirect URL not provided'));
+      }
+    }
+  }
+]
+
 const finalRoutes = [
   {
     path: '/:any+',
@@ -452,7 +467,8 @@ const router = createRouter({
     ...inviteMember,
     ...namespaceSwitch,
     ...finalRoutes,
-    ...guideRoutes
+    ...guideRoutes,
+    ...payRedirect
   ] as RouteRecordRaw[]
 })
 

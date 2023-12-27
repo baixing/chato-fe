@@ -145,7 +145,10 @@ const handlePayment = (isMobile, isWechatEnvironment, paymentData) => {
 
   if (isMobile) {
     if (isAppletEnv.value) {
-      return copyPaste(payment_code_url, '链接已复制，请在网页中打开进行支付')
+      return copyPaste(
+        `https://chato.cn/pay/redirect?redirect=${payment_code_url}`,
+        '链接已复制，请在网页中打开进行支付'
+      )
     }
 
     if (isWechatEnvironment) {
