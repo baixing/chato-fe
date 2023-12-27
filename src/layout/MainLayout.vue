@@ -38,13 +38,14 @@ import { ESpaceRightsType } from '@/enum/space'
 // import { useChatStore } from '@/stores/chat'
 // import { useDomainStore } from '@/stores/domain'
 // import { useSpaceStore } from '@/stores/space'
-import { nextTick, ref } from 'vue'
+import { defineAsyncComponent, nextTick, ref } from 'vue'
 // import { useRoute, useRouter } from 'vue-router'
 import { useBase } from '@/stores/base'
 import { useChatStore } from '@/stores/chat'
 import { useSpaceStore } from '@/stores/space'
-import Sidebar from './components/Sidebar/MainSidebar.vue'
 import Skeleton from './components/Skeleton/index.vue'
+
+const Sidebar = defineAsyncComponent(() => import('./components/Sidebar/MainSidebar.vue'))
 
 const { drawerVisible } = useSidebar()
 const { isMobile } = useBasicLayout()
@@ -72,15 +73,18 @@ const init = async () => {
     await baseStoreI.getAuthToken()
     // const userInfoRes = await baseStoreI.getUserInfo()
     // $sensors?.login(userInfoRes.id.toString())
-
-    await Promise.all([chatStoreI.initChatList()])
-
     // spaceStoreI.initSpaceQuota()
+    onInitChatList()
     loading.value = false
   } catch (e) {}
 }
 
 init()
+
+// 异步 initChatList
+const onInitChatList = async () => {
+  await Promise.all([chatStoreI.initChatList()])
+}
 
 nextTick(() => {
   checkRightsTypeNeedUpgrade(ESpaceRightsType.usage)

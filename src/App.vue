@@ -1,6 +1,6 @@
 <template>
   <el-config-provider :locale="clocale">
-    <div class="flex flex-col flex-1 h-full relative pb-[0.5px]">
+    <div class="flex flex-col flex-1 h-full relative pb-half-px">
       <router-view />
     </div>
   </el-config-provider>
@@ -73,32 +73,6 @@ window.previewImages = (imageStr: string, imageIndex = 0) => {
     images: imageUrlList
   })
 }
-
-// 检测浏览器是否支持0.5px -> 1px
-const onCheckPx = () => {
-  document.addEventListener('DOMContentLoaded', function () {
-    // 创建一个元素来测试
-    var testElement = document.createElement('div')
-    // 应用0.5px的padding-bottom
-    testElement.style.paddingBottom = '0.5px'
-    // 将元素添加到DOM中以获取计算样式
-    document.body.appendChild(testElement)
-    // 获取计算后的样式
-    var computedStyle = window.getComputedStyle(testElement)
-    // 检查计算后的样式是否实际应用了0.5px
-    if (computedStyle.paddingBottom !== '0.5px') {
-      // 如果没有应用0.5px，则使用1px
-      var elements = document.querySelectorAll('.pb-[0\\.5px]')
-      elements.forEach(function (el: any) {
-        el.style.paddingBottom = '1px'
-      })
-    }
-    // 清理测试元素
-    document.body.removeChild(testElement)
-  })
-}
-
-onCheckPx()
 </script>
 
 <style lang="scss" scoped>

@@ -70,6 +70,7 @@ const defaultForm = reactive({
 
 const isInAppOrApplet = [CHATO_SOURCE_APP, CHATO_SOURCE_APPLET]
 const isInApplet = computed(() => isInAppOrApplet.includes(source.value)) // 判断是否嵌入到小程序/app
+const isApp = computed(() => CHATO_SOURCE_APP === source.value) // app环境
 
 const correctAnswer = (e) => {
   defaultForm.title = e.question
@@ -108,9 +109,17 @@ const onTopNoPullDown = () => {
   )
 }
 
+const onCheckPx = () => {
+  var elements = document.querySelectorAll('.pb-half-px')
+  elements.forEach(function (el: any) {
+    el.style.paddingBottom = '1px'
+  })
+}
+
 onMounted(() => {
   onTopNoPullDown()
   document.body.style.overflow = 'auto'
+  isApp.value && onCheckPx()
 })
 </script>
 
