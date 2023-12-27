@@ -162,7 +162,7 @@ const handlePayment = (isMobile, isWechatEnvironment, paymentData) => {
 
 const initPayCode = async () => {
   try {
-    const payType = determinePayType(isMobile.value, currentEnvIsWechat)
+    const payType = determinePayType(isMobile.value, currentEnvIsWechat.value)
     const packageId = orderInfo.value.length ? orderInfo.value[0].id : 0
 
     const res = await postPurchaseProductionAPI(props.domainInfo.slug, {
@@ -173,7 +173,7 @@ const initPayCode = async () => {
 
     const { order_id, payment_code_url, payment_qr_code } = res.data.data
 
-    handlePayment(isMobile.value, currentEnvIsWechat, {
+    handlePayment(isMobile.value, currentEnvIsWechat.value, {
       order_id,
       payment_code_url,
       payment_qr_code
