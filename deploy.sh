@@ -30,5 +30,8 @@ echo "[Deploy] Dest dir is: $DEST_DIR"
 # 部署目标目录
 SERVER_DIR="$USER@$SVR:$DEST_DIR"
 
+#上传，不排除dist
+scp -r $DIST_DIR $SERVER_DIR
+
 # 使用rsync命令上传，排除dist/assets目录
-rsync -av --exclude 'assets/' $DIST_DIR $SERVER_DIR
+# rsync -av --exclude 'assets/' $DIST_DIR $SERVER_DIR

@@ -119,7 +119,7 @@ export default defineConfig(({ command, mode }) => {
         }
       }
     },
-    base: isPro ? '//file.baixing.net/chato-fe/static/' : '/',
+    base: '/',
     build: {
       sourcemap: isProd,
       target: 'modules',
