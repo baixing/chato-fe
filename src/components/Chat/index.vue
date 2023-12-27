@@ -374,13 +374,7 @@ import {
   onRouteWeixinDefaultLogin,
   randomString
 } from '@/utils/help'
-import {
-  convertToMarkdown,
-  regReplaceA,
-  regReplaceToArr,
-  regReplaceToNull,
-  removewRegReplaceA
-} from '@/utils/reg'
+import { convertToMarkdown, regReplaceA, removewRegReplaceA } from '@/utils/reg'
 import SSE from '@/utils/sse'
 import { getStringWidth } from '@/utils/string'
 import { isURL } from '@/utils/url'
@@ -788,24 +782,24 @@ function getBotInfo() {
         $notnull(res.data.data) && res.data.data.shortcuts
           ? JSON.parse(res.data.data.shortcuts)
           : []
-      if (botSlug.value === '-1' && isMobile.value)
-        detail.value.shortcuts = JSON.stringify([
-          { title: '创意写作', value: 'q3p4g76mzpdr62k1' },
-          { title: '四六级闯关游戏', value: 'v1xje74m3ke7m24y' },
-          { title: '约会演练', value: '64q805zzwzl59y31' },
-          { title: '短视频脚本', value: 'n081w73vk2erxdm2' },
-          { title: '艾瑞尼亚的冒险', value: 'l3evn7vjnz07xopq' },
-          { title: '朋友圈神器', value: '392mjrm3op27qxep' },
-          { title: '高情商回复', value: 'zkw4n78zvwy76281' },
-          { title: '文案润色', value: '64q805zo2v79y31g' },
-          { title: '营销策划', value: 'q3p4g76md0or62k1' },
-          { title: '心理咨询', value: 'gwk6d70wo905ve1o' },
-          { title: '工作汇报', value: 'kv9ez5yvxv5l3m46' },
-          { title: 'PPT大纲', value: 'v1xje74p2w37m24y' },
-          { title: 'Excel懂王', value: 'p8eldrky6vy7nky0' },
-          { title: '数据分析师', value: '21q4l51mx3k5nxom' },
-          { title: 'Bug终结者大师', value: 'dzwgq5o4okd73yp2' }
-        ])
+      // if (botSlug.value === '-1' && isMobile.value)
+      //   detail.value.shortcuts = JSON.stringify([
+      //     { title: '创意写作', value: 'q3p4g76mzpdr62k1' },
+      //     { title: '四六级闯关游戏', value: 'v1xje74m3ke7m24y' },
+      //     { title: '约会演练', value: '64q805zzwzl59y31' },
+      //     { title: '短视频脚本', value: 'n081w73vk2erxdm2' },
+      //     { title: '艾瑞尼亚的冒险', value: 'l3evn7vjnz07xopq' },
+      //     { title: '朋友圈神器', value: '392mjrm3op27qxep' },
+      //     { title: '高情商回复', value: 'zkw4n78zvwy76281' },
+      //     { title: '文案润色', value: '64q805zo2v79y31g' },
+      //     { title: '营销策划', value: 'q3p4g76md0or62k1' },
+      //     { title: '心理咨询', value: 'gwk6d70wo905ve1o' },
+      //     { title: '工作汇报', value: 'kv9ez5yvxv5l3m46' },
+      //     { title: 'PPT大纲', value: 'v1xje74p2w37m24y' },
+      //     { title: 'Excel懂王', value: 'p8eldrky6vy7nky0' },
+      //     { title: '数据分析师', value: '21q4l51mx3k5nxom' },
+      //     { title: 'Bug终结者大师', value: 'dzwgq5o4okd73yp2' }
+      //   ])
       inputLength.value = detail.value.question_max_length
       !socketStore.isExistInPeddingDomains(botSlug.value) && sayWelcome()
       // shareWeixinInit(detail.value)
@@ -891,10 +885,13 @@ function sayWelcome() {
       displayType: EMessageDisplayType.answer,
       id: `welcome-a`,
       isWelcome: true,
-      content: regReplaceToNull(detail.value.welcome)
+      content: regReplaceA(detail.value.welcome, {
+        class: 'welcome-a',
+        id: 'Chato_chat_label_click'
+      })
     })
-    recommendQuestions.value = regReplaceToArr(detail.value.welcome)
-    welcomeRecommendQuestions.value = regReplaceToArr(detail.value.welcome)
+    // recommendQuestions.value = regReplaceToArr(detail.value.welcome)
+    // welcomeRecommendQuestions.value = regReplaceToArr(detail.value.welcome)
   }
 }
 
