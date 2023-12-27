@@ -184,11 +184,11 @@ const onPreviewImage = (image: string) => {
               isAnswerMessage &&
               !ChatMessageAbnormaFinalStatus.includes(message.status)
             "
-            class="w-[60vw] max-w-[400px] max-h-[400px] relative"
+            class="max-w-[400px] relative"
           >
             <img
               v-loading="message.status === EWsMessageStatus.running"
-              class="w-full h-[60vw]"
+              class="w-[60vw] h-[60vw] max-w-[400px] max-h-[400px]"
               :src="message.content"
               @click="onPreviewImage(message.content)"
             />
