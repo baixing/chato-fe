@@ -82,8 +82,7 @@ const props = defineProps<{
 
 const emit = defineEmits(['update:value'])
 
-const isAppletEnv = ref(false)
-const currentEnvIsWechat = computed(() => isWechat() && !isAppletEnv.value)
+const currentEnvIsWechat = isWechat()
 const { t } = useI18n()
 const { isMobile: mobile } = useBasicLayout()
 const cuser = cuserStore()
@@ -94,6 +93,7 @@ const { loginStatus } = storeToRefs(cuser)
 const agreeBtn = ref(true)
 const paymentQrCode = ref('')
 const loading = ref(true)
+const isAppletEnv = ref(false)
 
 const isMobile = computed(() => mobile.value)
 
@@ -144,17 +144,9 @@ const handlePayment = (isMobile, isWechatEnvironment, paymentData) => {
   const { order_id, payment_code_url, payment_qr_code } = paymentData
 
   if (isMobile) {
-    if (isAppletEnv.value) {
-      return copyPaste(
-        `https://chato.cn/pay/redirect?redirect=${payment_code_url}`,
-        '链接已复制，请在网页中打开进行支付'
-      )
-    }
-
     if (isWechatEnvironment) {
       return onWeixinPay(payment_code_url)
     }
-
     return (window.location.href = payment_code_url)
   } else {
     paymentQrCode.value = `data:image/png;base64,${payment_qr_code}`
@@ -165,7 +157,7 @@ const handlePayment = (isMobile, isWechatEnvironment, paymentData) => {
 
 const initPayCode = async () => {
   try {
-    const payType = determinePayType(isMobile.value, currentEnvIsWechat.value)
+    const payType = determinePayType(isMobile.value, currentEnvIsWechat)
     const packageId = orderInfo.value.length ? orderInfo.value[0].id : 0
 
     const res = await postPurchaseProductionAPI(props.domainInfo.slug, {
@@ -176,7 +168,7 @@ const initPayCode = async () => {
 
     const { order_id, payment_code_url, payment_qr_code } = res.data.data
 
-    handlePayment(isMobile.value, currentEnvIsWechat.value, {
+    handlePayment(isMobile.value, currentEnvIsWechat, {
       order_id,
       payment_code_url,
       payment_qr_code
@@ -223,6 +215,13 @@ const onWeixinPay = async (id: string) => {
 const onHandlePay = async () => {
   if (!loginStatus.value) {
     return cuser.routerToLogin(props.domainInfo.slug, { pay: '1' })
+  }
+
+  if (isAppletEnv.value) {
+    return copyPaste(
+      `https://chato.cn/b/${props.domainInfo.slug}?source=Chato_share_web`,
+      '链接已复制，小程序暂不支持支付，请在网页中打开'
+    )
   }
 
   if (!orderInfo.value.length) {
