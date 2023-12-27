@@ -629,10 +629,12 @@ const getCategory = async () => {
   AIDialogue.value = dialogueList.data.data.map((dialogue) =>
     chatList.value.find((item) => item.slug === dialogue)
   )
+  console.log(AIDialogue.value)
   const drawList = await getCategoryList('ai_draw')
   AIPainting.value = drawList.data.data.map((painting) => {
     return chatList.value.find((item) => item.slug === painting)
   })
+  console.log(AIDialogue.value)
 }
 // ----------------
 const sensorsOnSetBot = () => {
@@ -1403,9 +1405,7 @@ const chatHisListener = (event) => {
   if (target instanceof HTMLElement) {
     const content = target.getAttribute('data-chref')
     const msg_id = target.getAttribute('data-cid')
-    console.log(content, 1)
     if (target.classList.contains('welcome-a') && $notnull(content) && !isLoadingAnswer.value) {
-      console.log(content, 2)
       submit(content)
     }
     if (
