@@ -12,7 +12,7 @@ export function regReplaceA(str: string, properties?: Record<string, string | nu
         }
       }
       // 否则进行替换
-      return `<div class= "py-1"> <a href="javascript:;" class="!font-medium !bg-white cursor-pointer px-4 py-1 !text-[#000] rounded-xl text-xs leading-6 tracking-[0.13px] flex items-center justify-between gap-2 transition-opacity hover:opacity-80" data-chref="${content}" data-sensors-label-question="${content}" ${aAttributes}>
+      return `<div class= "py-1"> <a href="javascript:;" class="!font-medium !bg-white cursor-pointer px-4 py-1 !text-[#000] rounded-xl text-xs leading-6 tracking-[0.13px] flex items-center justify-between gap-2 transition-opacity hover:opacity-80 ${properties['class']}" data-chref="${content}" data-sensors-label-question="${content}" ${aAttributes}>
       <span> ${content}</span> > </a> </div>`
     }
   })
