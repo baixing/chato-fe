@@ -72,6 +72,9 @@ export const RoutesMap = {
   namespaceSwitch: 'namespaceSwitch',
   endPlatform: {
     adCollectForm: 'endPlatformadCollectForm'
+  },
+  pay: {
+    payRediect: 'payRediect'
   }
 }
 
@@ -439,6 +442,7 @@ const loginedRoutes = [
 // pay redirect
 const payRedirect = [
   {
+    name: RoutesMap.pay.payRediect,
     path: '/pay/redirect',
     beforeEnter: (to, from, next) => {
       const redirectUrl = to.query.redirect
