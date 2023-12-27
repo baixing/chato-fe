@@ -74,7 +74,7 @@ const init = async () => {
     // const userInfoRes = await baseStoreI.getUserInfo()
     // $sensors?.login(userInfoRes.id.toString())
     // spaceStoreI.initSpaceQuota()
-    onInitChatList()
+    await onInitChatList()
     loading.value = false
   } catch (e) {}
 }

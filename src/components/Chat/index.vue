@@ -1013,7 +1013,8 @@ const chatCommonParams = computed<IChatCommonParams>(() => {
   return {
     domain_slug: detail.value.slug,
     token: chatToken.value,
-    visitor_type: isInternal ? (props.isreadRouteParam ? 'chat' : 'owner') : 'visitor'
+    visitor_type: isInternal ? (props.isreadRouteParam ? 'chat' : 'owner') : 'visitor',
+    type: isMidJourneyDomain.value ? 'img' : undefined
   }
 })
 
