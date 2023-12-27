@@ -134,7 +134,7 @@
         <div
           v-if="!isLoadingAnswer && recommendQuestions.length"
           v-loading="recommendQuestionsLoading"
-          class="!mt-4 space-y-2"
+          class="!mt-4 space-y-2 box-border"
         >
           <div
             v-for="(item, index) in recommendQuestions"
