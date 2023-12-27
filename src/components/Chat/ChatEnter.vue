@@ -253,9 +253,10 @@ const internalEnterDisabled = computed({
 const internalHiddenClear = computed(() => props.hiddenClear)
 const internalLastQuestionId = computed(() => props.lastQuestionId)
 const isAiGenerate = computed(() => props.isAiGenerate)
-const inputPlaceholder = computed(() =>
-  isMobile.value ? '请输入问题' : '输入问题，换行可通过shift+回车'
-)
+const inputPlaceholder = computed(() => {
+  if (internalHiddenClear.value) return '请输入你脑海里的有趣画面'
+  return isMobile.value ? '请输入问题' : '输入问题，换行可通过shift+回车'
+})
 
 const inDebug = computed(() => RoutesMap.tranning.roleInfo === route.name)
 

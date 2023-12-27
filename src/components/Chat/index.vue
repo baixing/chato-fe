@@ -144,7 +144,7 @@
             :data-sensors-recommend-click-question="item.question"
             :key="`rq_${index}`"
             @click="onClickRecommend(item.question)"
-            class="cursor-pointer px-4 py-1 text-[#2F3447] rounded-3xl text-xs leading-6 tracking-[0.13px] border border-solid border-[#E4E7ED] flex items-center justify-between gap-2 transition-opacity hover:opacity-80"
+            class="!font-medium cursor-pointer px-4 py-1 text-[#2F3447] rounded-3xl text-xs leading-6 tracking-[0.13px] border border-solid border-[#E4E7ED] flex items-center justify-between gap-2 transition-opacity hover:opacity-80"
           >
             <span>{{ item.question }}</span>
             <el-icon :size="16"><Right /></el-icon>
@@ -498,8 +498,8 @@ const showVisiblePublic = ref(false)
 const redirectCode = computed(() => (route.query.code as string) || '')
 const homeSlug = ref(route.query.homeSlug || 'ge9p359y4v27d2oq')
 const currentEnvIsWechat = isWechat()
-const AIDialogue = ref<IDomainInfo[]>([])
-const AIPainting = ref<IDomainInfo[]>([])
+const AIDialogue = ref<IDomainInfo[]>()
+const AIPainting = ref<IDomainInfo[]>()
 
 const DefaultChatHistoryPage = {
   total: 0,
@@ -629,12 +629,10 @@ const getCategory = async () => {
   AIDialogue.value = dialogueList.data.data.map((dialogue) =>
     chatList.value.find((item) => item.slug === dialogue)
   )
-  console.log(AIDialogue.value)
   const drawList = await getCategoryList('ai_draw')
   AIPainting.value = drawList.data.data.map((painting) => {
     return chatList.value.find((item) => item.slug === painting)
   })
-  console.log(AIDialogue.value)
 }
 // ----------------
 const sensorsOnSetBot = () => {
@@ -986,6 +984,7 @@ const submit = async (str = '') => {
     content: xssFilterText
   })
   detail.value.show_recommend_question && initRecommendQuestions(xssFilterText)
+  isLoadingAnswer.value = true
   commonRequestSocket(xssFilterText, msg_id, _id)
   socketStore.updatePeddingDomains(botSlug.value)
   // 语音播放重置
@@ -1134,11 +1133,13 @@ async function sendMsgRequest(message) {
 
 const generateMessage = (data, key) => {
   const isFinalStatus = ChatMessageFinalStatus.includes(data.status)
-  isLoadingAnswer.value = !isFinalStatus && !isMidJourneyDomain.value
+  isLoadingAnswer.value = !isFinalStatus
   if (continueTarget.value) {
     continueTarget.value.innerText = '继续'
   }
-
+  if (isFinalStatus && isMidJourneyDomain.value) {
+    clearChatHistory()
+  }
   const defaulthHistoryItem: IMessageItem = {
     displayType: EMessageDisplayType.answer,
     msg_id: key,
@@ -1571,6 +1572,17 @@ watch(
 let observer
 
 onMounted(() => {
+  AIDialogue.value = [
+    'ge9p359y4v27d2oq',
+    '392mjrmgmzvrqxep',
+    'ymk867pn429rv941',
+    'q94e6rxnl8q7830m',
+    'l3evn7vnd41rxopq',
+    'ymk867pnzwxrv941'
+  ].map((dialogue) => chatList?.value.find((item) => item.slug === dialogue))
+  AIPainting.value = ['zk34lrlxwnvr9xnj'].map((dialogue) =>
+    chatList?.value.find((item) => item.slug === dialogue)
+  )
   getCategory()
   document.addEventListener('click', onElClick)
 

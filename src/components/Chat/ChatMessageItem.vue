@@ -184,11 +184,11 @@ const onPreviewImage = (image: string) => {
               isAnswerMessage &&
               !ChatMessageAbnormaFinalStatus.includes(message.status)
             "
-            class="w-[60vw] h-[60vw] max-w-[400px] max-h-[400px] relative"
+            class="w-[60vw] max-w-[400px] max-h-[400px] relative"
           >
             <img
               v-loading="message.status === EWsMessageStatus.running"
-              class="w-full h-full"
+              class="w-full h-[60vw]"
               :src="message.content"
               @click="onPreviewImage(message.content)"
             />
@@ -198,6 +198,9 @@ const onPreviewImage = (image: string) => {
             >
               {{ mjProgress }}
             </p>
+            <div class="mt-2" v-if="message.status !== EWsMessageStatus.running">
+              增加内容和细节要求，并尝试明确绘画风格，效果会截然不同，继续试试吧。
+            </div>
           </div>
           <div v-else class="overflow-hidden w-auto markdown-body">
             <ChatMessageAudio v-if="audioVisible" :player-id="internalAudioPlayerId" />
