@@ -144,13 +144,14 @@ const handlePayment = (isMobile, isWechatEnvironment, paymentData) => {
   const { order_id, payment_code_url, payment_qr_code } = paymentData
 
   if (isMobile) {
+    if (isAppletEnv.value) {
+      return copyPaste(payment_code_url, '链接已复制，请在网页中打开进行支付')
+    }
+
     if (isWechatEnvironment) {
       return onWeixinPay(payment_code_url)
     }
 
-    if (isAppletEnv.value) {
-      return copyPaste(payment_code_url, '链接已复制，请在网页中打开进行支付')
-    }
     return (window.location.href = payment_code_url)
   } else {
     paymentQrCode.value = `data:image/png;base64,${payment_qr_code}`
