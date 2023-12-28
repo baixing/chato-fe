@@ -1132,7 +1132,7 @@ async function sendMsgRequest(message) {
 
 const generateMessage = (data, key) => {
   const isFinalStatus = ChatMessageFinalStatus.includes(data.status)
-  isLoadingAnswer.value = !isFinalStatus
+  isLoadingAnswer.value = !isFinalStatus && data.type != 'image'
   if (continueTarget.value) {
     continueTarget.value.innerText = '继续'
   }
@@ -1237,7 +1237,7 @@ async function clearChatHistory() {
         displayType: EMessageDisplayType.remove
       })
 
-      recommendQuestions.value = []
+      // recommendQuestions.value = []
       history.value = newHistory
     } else {
       Notification.error(data.msg)
