@@ -249,6 +249,17 @@
           'mb-2 leading-4 text-[10px] flex justify-center text-center shrink-0',
           !isCustomerBrand && 'cursor-pointer'
         ]"
+        v-if="botSlug === '-1' || chatList.map((item) => item.slug).includes(botSlug)"
+        @click="onFooterBrandLink"
+      />
+      <ChatFooter
+        v-else-if="detail.brand_show"
+        :name="detail.brand_name"
+        :logo="detail.brand_logo"
+        :class="[
+          'mb-2 leading-4 text-xs flex justify-center text-[#596780] text-center shrink-0',
+          !isCustomerBrand && 'cursor-pointer'
+        ]"
         @click="onFooterBrandLink"
       />
       <!-- --- -->
