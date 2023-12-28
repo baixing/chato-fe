@@ -1025,11 +1025,7 @@ const onTerminateRetry = async () => {
       return
     }
 
-    const content = lastAnswer.content
-    // regReplaceA('#继续#', {
-    //   class: 'answer-continue',
-    //   'data-cid': lastAnswer.msg_id || lastAnswer.questionId
-    // })
+    const content = lastAnswer.content + '<p class="text-right !mb-0 text-[#6c757d]">已停止回答</p>'
 
     const terminateParams = {
       type: 'close',
@@ -1054,7 +1050,7 @@ const onTerminateRetry = async () => {
       }))
 
     if (!lastAnswer.questionId) {
-      lastAnswer.content = '回答已终止'
+      lastAnswer.content = '已停止回答'
       lastAnswer.status = EWsMessageStatus.done
       isLoadingAnswer.value = false
       return
@@ -1069,12 +1065,12 @@ watch(isTerminated, (v) => {
   if (v) {
     const optMsg = history.value[0]
     // 触发了终止且当前机器人不是 MidJourney，消息后接上继续
-    if (!isMidJourneyDomain.value) {
-      optMsg.content += regReplaceA('#继续#', {
-        class: 'answer-continue',
-        'data-cid': optMsg.msg_id || optMsg.questionId
-      })
-    }
+    // if (!isMidJourneyDomain.value) {
+    // optMsg.content += regReplaceA('#继续#', {
+    //   class: 'answer-continue',
+    //   'data-cid': optMsg.msg_id || optMsg.questionId
+    // })
+    // }
     optMsg.status = EWsMessageStatus.done
   } else if (!isLoadingAnswer.value) {
     let newHistory = [...history.value]
@@ -1133,9 +1129,9 @@ async function sendMsgRequest(message) {
 const generateMessage = (data, key) => {
   const isFinalStatus = ChatMessageFinalStatus.includes(data.status)
   isLoadingAnswer.value = !isFinalStatus
-  if (continueTarget.value) {
-    continueTarget.value.innerText = '继续'
-  }
+  // if (continueTarget.value) {
+  //   continueTarget.value.innerText = '继续'
+  // }
   if (isFinalStatus && isMidJourneyDomain.value) {
     clearChatHistory()
   }
