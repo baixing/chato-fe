@@ -189,6 +189,12 @@ const onPreviewImage = (image: string) => {
             <img
               v-loading="message.status === EWsMessageStatus.running"
               class="w-[60vw] h-[60vw] max-w-[400px] max-h-[400px]"
+              @error="
+                (img) => {
+                  (img.target as HTMLImageElement).src =
+                    'https://afu-1255830993.cos.ap-shanghai.myqcloud.com/resource/mj_error.png'
+                }
+              "
               :src="message.content"
               @click="onPreviewImage(message.content)"
             />
