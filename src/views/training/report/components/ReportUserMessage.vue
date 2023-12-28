@@ -20,7 +20,7 @@
             :key="item.sender_uid"
             :class="[
               'flex items-center gap-2 rounded-md px-2 py-[6px] overflow-hidden transition-colors cursor-pointer hover:bg-[#f2f3f5bd]',
-              activeChatUser === item.sender_uid && 'bg-[#f6f3ffcf] hover:!bg-[#f6f3ffcf]'
+              activeChatUser === item.sender_uid && 'bg-[#f2f3f5bd]'
             ]"
             @click="onChangeActiveChatUser(item.sender_uid, index)"
           >

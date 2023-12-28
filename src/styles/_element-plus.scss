@@ -97,18 +97,21 @@
 
 .chato-form {
   .el-form-item {
-    margin-bottom: 32px;
+    margin-bottom: 24px;
   }
 
   .el-form-item__label {
     padding: 0;
-    margin-bottom: 16px !important;
     font-size: 14px;
     font-weight: 500;
     line-height: 16px;
     letter-spacing: 0.13px;
     color: #303133;
     // pointer-events: none;
+  }
+
+  .el-form-item__error {
+    padding-top: 4px;
   }
 }
 
@@ -163,5 +166,13 @@
         border-radius: 8px;
       }
     }
+  }
+}
+
+.chato-drawer {
+  .el-drawer__header {
+    margin-bottom: 0;
+    color: #303133;
+    font-weight: 500;
   }
 }

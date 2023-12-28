@@ -1,5 +1,5 @@
 <template>
-  <div class="relative shrink-0" :style="{ height: `${size}px` }">
+  <div class="relative shrink-0" :style="{ height: `${size}px`, lineHeight: `${size}px` }">
     <el-avatar :size="size" :style="{ '--el-avatar-bg-color': avatar ? 'transparent' : undefined }">
       <img v-if="avatar.isUrl" :src="avatar.url" class="w-full h-full object-cover" />
       <span

@@ -4,14 +4,14 @@
     @click="onCardClick"
   >
     <div class="flex justify-between items-center">
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-3 overflow-hidden">
         <Avatar
           :avatar="internalBot.avatar || DefaultAvatar"
           class="w-11 h-11 rounded-full overflow-hidden shrink-0 lg:w-9 lg:h-9"
           :size="isMobile ? 36 : 44"
           :name="internalBot.name.slice(0, 2)"
         />
-        <span class="inline-block truncate font-medium text-[#3D3D3D]">
+        <span class="truncate font-medium text-[#3D3D3D]">
           {{ internalBot.name }}
         </span>
       </div>
