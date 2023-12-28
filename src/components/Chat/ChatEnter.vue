@@ -47,6 +47,7 @@
     <template v-else>
       <div class="input-box-content">
         <el-input
+          ref="inputRef"
           resize="none"
           type="textarea"
           :autosize="{ maxRows: 5 }"
@@ -215,7 +216,7 @@ import type { IDomainInfo } from '@/interface/domain'
 import { RoutesMap } from '@/router'
 import type { UploadRawFile } from 'element-plus'
 import { debounce } from 'lodash'
-import { computed, inject, nextTick, onBeforeUnmount, ref, watch, type Ref } from 'vue'
+import { computed, inject, nextTick, onBeforeUnmount, onMounted, ref, watch, type Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 
@@ -237,6 +238,7 @@ const route = useRoute()
 const { isMobile } = useBasicLayout()
 const messageImg = ref<string>()
 const domainDetail = inject<Ref<IDomainInfo>>(SymChatDomainDetail)
+const inputRef = ref(null)
 
 const chatRecordingEnterVisible = ref(false)
 
@@ -417,6 +419,17 @@ watch(
 onBeforeUnmount(() => {
   onCloseRecorder()
 })
+
+onMounted(() => {
+  const Eltext = document.querySelectorAll('.el-textarea')
+  Eltext.forEach((item) => {
+    item.addEventListener('click', (event) => {
+      event.preventDefault() // 阻止任何默认行为
+      event.stopPropagation() // 阻止事件冒泡
+      inputRef.value.focus()
+    })
+  })
+})
 </script>
 
 <style lang="scss" scoped>
@@ -434,7 +447,7 @@ onBeforeUnmount(() => {
   }
 
   .input-box-content {
-    @apply rounded-3xl py-1 pl-4 pr-1;
+    @apply rounded-3xl py-1 pl-4 pr-1 py-0;
     flex: 1;
     display: flex;
     align-items: center;
@@ -480,6 +493,7 @@ onBeforeUnmount(() => {
   :deep(.el-textarea) {
     display: flex;
     align-items: center;
+    min-height: 38px;
   }
 
   :deep(.el-textarea__inner) {

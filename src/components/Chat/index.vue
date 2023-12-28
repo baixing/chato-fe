@@ -1026,12 +1026,11 @@ const onTerminateRetry = async () => {
       return
     }
 
-    const content =
-      lastAnswer.content +
-      regReplaceA('#继续#', {
-        class: 'answer-continue',
-        'data-cid': lastAnswer.msg_id || lastAnswer.questionId
-      })
+    const content = lastAnswer.content
+    // regReplaceA('#继续#', {
+    //   class: 'answer-continue',
+    //   'data-cid': lastAnswer.msg_id || lastAnswer.questionId
+    // })
 
     const terminateParams = {
       type: 'close',
