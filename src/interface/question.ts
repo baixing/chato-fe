@@ -18,4 +18,5 @@ export interface IRecommendQuestion {
 
 export interface IRecommendQuestionParams extends IChatCommonParams {
   question: string
+  type: string
 }
