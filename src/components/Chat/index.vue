@@ -1129,9 +1129,6 @@ async function sendMsgRequest(message) {
 const generateMessage = (data, key) => {
   const isFinalStatus = ChatMessageFinalStatus.includes(data.status)
   isLoadingAnswer.value = !isFinalStatus && data.type != 'image'
-  // if (continueTarget.value) {
-  //   continueTarget.value.innerText = '继续'
-  // }
   if (isFinalStatus && isMidJourneyDomain.value) {
     clearChatHistory()
   }
@@ -1450,7 +1447,7 @@ const onElClick = (event) => {
 const recommendQuestionsLoading = ref(false)
 const recommendBaseQuestion = ref('')
 const recommendQuestions = ref<IRecommendQuestion[]>([])
-const welcomeRecommendQuestions = ref<IRecommendQuestion[]>([])
+// const welcomeRecommendQuestions = ref<IRecommendQuestion[]>([])
 
 const initRecommendQuestions = async (question: string) => {
   try {
@@ -1464,9 +1461,7 @@ const initRecommendQuestions = async (question: string) => {
       question,
       type: isMidJourneyDomain.value ? 'img' : 'chat'
     })
-    recommendQuestions.value = isMidJourneyDomain.value
-      ? welcomeRecommendQuestions.value
-      : data.recommends.filter((item) => item.question != '')
+    recommendQuestions.value = data.recommends.filter((item) => item.question != '')
     scrollChatHistory()
   } catch (e) {
   } finally {

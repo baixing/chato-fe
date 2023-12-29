@@ -109,7 +109,7 @@ export const getTTS = (data: ITTSParams) => {
 export const getChatRecommendQuestions = (data: IRecommendQuestionParams) => {
   return request<{ recommends: IRecommendQuestion[] }>({
     method: 'post',
-    url: 'api/recommend/question',
+    url: 'api/question/suggest',
     data
   })
 }
