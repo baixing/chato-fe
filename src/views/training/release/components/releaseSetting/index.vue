@@ -469,7 +469,10 @@ const onSave = async () => {
 }
 
 const initMobileList = async () => {
-  const res = await getMobileLimitAPI(domainInfo.value.id, { page: 1, page_size: 10 })
+  const res = await getMobileLimitAPI(domainInfo.value.id, {
+    page: pageMobileConfig.page,
+    page_size: pageMobileConfig.page_size
+  })
   const pagination = res.data.meta.pagination
   pageMobileConfig.mobileList = res.data.data
   pageMobileConfig.page = pagination.page
