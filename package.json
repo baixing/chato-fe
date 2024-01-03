@@ -32,7 +32,7 @@
     "copy-to-clipboard": "^3.3.3",
     "cos-js-sdk-v5": "^1.4.21",
     "dayjs": "^1.11.10",
-    "element-plus": "2.3.4",
+    "element-plus": "2.4.3",
     "github-markdown-css": "^5.2.0",
     "highlight.js": "^11.8.0",
     "jsencrypt": "^3.3.2",
