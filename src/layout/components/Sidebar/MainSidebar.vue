@@ -64,7 +64,7 @@ const allMenuList = [
   { title: t('训练中心'), icon: 'robot-filled', routeName: RoutesMap.manager.center },
   { title: t('我的对话'), icon: 'chat-filled', routeName: RoutesMap.chat.c },
   // { title: t('资源广场'), icon: 'cube-filled', routeName: RoutesMap.resource }
-  { title: t('AI 插件库'), icon: 'cube-filled', routeName: RoutesMap.aiPlugin.center },
+  // { title: t('AI 插件库'), icon: 'cube-filled', routeName: RoutesMap.aiPlugin.center },
   { title: t('对话 Flow'), icon: 'flow-filled', routeName: RoutesMap.flow.index }
 ]
 
@@ -85,10 +85,8 @@ const { chatList } = storeToRefs(chatStoreI)
 const { domainInfo } = storeToRefs(domainStoreI)
 
 const sideMenuList = computed(() => {
-  if (userInfo.value.role === 'superman') {
+  if (isManagerRole(userInfo.value.role)) {
     return allMenuList
-  } else if (isManagerRole(userInfo.value.role)) {
-    return allMenuList.slice(0, -1)
   } else {
     return allMenuList.slice(1)
   }
