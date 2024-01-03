@@ -43,7 +43,7 @@ import { EMessageActionType, EMessageDisplayType, EMessageEvalution } from '@/en
 import type { IDomainInfo } from '@/interface/domain'
 import type { IMessageItem } from '@/interface/message'
 import { copyPaste, downloadImg, generatePreviewImgUrl } from '@/utils/help'
-import { removewRegReplaceA } from '@/utils/reg'
+import { regReplaceImg, removewRegReplaceA } from '@/utils/reg'
 import {
   CirclePlus,
   CopyDocument,
@@ -180,7 +180,7 @@ const onMoreAction = (action: EMessageActionType) => {
       onTranslate(content, questionId)
       break
     case EMessageActionType.copy:
-      copyPaste(content)
+      copyPaste(regReplaceImg(content))
       break
     case EMessageActionType.delete:
       onDelete(questionId)

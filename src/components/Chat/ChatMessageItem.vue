@@ -188,7 +188,7 @@ const onPreviewImage = (image: string) => {
           >
             <img
               v-loading="message.status === EWsMessageStatus.running"
-              class="w-[60vw] h-[60vw] max-w-[400px] max-h-[400px]"
+              class="max-w-[400px] max-h-[400px] w-auto h-auto"
               @error="
                 (img) => {
                   (img.target as HTMLImageElement).src =

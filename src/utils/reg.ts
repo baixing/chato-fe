@@ -15,6 +15,16 @@ export function regReplaceA(str: string, properties?: Record<string, string | nu
   })
 }
 
+export const regReplaceImg = (str: string) => {
+  const regex = /\*\*([^*]+)\*\*/g
+  const matches = str.match(regex)
+  if (matches) {
+    return matches[0].replace(/\*\*/g, '')
+  } else {
+    return str
+  }
+}
+
 export function regReplaceToNull(str: string) {
   const regex = /#\s*([^#\s]+)\s*#(?!\\n)/g
   return str.replace(regex, (match, content) => {

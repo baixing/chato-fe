@@ -1447,7 +1447,6 @@ const onElClick = (event) => {
 const recommendQuestionsLoading = ref(false)
 const recommendBaseQuestion = ref('')
 const recommendQuestions = ref<IRecommendQuestion[]>([])
-// const welcomeRecommendQuestions = ref<IRecommendQuestion[]>([])
 
 const initRecommendQuestions = async (question: string) => {
   try {
