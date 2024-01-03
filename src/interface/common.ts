@@ -12,13 +12,13 @@ export interface IResponse<T> {
 
 export interface IPage {
   page: number
-  total: number
+  total?: number
   page_count: number
   page_size?: number
   size?: number
 }
 
-export type IPageFilter<T> = Pick<IPage, 'page' | 'page_size'> & {
+export type IPageFilter<T = any> = Pick<IPage, 'page' | 'page_size'> & {
   [key in keyof T]?: T[key]
 }
 

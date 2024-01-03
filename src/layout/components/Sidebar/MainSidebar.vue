@@ -60,12 +60,16 @@ import SidebarBottom from './SidebarBottom.vue'
 
 const { t } = useI18n()
 
-const allMenuList = [
+const normalMenuList = [
   { title: t('训练中心'), icon: 'robot-filled', routeName: RoutesMap.manager.center },
-  { title: t('我的对话'), icon: 'chat-filled', routeName: RoutesMap.chat.c },
+  { title: t('我的对话'), icon: 'chat-filled', routeName: RoutesMap.chat.c }
   // { title: t('资源广场'), icon: 'cube-filled', routeName: RoutesMap.resource }
   // { title: t('AI 插件库'), icon: 'cube-filled', routeName: RoutesMap.aiPlugin.center },
-  { title: t('对话 Flow'), icon: 'flow-filled', routeName: RoutesMap.flow.index }
+]
+
+const supermanMenuList = [
+  { title: t('对话 Flow'), icon: 'flow-filled', routeName: RoutesMap.flow.index },
+  { title: t('私域运营'), icon: 'activity-filled', routeName: RoutesMap.activity.index }
 ]
 
 const secondarySidebar = {
@@ -86,11 +90,11 @@ const { domainInfo } = storeToRefs(domainStoreI)
 
 const sideMenuList = computed(() => {
   if (userInfo.value.role === 'superman') {
-    return allMenuList
+    return normalMenuList.concat(supermanMenuList)
   } else if (isManagerRole(userInfo.value.role)) {
-    return allMenuList.slice(0, -1)
+    return normalMenuList
   } else {
-    return allMenuList.slice(1, -1)
+    return normalMenuList.slice(1)
   }
 })
 
@@ -98,14 +102,15 @@ const activeSideMenu = computed(() => {
   if (
     route.name === RoutesMap.chat.c ||
     route.name === RoutesMap.home.homeResource ||
-    route.name === RoutesMap.chat.navigator ||
-    route.name === RoutesMap.aiPlugin.center
+    route.name === RoutesMap.chat.navigator
   ) {
     return route.name
   } else if (/^(tranning|manager).*/.test(route.name as string)) {
     return RoutesMap.manager.center
   } else if (/^(flow).*/.test(route.name as string)) {
     return RoutesMap.flow.index
+  } else if (/^(activity).*/.test(route.name as string)) {
+    return RoutesMap.activity.index
   } else {
     return ''
   }

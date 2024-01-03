@@ -42,6 +42,10 @@ export const RoutesMap = {
     index: 'flowIndex',
     intention: 'flowIntention'
   },
+  activity: {
+    index: 'activityIndex',
+    message: 'activityMessage'
+  },
   resource: 'resource',
   tranning: {
     bot: 'tranningBot',
@@ -368,6 +372,26 @@ const flowManager = [
   }
 ]
 
+// 活动
+const activityManager = [
+  {
+    path: 'activity',
+    component: RouterView,
+    children: [
+      {
+        name: RoutesMap.activity.index,
+        path: '',
+        component: () => import('@/views/activity/index.vue')
+      },
+      {
+        name: RoutesMap.activity.message,
+        path: ':activityId/message',
+        component: () => import('@/views/activity/message.vue')
+      }
+    ]
+  }
+]
+
 // 空间
 const spaceManager = [
   {
@@ -455,9 +479,10 @@ const loginedRoutes = [
       ...trainningRoutes, // 训练中心
       ...managerRoutes, // 管理机器人
       ...resourceSquareRoutes, // 资源广场
-      ...aiPluginSquareRoutes, // AI插件库
+      // ...aiPluginSquareRoutes, // AI插件库
       ...spaceManager,
       ...flowManager,
+      ...activityManager,
       ...vipManager
       // ...guideRoutes // 引导
     ]

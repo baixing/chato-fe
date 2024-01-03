@@ -6,7 +6,7 @@
     @select="(v) => emit('select', v)"
     class="font-medium space-x-2 horizontal-menu"
     :style="{
-      '--el-menu-item-height': `${height}px`
+      '--el-menu-horizontal-height': `${height}px`
     }"
   >
     <el-menu-item v-for="item in menus" :key="item.routeName" :index="item.routeName">
