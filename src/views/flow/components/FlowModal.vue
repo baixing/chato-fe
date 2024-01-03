@@ -70,6 +70,7 @@ const onSaveFlow = async () => {
     await addFlow(formState)
     ElNotification.success(t('保存成功'))
     emit('success')
+    internalVisible.value = false
   } catch (e) {}
 }
 
