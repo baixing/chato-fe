@@ -133,7 +133,6 @@
         <!-- 问题推荐-提问示例 -->
         <div
           v-if="!isLoadingAnswer && recommendQuestions.length"
-          v-loading="recommendQuestionsLoading"
           class="!mt-4 space-y-2 box-border z-[999]"
         >
           <div
@@ -698,6 +697,9 @@ const onHiddenChatMore = () => {
 }
 
 const onChatHistoryScroll = () => {
+  if (isLoadingAnswer.value) {
+    scrollBottom.value = false
+  }
   onHiddenChatMore()
   scrollHistory()
 }

@@ -7,7 +7,8 @@ import Prism from 'prismjs'
 const md = MarkdownIt({
   html: true,
   breaks: true,
-  highlight: function (str: string, lang: string) {
+  highlight: function (str: string, originLang: string = 'nginx') {
+    const lang = originLang || 'nginx'
     const langHtml = lang ? `<span>${lang}</span>` : ''
     const copyButtonHtml = `<div ref="copyBtns" class="copy-btn-code">Copy <span class="text">${str}</span> </div>`
     let renderCode = ''
@@ -25,7 +26,11 @@ const md = MarkdownIt({
       renderCode = Prism.highlight(str, Prism.languages['javascript'], 'javascript')
     }
 
-    return `<div class="top-set-bg flex justify-between px-4 py-2">${langHtml}${copyButtonHtml}</div> <pre class="language-${lang}"><code>${renderCode}</code></pre>`
+    return `
+    <div class="top-set-bg flex justify-between px-4 py-2 text-[#fff]">
+    ${langHtml}${copyButtonHtml}
+    </div> <pre class="language-${lang || 'nginx'}">
+      <code>${renderCode}</code></pre>`
   }
 })
 
