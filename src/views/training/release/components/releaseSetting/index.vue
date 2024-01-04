@@ -190,10 +190,10 @@
           <span class="mr-3">
             {{
               $t('已录入 {mobileNumber} 个手机号', {
-                mobileNumber: pageMobileConfig.mobileList.length
+                mobileNumber: pageMobileConfig.total
               })
-            }}</span
-          >
+            }}
+          </span>
           <el-button link type="primary" @click="listManagementRef = true">
             {{ $t('名单管理') }}
           </el-button>
