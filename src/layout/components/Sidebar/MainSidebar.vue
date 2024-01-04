@@ -85,10 +85,12 @@ const { chatList } = storeToRefs(chatStoreI)
 const { domainInfo } = storeToRefs(domainStoreI)
 
 const sideMenuList = computed(() => {
-  if (isManagerRole(userInfo.value.role)) {
+  if (userInfo.value.role === 'superman') {
     return allMenuList
+  } else if (isManagerRole(userInfo.value.role)) {
+    return allMenuList.slice(0, -1)
   } else {
-    return allMenuList.slice(1)
+    return allMenuList.slice(1, -1)
   }
 })
 
