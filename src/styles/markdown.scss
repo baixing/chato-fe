@@ -7,6 +7,7 @@
   font-size: 0.8em;
   cursor: pointer;
 }
+
 .top-set-bg {
   background-color: rgba(52, 53, 65, 1);
   position: absolute;
@@ -34,10 +35,12 @@ pre .token.operator {
   display: none;
   bottom: 0;
   right: 0;
+  color: #fff;
 }
 
 .markdown-body pre {
   background-color: #272822 !important;
+  color: #fff;
 }
 
 .copy-btn-code .text {
@@ -71,9 +74,11 @@ pre code {
   white-space: normal;
   background-color: transparent;
   font-size: 15px;
+
   pre {
     background-color: #272822 !important;
   }
+
   pre code {
     tab-size: 4;
   }
@@ -81,6 +86,7 @@ pre code {
   table {
     width: auto;
   }
+
   img {
     width: 90px;
     height: 90px;
@@ -92,6 +98,7 @@ pre code {
   }
 
   li {
+
     ul,
     ol {
       margin-top: 0.25em;
