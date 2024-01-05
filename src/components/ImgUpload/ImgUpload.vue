@@ -60,7 +60,7 @@
             </div>
           </div>
         </div>
-        <div v-else class="w-7 h-7">
+        <div v-else class="w-7 h-7 text-center leading-7">
           <el-icon>
             <Plus />
           </el-icon>
