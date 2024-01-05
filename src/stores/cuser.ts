@@ -4,6 +4,7 @@ import type { ICUserBuyProductionDetail } from '@/interface/order'
 import { RoutesMap } from '@/router'
 import { ElNotification as Notification } from 'element-plus'
 import { defineStore, storeToRefs } from 'pinia'
+import { v4 as uuidv4 } from 'uuid'
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter, type LocationQuery } from 'vue-router'
@@ -58,7 +59,7 @@ export const cuserStore = defineStore('cuser', () => {
 
   // 退出登录
   const loginoutCuser = () => {
-    authStore.setUid('')
+    authStore.setUid(uuidv4())
     buyOrderInfo.value = []
     loginStatus.value = false
   }
