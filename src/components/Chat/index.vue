@@ -79,7 +79,7 @@
           class="!mt-4 space-y-2"
         >
           <div
-            v-for="(item, index) in recommendQuestions"
+            v-for="(item, index) in recommendQuestions.filter((_, index) => index < 3)"
             data-sensors-click
             id="Chato_chat_recommend_question_click"
             :data-sensors-recommend-base-question="recommendBaseQuestion"
