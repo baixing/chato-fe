@@ -53,6 +53,8 @@
           <el-date-picker
             v-model="formState.send_time"
             type="datetime"
+            format="YYYY-MM-DD HH:mm:ss"
+            value-format="YYYY-MM-DD HH:mm:ss"
             :placeholder="$t('请选择')"
           />
         </el-form-item>
