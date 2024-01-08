@@ -532,7 +532,7 @@ async function init() {
   watermarkFunc()
   if (currentEnvIsWechat && !!detail.value.customer_limit.payment_limit_switch) {
     wx.miniProgram.getEnv(function (res) {
-      if (!res.miniprogram) {
+      if (!res.miniprogram && location.host.includes('chato.cn')) {
         onWeixinH5DefaultLogin()
       }
     })
