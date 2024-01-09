@@ -26,7 +26,7 @@ export const ChatMessageMoreAction = {
     [EMessageDisplayType.question]: [
       EMessageActionType.retry,
       EMessageActionType.copy,
-      EMessageActionType.delete,
+      // EMessageActionType.delete,
       EMessageActionType.share
     ],
     [EMessageDisplayType.answer]: [
@@ -35,7 +35,7 @@ export const ChatMessageMoreAction = {
       EMessageActionType.fix,
       EMessageActionType.translate,
       EMessageActionType.copy,
-      EMessageActionType.delete,
+      // EMessageActionType.delete,
       EMessageActionType.expand,
       EMessageActionType.audio,
       EMessageActionType.share
