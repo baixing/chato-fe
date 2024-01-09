@@ -1,0 +1,12 @@
+{
+    "applinks": {
+        "apps": [],
+        "details": [
+            {
+                "appID": "3989F32QL4.com.baixing.chat",
+                "paths": [ "/app/*"]
+            }
+        ]
+    }
+}
+
