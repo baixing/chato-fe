@@ -388,6 +388,7 @@ import SSE from '@/utils/sse'
 import { getStringWidth } from '@/utils/string'
 import { isURL } from '@/utils/url'
 import shareWeixin from '@/utils/weixinShare'
+//@ts-ignore
 import { vOnClickOutside } from '@vueuse/components'
 import { useDebounceFn, useStorage } from '@vueuse/core'
 import dayjs from 'dayjs'
@@ -803,7 +804,9 @@ function getBotInfo() {
       inputLength.value = detail.value.question_max_length
       !socketStore.isExistInPeddingDomains(botSlug.value) && sayWelcome()
       // shareWeixinInit(detail.value)
-      $notnull(route.query.p) ? submit(route.query.p as string) : ''
+      $notnull(route.query.p)
+        ? (submit(route.query.p as string), router.replace({ path: `/c/bot/${homeSlug.value}` }))
+        : ''
     })
     .catch(() => {})
     .finally(() => {

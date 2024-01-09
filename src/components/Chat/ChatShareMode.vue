@@ -34,8 +34,9 @@ const shareMode = computed({
 const { $copyText } = useGlobalProperties()
 
 const share = async () => {
-  if (shareList.value.length === 0) return ElNotification.error('至少分享一条')
-  const res = await postShare(shareList.value)
+  const shareListBody = shareList.value.filter((item) => item != null)
+  if (shareListBody.length === 0) return ElNotification.error('至少分享一条')
+  const res = await postShare(shareListBody)
   if (isInApplet.value) {
     const link = await getAppletLink(
       props.detail.slug,
