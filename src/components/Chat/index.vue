@@ -330,9 +330,6 @@ const $isLoading = ref<boolean>(true) // 是否处于全屏加载状态
 const history = ref<IMessageItem[]>([])
 const inputLength = ref<number>(3000)
 const continueTarget = ref<HTMLElement>(null)
-// const socketResult = ref({
-//   chunk_message: ''
-// })
 const watermark = ref<Watermark>()
 const blindWatermark = ref<BlindWatermark>()
 const sensorsQuestionId = computed(() => history.value?.[history.value.length - 1]?.questionId)
@@ -357,7 +354,9 @@ const SSEInstance = new SSE()
 const socketStore = useSocketStore()
 // JS 嵌入转人工客服：未登录时，增加 uid 为 token 标识
 const socketURL = computed(() =>
-  authToken.value ? currentEnvConfig.socketURL : `${currentEnvConfig.socketURL}?token=${uid.value}`
+  authToken.value && route.name !== RoutesMap.chat.release
+    ? currentEnvConfig.socketURL
+    : `${currentEnvConfig.socketURL}?token=${uid.value}`
 )
 const socketInstance = useWebSocketConnect(socketURL.value)
 const { socketResultMap } = storeToRefs(socketStore)
@@ -920,6 +919,14 @@ const generateMessage = (data, key) => {
   } else {
     history.value.push(currentAnswer)
   }
+  // 补充提问问题由后端返回的 question_id
+  const latest2HistoryItem = history.value.at(-2)
+  if (!latest2HistoryItem.questionId) {
+    history.value[history.value.length - 2] = {
+      ...latest2HistoryItem,
+      questionId: data.question_id
+    }
+  }
 }
 
 // 特殊处理：继续
@@ -1478,7 +1485,5 @@ defineExpose({
   text-align: center;
   color: $color-minor;
   opacity: 0.5;
-}
-.parent-element {
 }
 </style>
