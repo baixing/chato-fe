@@ -291,7 +291,7 @@ const debugDomain = inject<IDomainInfo>(DebugDomainSymbol, null)
 const { t } = useI18n()
 const userStore = cuserStore()
 const { loginUserId, loginStatus } = storeToRefs(userStore)
-const { source } = useSource()
+const { source, sourceID } = useSource()
 const route = useRoute()
 const base = useBase()
 const isAiGenerate = ref(false)
@@ -846,6 +846,7 @@ async function sendMsgRequest(message) {
     ...message,
     type: isMidJourneyDomain.value ? 'mj_image' : 'chat',
     source: source.value,
+    source_id: sourceID.value,
     ...chatCommonParams.value,
     navit_msg_id: isMidJourneyDomain.value ? random(1000000, 9999999) : undefined,
     fake_domain: debugDomain || undefined
