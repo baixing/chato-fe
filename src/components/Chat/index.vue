@@ -291,7 +291,7 @@ const debugDomain = inject<IDomainInfo>(DebugDomainSymbol, null)
 const { t } = useI18n()
 const userStore = cuserStore()
 const { loginUserId, loginStatus } = storeToRefs(userStore)
-const { source } = useSource()
+const { source, sourceID } = useSource()
 const route = useRoute()
 const base = useBase()
 const isAiGenerate = ref(false)
@@ -330,9 +330,6 @@ const $isLoading = ref<boolean>(true) // 是否处于全屏加载状态
 const history = ref<IMessageItem[]>([])
 const inputLength = ref<number>(3000)
 const continueTarget = ref<HTMLElement>(null)
-// const socketResult = ref({
-//   chunk_message: ''
-// })
 const watermark = ref<Watermark>()
 const blindWatermark = ref<BlindWatermark>()
 const sensorsQuestionId = computed(() => history.value?.[history.value.length - 1]?.questionId)
@@ -357,7 +354,9 @@ const SSEInstance = new SSE()
 const socketStore = useSocketStore()
 // JS 嵌入转人工客服：未登录时，增加 uid 为 token 标识
 const socketURL = computed(() =>
-  authToken.value ? currentEnvConfig.socketURL : `${currentEnvConfig.socketURL}?token=${uid.value}`
+  authToken.value && route.name !== RoutesMap.chat.release
+    ? currentEnvConfig.socketURL
+    : `${currentEnvConfig.socketURL}?token=${uid.value}`
 )
 const socketInstance = useWebSocketConnect(socketURL.value)
 const { socketResultMap } = storeToRefs(socketStore)
@@ -532,7 +531,7 @@ async function init() {
   watermarkFunc()
   if (currentEnvIsWechat && !!detail.value.customer_limit.payment_limit_switch) {
     wx.miniProgram.getEnv(function (res) {
-      if (!res.miniprogram) {
+      if (!res.miniprogram && location.host.includes('chato.cn')) {
         onWeixinH5DefaultLogin()
       }
     })
@@ -847,6 +846,7 @@ async function sendMsgRequest(message) {
     ...message,
     type: isMidJourneyDomain.value ? 'mj_image' : 'chat',
     source: source.value,
+    source_id: sourceID.value,
     ...chatCommonParams.value,
     navit_msg_id: isMidJourneyDomain.value ? random(1000000, 9999999) : undefined,
     fake_domain: debugDomain || undefined
@@ -919,6 +919,14 @@ const generateMessage = (data, key) => {
     history.value[history.value.length - 1] = currentAnswer
   } else {
     history.value.push(currentAnswer)
+  }
+  // 补充提问问题由后端返回的 question_id
+  const latest2HistoryItem = history.value.at(-2)
+  if (!latest2HistoryItem.questionId) {
+    history.value[history.value.length - 2] = {
+      ...latest2HistoryItem,
+      questionId: data.question_id
+    }
   }
 }
 
@@ -1478,7 +1486,5 @@ defineExpose({
   text-align: center;
   color: $color-minor;
   opacity: 0.5;
-}
-.parent-element {
 }
 </style>

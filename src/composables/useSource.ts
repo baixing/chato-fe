@@ -7,6 +7,7 @@ export const useSource = () => {
   const route = useRoute()
   const urlSource = route.query.source as string
   const routeName = route.name as string
+  const urlSourceID = route.query.source_id as string
 
   const source = computed(() => {
     if (routeName === RoutesMap.tranning.roleInfo) {
@@ -20,7 +21,16 @@ export const useSource = () => {
     return urlSource
   })
 
+  const sourceID = computed(() => {
+    if (!urlSourceID) {
+      return ''
+    }
+
+    return urlSourceID
+  })
+
   return {
-    source
+    source,
+    sourceID
   }
 }

@@ -42,7 +42,7 @@ window.onload = () => {
       }
       createChatoConfig.tipChatoBg = data.data.suspend_style
       createChatoConfig.tipChatoColor = data.data.suspend_style_color || '#fff'
-      createChatoConfig.chatoIframeSrc = `${createChatoConfig.wwwBaseURL}/b/${createChatoConfig.domainSlug}?source=Chato_share_js`
+      createChatoConfig.chatoIframeSrc = `${createChatoConfig.wwwBaseURL}/b/${createChatoConfig.domainSlug}?source=Chato_share_js&source_id=${window.top.location.href}`
       createChatoConfig.popupFrequency = data.data.popup_frequency
       return Promise.resolve(data.data)
     }
@@ -130,6 +130,7 @@ window.onload = () => {
       let lastY = 0
       let newX = window.innerWidth - inframe_container.clientWidth - 44
       let newY = window.innerHeight - inframe_container.clientHeight - 44
+      let firstShowChato = true // 第一次弹出chato标识
 
       tip_chato?.addEventListener('mousedown', startDrag)
       document.addEventListener('mousemove', drag)
@@ -186,6 +187,7 @@ window.onload = () => {
       function visibleChato(tipV = 'none', inframeV = 'block') {
         tip_chato && (tip_chato.style.display = tipV)
         inframe_container.style.display = inframeV
+        firstShowChato = false
         if (inframeV === 'block') {
           updateContainerPosition()
         }
@@ -199,7 +201,10 @@ window.onload = () => {
             clearInterval(intervaler)
           }
           intervaler = setInterval(function () {
-            visibleChato('none', 'block')
+            if (firstShowChato) {
+              visibleChato('none', 'block')
+              clearInterval(intervaler)
+            }
           }, rate * 1000)
         }
       }

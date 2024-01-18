@@ -1,6 +1,15 @@
 <template>
   <ul class="message-more-container" :style="internalPositionStyle" ref="messageMoreRef">
-    <li v-for="item in internalMoreActions" :key="item.type" @click="onMoreAction(item.type)">
+    <li
+      v-for="item in internalMoreActions"
+      :key="item.type"
+      data-sensors-click
+      id="Chato_chat_message_action_click"
+      :data-sensors-action-type="item.type"
+      :data-sensors-question-id="internalMessage.questionId"
+      :data-sensors-message-type="internalMessage.displayType"
+      @click="onMoreAction(item.type)"
+    >
       <el-icon :size="16">
         <svg-icon
           v-if="EMessageActionType.like === item.type"
