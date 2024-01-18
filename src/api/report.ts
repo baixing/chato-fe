@@ -1,9 +1,5 @@
 import type { IPageFilter, TPagingList } from '@/interface/common'
-import type {
-  IQuestionFilter,
-  IUserChatMessage,
-  IUserChatMessageFilter
-} from '@/interface/question'
+import type { IQuestionFilter, IUserChatMessageFilter } from '@/interface/question'
 import type { IFormCollectDetailList, IFormCollectSelect } from '@/interface/report'
 import { paramsSerializer } from '@/utils/help'
 import request from '@/utils/request'
@@ -111,7 +107,7 @@ export function exportFormCollectDetailList(params: TPagingList) {
 }
 
 export function getUserChatMessageByDomainId(data: IPageFilter<IUserChatMessageFilter>) {
-  return request<IUserChatMessage[]>({
+  return request({
     url: `chato/api/v1/questions/chat_list_by_user`,
     data
   })

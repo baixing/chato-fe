@@ -27,6 +27,7 @@
             <el-tooltip placement="left">
               <template #content>
                 <div class="text-xs leading-4">
+                  <p>{{ `Source_id: ${item.source_id || $t('无')}` }}</p>
                   <p>{{ `Source: ${item.source || $t('无')}` }}</p>
                   <p>{{ `Tag: ${item.tag || $t('无')}` }}</p>
                 </div>
@@ -144,6 +145,7 @@ const refreshChatUsersOrder = (chatMsgItem) => {
     const newChatItem = {
       sender_uid: chatMsgItem.sender_uid,
       avatar: generateRandomRGB(),
+      source_id: chatMsgItem.source_id,
       source: chatMsgItem.source,
       nickname: rednerUserName(chatMsgItem.sender_uid),
       tag: '',
@@ -212,6 +214,7 @@ const initChatUsers = async () => {
         sender_uid: item.sender_uid,
         avatar: generateRandomRGB(),
         new_count: 0,
+        source_id: item.source_id,
         source: item.source,
         tag: item.tags_str,
         modified: item.modified,

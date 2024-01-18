@@ -42,6 +42,7 @@ export interface ChatToBotRes {
   seq: number
   service_provider_channel: string
   session_id: string
+  source_id: string
   source: string
   status: EWsMessageStatus
   summary: string
