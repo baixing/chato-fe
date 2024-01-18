@@ -513,7 +513,7 @@ const checkQuotaInPlatformC = async () => {
   const {
     data: { data: domainQuota }
   } = await getDomainQuotaInPlatformC(botSlug.value)
-  quotaUpperLimit.value = domainQuota.total === domainQuota.consumed
+  quotaUpperLimit.value = domainQuota.data.total === domainQuota.data.consumed
 }
 
 async function init() {
