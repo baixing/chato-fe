@@ -28,6 +28,7 @@ export interface IUserChat {
   sender_uid: string
   avatar: string // 微信头像
   nickname: string
+  source_id: string
   source: string // 渠道来源
   tag: string // 企微 tag
   modified: string // 最后一次聊天时间
