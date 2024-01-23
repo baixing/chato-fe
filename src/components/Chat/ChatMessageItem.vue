@@ -103,7 +103,7 @@ provide(SymChatMessageAudioTTSParams, audioTTSParams)
         >
           <div class="cursor-flash"></div>
         </div>
-        <div v-else-if="isSegmentation" class="space-y-6">
+        <div v-else-if="isSegmentation" class="space-y-6 max-w-full">
           <div
             :class="[
               'message-box relative w-max',
