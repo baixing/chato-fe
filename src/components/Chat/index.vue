@@ -302,6 +302,7 @@ const emit = defineEmits(['showDrawer', 'correctAnswer'])
 const { $sensors, $copyText } = useGlobalProperties()
 // 是否正在加载回答的消息内容
 const isLoadingAnswer = ref(false)
+
 const botSlug = computed(() => {
   if (debugDomain?.slug) {
     return debugDomain.slug
