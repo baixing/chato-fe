@@ -54,14 +54,14 @@
         />
       </el-select>
       <div class="button-container">
-        <el-button
+        <!-- <el-button
           link
           :class="['!text-[#606266] !font-normal', 'mr-1', isMobile ? 'w-[22px]' : '']"
           @click="toggleButton(locale === ELangKey.en ? ELangKey.zh_cn : ELangKey.en)"
         >
           {{ checkbutton[locale] }}
           <el-icon class="el-icon--right"><ArrowDown /></el-icon>
-        </el-button>
+        </el-button> -->
         <el-button
           :data-script="authToken ? 'Chato-enter' : 'Chato-login'"
           class="w-auto h-9 rounded-lg !text-sm hover:!scale-105"
@@ -226,7 +226,6 @@ import { kPrivacyLinkUrl, kUserAgreementLinkUrl } from '@/constant/terms'
 import { ELangKey } from '@/enum/locales'
 import { ESpaceRightsType } from '@/enum/space'
 import { EAllRole } from '@/enum/user'
-import { checkbutton } from '@/locales'
 import { RoutesMap } from '@/router'
 import { useAuthStore } from '@/stores/auth'
 import { useBase } from '@/stores/base'
@@ -234,7 +233,6 @@ import { useChatStore } from '@/stores/chat'
 import { useLocales } from '@/stores/locales'
 import { openPreviewUrl } from '@/utils/help'
 import { chatoIframe } from '@/utils/iframe'
-import { ArrowDown } from '@element-plus/icons-vue'
 import { useDebounceFn, useStorage } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { v4 as uuidv4 } from 'uuid'
