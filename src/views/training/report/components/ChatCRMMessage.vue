@@ -2,7 +2,7 @@
   <div :class="['flex items-start', isQuestionMessage && 'justify-end']">
     <div
       :class="[
-        'message-box overflow-hidden w-auto',
+        'message-box overflow-hidden w-auto scale-75',
         isQuestionMessage ? 'ml-12 !rounded-br-sm !rounded-tl-2xl' : 'mr-12'
       ]"
       :style="{

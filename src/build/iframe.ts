@@ -42,7 +42,11 @@ window.onload = () => {
       }
       createChatoConfig.tipChatoBg = data.data.suspend_style
       createChatoConfig.tipChatoColor = data.data.suspend_style_color || '#fff'
-      createChatoConfig.chatoIframeSrc = `${createChatoConfig.wwwBaseURL}/b/${createChatoConfig.domainSlug}?source=Chato_share_js&source_id=${window.top.location.href}`
+      createChatoConfig.chatoIframeSrc = `${createChatoConfig.wwwBaseURL}/b/${
+        createChatoConfig.domainSlug
+      }?source=Chato_share_js&source_id=${encodeURIComponent(
+        `${window.top.location.href}=title=${window.top.document.title}`
+      )}`
       createChatoConfig.popupFrequency = data.data.popup_frequency
       return Promise.resolve(data.data)
     }

@@ -24,32 +24,23 @@
             ]"
             @click="onChangeActiveChatUser(item.sender_uid, index)"
           >
-            <el-tooltip placement="left">
-              <template #content>
-                <div class="text-xs leading-4">
-                  <p>{{ `Source_id: ${item.source_id || $t('无')}` }}</p>
-                  <p>{{ `Source: ${item.source || $t('无')}` }}</p>
-                  <p>{{ `Tag: ${item.tag || $t('无')}` }}</p>
-                </div>
-              </template>
-              <el-badge
-                :hidden="activeChatUser === item.sender_uid || !item.new_count"
-                :value="item.new_count"
-                :max="99"
-                class="msg-count"
+            <el-badge
+              :hidden="activeChatUser === item.sender_uid || !item.new_count"
+              :value="item.new_count"
+              :max="99"
+              class="msg-count"
+            >
+              <el-avatar
+                :size="isMobile ? 32 : 36"
+                class="shrink-0 font-medium text-lg"
+                :style="{
+                  '--el-avatar-text-size': '18px',
+                  '--el-avatar-bg-color': item.avatar
+                }"
               >
-                <el-avatar
-                  :size="isMobile ? 32 : 36"
-                  class="shrink-0 font-medium text-lg"
-                  :style="{
-                    '--el-avatar-text-size': '18px',
-                    '--el-avatar-bg-color': item.avatar
-                  }"
-                >
-                  {{ item.nickname.slice(-1).toLocaleUpperCase() }}
-                </el-avatar>
-              </el-badge>
-            </el-tooltip>
+                {{ item.nickname.slice(-1).toLocaleUpperCase() }}
+              </el-avatar>
+            </el-badge>
             <div class="text-xs lg:text-xs text-gray-400 leading-5 flex-1 overflow-hidden">
               <div class="flex items-center gap-2 overflow-hidden">
                 <span class="text-[#303133] font-medium truncate text-sm flex-1">
@@ -65,7 +56,21 @@
         </ul>
         <LoadingMore :visible="loading" />
       </div>
-      <div class="my-3 w-full overflow-hidden">
+      <div class="relative my-3 mt-0 w-full overflow-hidden pt-16">
+        <div
+          class="absolute top-0 left-0 z-[999] bg-[#f2f3f5bd] w-full text-[#303133] overflow-hidden text-xs leading-5 py-3 px-5"
+          style="border: 1px solid 303133"
+        >
+          <p class="float-left w-1/2 truncate overflow-hidden whitespace-nowrap">
+            咨询页：{{ `${extractData(currentChatUser.source_id).title || $t('无')}` }}
+          </p>
+          <p class="float-left w-1/2 truncate overflow-hidden whitespace-nowrap">
+            渠道：{{ `${currentChatUser.source || $t('无')}` }}
+          </p>
+          <p class="float-left w-1/2 truncate overflow-hidden whitespace-nowrap">
+            着陆页：{{ `${extractData(currentChatUser.source_id).url || $t('无')}` }}
+          </p>
+        </div>
         <ReportUserChatCRM :uid="activeChatUser" @send="onSend" />
       </div>
     </template>
@@ -84,6 +89,7 @@ import { useAuthStore } from '@/stores/auth'
 import { useChatUserStore } from '@/stores/chatUser'
 import { useDomainStore } from '@/stores/domain'
 import { generateRandomRGB, isPhoneNum } from '@/utils/help'
+import { extractData } from '@/utils/reg'
 import { useWebSocket } from '@vueuse/core'
 import dayjs from 'dayjs'
 import { storeToRefs } from 'pinia'
@@ -106,11 +112,20 @@ const pagination = reactive<IPage>({
   page_count: 0,
   page_size: 10
 })
+
 const hasMoreChatUsers = computed(
   () => pagination.page_count && pagination.page !== pagination.page_count
 )
 const scrollDisabled = computed(() => loading.value || !hasMoreChatUsers.value)
 const activeChatUser = ref('')
+
+const currentChatUser = computed<Partial<IUserChat>>(
+  () =>
+    chatUsers.value.find((item) => item.sender_uid === activeChatUser.value) || {
+      source: '',
+      source_id: ''
+    }
+)
 
 const domainStoreI = useDomainStore()
 const { domainInfo } = storeToRefs(domainStoreI)
