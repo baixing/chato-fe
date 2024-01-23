@@ -10,6 +10,7 @@ import {
 import type { IDomainInfo } from '@/interface/domain'
 import type { IMessageItem } from '@/interface/message'
 import type { ITTSParams } from '@/interface/tts'
+import youzan from '@/json/youzan.json'
 import { generatePreviewImgUrl } from '@/utils/help'
 import { detectMarkdown, renderMarkdown } from '@/utils/markdown'
 import { computed, inject, provide, ref, type Ref } from 'vue'
@@ -38,7 +39,12 @@ const internalAudioPlayerId = computed(
 const audioVisible = computed(
   () => isAnswerMessage.value && checkShowCurrentAudioPlayer(internalAudioPlayerId.value)
 )
-
+const isSegmentation = computed(
+  () =>
+    !Object.keys(youzan.itemMap).includes(props.detail.slug) &&
+    isAnswerMessage.value &&
+    props.message.id != 'welcome-a'
+)
 const emit = defineEmits([
   'clickSource',
   'evaluate',
@@ -96,6 +102,36 @@ provide(SymChatMessageAudioTTSParams, audioTTSParams)
           class="message-box !rounded-tl-none"
         >
           <div class="cursor-flash"></div>
+        </div>
+        <div v-else-if="isSegmentation" class="space-y-6">
+          <div
+            :class="[
+              'message-box relative w-max',
+              !message.first &&
+                (isQuestionMessage ? 'ml-12 !rounded-br-sm !rounded-tl-2xl' : 'mr-12')
+            ]"
+            :style="{
+              backgroundColor: isQuestionMessage ? detail.message_style : 'auto',
+              color: isQuestionMessage ? '#fff' : 'auto'
+            }"
+            v-for="(item, index) in messageContent.split('\n').filter((item) => item)"
+            :key="index"
+          >
+            <div class="overflow-hidden w-auto markdown-body">
+              <ChatMessageAudio v-if="audioVisible" :player-id="internalAudioPlayerId" />
+              <div
+                v-if="detectMarkdown(item)"
+                v-html="renderMarkdown(item)"
+                class="markdown-container-chato markdown-body flex"
+              ></div>
+              <div
+                v-else
+                v-html="item"
+                class="whitespace-pre-line break-words flex"
+                style="word-break: break-word"
+              ></div>
+            </div>
+          </div>
         </div>
         <div
           v-else
