@@ -8,7 +8,7 @@ interface ShareObj {
   imgUrl: string
 }
 
-const setWxConfig = (appId: string, timestamp: string, nonceStr: string, signature: string) => {
+const setWxConfig = (appId: string, timestamp: number, nonceStr: string, signature: string) => {
   wx.config({
     debug: false,
     appId: appId,
