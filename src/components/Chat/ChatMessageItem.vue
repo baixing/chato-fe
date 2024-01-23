@@ -41,7 +41,7 @@ const audioVisible = computed(
 )
 const isSegmentation = computed(
   () =>
-    !Object.keys(youzan.itemMap).includes(props.detail.slug) &&
+    Object.values(youzan.itemMap).includes(props.detail.slug) &&
     isAnswerMessage.value &&
     props.message.id != 'welcome-a'
 )
