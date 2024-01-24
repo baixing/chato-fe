@@ -40,7 +40,7 @@ export const useSpaceStore = defineStore('space', () => {
   const initSpaceMembers = async () => {
     const {
       data: { data }
-    } = await getCommonGraph<IUserInfo[]>(`orgs/${orgInfo.value.id}/users`)
+    } = await getCommonGraph<IUserInfo[]>(`chato_orgs/${orgInfo.value.id}/users`)
     spaceMembers.value = data
     return data
   }

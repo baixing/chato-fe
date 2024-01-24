@@ -61,7 +61,7 @@
 
 <script setup lang="ts">
 import { postCommonGraph } from '@/api/graph'
-import { deleteMobileLimitAPI } from '@/api/release'
+import useGlobalProperties from '@/composables/useGlobalProperties'
 import type { IMobileLimitItem } from '@/interface/release'
 import { ElLoading, ElNotification as Notification } from 'element-plus'
 import { computed, ref } from 'vue'
@@ -85,7 +85,7 @@ const loading = ref<boolean>(false)
 const editUserVisible = ref<boolean>(false)
 const enterUserVisible = ref<boolean>(false)
 const settingItem = ref<IMobileLimitItem>()
-
+const { deleteCommonGraph } = useGlobalProperties()
 const pageValue = computed({
   set: (val) => emit('update:page', val),
   get: () => props.page
@@ -97,7 +97,7 @@ const visible = computed({
 })
 
 const handlerRemoveItem = async (id: number) => {
-  await deleteMobileLimitAPI(props.domainId, id)
+  await deleteCommonGraph('domain_mobile_limits/' + id)
   emit('handleReloadList')
 }
 
@@ -118,7 +118,6 @@ const handleEditSubmit = async (item: IMobileLimitItem) => {
       domainId: props.domainId,
       ...item
     })
-    // await postMobileLimitAPI(props.domainId, item)
     emit('handleReloadList')
     enterUserVisible.value = false
     editUserVisible.value = false

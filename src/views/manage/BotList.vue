@@ -94,16 +94,11 @@
   </Modal>
 </template>
 <script lang="ts" setup>
-import {
-  cloneDomainRobot,
-  getDomainCategoryList,
-  updateBotUseScope,
-  updateDomainInResource
-} from '@/api/domain'
+import { cloneDomainRobot, getDomainCategoryList, updateBotUseScope } from '@/api/domain'
 import { generateQACheckReport } from '@/api/file'
-import { deletesDomain } from '@/api/user'
 import Modal from '@/components/Modal/index.vue'
 import Topbar from '@/components/Topbar/index.vue'
+import useGlobalProperties from '@/composables/useGlobalProperties'
 import useSpaceRights from '@/composables/useSpaceRights'
 import { ESpaceRightsType } from '@/enum/space'
 import type { IDomainInfo } from '@/interface/domain'
@@ -132,6 +127,7 @@ const dialogState = reactive({
   type: ''
 })
 const { domainList } = storeToRefs(domainStoreI)
+const { deleteCommonGraph, postCommonGraph } = useGlobalProperties()
 const { checkRightsTypeNeedUpgrade } = useSpaceRights()
 const visibleOptions = [
   {
@@ -195,7 +191,7 @@ const onDelete = async (item: IDomainInfo) => {
       text: t('删除中...'),
       background: 'rgba(0, 0, 0, 0.7)'
     })
-    await deletesDomain(item.id)
+    await deleteCommonGraph('chato_domains/' + item.id)
     ElNotification.success(t('删除成功'))
     await onRefresh()
   } catch (err) {
@@ -248,7 +244,8 @@ const onSync = async () => {
     )
 
     syncSubmiting.value = true
-    await updateDomainInResource(opDomain.value.id, {
+    await postCommonGraph('chato_domains/save', {
+      id: opDomain.value.id,
       visible: dialogState.type === 'visible' ? saveValue : opDomain.value.visible,
       template: dialogState.type === 'template' ? saveValue : opDomain.value.template,
       category: opDomain.value.category
