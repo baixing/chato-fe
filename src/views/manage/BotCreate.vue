@@ -80,7 +80,6 @@
 
 <script setup lang="ts">
 import { createDraftDomain, getDomainDetailPublic, updateDomain } from '@/api/domain'
-import { getFilesByDomainId } from '@/api/file'
 import { getCommonGraph } from '@/api/graph'
 import EnterDoc from '@/components/EnterAnswer/EnterDoc.vue'
 import Topbar from '@/components/Topbar/index.vue'
@@ -247,7 +246,11 @@ const initFilesList = async () => {
     uploadFilesListLoading.value = true
     const {
       data: { data }
-    } = await getFilesByDomainId(formState.id.toString(), { page: 1, page_size: 1000 })
+    } = await getCommonGraph<IDocumentList[]>(`domains_files`, {
+      filter: `domain_id=${formState.id.toString()}`,
+      page: 1,
+      page_size: 1000
+    })
     uploadFilesList.value = data
     if (cdFn) {
       cdFn(data)

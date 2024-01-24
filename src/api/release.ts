@@ -1,5 +1,4 @@
 import type { EChannelType, EQrCodeHookType } from '@/enum/release'
-import type { IPageFilter } from '@/interface/common'
 import type {
   IAppletAuthParams,
   IAppletAuthRes,
@@ -297,14 +296,6 @@ export function postMiniAppAuthStatusAPI(data: { domain_id: number | string }) {
 export function getTimeBroadcastAPI(data: IGetBroadcastParams) {
   return request<ISettingBroadcastType[]>({
     url: `/chato/api/v1/send_schedule/task`,
-    data
-  })
-}
-
-// ------发布设置-手机号白名单------
-export function getMobileLimitAPI(domainId: number, data: IPageFilter<{}>) {
-  return request<IMobileLimitItem[]>({
-    url: `/chato/api/domains/${domainId}/mobile_limit`,
     data
   })
 }
