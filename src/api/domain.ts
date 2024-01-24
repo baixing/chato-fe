@@ -2,27 +2,12 @@ import type { IDemonstration, IDomainInfo, IDomainLLMConfig } from '@/interface/
 import type { ITTSListApi, ITimbreAuditionApi } from '@/interface/tts'
 import request from '@/utils/request'
 
-export function getDomainsByOrgId(orgId) {
-  // return Promise.reject({ response: { status: 403 } })
-  // return Promise.resolve({ data: {} })
-  // return Promise.resolve({ data: dataDomains })
-
-  return request({
-    url: `/chato/api/orgs/${orgId}/domains`
-  })
-}
-
 export function getDomainDetailPublic(domainSlug) {
   return request({
     url: `/chato/api-public/domains/${domainSlug}`
   })
 }
 
-export function getDomainDetail(domainId) {
-  return request<IDomainInfo>({
-    url: `/chato/api/domains/${domainId}`
-  })
-}
 export const updateDomain = (domainId: string | number, data) => {
   return request<IDomainInfo | string[]>({
     method: 'patch',

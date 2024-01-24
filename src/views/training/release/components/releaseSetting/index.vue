@@ -289,8 +289,8 @@
 
 <script lang="ts" setup>
 import { updateDomain } from '@/api/domain'
+import { getCommonGraph } from '@/api/graph'
 import { getUserPackageListAPI, postUserPackageAPI } from '@/api/order'
-import { getMobileLimitAPI } from '@/api/release'
 import payImg from '@/assets/img/pay-home.png'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
 import Modal from '@/components/Modal/index.vue'
@@ -302,6 +302,7 @@ import useImagePath from '@/composables/useImagePath'
 import { FreeCommercialTypeExperienceDay } from '@/constant/space'
 import { ESpaceCommercialType, ESpaceRightsType } from '@/enum/space'
 import type { IDomainInfo } from '@/interface/domain'
+import type { IMobileLimitItem } from '@/interface/release'
 import { RoutesMap } from '@/router'
 import { useBase } from '@/stores/base'
 import { useDomainStore } from '@/stores/domain'
@@ -469,10 +470,13 @@ const onSave = async () => {
 }
 
 const initMobileList = async () => {
-  const res = await getMobileLimitAPI(domainInfo.value.id, {
-    page: pageMobileConfig.page,
-    page_size: pageMobileConfig.page_size
-  })
+  const res = await getCommonGraph<IMobileLimitItem[]>(
+    `/chato_domains/${domainInfo.value.id}/mobile_limit`,
+    {
+      page: pageMobileConfig.page,
+      page_size: pageMobileConfig.page_size
+    }
+  )
   const pagination = res.data.meta.pagination
   pageMobileConfig.mobileList = res.data.data
   pageMobileConfig.page = pagination.page
