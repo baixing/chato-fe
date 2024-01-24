@@ -471,7 +471,7 @@ const onSave = async () => {
 
 const initMobileList = async () => {
   const res = await getCommonGraph<IMobileLimitItem[]>(
-    `/chato_domains/${domainInfo.value.id}/mobile_limit`,
+    `chato_domains/${domainInfo.value.id}/mobile_limit`,
     {
       page: pageMobileConfig.page,
       page_size: pageMobileConfig.page_size
