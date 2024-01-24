@@ -475,12 +475,12 @@ const initMobileList = async () => {
     page: pageMobileConfig.page,
     size: pageMobileConfig.page_size
   })
-  const pagination = res.data.meta.pagination
+  const pagination = res.data.pagination
   pageMobileConfig.mobileList = res.data.data
   pageMobileConfig.page = pagination.page
   pageMobileConfig.total = pagination.total
   pageMobileConfig.page_count = pagination.page_count
-  pageMobileConfig.page_size = pagination.page_size
+  pageMobileConfig.page_size = pagination.size
 }
 
 const onHandleSwitchMobile = async (e: Event, mobileSwitch: number) => {

@@ -118,6 +118,7 @@ const handleEditSubmit = async (item: IMobileLimitItem) => {
       domainId: props.domainId,
       ...item
     })
+    // await postMobileLimitAPI(props.domainId, item)
     emit('handleReloadList')
     enterUserVisible.value = false
     editUserVisible.value = false
