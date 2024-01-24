@@ -115,8 +115,9 @@ const handleEditSubmit = async (item: IMobileLimitItem) => {
   })
   try {
     await postCommonGraph('domain_mobile_limits/save', {
-      domainId: props.domainId,
-      ...item
+      ...item,
+      domain_id: props.domainId,
+      id: null
     })
     // await postMobileLimitAPI(props.domainId, item)
     emit('handleReloadList')

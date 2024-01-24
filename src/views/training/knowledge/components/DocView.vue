@@ -99,7 +99,8 @@
 </template>
 <script lang="ts" setup>
 import { updateDomain } from '@/api/domain'
-import { deleteRetryFileMate, getFilesByDomainId, postGenerateDocAPI } from '@/api/file'
+import { deleteRetryFileMate, postGenerateDocAPI } from '@/api/file'
+import { getCommonGraph } from '@/api/graph'
 import IconReward from '@/assets/img/Icon-Reward.png'
 import EnterDoc from '@/components/EnterAnswer/EnterDoc.vue'
 import SearchInput from '@/components/Input/SearchInput.vue'
@@ -222,7 +223,10 @@ const initDocList = async () => {
     }
     const {
       data: { data, meta }
-    } = await getFilesByDomainId(domainId.value, params)
+    } = await getCommonGraph<IDocumentList[]>(`domains_files`, {
+      filter: `domain_id==${domainId.value}`,
+      ...params
+    })
     tableData.value = data
     pagination.value.page_count = meta.pagination.page_count
     if (tableData.value.length > 0 && domainInfo.value.task_progress[1] === 0) {
