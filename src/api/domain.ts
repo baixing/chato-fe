@@ -74,7 +74,7 @@ export const checkDomainCorrectTicketIsExpired = (data) => {
 export const createDraftDomain = () => {
   return request<IDomainInfo>({
     method: 'post',
-    url: `chato/api/v1/domains/create_draft`
+    url: `/chato/api/v1/domains/create_draft`
   })
 }
 

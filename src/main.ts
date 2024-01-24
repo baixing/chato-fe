@@ -4,6 +4,7 @@ import 'prismjs/themes/prism.css'
 import 'viewerjs/dist/viewer.css'
 import 'wow.js/css/libs/animate.css'
 //
+import { deleteCommonGraph, getCommonGraph, postCommonGraph } from '@/api/graph'
 import useSensors from '@/composables/useSensors'
 import useSentry from '@/composables/useSentry'
 import { useBase } from '@/stores/base'
@@ -44,6 +45,9 @@ useSensors(app)
 
 app.config.globalProperties.$copyText = (text: string, successMessage?: string) =>
   copyPaste(text, successMessage)
+app.config.globalProperties.getCommonGraph = getCommonGraph
+app.config.globalProperties.postCommonGraph = postCommonGraph
+app.config.globalProperties.deleteCommonGraph = deleteCommonGraph
 app.mount('#app')
 
 useSentry(app, router)

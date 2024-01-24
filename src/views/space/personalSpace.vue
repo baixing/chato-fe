@@ -112,9 +112,10 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { removeSpaceMember, updateOrgSpaceInfo, updateSpaceMemberRole } from '@/api/space'
+import { removeSpaceMember } from '@/api/space'
 import UserAvatar from '@/components/Avatar/UserAvatar.vue'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
+import useGlobalProperties from '@/composables/useGlobalProperties'
 import useSpace from '@/composables/useSpace'
 import useSpaceRights from '@/composables/useSpaceRights'
 import type { ESettingSpaceRole } from '@/enum/space'
@@ -143,7 +144,7 @@ const addMemberVisible = ref<boolean>(false)
 const name = ref(userInfo.value?.org?.name || '')
 const avatar = ref(userInfo.value?.org?.avatar || 'avatar://color=#409EFF')
 const { switchSpace } = useSpace()
-
+const { postCommonGraph } = useGlobalProperties()
 const roleList = [
   {
     label: t('管理者'),
@@ -222,7 +223,7 @@ const handleSelect = async (userId: number, value: ESettingSpaceRole) => {
     org_user_id: userId,
     role: value
   }
-  const res = await updateSpaceMemberRole(data)
+  const res = await postCommonGraph('users/save', data)
   const code = res.data.code
   const message = res.data.message
   ElMessage({
@@ -244,7 +245,7 @@ const handleUpdateOrgInfo = async () => {
   if (getStringWidth(data.name) > 20) return Notification.error(t('昵称超过20个字符'))
   if (getStringWidth(data.name) === 0) return Notification.error(t('请输入昵称'))
   try {
-    await updateOrgSpaceInfo(data)
+    await postCommonGraph('chato_orgs/save', data)
     base.updateUserOrgInfoAttri(data)
     Notification.success(t('保存成功'))
   } catch (e) {}
