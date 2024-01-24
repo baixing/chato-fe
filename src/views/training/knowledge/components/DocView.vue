@@ -222,13 +222,12 @@ const initDocList = async () => {
       params.status = DocSelectStatus.value
     }
     const {
-      data: { data, meta }
-    } = await getCommonGraph<IDocumentList[]>(`domains_files`, {
-      filter: `domain_id==${domainId.value}`,
+      data: { data, pagination: meta }
+    } = await getCommonGraph<IDocumentList[]>(`chato_domains/${domainId.value}/files`, {
       ...params
     })
     tableData.value = data
-    pagination.value.page_count = meta.pagination.page_count
+    pagination.value.page_count = meta.page_count
     if (tableData.value.length > 0 && domainInfo.value.task_progress[1] === 0) {
       domainInfo.value.task_progress[1] = 40
       await updateDomain(domainInfo.value.id, {
