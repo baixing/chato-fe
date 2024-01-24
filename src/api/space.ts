@@ -99,14 +99,6 @@ export const getSpaceQuota = () => {
   })
 }
 
-// 获取空间成员
-export const getSpaceMembers = () => {
-  return request<IUserInfo[]>({
-    method: 'get',
-    url: `/chato/api/v1/user/org/members`
-  })
-}
-
 // 获取空间权益信息汇总
 export const getSpaceRightsSummary = () => {
   return request<ISpaceRightsSummary>({

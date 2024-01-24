@@ -79,13 +79,9 @@
 </template>
 
 <script setup lang="ts">
-import {
-  createDraftDomain,
-  getDomainDetail,
-  getDomainDetailPublic,
-  updateDomain
-} from '@/api/domain'
+import { createDraftDomain, getDomainDetailPublic, updateDomain } from '@/api/domain'
 import { getFilesByDomainId } from '@/api/file'
+import { getCommonGraph } from '@/api/graph'
 import EnterDoc from '@/components/EnterAnswer/EnterDoc.vue'
 import Topbar from '@/components/Topbar/index.vue'
 import { useBasicLayout } from '@/composables/useBasicLayout'
@@ -309,7 +305,7 @@ const initDomainDetail = async () => {
 
     const {
       data: { data }
-    } = await getDomainDetail(route.params.botId)
+    } = await getCommonGraph<IDomainInfo>(`chato_domains/${route.params.botId}`)
 
     formState = Object.assign(formState, data)
     await initFilesList()
