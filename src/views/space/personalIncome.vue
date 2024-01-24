@@ -56,7 +56,7 @@
 </template>
 
 <script setup lang="ts">
-import { getPurchaseToBIncome } from '@/api/order'
+import { getCommonGraph } from '@/api/graph'
 import type { ICUserBuyProductionDetail } from '@/interface/order'
 import ContentLayout from '@/layout/ContentLayout.vue'
 import { useDomainStore } from '@/stores/domain'
@@ -81,10 +81,10 @@ const slugString = computed(() => {
 })
 
 const init = async () => {
-  const res = await getPurchaseToBIncome()
-  // getCommonGraph<ICUserBuyProductionDetail[]>(`customer_order`, {
-  //   filter: `${slugString.value}`
-  // })
+  //  getPurchaseToBIncome()
+  const res = await getCommonGraph<ICUserBuyProductionDetail[]>(`customer_order`, {
+    filter: `${slugString.value}`
+  })
   payList.value = res.data.data
 }
 
