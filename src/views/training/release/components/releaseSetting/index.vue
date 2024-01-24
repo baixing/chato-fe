@@ -290,7 +290,7 @@
 <script lang="ts" setup>
 import { updateDomain } from '@/api/domain'
 import { getCommonGraph } from '@/api/graph'
-import { getUserPackageListAPI, postUserPackageAPI } from '@/api/order'
+import { postUserPackageAPI } from '@/api/order'
 import payImg from '@/assets/img/pay-home.png'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
 import Modal from '@/components/Modal/index.vue'
@@ -470,7 +470,7 @@ const onSave = async () => {
 }
 
 const initMobileList = async () => {
-  const res = await getCommonGraph<IMobileLimitItem[]>(`domain_mobile_limits`, {
+  const res = await getCommonGraph<IMobileLimitItem[]>(`domain_mobile_limit`, {
     filter: `domain_id==${domainInfo.value.id}`,
     page: pageMobileConfig.page,
     size: pageMobileConfig.page_size
@@ -508,7 +508,9 @@ const onViewRevenue = () => {
 }
 
 const initOrderInfo = async () => {
-  const res = await getUserPackageListAPI(domainInfo.value.slug)
+  const res = await getCommonGraph<any[]>(`customer_package`, {
+    filter: `domain_slug=="${domainInfo.value.slug}"`
+  })
   const orderList = res.data.data
   if (orderList.length) {
     const orderInfo = orderList[0]

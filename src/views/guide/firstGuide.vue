@@ -238,6 +238,9 @@ const init = async () => {
     const {
       data: { data }
     } = await getFirstGuideInterestDomains()
+    //  getCommonGraph<IDomainInfo[]>(`chato_domains`, {
+    //   filter: `org_id==208 and visible==1 and template==1`
+    // })
     const userInfoRes = await baseStoreI.getUserInfo()
     if (userInfoRes.org.additions) {
       const { organization_type, organization_type_name } = JSON.parse(userInfoRes.org.additions)

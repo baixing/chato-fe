@@ -114,7 +114,7 @@ const handleEditSubmit = async (item: IMobileLimitItem) => {
     background: 'rgba(0, 0, 0, 0.7)'
   })
   try {
-    await postCommonGraph('domain_mobile_limits/save', {
+    await postCommonGraph('domain_mobile_limit/save', {
       domainId: props.domainId,
       ...item
     })
