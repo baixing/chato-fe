@@ -470,13 +470,11 @@ const onSave = async () => {
 }
 
 const initMobileList = async () => {
-  const res = await getCommonGraph<IMobileLimitItem[]>(
-    `chato_domains/${domainInfo.value.id}/mobile_limit`,
-    {
-      page: pageMobileConfig.page,
-      page_size: pageMobileConfig.page_size
-    }
-  )
+  const res = await getCommonGraph<IMobileLimitItem[]>(`domain_mobile_limits`, {
+    filter: `domain_id==${domainInfo.value.id}`,
+    page: pageMobileConfig.page,
+    size: pageMobileConfig.page_size
+  })
   const pagination = res.data.meta.pagination
   pageMobileConfig.mobileList = res.data.data
   pageMobileConfig.page = pagination.page
