@@ -97,7 +97,7 @@ const visible = computed({
 })
 
 const handlerRemoveItem = async (id: number) => {
-  await deleteCommonGraph('domain_mobile_limits/' + id)
+  await deleteCommonGraph('domain_mobile_limit/' + id)
   emit('handleReloadList')
 }
 
@@ -114,7 +114,7 @@ const handleEditSubmit = async (item: IMobileLimitItem) => {
     background: 'rgba(0, 0, 0, 0.7)'
   })
   try {
-    await postCommonGraph('domain_mobile_limits/save', {
+    await postCommonGraph('domain_mobile_limit/save', {
       ...item,
       domain_id: props.domainId,
       id: null
