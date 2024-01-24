@@ -60,13 +60,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import EditUser from './EditUser.vue'
-import EnterUser from './EnterUser.vue'
-import { deleteMobileLimitAPI, postMobileLimitAPI } from '@/api/release'
+import { postCommonGraph } from '@/api/graph'
+import { deleteMobileLimitAPI } from '@/api/release'
 import type { IMobileLimitItem } from '@/interface/release'
 import { ElLoading, ElNotification as Notification } from 'element-plus'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import EditUser from './EditUser.vue'
+import EnterUser from './EnterUser.vue'
 
 const emit = defineEmits(['update:page', 'update:value', 'handleReloadList'])
 const props = defineProps<{
@@ -113,7 +114,11 @@ const handleEditSubmit = async (item: IMobileLimitItem) => {
     background: 'rgba(0, 0, 0, 0.7)'
   })
   try {
-    await postMobileLimitAPI(props.domainId, item)
+    await postCommonGraph('domain_mobile_limits/save', {
+      domainId: props.domainId,
+      ...item
+    })
+    // await postMobileLimitAPI(props.domainId, item)
     emit('handleReloadList')
     enterUserVisible.value = false
     editUserVisible.value = false
