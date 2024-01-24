@@ -1,5 +1,5 @@
 import { postCheckLoginCAPI } from '@/api/auth'
-import { getUserPackageListAPI, postPurchaseHistoryProductionAPI } from '@/api/order'
+import { getCommonGraph } from '@/api/graph'
 import type { ICUserBuyProductionDetail } from '@/interface/order'
 import { RoutesMap } from '@/router'
 import { ElNotification as Notification } from 'element-plus'
@@ -47,13 +47,17 @@ export const cuserStore = defineStore('cuser', () => {
 
   // 获取套餐信息
   const getCuserOrderInfo = async (slug: string) => {
-    const res = await getUserPackageListAPI(slug)
+    const res = await getCommonGraph<any[]>(`customer_package`, {
+      filter: `domain_slug=="${slug}"`
+    })
     orderInfo.value = res.data.data
   }
 
   // 获取c端已经购买的套餐信息
   const getCuserBuyOrderInfo = async (slug: string) => {
-    const res = await postPurchaseHistoryProductionAPI(slug, uid.value)
+    const res = await getCommonGraph<any>('customer_order', {
+      filter: `domain_slug=="${slug}" and user_uuid=="${uid.value}"`
+    })
     buyOrderInfo.value = res.data.data
   }
 

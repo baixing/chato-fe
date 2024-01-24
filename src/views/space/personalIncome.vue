@@ -56,18 +56,35 @@
 </template>
 
 <script setup lang="ts">
-import { getPurchaseToBIncome } from '@/api/order'
+import { getCommonGraph } from '@/api/graph'
 import type { ICUserBuyProductionDetail } from '@/interface/order'
 import ContentLayout from '@/layout/ContentLayout.vue'
+import { useDomainStore } from '@/stores/domain'
 import dayjs from 'dayjs'
+import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
 
+const domainStore = useDomainStore()
+const { domainList } = storeToRefs(domainStore)
 const payList = ref<ICUserBuyProductionDetail[]>([])
 
 const totalPay = computed(() => payList.value.reduce((pre, cur) => (pre += cur.package.price), 0))
 
+const slugString = computed(() => {
+  const list = domainList.value.map((item) => item.slug)
+  const result = list
+    .reduce((pre, cur) => {
+      return pre + `"${cur}"` + ','
+    }, '')
+    .slice(0, -1) // 移除最后一个字符，即多余的逗号
+  return result
+})
+
 const init = async () => {
-  const res = await getPurchaseToBIncome()
+  const res = await getCommonGraph<ICUserBuyProductionDetail[]>(`customer_order`, {
+    filter: `domain_slug in (${slugString.value})`
+  })
+  // getPurchaseToBIncome()
   payList.value = res.data.data
 }
 

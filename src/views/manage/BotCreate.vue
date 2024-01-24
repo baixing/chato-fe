@@ -246,10 +246,9 @@ const initFilesList = async () => {
     uploadFilesListLoading.value = true
     const {
       data: { data }
-    } = await getCommonGraph<IDocumentList[]>(`domains_files`, {
-      filter: `domain_id=${formState.id.toString()}`,
+    } = await getCommonGraph<IDocumentList[]>(`chato_domains/${formState.id.toString()}/files`, {
       page: 1,
-      page_size: 1000
+      size: 1000
     })
     uploadFilesList.value = data
     if (cdFn) {

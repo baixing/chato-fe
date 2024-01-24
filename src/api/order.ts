@@ -35,13 +35,6 @@ export function refreshPaymentStatus(order_id: number) {
   })
 }
 
-// ---- 用户自定义套餐 ----
-export function getUserPackageListAPI(slug: string) {
-  return request({
-    url: `/chato/api/v2/domains/${slug}/customer/package`
-  })
-}
-
 export function postUserPackageAPI(slug: string, data: IUserSettingOrderPayment) {
   return request({
     method: 'post',
@@ -55,26 +48,6 @@ export function postPurchaseProductionAPI(slug: string, data: ICUserBuyProductio
     method: 'post',
     url: `/chato/api/v2/domains/${slug}/customer/payment`,
     data
-  })
-}
-
-export function postPurchaseHistoryProductionAPI(slug: string, customer_uuid: string) {
-  return request({
-    url: `/chato/api/v2/domains/${slug}/customer/payment/list`,
-    data: { customer_uuid }
-  })
-}
-
-export function getPurchaseOrderStatus(orderId: number, customer_uuid: string, slug: string) {
-  return request({
-    url: `/chato/api/v2/domains/${slug}/customer/order/${orderId}/info`,
-    data: { customer_uuid }
-  })
-}
-
-export function getPurchaseToBResultListAPI(slug: string) {
-  return request({
-    url: `/chato/api/v2/domains/${slug}/payment/list`
   })
 }
 
