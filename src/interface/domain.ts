@@ -60,6 +60,7 @@ export interface IDomainInfo {
   message_style: string
   suspend_style: string
   whitelist_sites: string
+  creator_id?: number
   lang: string
   reply_tone: string
   reply_length: number
