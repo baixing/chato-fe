@@ -136,7 +136,8 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { createAfficialAccount, serachAfficialAccount } from '@/api/weixin'
+import { getCommonGraph } from '@/api/graph'
+import { createAfficialAccount } from '@/api/weixin'
 import useImagePath from '@/composables/useImagePath'
 import { EAfficialAccountStatusType } from '@/enum/release'
 import type { ICeateAfficialAccountRes } from '@/interface/release'
@@ -208,7 +209,10 @@ const submitForm = async () => {
 }
 
 const init = async () => {
-  const res = await serachAfficialAccount(props.slugId)
+  const res = await getCommonGraph<ICeateAfficialAccountRes[]>('mp_account', {
+    filter: `domain_slug=="${props.slugId}"`
+  })
+  //  serachAfficialAccount(props.slugId)
   afficialAccountList.value = res.data.data
   const defaultAfficialAccount =
     afficialAccountList.value.length > 0 ? afficialAccountList.value[0] : null

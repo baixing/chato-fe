@@ -4,7 +4,6 @@ import type {
   IAppletAuthRes,
   IApplicationFormData,
   IBrandDomainType,
-  IBrandDomainTypeKeyFile,
   ICreateAccountCode,
   ICreateAccountEmpowerRes,
   ICreateAccountParams,
@@ -14,7 +13,6 @@ import type {
   IFeishuPublicSerachRes,
   IFeishuSwitchConfigType,
   IFeishuiPublicFormType,
-  IGetBroadcastParams,
   IGroupList,
   IJoinGroupChatAPI,
   IMobileLimitItem,
@@ -102,12 +100,12 @@ export function getGroupImgAPI(domainId: number, id: string) {
 }
 
 // 行业列表
-export function getIndustry() {
-  return request({
-    method: 'post',
-    url: `/chato/api/v1/config/industry`
-  })
-}
+// export function getIndustry() {
+//   return request({
+//     method: 'post',
+//     url: `/chato/api/v1/config/industry`
+//   })
+// }
 
 // 空间保存
 export function applicationFormSave(data: IApplicationFormData) {
@@ -127,11 +125,11 @@ export function saveBrandDomain(domain_slug: string, data: IBrandDomainType) {
   })
 }
 
-export function getBrandDomain(domain_slug: string) {
-  return request<IBrandDomainTypeKeyFile[]>({
-    url: `/api/custom_host/${domain_slug}/get`
-  })
-}
+// export function getBrandDomain(domain_slug: string) {
+//   return request<IBrandDomainTypeKeyFile[]>({
+//     url: `/api/custom_host/${domain_slug}/get`
+//   })
+// }
 
 // 查询飞书配置
 export function getFeishuConfig(domain_slug: string) {
@@ -200,11 +198,11 @@ export function updateTiktokConfig(id: number, data: any) {
 }
 
 // channel_get
-export function getChannelType(channel_type: EChannelType, domain_slug: string) {
-  return request({
-    url: `/chato/api/v1/channel/${channel_type}/account/${domain_slug}`
-  })
-}
+// export function getChannelType(channel_type: EChannelType, domain_slug: string) {
+//   return request({
+//     url: `/chato/api/v1/channel/${channel_type}/account/${domain_slug}`
+//   })
+// }
 
 // channel_patch
 export function patchChannelType(
@@ -293,12 +291,12 @@ export function postMiniAppAuthStatusAPI(data: { domain_id: number | string }) {
 }
 
 // ----- 定时广播 -----
-export function getTimeBroadcastAPI(data: IGetBroadcastParams) {
-  return request<ISettingBroadcastType[]>({
-    url: `/chato/api/v1/send_schedule/task`,
-    data
-  })
-}
+// export function getTimeBroadcastAPI(data: IGetBroadcastParams) {
+//   return request<ISettingBroadcastType[]>({
+//     url: `/chato/api/v1/send_schedule/task`,
+//     data
+//   })
+// }
 
 export function postTimeBroadcastAPI(data: ISettingBroadcastType) {
   return request({

@@ -1,5 +1,5 @@
-import type { IDemonstration, IDomainInfo, IDomainLLMConfig } from '@/interface/domain'
-import type { ITTSListApi, ITimbreAuditionApi } from '@/interface/tts'
+import type { IDemonstration, IDomainInfo } from '@/interface/domain'
+import type { ITimbreAuditionApi } from '@/interface/tts'
 import request from '@/utils/request'
 
 export function getDomainDetailPublic(domainSlug) {
@@ -78,17 +78,17 @@ export const createDraftDomain = () => {
   })
 }
 
-export const domainLLMConfigAPI = () => {
-  return request<IDomainLLMConfig[]>({
-    url: `/chato/api/v1/config/llm`
-  })
-}
+// export const domainLLMConfigAPI = () => {
+//   return request<IDomainLLMConfig[]>({
+//     url: `/chato/api/v1/config/llm`
+//   })
+// }
 
-export const getTimbreList = () => {
-  return request<ITTSListApi>({
-    url: `/api/tts/timbre`
-  })
-}
+// export const getTimbreList = () => {
+//   return request<ITTSListApi>({
+//     url: `/api/tts/timbre`
+//   })
+// }
 
 export const getTestTimbreUrl = (timbre: String) => {
   return request<{ contentList: ITimbreAuditionApi[] }>({
@@ -117,12 +117,12 @@ export function checkDomainIdAPI(domainId: string) {
   })
 }
 
-export function getDomainCategoryList() {
-  return request<string[]>({
-    method: 'get',
-    url: `/chato/api/v1/config/category`
-  })
-}
+// export function getDomainCategoryList() {
+//   return request<string[]>({
+//     method: 'get',
+//     url: `/chato/api/v1/config/category`
+//   })
+// }
 
 export function getDemonstration(type: string) {
   return request<IDemonstration>({

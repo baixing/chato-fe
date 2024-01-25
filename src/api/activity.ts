@@ -1,4 +1,4 @@
-import type { IActivity, IActivityMessage, IQwUserTag } from '@/interface/activity'
+import type { IActivity, IQwUserTag } from '@/interface/activity'
 import type { IPageFilter } from '@/interface/common'
 import request from '@/utils/request'
 
@@ -12,12 +12,12 @@ export function getActivityList(data: IPageFilter) {
 }
 
 // 活动详情
-export function getActivityDetail(id: string | number) {
-  return request<IActivity>({
-    method: 'get',
-    url: `/chato/api/v1/send_schedule/group/${id}`
-  })
-}
+// export function getActivityDetail(id: string | number) {
+//   return request<IActivity>({
+//     method: 'get',
+//     url: `/chato/api/v1/send_schedule/group/${id}`
+//   })
+// }
 
 // 添加活动
 export function addActivity(data: Omit<IActivity, 'id'> & { type: number }) {
@@ -46,10 +46,10 @@ export function getQwUserTagList(wx_user_id: number | string) {
 }
 
 // 活动 - 消息列表
-export function getActivityMessageList(data: IPageFilter<{ group_id: number | string }>) {
-  return request<IActivityMessage[]>({
-    method: 'get',
-    url: `/chato/api/v1/send_schedule/query_group_send_schedule`,
-    data
-  })
-}
+// export function getActivityMessageList(data: IPageFilter<{ group_id: number | string }>) {
+//   return request<IActivityMessage[]>({
+//     method: 'get',
+//     url: `/chato/api/v1/send_schedule/query_group_send_schedule`,
+//     data
+//   })
+// }

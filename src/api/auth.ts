@@ -27,12 +27,12 @@ export function postLoginAPI(data: ILoginParams) {
   })
 }
 
-export function getCheckChannelAPI(params: { code: string }) {
-  return request({
-    url: `/chato/api/v1/inviter_channels/check_code`,
-    params: params
-  })
-}
+// export function getCheckChannelAPI(params: { code: string }) {
+//   return request({
+//     url: `/chato/api/v1/inviter_channels/check_code`,
+//     params: params
+//   })
+// }
 
 export function getLoginQRCodeAPI() {
   return request<ILoginQRCodeResult>({

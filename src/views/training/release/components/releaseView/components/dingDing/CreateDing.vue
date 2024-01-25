@@ -25,9 +25,10 @@
 </template>
 
 <script setup lang="ts">
-import { getChannelType, postDingDingConfig, patchChannelType } from '@/api/release'
-import { EAfficialAccountStatusType, EChannelType } from '@/enum/release'
+import { getCommonGraph } from '@/api/graph'
+import { patchChannelType, postDingDingConfig } from '@/api/release'
 import Modal from '@/components/Modal/index.vue'
+import { EAfficialAccountStatusType, EChannelType } from '@/enum/release'
 import type { IDingDingPublicFormType } from '@/interface/release'
 import { $notnull } from '@/utils/help'
 import { ElLoading } from 'element-plus'
@@ -86,10 +87,13 @@ const initdingdingConfig = async () => {
     loading.value = true
     const {
       data: { data }
-    } = await getChannelType(EChannelType.DINGDING, props.domainSlug)
+    } = await getCommonGraph<any>('mp_account', {
+      filter: `type_def=="${EChannelType.DINGDING}" and domain_slug=="${props.domainSlug}"`
+    })
+    // getChannelType(EChannelType.DINGDING, props.domainSlug)
     if ($notnull(data)) {
-      turn.value = data.s_status === EAfficialAccountStatusType.normal
-      dingdingConfig.value = data
+      turn.value = data[0].s_status === EAfficialAccountStatusType.normal
+      dingdingConfig.value = data[0]
     }
   } catch (e) {
   } finally {

@@ -168,13 +168,7 @@
 
 <script lang="ts" setup>
 import { postWeixinH5Login } from '@/api/auth'
-import {
-  chatToBotHistoryB,
-  chatToBotHistoryC,
-  clearSession,
-  evaluate,
-  getChatRecommendQuestions
-} from '@/api/chat'
+import { clearSession, evaluate, getChatRecommendQuestions } from '@/api/chat'
 import {
   checkDomainCorrectTicketIsExpired,
   getDomainDetailPublic,
@@ -590,19 +584,23 @@ const getHistoryChat = async (scrollBottomTag = true) => {
     chatHistoryParams.sender_uid = uid.value
   }
   chatHistoryParams.domain_slug = botSlug.value
-  const chatToBotHistory = isInternal ? chatToBotHistoryB : chatToBotHistoryC
+  // const chatToBotHistory = isInternal ? chatToBotHistoryB : chatToBotHistoryC
 
   try {
     const { data } = await getCommonGraph<IDomainInfo[]>('chato_domains', {
       filter: `slug=="${chatHistoryParams.domain_slug}"`
     })
-    console.log(data, 1)
+
     const res = await getCommonGraph<ChatToBotRes[]>('chato_questions', {
-      filter: `(sender_uid=="${chatHistoryParams.sender_uid}" or (sender_id=="${chatHistoryParams.sender}")) and domain_id=="${data.data[0].id}"`,
+      filter: `${
+        isInternal
+          ? `sender_id=="${chatHistoryParams.sender}" and org_id=="${userInfo.value.org.id}"`
+          : `sender_uid=="${chatHistoryParams.sender_uid}"`
+      } and domain_id=="${data.data[0].id}"`,
       page: chatHistoryParams.page,
-      size: chatHistoryParams.size
+      size: chatHistoryParams.size,
+      sort: '-id'
     })
-    console.log(res, 2)
     // chatToBotHistory(chatHistoryParams)
     chatHistoryPage.page_count = res.data.pagination.page_count
     chatHistoryPage.total = res.data.pagination.total

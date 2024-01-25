@@ -94,12 +94,13 @@
   </Modal>
 </template>
 <script lang="ts" setup>
-import { cloneDomainRobot, getDomainCategoryList, updateBotUseScope } from '@/api/domain'
+import { cloneDomainRobot, updateBotUseScope } from '@/api/domain'
 import { generateQACheckReport } from '@/api/file'
 import Modal from '@/components/Modal/index.vue'
 import Topbar from '@/components/Topbar/index.vue'
 import useGlobalProperties from '@/composables/useGlobalProperties'
 import useSpaceRights from '@/composables/useSpaceRights'
+import { CATEGORYLIST } from '@/constant/common'
 import { ESpaceRightsType } from '@/enum/space'
 import type { IDomainInfo } from '@/interface/domain'
 import ContentLayout from '@/layout/ContentLayout.vue'
@@ -301,22 +302,22 @@ const cloneRobot = async (id: string, name: string) => {
 }
 
 const domainCategoryLoading = ref(false)
-const domainCategoryList = ref<string[]>([])
-const initDomainCategoryList = async () => {
-  try {
-    domainCategoryLoading.value = true
-    const {
-      data: { data }
-    } = await getDomainCategoryList()
-    domainCategoryList.value = data
-  } catch (e) {
-  } finally {
-    domainCategoryLoading.value = false
-  }
-}
+const domainCategoryList = ref<string[]>(CATEGORYLIST)
+// const initDomainCategoryList = async () => {
+//   try {
+//     domainCategoryLoading.value = true
+//     const {
+//       data: { data }
+//     } = await getDomainCategoryList()
+//     domainCategoryList.value = data
+//   } catch (e) {
+//   } finally {
+//     domainCategoryLoading.value = false
+//   }
+// }
 
 onMounted(() => {
-  initDomainCategoryList()
+  // initDomainCategoryList()
   onRefresh()
 })
 

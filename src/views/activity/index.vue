@@ -101,9 +101,11 @@ import type { IActivity } from '@/interface/activity'
 import type { IPage } from '@/interface/common'
 import ContentLayout from '@/layout/ContentLayout.vue'
 import { RoutesMap } from '@/router'
+import { useBase } from '@/stores/base'
 import { Delete, Plus } from '@element-plus/icons-vue'
 import dayjs from 'dayjs'
 import { ElMessageBox, ElNotification } from 'element-plus'
+import { storeToRefs } from 'pinia'
 import { reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
@@ -121,6 +123,8 @@ const pagination = reactive<IPage>({
 })
 const activityList = ref<IActivity[]>([])
 const drawerVisible = ref(false)
+const base = useBase()
+const { userInfo } = storeToRefs(base)
 
 const onDelActivity = async (row: IActivity) => {
   try {
@@ -152,6 +156,11 @@ const initActivityList = async (page = 1) => {
     const {
       data: { data, pagination: paginationRes }
     } = await getActivityList({ page, page_size: 10 })
+    //  getCommonGraph<IActivity[]>('send_schedule_group', {
+    //   filter: `org_id=="${userInfo.value.org.id}"`,
+    //   page,
+    //   size: 10
+    // })
     activityList.value = page === 1 ? data : activityList.value.concat(data)
     pagination.page_count = paginationRes.page_count
   } catch (e) {

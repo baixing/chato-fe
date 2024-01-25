@@ -201,12 +201,12 @@
 </template>
 
 <script setup lang="ts">
+import { getCommonGraph } from '@/api/graph'
 import {
   deleteGroupChatAPI,
   deleteTimeBroadcastAPI,
   editGroupAPI,
   getGroupImgAPI,
-  getTimeBroadcastAPI,
   patchTimeBroadcastAPI,
   postTimeBroadcastAPI,
   transferGroupAPI
@@ -395,7 +395,12 @@ const getGroupQrCode = async (id: string) => {
 
 // ------ 定时广播 -----
 const initTimeBroadcast = async (id: string) => {
-  const { data } = await getTimeBroadcastAPI({ domain: props.domainId, receiver_id: id })
+  const { data } = await getCommonGraph<ISettingBroadcastType[]>('send_schedule', {
+    filter: `domain_id="${props.domainId} and receiver_id=="${id}""`
+  })
+
+  // getTimeBroadcastAPI({ domain: props.domainId, receiver_id: id })
+
   radioList.value = data.data
 }
 

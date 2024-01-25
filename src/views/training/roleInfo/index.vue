@@ -78,10 +78,11 @@
 </template>
 
 <script setup lang="ts">
-import { domainLLMConfigAPI, updateDomain } from '@/api/domain'
+import { updateDomain } from '@/api/domain'
 import IconReward from '@/assets/img/Icon-Reward.png'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import useGlobalProperties from '@/composables/useGlobalProperties'
+import { SUPPORT_LLM_CONFIG } from '@/constant/common'
 import { DebugDomainSymbol, DomainEditSymbol, DomainHansLimitSymbol } from '@/constant/domain'
 import { EDomainStatus } from '@/enum/domain'
 import type { IDomainInfo, IDomainLLMConfig } from '@/interface/domain'
@@ -230,12 +231,13 @@ const sensorsTaskProgress = () => {
   })
 }
 
-const initLLMConfigOption = async () => {
-  const res = await domainLLMConfigAPI()
-  const domainLLMList = res.data.data
-  domainLLMTypeOptions.value = domainLLMList
-  if (!currentDomain.llm && domainLLMList.length > 0) {
-    currentDomain.llm = domainLLMList[0].type
+const initLLMConfigOption = () => {
+  // const res = await domainLLMConfigAPI()
+  //  domainLLMConfigAPI()
+  // const domainLLMList = res.data.data
+  domainLLMTypeOptions.value = SUPPORT_LLM_CONFIG
+  if (!currentDomain.llm && SUPPORT_LLM_CONFIG.length > 0) {
+    currentDomain.llm = SUPPORT_LLM_CONFIG[0].type
   }
 }
 
