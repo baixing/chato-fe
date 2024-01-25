@@ -61,7 +61,7 @@ export interface HistoryMessages {
 
 export interface ChatHistoryParams {
   page: number
-  page_size: number
+  size: number
   org_id?: number
   domain_slug?: string
   source?: ChatHistoryParamsSource
