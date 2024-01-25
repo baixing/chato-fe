@@ -778,17 +778,17 @@ const onTerminateRetry = async () => {
     }
 
     socketInstance.send(JSON.stringify(terminateParams))
-    const SSEAudioDoneParams = {
-      chunk_message: '',
-      status: EWsMessageStatus.done,
-      question_id: lastAnswer.questionId
-    }
-    needsSSEAudio.value &&
-      (await SSETextToAudio({
-        sseRes: SSEAudioDoneParams,
-        domainSlug: botSlug.value,
-        token: chatToken.value
-      }))
+    // const SSEAudioDoneParams = {
+    //   chunk_message: '',
+    //   status: EWsMessageStatus.done,
+    //   question_id: lastAnswer.questionId
+    // }
+    // needsSSEAudio.value &&
+    //   (await SSETextToAudio({
+    //     sseRes: SSEAudioDoneParams,
+    //     domainSlug: botSlug.value,
+    //     token: chatToken.value
+    //   }))
 
     if (!lastAnswer.questionId) {
       lastAnswer.content = t('回答已终止')
@@ -868,7 +868,7 @@ async function sendMsgRequest(message) {
   }
 }
 
-const generateMessage = (data, key) => {
+const generateMessage = async (data, key) => {
   const isFinalStatus = ChatMessageFinalStatus.includes(data.status)
   isLoadingAnswer.value = !isFinalStatus
   if (continueTarget.value) {
@@ -929,6 +929,18 @@ const generateMessage = (data, key) => {
       questionId: data.question_id
     }
   }
+  const lastAnswer = history.value[history.value.length - 1]
+  const SSEAudioDoneParams = {
+    chunk_message: '',
+    status: EWsMessageStatus.done,
+    question_id: lastAnswer.questionId
+  }
+  needsSSEAudio.value &&
+    (await SSETextToAudio({
+      sseRes: SSEAudioDoneParams,
+      domainSlug: botSlug.value,
+      token: chatToken.value
+    }))
 }
 
 // 特殊处理：继续
