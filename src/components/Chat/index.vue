@@ -931,11 +931,12 @@ const generateMessage = async (data, key) => {
   }
   const lastAnswer = history.value[history.value.length - 1]
   const SSEAudioDoneParams = {
-    chunk_message: '',
+    chunk_message: data.chunk_message,
     status: EWsMessageStatus.done,
     question_id: lastAnswer.questionId
   }
-  needsSSEAudio.value &&
+  data.status === EWsMessageStatus.done &&
+    needsSSEAudio.value &&
     (await SSETextToAudio({
       sseRes: SSEAudioDoneParams,
       domainSlug: botSlug.value,
