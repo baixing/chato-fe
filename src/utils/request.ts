@@ -93,7 +93,8 @@ service.interceptors.response.use(
       err.message = $t('请求错误')
     } else if (err.request) {
       // 对于请求未发送到服务器的错误进行处理，例如网络错误
-      err.message = $t('网络异常，请检查后重试')
+      // err.message = $t('网络异常，请检查后重试')
+      return Promise.reject(err) // 超时、没有响应暂不提示
     }
     captureErrorMessageToSentry(err)
     // Todo: 避免3s内客户端显示很多报错
