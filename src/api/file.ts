@@ -1,7 +1,5 @@
 import type {
-  GetFilesByDomainIdType,
   IDocmentToQAParams,
-  IDocumentList,
   IKnowledgeShared,
   IQuestionConvertQAForm,
   IWXPublic,
@@ -11,15 +9,15 @@ import request from '@/utils/request'
 
 const PAGE_SIZE = 10
 
-export function getFilesByDomainId(domainId: string | number, params: GetFilesByDomainIdType) {
-  return request<IDocumentList[]>({
-    url: `/chato/api/domains/${domainId}/files`,
-    params: {
-      page_size: PAGE_SIZE,
-      ...params
-    }
-  })
-}
+// export function getFilesByDomainId(domainId: string | number, params: GetFilesByDomainIdType) {
+//   return request<IDocumentList[]>({
+//     url: `/chato/api/domains/${domainId}/files`,
+//     params: {
+//       page_size: PAGE_SIZE,
+//       ...params
+//     }
+//   })
+// }
 
 // 删除文件
 export function deleteFile(fileId) {

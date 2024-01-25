@@ -499,7 +499,8 @@
 
 <script setup lang="ts">
 import { getSystemPromptLimit } from '@/api/domain'
-import { deleteFile, getFilesByDomainId } from '@/api/file'
+import { deleteFile } from '@/api/file'
+import { getCommonGraph } from '@/api/graph'
 import EnterQa from '@/components/EnterAnswer/EnterQa.vue'
 import useImagePath from '@/composables/useImagePath'
 import useSpaceRights from '@/composables/useSpaceRights'
@@ -680,7 +681,11 @@ const initFilesList = async () => {
     uploadFilesListLoading.value = true
     const {
       data: { data }
-    } = await getFilesByDomainId(formState.id.toString(), { page: 1, page_size: 1000 })
+    } = await getCommonGraph<IDocumentList[]>(`chato_domains/${formState.id.toString()}/files`, {
+      page: 1,
+      size: 1000
+    })
+    //  getFilesByDomainId(formState.id.toString(), { page: 1, page_size: 1000 })
     uploadFilesList.value = data
   } catch (e) {
   } finally {
