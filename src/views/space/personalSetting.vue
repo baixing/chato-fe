@@ -130,7 +130,7 @@ const handleSaveSetting = async (formEl: FormInstance | undefined) => {
         id: settingForm.id
       }
       try {
-        await postCommonGraph('users/save', data)
+        await postCommonGraph('chato_users/save', data)
         base.updateUserInfoAttri(data)
         Notification.success(t('保存成功'))
       } catch (e) {

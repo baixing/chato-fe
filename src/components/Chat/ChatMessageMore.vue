@@ -46,7 +46,8 @@
 </template>
 
 <script setup lang="ts">
-import { deleteSession, evaluate, translate } from '@/api/chat'
+import { deleteSession, translate } from '@/api/chat'
+import useGlobalProperties from '@/composables/useGlobalProperties'
 import { SymChatDomainDetail } from '@/constant/chat'
 import { EMessageActionType, EMessageDisplayType, EMessageEvalution } from '@/enum/message'
 import type { IDomainInfo } from '@/interface/domain'
@@ -85,7 +86,7 @@ const emit = defineEmits([
   'receiveQuestionAnswer',
   'playAudio'
 ])
-
+const { postCommonGraph } = useGlobalProperties()
 const ChatMessageMoreAllAction = [
   { title: '保存', icon: Download, type: EMessageActionType.save },
   { title: '赞', icon: '', type: EMessageActionType.like },
@@ -151,7 +152,10 @@ const onDelete = async (questionId: number) => {
 }
 
 const onEvaluate = async (questionId: number, evaluation: string) => {
-  await evaluate(questionId, { evaluation })
+  await postCommonGraph('chato_questions/save', {
+    id: questionId,
+    evaluation: evaluation
+  })
   emit('likeDislikeSuccess', questionId, evaluation)
 }
 

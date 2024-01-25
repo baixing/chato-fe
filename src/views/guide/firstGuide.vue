@@ -218,7 +218,7 @@ const onGotoCreate = async () => {
     } = await postCommonGraph<IDomainInfo>('chato_domains/save', {
       creator_id: userInfo.value.id,
       updater_id: userInfo.value.id,
-      org_id: userInfo.value.org.id,
+      org: userInfo.value.org.id,
       desc_show: 0,
       name: '',
       status: 2,

@@ -220,17 +220,17 @@ const handleRemoveMember = async (row: any) => {
 
 const handleSelect = async (userId: number, value: ESettingSpaceRole) => {
   const data = {
-    org_user_id: userId,
+    id: userId,
     role: value
   }
-  const res = await postCommonGraph('users/save', data)
+  const res = await postCommonGraph('chato_users/save', data)
   const code = res.data.code
   const message = res.data.message
   ElMessage({
     type: code === 200 ? 'success' : 'error',
     message: code === 200 ? t('修改成功') : message
   })
-  if (data.org_user_id === userInfo.value.id) {
+  if (data.id === userInfo.value.id) {
     switchSpace(userInfo.value.org.id, { role: value as unknown as EAllRole })
     base.getUserInfo()
   }
@@ -239,6 +239,7 @@ const handleSelect = async (userId: number, value: ESettingSpaceRole) => {
 const handleUpdateOrgInfo = async () => {
   name.value = name.value.trim()
   const data = {
+    id: userInfo.value?.org.id,
     avatar: avatar.value,
     name: name.value
   }
