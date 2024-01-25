@@ -174,7 +174,8 @@
 
 <script setup lang="ts">
 import { updateDomain } from '@/api/domain'
-import { deleteFile, getFilesByDomainId } from '@/api/file'
+import { deleteFile } from '@/api/file'
+import { getCommonGraph } from '@/api/graph'
 import IconReward from '@/assets/img/Icon-Reward.png'
 import AIGenerateBtn from '@/components/AIGenerateBtn/index.vue'
 import EnterDoc from '@/components/EnterAnswer/EnterDoc.vue'
@@ -242,7 +243,14 @@ const initFilesList = async () => {
     uploadFilesListLoading.value = true
     const {
       data: { data }
-    } = await getFilesByDomainId(currentDomain.id.toString(), { page: 1, page_size: 1000 })
+    } = await getCommonGraph<IDocumentList[]>(
+      `chato_domains/${currentDomain.id.toString()}/files`,
+      {
+        page: 1,
+        size: 1000
+      }
+    )
+    //  getFilesByDomainId(currentDomain.id.toString(), { page: 1, page_size: 1000 })
     uploadFilesList.value = data
     if (uploadFilesList.value.length > 0 && currentDomain.task_progress[1] === 0) {
       currentDomain.task_progress[1] = 40
