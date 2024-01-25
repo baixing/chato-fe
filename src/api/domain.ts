@@ -158,7 +158,7 @@ export function getAppletQRCode2(slug: string) {
 export function getDomainReplySwitch(domain_id: IDomainInfo['id'], sender_uid: string) {
   return request({
     method: 'get',
-    url: `chato/api/v2/domains/human_reply_switch`,
+    url: `/chato/api/v2/domains/human_reply_switch`,
     data: { domain_id, sender_uid }
   })
 }
@@ -170,7 +170,7 @@ export function updateDomainReplySwitch(data: {
 }) {
   return request({
     method: 'post',
-    url: `chato/api/v2/domains/human_reply_switch`,
+    url: `/chato/api/v2/domains/human_reply_switch`,
     data
   })
 }
