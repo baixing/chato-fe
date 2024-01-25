@@ -7,7 +7,6 @@ import 'wow.js/css/libs/animate.css'
 import { deleteCommonGraph, getCommonGraph, postCommonGraph } from '@/api/graph'
 import useSensors from '@/composables/useSensors'
 import useSentry from '@/composables/useSentry'
-import { useBase } from '@/stores/base'
 import elementIcon from '@/utils/elementIcon'
 import { globalComponents } from '@/utils/globalComponents'
 import { copyPaste } from '@/utils/help'
@@ -32,14 +31,6 @@ app.use(VueViewer)
 
 app.use(asyncRegisterGlobalComponents, globalComponents)
 app.use(elementIcon)
-
-const base = useBase()
-const initAB = async () => {
-  try {
-    await base.getABTestConfig()
-  } catch (e) {}
-}
-initAB()
 
 useSensors(app)
 
