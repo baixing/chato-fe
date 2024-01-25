@@ -180,6 +180,7 @@ import {
   getDomainDetailPublic,
   getDomainQuotaInPlatformC
 } from '@/api/domain'
+import { getCommonGraph } from '@/api/graph'
 import DefaultAvatar from '@/assets/img/avatar.png'
 import AudioPlayer from '@/components/AudioPlayer/index.vue'
 import ChatEnter from '@/components/Chat/ChatEnter.vue'
@@ -212,7 +213,7 @@ import {
 } from '@/enum/message'
 import { EWeixinH5LoginType } from '@/enum/order'
 import { ESpaceRightsType } from '@/enum/space'
-import type { ChatHistoryParams, IChatCommonParams } from '@/interface/chat'
+import type { ChatHistoryParams, ChatToBotRes, IChatCommonParams } from '@/interface/chat'
 import type { IDomainInfo } from '@/interface/domain'
 import type { IMessageItem } from '@/interface/message'
 import type { IRecommendQuestion } from '@/interface/question'
@@ -348,7 +349,7 @@ const DefaultChatHistoryPage = {
 let chatHistoryPage = reactive({ ...DefaultChatHistoryPage })
 const chatHistoryParams: ChatHistoryParams = reactive({
   page: 1,
-  page_size: 10
+  size: 10
 })
 
 const SSEInstance = new SSE()
@@ -592,9 +593,19 @@ const getHistoryChat = async (scrollBottomTag = true) => {
   const chatToBotHistory = isInternal ? chatToBotHistoryB : chatToBotHistoryC
 
   try {
-    const res = await chatToBotHistory(chatHistoryParams)
-    chatHistoryPage.page_count = res.data.meta.pagination.page_count
-    chatHistoryPage.total = res.data.meta.pagination.total
+    const { data } = await getCommonGraph<IDomainInfo[]>('chato_domains', {
+      filter: `slug=="${chatHistoryParams.domain_slug}"`
+    })
+    console.log(data, 1)
+    const res = await getCommonGraph<ChatToBotRes[]>('chato_questions', {
+      filter: `(sender_uid=="${chatHistoryParams.sender_uid}" or (sender_id=="${chatHistoryParams.sender}")) and domain_id=="${data.data[0].id}"`,
+      page: chatHistoryParams.page,
+      size: chatHistoryParams.size
+    })
+    console.log(res, 2)
+    // chatToBotHistory(chatHistoryParams)
+    chatHistoryPage.page_count = res.data.pagination.page_count
+    chatHistoryPage.total = res.data.pagination.total
     const list = res.data.data
     chatHistoryPage.currentTotal = chatHistoryPage.currentTotal + list.length
     const newHistory = [...history.value]
@@ -640,6 +651,7 @@ const getHistoryChat = async (scrollBottomTag = true) => {
 
     return list
   } catch (e) {
+    console.log(e)
   } finally {
     $isLoading.value = false
   }

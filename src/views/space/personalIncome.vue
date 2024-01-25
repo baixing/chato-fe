@@ -74,15 +74,15 @@ const slugString = computed(() => {
   const list = domainList.value.map((item) => item.slug)
   const result = list
     .reduce((pre, cur) => {
-      return pre + `"${cur}"` + ','
+      return pre + `domain_slug=="${cur}" ` + 'or '
     }, '')
-    .slice(0, -1) // 移除最后一个字符，即多余的逗号
+    .slice(0, -3) // 移除最后一个字符，即多余的逗号
   return result
 })
 
 const init = async () => {
   const res = await getCommonGraph<ICUserBuyProductionDetail[]>(`customer_order`, {
-    filter: `domain_slug in (${slugString.value})`
+    filter: `${slugString.value}`
   })
   // getPurchaseToBIncome()
   payList.value = res.data.data
