@@ -1,20 +1,18 @@
 import type {
   ICUserBuyProductionDetail,
   ICUserBuyProductionParams,
-  IOrderPackage,
   IOrderPaymentCode,
-  IOrderPaymentStatus,
   IUserSettingOrderPayment
 } from '@/interface/order'
 import request from '@/utils/request'
 
 // 套餐列表
-export function getOrderPackageList() {
-  return request<IOrderPackage[]>({
-    method: 'get',
-    url: `/chato/api/package/order/list_package`
-  })
-}
+// export function getOrderPackageList() {
+//   return request<IOrderPackage[]>({
+//     method: 'get',
+//     url: `/chato/api/package/order/list_package`
+//   })
+// }
 
 export function getOrderPackagePaymentCode(data: {
   package_id: number
@@ -28,12 +26,12 @@ export function getOrderPackagePaymentCode(data: {
   })
 }
 
-export function refreshPaymentStatus(order_id: number) {
-  return request<IOrderPaymentStatus>({
-    method: 'get',
-    url: `/chato/api/package/order/${order_id}`
-  })
-}
+// export function refreshPaymentStatus(order_id: number) {
+//   return request<IOrderPaymentStatus>({
+//     method: 'get',
+//     url: `/chato/api/package/order/${order_id}`
+//   })
+// }
 
 export function postUserPackageAPI(slug: string, data: IUserSettingOrderPayment) {
   return request({

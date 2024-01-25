@@ -218,6 +218,12 @@ const initChatUsers = async () => {
       page: pagination.page,
       page_size: pagination.page_size
     })
+    // getCommonGraph<any>('chato_domains', {
+    //   filter: `domain_id=="${domainId.value}"`,
+    //   page: pagination.page,
+    //   size: pagination.page_size,
+    //   sort: '-id'
+    // })
     if (!activeChatUser.value && data.length) {
       activeChatUser.value = data[0].sender_uid
     }

@@ -62,8 +62,8 @@
   </el-checkbox>
 </template>
 <script lang="ts" setup>
-import { getFirstGuideIndustry } from '@/api/industry'
 import useGlobalProperties from '@/composables/useGlobalProperties'
+import { INDUSTRYSELECTCONFIG } from '@/constant/common'
 import { kPrivacyLinkUrl, kUserAgreementLinkUrl } from '@/constant/terms'
 import { openPreviewUrl } from '@/utils/help'
 import dayjs from 'dayjs'
@@ -99,22 +99,22 @@ const formRules = reactive<FormRules>({
 })
 const industryState = reactive({
   loading: false,
-  list: []
+  list: INDUSTRYSELECTCONFIG.industry || []
 })
 const protocolAgree = ref(true)
 
-const init = async () => {
-  try {
-    industryState.loading = true
-    const {
-      data: { data }
-    } = await getFirstGuideIndustry()
-    industryState.list = data?.industry || []
-  } catch (err) {
-  } finally {
-    industryState.loading = false
-  }
-}
+// const init = async () => {
+//   try {
+//     industryState.loading = true
+//     const {
+//       data: { data }
+//     } = await getFirstGuideIndustry()
+//     industryState.list = data?.industry || []
+//   } catch (err) {
+//   } finally {
+//     industryState.loading = false
+//   }
+// }
 
 const { $sensors } = useGlobalProperties()
 
@@ -132,5 +132,5 @@ const onSubmit = async () => {
   emit('submit')
 }
 
-init()
+// init()
 </script>

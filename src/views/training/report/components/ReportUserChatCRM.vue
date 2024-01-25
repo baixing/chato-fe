@@ -192,9 +192,10 @@ const initChatHistory = async (page = 1) => {
     const {
       data: { data, pagination }
     } = await getCommonGraph<ChatToBotRes[]>('chato_questions', {
-      filter: `sender_uid=="${senderUID.value}" and domain_id=="${domainInfo.value.slug}"`,
+      filter: `sender_uid=="${senderUID.value}" and domain_id=="${domainInfo.value.id}"`,
       page: page,
-      size: chatHistoryPagination.page_size
+      size: chatHistoryPagination.page_size,
+      sort: '-id'
     })
     //  chatToBotHistoryC({
     //   sender_uid: senderUID.value,

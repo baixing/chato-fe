@@ -90,12 +90,8 @@
   </Modal>
 </template>
 <script lang="ts" setup>
-import {
-  getChannelType,
-  patchChannelType,
-  patchWeixinConfig,
-  postWeixinConfig
-} from '@/api/release'
+import { getCommonGraph } from '@/api/graph'
+import { patchChannelType, patchWeixinConfig, postWeixinConfig } from '@/api/release'
 import Modal from '@/components/Modal/index.vue'
 import useImagePath from '@/composables/useImagePath'
 import { EAfficialAccountStatusType, EChannelType } from '@/enum/release'
@@ -189,8 +185,11 @@ const init = async () => {
     loading.value = true
     const {
       data: { data }
-    } = await getChannelType(EChannelType.WECHAT_KF, props.domainSlug)
-    config.value = data || {}
+    } = await getCommonGraph<any>('mp_account', {
+      filter: `type_def=="${EChannelType.WECHAT_KF}" and domain_slug=="${props.domainSlug}"`
+    })
+    // getChannelType(EChannelType.WECHAT_KF, props.domainSlug)
+    config.value = $notnull(data) ? data[0] : {}
   } catch (e) {
   } finally {
     loading.value = false

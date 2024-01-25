@@ -101,12 +101,14 @@
 </template>
 
 <script lang="ts" setup>
-import { getCheckChannelAPI, postSendSmsCodeAPI } from '@/api/auth'
+import { postSendSmsCodeAPI } from '@/api/auth'
+import { getCommonGraph } from '@/api/graph'
 import useGlobalProperties from '@/composables/useGlobalProperties'
 import useRSA from '@/composables/useRSA'
 import useSpaceRights from '@/composables/useSpaceRights'
 import { LoginCodeTip } from '@/constant/auth'
 import { ESpaceRightsType } from '@/enum/space'
+import { $notnull } from '@/utils/help'
 import { validateCode, validateMobile } from '@/utils/validate'
 import {
   ElNotification as Notification,
@@ -175,13 +177,27 @@ const isInputChannel = computed(() => inputChannel.includes(modelForm.channelTyp
 
 function validateChannelType(rule: any, value: any, callback: any) {
   if (modelForm.channelType === t('邀请码') && value !== '') {
-    getCheckChannelAPI({ code: value })
+    getCommonGraph<any[]>('inviter_channels', {
+      filter: 'code=="${value}"'
+    })
       .then((res) => {
         const { data } = res.data
-        !data && Notification.error(t('邀请码无效'))
+        !$notnull(data) || dayjs().isAfter(dayjs(data[0].expired))
+          ? Notification.error(t('邀请码无效'))
+          : Notification.success('有效邀请码')
         callback()
       })
-      .catch(() => {})
+      .catch((err) => {
+        console.log(err)
+      })
+
+    // getCheckChannelAPI({ code: value })
+    //   .then((res) => {
+    //     const { data } = res.data
+    //     !data && Notification.error(t('邀请码无效'))
+    //     callback()
+    //   })
+    //   .catch(() => {})
   } else {
     callback()
   }

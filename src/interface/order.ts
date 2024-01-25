@@ -86,7 +86,7 @@ export interface ICUserBuyProductionDetail {
 
 export interface IJSAPISignParams {
   appId: string
-  timeStamp: string
+  timeStamp: number
   signType: string
   nonceStr: string
   package: string
