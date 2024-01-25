@@ -65,14 +65,10 @@
 </template>
 
 <script lang="ts" setup>
-import {
-  getChannelType,
-  getTitokServiceConfig,
-  patchChannelType,
-  updateTiktokConfig
-} from '@/api/release'
+import { getChannelType, getTitokServiceConfig, patchChannelType } from '@/api/release'
 import Modal from '@/components/Modal/index.vue'
 import SwitchWithStateMsg from '@/components/SwitchWithStateMsg/index.vue'
+import useGlobalProperties from '@/composables/useGlobalProperties'
 import { ChannelStatusTiktok } from '@/constant/release'
 import { EAfficialAccountStatusType, EChannelType } from '@/enum/release'
 import { ElLoading, ElMessage, ElNotification } from 'element-plus'
@@ -94,7 +90,7 @@ const tiktokStatus = ref<{
 }>()
 const tiktokServiceConfig = ref<string>('') // 抖音配置
 const loading = ref(false)
-
+const { postCommonGraph } = useGlobalProperties()
 const internalVisible = computed({
   get: () => props.value,
   set: (v) => emit('update:value', v)
@@ -106,7 +102,10 @@ const onChangeTiktokAdditions = async (key: string, val: boolean) => {
       ...tiktokStatus.value.additions,
       [key]: Boolean(val)
     }
-    await updateTiktokConfig(tiktokStatus.value.id, params)
+    await postCommonGraph(`mp_account/save`, {
+      id: tiktokStatus.value.id,
+      ...params
+    })
     tiktokStatus.value.additions[key] = val
     ElNotification.success(t('操作成功'))
   } catch (e) {}

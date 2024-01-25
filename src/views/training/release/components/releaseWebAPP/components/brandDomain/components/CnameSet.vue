@@ -78,6 +78,7 @@
 </template>
 <script lang="ts" setup>
 import { saveBrandDomain } from '@/api/release'
+import useGlobalProperties from '@/composables/useGlobalProperties'
 import { EBrandCreateEditStatusType } from '@/enum/domain'
 import type { IBrandDomainType, IBrandDomainTypeKeyFile } from '@/interface/release'
 import { cosServe } from '@/utils/cos'
@@ -95,6 +96,7 @@ const props = defineProps<{
   brandDomainInfo: IBrandDomainTypeKeyFile
 }>()
 const emit = defineEmits(['nextClick', 'handleSubmitSuccess'])
+const { postCommonGraph, getCommonGraph } = useGlobalProperties()
 const cnameSetForm = ref<FormInstance>()
 const cnameUpload = reactive({
   pub_key: [],
@@ -135,6 +137,12 @@ const handleSubmit = async () => {
       ? EBrandCreateEditStatusType.create
       : EBrandCreateEditStatusType.update
   }
+  // const {
+  //   data: { data: domain }
+  // } = await getCommonGraph('/chato_domains', {
+  //   filter: `slug=="${props.slug}"`
+  // })
+
   const res = await saveBrandDomain(props.slug, data)
   loading.close()
   if (res.data.code === 200) {

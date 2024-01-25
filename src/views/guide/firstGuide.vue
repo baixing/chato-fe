@@ -121,7 +121,7 @@
 
 <script setup lang="ts">
 import { updateDomain } from '@/api/domain'
-import { getFirstGuideInterestDomains, saveFirstGuideAdditions } from '@/api/industry'
+import { getFirstGuideInterestDomains } from '@/api/industry'
 import useGlobalProperties from '@/composables/useGlobalProperties'
 import { EDomainStatus } from '@/enum/domain'
 import { EUserOrganizationRole } from '@/enum/userInformation'
@@ -206,13 +206,15 @@ const onGotoCreate = async () => {
   try {
     saving.value = true
     if (isAdditions) {
-      await saveFirstGuideAdditions({
-        interests: [formState.interests],
-        organization_type: formState.organization_type
+      await postCommonGraph('chato_orgs/save', {
+        id: userInfo.value.org.id,
+        additions: JSON.stringify({
+          interests: [formState.interests],
+          organization_type: formState.organization_type
+        })
       })
       baseStoreI.getUserInfo()
     }
-    console.log(userInfo.value)
     const {
       data: { data }
     } = await postCommonGraph<IDomainInfo>('chato_domains/save', {
