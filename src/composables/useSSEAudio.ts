@@ -6,7 +6,6 @@ import { ElMessage } from 'element-plus'
 import { storeToRefs } from 'pinia'
 
 export default function useSSEAudio() {
-  let sseText = ''
   const sseTextArr: ITTSParams[] = []
   let ttsSyncIndex = 0
   let ttsPending = false
@@ -14,8 +13,6 @@ export default function useSSEAudio() {
   const audioStoreI = useAudioStore()
   const { audioRef, audioPlayingId, audioLoading, audioListMap, audioPlaying } =
     storeToRefs(audioStoreI)
-
-  const finalSymbol = ['.', ',', '!', '?', ';', '。', '，', '！', '？', '；']
 
   const SSETextToAudio = ({
     sseRes,
@@ -36,9 +33,8 @@ export default function useSSEAudio() {
       audioStoreI.initAudioListByPlayerId(playerId)
     }
     const isFinish = finishReason || ChatMessageFinalStatus.includes(status)
-    if (finalSymbol.includes(chunkText) || isFinish) {
-      const textStr = isFinish ? sseText : `${sseText}。`
-      sseText = ''
+    if (isFinish) {
+      const textStr = isFinish ? chunkText : `${chunkText}。`
       sseTextArr.push({
         text: textStr,
         audio_key: playerId,
@@ -49,8 +45,6 @@ export default function useSSEAudio() {
       if (!ttsPending) {
         ttsQueue()
       }
-    } else {
-      sseText += chunkText
     }
   }
 
