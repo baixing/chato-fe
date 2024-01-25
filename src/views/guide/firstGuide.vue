@@ -215,7 +215,6 @@ const onGotoCreate = async () => {
       })
       baseStoreI.getUserInfo()
     }
-    console.log(userInfo.value)
     const {
       data: { data }
     } = await postCommonGraph<IDomainInfo>('chato_domains/save', {
