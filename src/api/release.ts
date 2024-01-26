@@ -1,4 +1,4 @@
-import type { EChannelType, EQrCodeHookType } from '@/enum/release'
+import type { EQrCodeHookType } from '@/enum/release'
 import type {
   IAppletAuthParams,
   IAppletAuthRes,
@@ -15,7 +15,6 @@ import type {
   IFeishuiPublicFormType,
   IGroupList,
   IJoinGroupChatAPI,
-  IPatchChannelType,
   ISettingBroadcastType,
   ISingelGroupList,
   IUpdateGroupDetail,
@@ -188,13 +187,13 @@ export function getTitokServiceConfig(domain_slug: string) {
 }
 
 // 更改抖音配置
-export function updateTiktokConfig(id: number, data: any) {
-  return request({
-    method: 'post',
-    url: `/chato/api/v1/channel/douyin/account/${id}/save_additions`,
-    data
-  })
-}
+// export function updateTiktokConfig(id: number, data: any) {
+//   return request({
+//     method: 'post',
+//     url: `/chato/api/v1/channel/douyin/account/${id}/save_additions`,
+//     data
+//   })
+// }
 
 // channel_get
 // export function getChannelType(channel_type: EChannelType, domain_slug: string) {
@@ -204,17 +203,17 @@ export function updateTiktokConfig(id: number, data: any) {
 // }
 
 // channel_patch
-export function patchChannelType(
-  channel_type: EChannelType,
-  domain_slug: string,
-  data: IPatchChannelType
-) {
-  return request({
-    method: 'patch',
-    url: `/chato/api/v1/channel/${channel_type}/account/${domain_slug}`,
-    data
-  })
-}
+// export function patchChannelType(
+//   channel_type: EChannelType,
+//   domain_slug: string,
+//   data: IPatchChannelType
+// ) {
+//   return request({
+//     method: 'patch',
+//     url: `/chato/api/v1/channel/${channel_type}/account/${domain_slug}`,
+//     data
+//   })
+// }
 
 // 配置钉钉
 export function postDingDingConfig(data: IDingDingPublicFormType, domain_slug) {

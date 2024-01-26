@@ -48,13 +48,13 @@ export function forbidSerach(domainId, params) {
 }
 
 // 问答-踩和赞
-export function evaluate(questionId, params) {
-  return request({
-    method: 'post',
-    url: `/chato/api/v1/questions/${questionId}/evaluate`,
-    data: params
-  })
-}
+// export function evaluate(questionId, params) {
+//   return request({
+//     method: 'post',
+//     url: `/chato/api/v1/questions/${questionId}/evaluate`,
+//     data: params
+//   })
+// }
 
 // 清除会话记录
 

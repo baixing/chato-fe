@@ -168,13 +168,13 @@
 
 <script lang="ts" setup>
 import { postWeixinH5Login } from '@/api/auth'
-import { clearSession, evaluate, getChatRecommendQuestions } from '@/api/chat'
+import { clearSession, getChatRecommendQuestions } from '@/api/chat'
 import {
   checkDomainCorrectTicketIsExpired,
   getDomainDetailPublic,
   getDomainQuotaInPlatformC
 } from '@/api/domain'
-import { getCommonGraph } from '@/api/graph'
+import { getCommonGraph, postCommonGraph } from '@/api/graph'
 import DefaultAvatar from '@/assets/img/avatar.png'
 import AudioPlayer from '@/components/AudioPlayer/index.vue'
 import ChatEnter from '@/components/Chat/ChatEnter.vue'
@@ -987,7 +987,11 @@ const onEvaluate = async (questionId: number, evValue: EMessageEvalution) => {
     } else {
       current.evaluation = evValue
     }
-    await evaluate(questionId, { evaluation: current.evaluation })
+    await postCommonGraph('chato_questions/save', {
+      id: questionId,
+      evaluation: current.evaluation
+    })
+    // evaluate(questionId, { evaluation: current.evaluation })
   } catch (e) {}
 }
 
