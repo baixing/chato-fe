@@ -25,8 +25,8 @@
 </template>
 
 <script setup lang="ts">
-import { getCommonGraph } from '@/api/graph'
-import { patchChannelType, postDingDingConfig } from '@/api/release'
+import { getCommonGraph, postCommonGraph } from '@/api/graph'
+import { postDingDingConfig } from '@/api/release'
 import Modal from '@/components/Modal/index.vue'
 import { EAfficialAccountStatusType, EChannelType } from '@/enum/release'
 import type { IDingDingPublicFormType } from '@/interface/release'
@@ -109,7 +109,20 @@ const updateFeishuStatus = async () => {
     s_status: turn.value ? EAfficialAccountStatusType.normal : EAfficialAccountStatusType.disabled
   }
   try {
-    await patchChannelType(EChannelType.DINGDING, props.domainSlug, data)
+    const res = await getCommonGraph<any>('mp_account', {
+      filter: `domain_slug=="${props.domainSlug}" and type_def=="${EChannelType.DINGDING}" and s_status=="${EAfficialAccountStatusType.normal}"`
+    })
+    const account = res.data.data
+    if ($notnull(account)) {
+      await postCommonGraph('mp_account/save', {
+        id: account[0].id,
+        s_status: data.s_status,
+        app_secret: dingdingConfig.value.app_secret,
+        app_id: dingdingConfig.value.app_id
+      })
+    }
+
+    // patchChannelType(EChannelType.DINGDING, props.domainSlug, data)
   } catch (e) {}
 }
 

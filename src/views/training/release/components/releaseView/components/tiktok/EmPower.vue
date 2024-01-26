@@ -66,7 +66,7 @@
 
 <script lang="ts" setup>
 import { getCommonGraph } from '@/api/graph'
-import { getTitokServiceConfig, patchChannelType } from '@/api/release'
+import { getTitokServiceConfig } from '@/api/release'
 import Modal from '@/components/Modal/index.vue'
 import SwitchWithStateMsg from '@/components/SwitchWithStateMsg/index.vue'
 import useGlobalProperties from '@/composables/useGlobalProperties'
@@ -151,11 +151,23 @@ const handleEmpower = async (txt: string) => {
       background: 'rgba(0, 0, 0, 0.7)'
     })
     try {
-      const res = await patchChannelType(EChannelType.DOUYIN, props.domainSlug, {
-        s_status: EAfficialAccountStatusType.disabled
+      const resAccount = await getCommonGraph<any>('mp_account', {
+        filter: `domain_slug=="${props.domainSlug}" and type_def=="${EChannelType.DOUYIN}" and s_status=="${EAfficialAccountStatusType.normal}"`
       })
-      tiktokStatus.value = res.data.data || {}
-      ElMessage.success(t('解除成功'))
+      const account = resAccount.data.data
+
+      if ($notnull(account)) {
+        const res = await postCommonGraph<any>('mp_account/save', {
+          id: account[0].id,
+          s_status: EAfficialAccountStatusType.disabled
+        })
+        tiktokStatus.value = res.data.data || {}
+        ElMessage.success(t('解除成功'))
+      }
+
+      // patchChannelType(EChannelType.DOUYIN, props.domainSlug, ∑∂ddddfr{
+      //   s_status: EAfficialAccountStatusType.disabled
+      // })
     } catch (e) {
       ElMessage.error(t('解除失败'))
     } finally {
