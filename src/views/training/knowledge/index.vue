@@ -135,22 +135,16 @@ const updateKnowledgeSharedStatus = async ({
   } = await getCommonGraph<IKnowledgeShared[]>(`knowledge_shared`, {
     filter: `sender_domain_id == "${sender_domain_id}" and receiver_domain_id == "${receiver_domain_id}"`
   })
-  console.log(1234)
-  console.log(status === 'delete')
   if (status === 'delete') {
     if (data.length === 0) return ElNotification.error('共享信息不存在或者删除')
     await deleteCommonGraph(`knowledge_shared/${data[0].id}`)
   } else {
-    console.log(9999)
-    console.log(sender_domain)
-    console.log(receiver_domain)
     const data = {
       sender_domain_id: sender_domain.id,
       receiver_domain_id: receiver_domain.id,
       sender_user_id: sender_domain.creator_id,
       receiver_user_id: receiver_domain.creator_id
     }
-    console.log(data)
     await postCommonGraph(`knowledge_shared/save`, data)
   }
 }

@@ -77,14 +77,15 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { saveBrandDomain } from '@/api/release'
 import useGlobalProperties from '@/composables/useGlobalProperties'
 import { EBrandCreateEditStatusType } from '@/enum/domain'
 import type { IBrandDomainType, IBrandDomainTypeKeyFile } from '@/interface/release'
+import { useBase } from '@/stores/base'
 import { cosServe } from '@/utils/cos'
 import { $notnull } from '@/utils/help'
 import type { FormInstance, UploadUserFile } from 'element-plus'
 import { ElLoading, ElNotification as Notification } from 'element-plus'
+import { storeToRefs } from 'pinia'
 import { computed, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import UploadFile from '../../UploadFile.vue'
@@ -96,7 +97,9 @@ const props = defineProps<{
   brandDomainInfo: IBrandDomainTypeKeyFile
 }>()
 const emit = defineEmits(['nextClick', 'handleSubmitSuccess'])
-const { postCommonGraph, getCommonGraph } = useGlobalProperties()
+const base = useBase()
+const { userInfo } = storeToRefs(base)
+const { postCommonGraph } = useGlobalProperties()
 const cnameSetForm = ref<FormInstance>()
 const cnameUpload = reactive({
   pub_key: [],
@@ -128,22 +131,19 @@ const handleSubmit = async () => {
     text: t('保存中'),
     background: 'rgba(0, 0, 0, 0.7)'
   })
-  const data = {
-    ...cnameSetModel,
-    id: $notnull(props.brandDomainInfo) ? props.brandDomainInfo.id : 0,
+  const ch = {
+    id: props.brandDomainInfo?.id === 0 ? null : props.brandDomainInfo?.id,
+    hostname: cnameSetModel?.hostname,
+    record: cnameSetModel?.record,
+    pub_key: JSON.stringify(cnameSetModel?.pub_key),
+    pri_key: JSON.stringify(cnameSetModel?.pri_key),
     expired: 0,
     memo: '',
-    status: $notnull(props.brandDomainInfo)
-      ? EBrandCreateEditStatusType.create
-      : EBrandCreateEditStatusType.update
+    domain_slug: props.slug,
+    uid: userInfo.value.id,
+    s_status: 'pending'
   }
-  // const {
-  //   data: { data: domain }
-  // } = await getCommonGraph('/chato_domains', {
-  //   filter: `slug=="${props.slug}"`
-  // })
-
-  const res = await saveBrandDomain(props.slug, data)
+  const res = await postCommonGraph('custom_host/save', ch)
   loading.close()
   if (res.data.code === 200) {
     Notification.success(t('操作成功，正在审核中....'))
