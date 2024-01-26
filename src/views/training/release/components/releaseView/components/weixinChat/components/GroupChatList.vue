@@ -201,10 +201,9 @@
 </template>
 
 <script setup lang="ts">
-import { getCommonGraph } from '@/api/graph'
+import { getCommonGraph, postCommonGraph } from '@/api/graph'
 import {
   deleteGroupChatAPI,
-  deleteTimeBroadcastAPI,
   editGroupAPI,
   getGroupImgAPI,
   patchTimeBroadcastAPI,
@@ -222,6 +221,7 @@ import {
   ElLoading,
   ElMessageBox,
   ElNotification,
+  dayjs,
   type FormInstance,
   type FormRules
 } from 'element-plus'
@@ -446,7 +446,11 @@ const handleSettingRemove = async (item: ISettingBroadcastType) => {
     background: 'rgba(0, 0, 0, 0.7)'
   })
   try {
-    await deleteTimeBroadcastAPI({ send_schedule_id: item.send_schedule_id })
+    await postCommonGraph('send_schedule/save', {
+      id: item.send_schedule_id,
+      deleted: dayjs().format('YYYY-MM-DD HH:mm:ss')
+    })
+    // deleteTimeBroadcastAPI({ send_schedule_id: item.send_schedule_id })
     initTimeBroadcast(curRoomId.value)
     ElNotification.success('删除成功')
   } catch (error) {
