@@ -337,13 +337,13 @@ export function patchTimeBroadcastAPI(data: ISettingBroadcastType) {
   })
 }
 
-export function deleteTimeBroadcastAPI(data: { send_schedule_id: number }) {
-  return request({
-    method: 'delete',
-    url: `/chato/api/v1/send_schedule/task`,
-    data
-  })
-}
+// export function deleteTimeBroadcastAPI(data: { send_schedule_id: number }) {
+//   return request({
+//     method: 'delete',
+//     url: `/chato/api/v1/send_schedule/task`,
+//     data
+//   })
+// }
 
 export function createPosterAPI(data: { domain_id: number }) {
   return request({

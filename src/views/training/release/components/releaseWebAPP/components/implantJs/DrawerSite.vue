@@ -73,17 +73,17 @@
   </el-drawer>
 </template>
 <script lang="ts" setup>
-import { getCommonGraph } from '@/api/graph'
-import { createDeleteEditSites } from '@/api/iframe'
+import { getCommonGraph, postCommonGraph } from '@/api/graph'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import { CHATO_SOURCE_JS } from '@/constant/common'
 import { ESiteShowLocationType, ESiteStatus } from '@/enum/release'
 import type {
-  ICreateDeleteEditSitesData,
   ICreateSitesChannelsRes,
+  ISaveSitesParams,
   ISetSiteFormType
 } from '@/interface/release'
 import { renderMarkdown } from '@/utils/markdown'
+import dayjs from 'dayjs'
 import type { FormInstance } from 'element-plus'
 import { ElLoading, ElMessageBox, ElNotification as Notification } from 'element-plus'
 import { computed, ref, watch } from 'vue'
@@ -181,8 +181,19 @@ const removeSite = (id: number, source: string) => {
     .catch(() => {})
 }
 
-const updateSites = async (data: ICreateDeleteEditSitesData) => {
-  const res = await createDeleteEditSites(props.slug, data)
+const updateSites = async (data: Partial<ISaveSitesParams>) => {
+  const params = {
+    ...data,
+    domain_slug: props.slug,
+    deleted: data.status === ESiteStatus.delete ? dayjs().format('YYYY-MM-DD HH:mm:ss') : null
+  }
+
+  delete params.status
+
+  const res = await postCommonGraph('share_channel/save', {
+    ...params
+  })
+  // createDeleteEditSites(props.slug, data)
   initSitesList()
   Notification({
     type: 'success',

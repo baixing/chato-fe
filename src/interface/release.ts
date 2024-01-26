@@ -43,6 +43,18 @@ export interface ICreateDeleteEditSitesData {
   status: string
 }
 
+export interface ISaveSitesParams {
+  id: number
+  source: string
+  popup: number
+  popup_frequency: number
+  show_bubble: number
+  show_location: ESiteShowLocationType
+  suspend_style: string
+  suspend_style_color: string
+  status: string
+}
+
 export interface ICreateSitesChannelsRes {
   created: string
   deleted: string
