@@ -73,7 +73,8 @@
   </el-drawer>
 </template>
 <script lang="ts" setup>
-import { createDeleteEditSites, getCreateSites } from '@/api/iframe'
+import { getCommonGraph } from '@/api/graph'
+import { createDeleteEditSites } from '@/api/iframe'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import { CHATO_SOURCE_JS } from '@/constant/common'
 import { ESiteShowLocationType, ESiteStatus } from '@/enum/release'
@@ -190,8 +191,11 @@ const updateSites = async (data: ICreateDeleteEditSitesData) => {
 }
 
 const initSitesList = async () => {
-  const res = await getCreateSites(props.slug)
-  const channels = res.data.data.channels
+  const res = await getCommonGraph<ICreateSitesChannelsRes[]>('share_channel', {
+    filter: `domain_slug=="${props.slug}"`
+  })
+  // getCreateSites(props.slug)
+  const channels = res.data.data
   sitesList.value = channels.map((item) => ({
     ...item,
     codeContent: codeContent(item.id),

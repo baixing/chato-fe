@@ -1,4 +1,4 @@
-import type { ICreateDeleteEditSitesData, ICreateSitesRes } from '@/interface/release'
+import type { ICreateDeleteEditSitesData } from '@/interface/release'
 import request from '@/utils/request'
 
 export function createDeleteEditSites(domain_slug: string, data: ICreateDeleteEditSitesData) {
@@ -9,8 +9,8 @@ export function createDeleteEditSites(domain_slug: string, data: ICreateDeleteEd
   })
 }
 
-export function getCreateSites(domain_slug: string) {
-  return request<ICreateSitesRes>({
-    url: `/chato/api/share_channel/${domain_slug}/get`
-  })
-}
+// export function getCreateSites(domain_slug: string) {
+//   return request<ICreateSitesRes>({
+//     url: `/chato/api/share_channel/${domain_slug}/get`
+//   })
+// }

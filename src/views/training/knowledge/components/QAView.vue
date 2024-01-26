@@ -205,7 +205,8 @@ const initQAList = async () => {
     const {
       data: { data, pagination: meta }
     } = await getCommonGraph<IDocumentList[]>(`chato_domains/${domainId.value}/files`, {
-      ...params
+      ...params,
+      sort: '-id'
     })
     // getFilesByDomainId(domainId.value, params)
     tableData.value = data

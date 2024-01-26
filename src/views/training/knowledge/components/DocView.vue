@@ -224,7 +224,8 @@ const initDocList = async () => {
     const {
       data: { data, pagination: meta }
     } = await getCommonGraph<IDocumentList[]>(`chato_domains/${domainId.value}/files`, {
-      ...params
+      ...params,
+      sort: '-id'
     })
     tableData.value = data
     pagination.value.page_count = meta.page_count
