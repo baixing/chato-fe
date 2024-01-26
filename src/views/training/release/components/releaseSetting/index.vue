@@ -289,8 +289,7 @@
 
 <script lang="ts" setup>
 import { updateDomain } from '@/api/domain'
-import { getCommonGraph } from '@/api/graph'
-import { postUserPackageAPI } from '@/api/order'
+import { getCommonGraph, postCommonGraph } from '@/api/graph'
 import payImg from '@/assets/img/pay-home.png'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
 import Modal from '@/components/Modal/index.vue'
@@ -307,6 +306,7 @@ import { RoutesMap } from '@/router'
 import { useBase } from '@/stores/base'
 import { useDomainStore } from '@/stores/domain'
 import { useSpaceStore } from '@/stores/space'
+import { $notnull } from '@/utils/help'
 import { getStringWidth } from '@/utils/string'
 import { getSpecifiedDateSinceNowDay } from '@/utils/timeRange'
 import { ElLoading, ElMessage, ElMessageBox, ElNotification } from 'element-plus'
@@ -434,10 +434,31 @@ const syncOriginalFormState = () => {
 
 // 保存套餐信息
 const onSaveOrderInfo = async () => {
-  await postUserPackageAPI(domainInfo.value.slug, {
-    ...toRaw(currentOrderDetail),
-    price: currentOrderDetail.price * 100
-  })
+  try {
+    const { data: data } = await getCommonGraph('customer_package', {
+      filter: `domain_slug=="${domainInfo.value.slug}" and status=="active"`
+    })
+
+    const oldList = data.data
+    if ($notnull(oldList)) {
+      await postCommonGraph('customer_package/save', {
+        id: oldList[0].id,
+        status: 'invalid'
+      })
+    }
+
+    await postCommonGraph('customer_package/save', {
+      ...toRaw(currentOrderDetail),
+      price: currentOrderDetail.price * 100,
+      domain_slug: domainInfo.value.slug
+    })
+  } catch (error) {
+    console.log(error)
+  }
+  // postUserPackageAPI(domainInfo.value.slug, {
+  //   ...toRaw(currentOrderDetail),
+  //   price: currentOrderDetail.price * 100
+  // })
 }
 
 const onHandleSetPackage = () => {
@@ -509,7 +530,8 @@ const onViewRevenue = () => {
 
 const initOrderInfo = async () => {
   const res = await getCommonGraph<any[]>(`customer_package`, {
-    filter: `domain_slug=="${domainInfo.value.slug}"`
+    filter: `domain_slug=="${domainInfo.value.slug}" and status=="active"`,
+    sort: '-id'
   })
   const orderList = res.data.data
   if (orderList.length) {

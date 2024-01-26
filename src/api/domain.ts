@@ -31,13 +31,13 @@ export function getDomainQuotaInPlatformC(domain_slug: string) {
 }
 
 // 更新机器人在资源广场显示或隐藏
-export const updateDomainInResource = (domainId: string | number, data: any) => {
-  return request<IDomainInfo>({
-    method: 'patch',
-    url: `/chato/api/v1/domains/${domainId}/in_resource`,
-    data
-  })
-}
+// export const updateDomainInResource = (domainId: string | number, data: any) => {
+//   return request<IDomainInfo>({
+//     method: 'patch',
+//     url: `/chato/api/v1/domains/${domainId}/in_resource`,
+//     data
+//   })
+// }
 
 export const cloneDomainRobot = (domainId: string, data: { is_need_document: 0 | 1 }) => {
   return request({
@@ -71,12 +71,12 @@ export const checkDomainCorrectTicketIsExpired = (data) => {
   })
 }
 
-export const createDraftDomain = () => {
-  return request<IDomainInfo>({
-    method: 'post',
-    url: `/chato/api/v1/domains/create_draft`
-  })
-}
+// export const createDraftDomain = () => {
+//   return request<IDomainInfo>({
+//     method: 'post',
+//     url: `/chato/api/v1/domains/create_draft`
+//   })
+// }
 
 // export const domainLLMConfigAPI = () => {
 //   return request<IDomainLLMConfig[]>({
@@ -99,15 +99,15 @@ export const getTestTimbreUrl = (timbre: String) => {
   })
 }
 
-export const updateBotUseScope = (domain_id: number, use_scope: 0 | 1) => {
-  return request({
-    url: `/chato/api/domains/${domain_id}/use_scope`,
-    method: 'PATCH',
-    data: {
-      use_scope
-    }
-  })
-}
+// export const updateBotUseScope = (domain_id: number, use_scope: 0 | 1) => {
+//   return request({
+//     url: `/chato/api/domains/${domain_id}/use_scope`,
+//     method: 'PATCH',
+//     data: {
+//       use_scope
+//     }
+//   })
+// }
 
 // 校验domain_id 是否在当前空间 ICheckDomainIdResult
 export function checkDomainIdAPI(domainId: string) {

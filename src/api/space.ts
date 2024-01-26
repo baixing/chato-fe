@@ -3,10 +3,7 @@ import type {
   ISpaceQuota,
   ISpaceRights,
   ISpaceRightsSummary,
-  ISpaceRole,
-  IUpdateMemeberRole,
-  IUpdateOrgInfo,
-  IUpdateOrgUserInfo
+  ISpaceRole
 } from '@/interface/space'
 import type { IUserInfo } from '@/interface/user'
 import request from '@/utils/request'
@@ -19,13 +16,13 @@ export function removeSpaceMember(id: number) {
   })
 }
 // 更改空间成员权限
-export function updateSpaceMemberRole(data: IUpdateMemeberRole) {
-  return request({
-    method: 'post',
-    url: `/chato/api/v1/user/org/member/update`,
-    data
-  })
-}
+// export function updateSpaceMemberRole(data: IUpdateMemeberRole) {
+//   return request({
+//     method: 'post',
+//     url: `/chato/api/v1/user/org/member/update`,
+//     data
+//   })
+// }
 
 // 用户是否在空间内
 export function hasInSpace(org_id: number) {
@@ -55,22 +52,22 @@ export function getInviteUserDetail(data: IAddMemeberRole) {
 }
 
 // 更新空间内用户信息
-export function updateOrgUserInfo(data: IUpdateOrgUserInfo) {
-  return request({
-    method: 'post',
-    url: `/chato/api/v1/user/org_user/update`,
-    data
-  })
-}
+// export function updateOrgUserInfo(data: IUpdateOrgUserInfo) {
+//   return request({
+//     method: 'post',
+//     url: `/chato/api/v1/user/org_user/update`,
+//     data
+//   })
+// }
 
 // 更新空间信息
-export function updateOrgSpaceInfo(data: IUpdateOrgInfo) {
-  return request({
-    method: 'post',
-    url: `/chato/api/v1/user/org/update`,
-    data
-  })
-}
+// export function updateOrgSpaceInfo(data: IUpdateOrgInfo) {
+//   return request({
+//     method: 'post',
+//     url: `/chato/api/v1/user/org/update`,
+//     data
+//   })
+// }
 
 // 获取空间权益
 export const getSpaceRights = () => {

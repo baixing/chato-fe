@@ -94,7 +94,7 @@
   </Modal>
 </template>
 <script lang="ts" setup>
-import { cloneDomainRobot, updateBotUseScope } from '@/api/domain'
+import { cloneDomainRobot } from '@/api/domain'
 import { generateQACheckReport } from '@/api/file'
 import Modal from '@/components/Modal/index.vue'
 import Topbar from '@/components/Topbar/index.vue'
@@ -105,6 +105,7 @@ import { ESpaceRightsType } from '@/enum/space'
 import type { IDomainInfo } from '@/interface/domain'
 import ContentLayout from '@/layout/ContentLayout.vue'
 import { RoutesMap } from '@/router'
+import { useBase } from '@/stores/base'
 import { useChatStore } from '@/stores/chat'
 import { useDomainStore } from '@/stores/domain'
 import { ElLoading, ElMessage, ElMessageBox, ElNotification, ElSelect } from 'element-plus'
@@ -116,6 +117,7 @@ import BotListCard from './components/BotListCard.vue'
 
 const { t } = useI18n()
 const router = useRouter()
+const base = useBase()
 const chatStoreI = useChatStore()
 const domainStoreI = useDomainStore()
 const loading = ref()
@@ -127,6 +129,7 @@ const dialogState = reactive({
   action: '',
   type: ''
 })
+const { userInfo } = storeToRefs(base)
 const { domainList } = storeToRefs(domainStoreI)
 const { deleteCommonGraph, postCommonGraph } = useGlobalProperties()
 const { checkRightsTypeNeedUpgrade } = useSpaceRights()
@@ -148,7 +151,17 @@ const setBotUseScopeDialogVisible = (bot: IDomainInfo) => {
 
 const onSetBotUseScope = async () => {
   try {
-    await updateBotUseScope(opDomain.value.id!, opDomain.value.use_scope)
+    if (
+      opDomain.value.creator_id !== userInfo.value.id &&
+      userInfo.value.org.owner_id !== userInfo.value.id
+    ) {
+      return ElNotification.info('没有操作权限')
+    }
+    await postCommonGraph('chato_domains/save', {
+      id: opDomain.value.id,
+      use_scope: opDomain.value.use_scope
+    })
+    // updateBotUseScope(opDomain.value.id!, opDomain.value.use_scope)
     const findItem = domainList.value.find((item) => item.id === opDomain.value.id)
     if (!findItem) return
     findItem.use_scope = opDomain.value.use_scope

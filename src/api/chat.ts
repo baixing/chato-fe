@@ -1,5 +1,5 @@
 import { ETerminal } from '@/enum/common'
-import type { ChatHistoryParams, ChatToBotRes, IChatCitationSource } from '@/interface/chat'
+import type { IChatCitationSource } from '@/interface/chat'
 import type { IRecommendQuestion, IRecommendQuestionParams } from '@/interface/question'
 import type { ITTSList, ITTSParams } from '@/interface/tts'
 import request from '@/utils/request'
@@ -21,22 +21,22 @@ export function chatToBot(botId, question) {
 }
 
 // c端聊天
-export function chatToBotHistoryC(params: ChatHistoryParams) {
-  return request<ChatToBotRes[]>({
-    method: 'get',
-    url: '/chato/api/v1/questions/query',
-    params
-  })
-}
+// export function chatToBotHistoryC(params: ChatHistoryParams) {
+//   return request<ChatToBotRes[]>({
+//     method: 'get',
+//     url: '/chato/api/v1/questions/query',
+//     params
+//   })
+// }
 
 // b端聊天
-export function chatToBotHistoryB(params: ChatHistoryParams) {
-  return request<ChatToBotRes[]>({
-    method: 'get',
-    url: '/chato/api/v1/questions/auth/query',
-    params
-  })
-}
+// export function chatToBotHistoryB(params: ChatHistoryParams) {
+//   return request<ChatToBotRes[]>({
+//     method: 'get',
+//     url: '/chato/api/v1/questions/auth/query',
+//     params
+//   })
+// }
 
 // 聊天-问题风控
 export function forbidSerach(domainId, params) {
