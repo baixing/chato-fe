@@ -110,13 +110,13 @@ export function getKnowledgeSharedList(data: any) {
 }
 
 // 更新知识库关联状态
-export function updateKnowledgeSharedStatus(data: any) {
-  return request({
-    method: 'post',
-    url: `/api/knowledge/share`,
-    data
-  })
-}
+// export function updateKnowledgeSharedStatus(data: any) {
+//   return request({
+//     method: 'post',
+//     url: `/api/knowledge/share`,
+//     data
+//   })
+// }
 
 //获取公众号list
 export function getWXPublicList(data: { name: string }) {

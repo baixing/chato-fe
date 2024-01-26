@@ -28,3 +28,11 @@ export function deleteCommonGraph<R, P extends Record<string, unknown> = Record<
     data: data
   })
 }
+
+export function patchCommonGraph<R, P extends object = object>(suffix: string, data?: P) {
+  return request<R>({
+    url: `/chato/api/v1/graph/${suffix}`,
+    method: 'PATCH',
+    data: data
+  })
+}

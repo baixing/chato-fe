@@ -1,8 +1,7 @@
 import type {
   ICUserBuyProductionDetail,
   ICUserBuyProductionParams,
-  IOrderPaymentCode,
-  IUserSettingOrderPayment
+  IOrderPaymentCode
 } from '@/interface/order'
 import request from '@/utils/request'
 
@@ -33,13 +32,13 @@ export function getOrderPackagePaymentCode(data: {
 //   })
 // }
 
-export function postUserPackageAPI(slug: string, data: IUserSettingOrderPayment) {
-  return request({
-    method: 'post',
-    url: `/chato/api/v2/domains/${slug}/customer/package`,
-    data
-  })
-}
+// export function postUserPackageAPI(slug: string, data: IUserSettingOrderPayment) {
+//   return request({
+//     method: 'post',
+//     url: `/chato/api/v2/domains/${slug}/customer/package`,
+//     data
+//   })
+// }
 
 export function postPurchaseProductionAPI(slug: string, data: ICUserBuyProductionParams) {
   return request<IOrderPaymentCode>({

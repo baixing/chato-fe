@@ -79,8 +79,8 @@
 </template>
 
 <script setup lang="ts">
-import { createDraftDomain, getDomainDetailPublic, updateDomain } from '@/api/domain'
-import { getCommonGraph } from '@/api/graph'
+import { getDomainDetailPublic, updateDomain } from '@/api/domain'
+import { getCommonGraph, postCommonGraph } from '@/api/graph'
 import EnterDoc from '@/components/EnterAnswer/EnterDoc.vue'
 import Topbar from '@/components/Topbar/index.vue'
 import { useBasicLayout } from '@/composables/useBasicLayout'
@@ -97,6 +97,7 @@ import SSE from '@/utils/sse'
 import { getStringWidth } from '@/utils/string'
 import { ElLoading, ElMessage, ElMessageBox, ElNotification } from 'element-plus'
 import { isEqual } from 'lodash-es'
+import { storeToRefs } from 'pinia'
 import {
   computed,
   nextTick,
@@ -130,6 +131,7 @@ const baseStoreI = useBase()
 const DOCModalVisible = ref(false)
 const isBeforeRoute = ref(false)
 
+const { userInfo } = storeToRefs(baseStoreI)
 const qtyLimit = baseStoreI.userInfo.role === USER_ROLES.SUPERMAN ? 1000 : 20
 let cdFn: Function
 // const onLinkBots = () => {
@@ -290,7 +292,17 @@ const onNewDraft = async () => {
     initing.value = true
     const {
       data: { data }
-    } = await createDraftDomain()
+    } = await postCommonGraph<IDomainInfo>('chato_domains/save', {
+      creator_id: userInfo.value.id,
+      updater_id: userInfo.value.id,
+      org: userInfo.value.org.id,
+      desc_show: 0,
+      name: '',
+      status: 2,
+      avatar: 'https://afu-1255830993.cos.ap-shanghai.myqcloud.com/447479457016221696.png'
+    })
+
+    // createDraftDomain()
 
     const { id, slug } = data
 

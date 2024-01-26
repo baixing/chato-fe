@@ -15,7 +15,6 @@ import type {
   IFeishuiPublicFormType,
   IGroupList,
   IJoinGroupChatAPI,
-  IMobileLimitItem,
   IPatchChannelType,
   ISettingBroadcastType,
   ISingelGroupList,
@@ -306,13 +305,13 @@ export function postTimeBroadcastAPI(data: ISettingBroadcastType) {
   })
 }
 
-export function postMobileLimitAPI(domainId: number, data: IMobileLimitItem) {
-  return request({
-    method: 'post',
-    url: `/chato/api/domains/${domainId}/mobile_limit`,
-    data
-  })
-}
+// export function postMobileLimitAPI(domainId: number, data: IMobileLimitItem) {
+//   return request({
+//     method: 'post',
+//     url: `/chato/api/domains/${domainId}/mobile_limit`,
+//     data
+//   })
+// }
 
 export function postMobileLimitFileAPI(domainId: number, file: string) {
   return request({
@@ -322,12 +321,12 @@ export function postMobileLimitFileAPI(domainId: number, file: string) {
   })
 }
 
-export function deleteMobileLimitAPI(domainId: number, limitId: number) {
-  return request({
-    method: 'delete',
-    url: `/chato/api/domains/${domainId}/mobile_limit/${limitId}`
-  })
-}
+// export function deleteMobileLimitAPI(domainId: number, limitId: number) {
+//   return request({
+//     method: 'delete',
+//     url: `/chato/api/domains/${domainId}/mobile_limit/${limitId}`
+//   })
+// }
 // ----------------------
 
 // ------群聊广播-------

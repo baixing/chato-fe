@@ -100,8 +100,9 @@
 </template>
 
 <script setup lang="ts">
-import { createDraftDomain, updateDomain } from '@/api/domain'
-import { deleteFile, uploadPublicAsync, uploadText, uploadURL } from '@/api/file'
+import { updateDomain } from '@/api/domain'
+import { deleteFile, uploadText, uploadURL } from '@/api/file'
+import { postCommonGraph } from '@/api/graph'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
 import Topbar from '@/components/Topbar/index.vue'
 import { currentEnvConfig } from '@/config'
@@ -111,6 +112,7 @@ import type { IDomainInfo } from '@/interface/domain'
 import ContentLayout from '@/layout/ContentLayout.vue'
 import { RoutesMap } from '@/router'
 import { useAuthStore } from '@/stores/auth'
+import { useBase } from '@/stores/base'
 import {
   ElNotification,
   dayjs,
@@ -130,6 +132,9 @@ const mediaLimit = 25
 
 const { t } = useI18n()
 const router = useRouter()
+const base = useBase()
+
+const { userInfo } = storeToRefs(base)
 
 const activeTab = ref<EDocumentTabType>(EDocumentTabType.inputPublic)
 const initing = ref(true)
@@ -154,7 +159,16 @@ const onNewDraft = async () => {
     initing.value = true
     const {
       data: { data }
-    } = await createDraftDomain()
+    } = await postCommonGraph<IDomainInfo>('chato_domains/save', {
+      creator_id: userInfo.value.id,
+      updater_id: userInfo.value.id,
+      org: userInfo.value.org.id,
+      desc_show: 0,
+      name: '',
+      status: 2,
+      avatar: 'https://afu-1255830993.cos.ap-shanghai.myqcloud.com/447479457016221696.png'
+    })
+    // createDraftDomain()
 
     const { id, slug } = data
 
