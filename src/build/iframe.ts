@@ -33,22 +33,25 @@ window.onload = () => {
     }
 
     async function fetchChatoDetail() {
+      // ${createChatoConfig.domainSlug}/${createChatoConfig.id}
+      const domainSlug = createChatoConfig.domainSlug
+      const wwwBaseURL = createChatoConfig.wwwBaseURL
       const response = await fetch(
-        `${createChatoConfig.baseURL}/chato/api/share_channel/${createChatoConfig.domainSlug}/${createChatoConfig.id}`
+        `${createChatoConfig.baseURL}/chato/api/v1/graph/share_channel?filter=domain_slug=="${domainSlug} and id=="${createChatoConfig.id}"`
       )
       const data = await response.json()
       if (data.code === 200036) {
         return Promise.reject(data.message)
       }
-      createChatoConfig.tipChatoBg = data.data.suspend_style
-      createChatoConfig.tipChatoColor = data.data.suspend_style_color || '#fff'
-      createChatoConfig.chatoIframeSrc = `${createChatoConfig.wwwBaseURL}/b/${
-        createChatoConfig.domainSlug
-      }?source=Chato_share_js&source_id=${encodeURIComponent(
+
+      const domainConfig = data.data[0] || {}
+      createChatoConfig.tipChatoBg = domainConfig.suspend_style
+      createChatoConfig.tipChatoColor = domainConfig.suspend_style_color || '#fff'
+      createChatoConfig.chatoIframeSrc = `${wwwBaseURL}/b/${domainSlug}?source=Chato_share_js&source_id=${encodeURIComponent(
         `${window.top.location.href}=title=${window.top.document.title}`
       )}`
-      createChatoConfig.popupFrequency = data.data.popup_frequency
-      return Promise.resolve(data.data)
+      createChatoConfig.popupFrequency = domainConfig.popup_frequency
+      return Promise.resolve(domainConfig)
     }
 
     async function createChato(domainConfig) {

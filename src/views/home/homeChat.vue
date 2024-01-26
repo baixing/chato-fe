@@ -27,12 +27,12 @@
         <svg-icon name="menu-more" svg-class="w-12 h-12 text-[#303133] mt-1" />
       </span>
       <homeChatItem />
-      <span
+      <!-- <span
         @click="copyText(link)"
         class="flex w-fit cursor-pointer rounded-full absolute z-[999] top-0 right-0 h-14 items-center text-base pr-5"
       >
         <svg-icon name="share" svg-class="text-[#303133] mt-1 w-6 h-6" />
-      </span>
+      </span> -->
     </div>
     <el-drawer
       v-model="drawerVisible"
