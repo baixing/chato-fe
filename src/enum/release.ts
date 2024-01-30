@@ -66,6 +66,11 @@ export enum EAccountStatus {
   offline = '离线'
 }
 
+export const AccountStatusNew = {
+  1: '在线',
+  2: '离线'
+} as const
+
 export enum ESiteShowLocationType {
   full = 'full',
   lower_right = 'lower_right'

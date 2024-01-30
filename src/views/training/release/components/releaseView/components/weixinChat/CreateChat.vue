@@ -69,24 +69,20 @@
 </template>
 
 <script setup lang="ts">
+import { getCommonGraph } from '@/api/graph'
+import { createGroupAPI, createSingleChatAPI, joinGroupChatAPI } from '@/api/release'
 import Modal from '@/components/Modal/index.vue'
+import UpgrateVersion from '@/components/Upgrade/UpgrateVersion.vue'
 import useSpaceRights from '@/composables/useSpaceRights'
 import { PaidCommercialTypes } from '@/constant/space'
-import { ECreateChatType, EActivateGroupType, EAccountStatus } from '@/enum/release'
-import type { ICreateGroupRes, IAccountList } from '@/interface/release'
-import { computed, ref, watch } from 'vue'
+import { EActivateGroupType, ECreateChatType } from '@/enum/release'
+import type { IAccountList, ICreateGroupRes } from '@/interface/release'
 import { ElLoading } from 'element-plus'
+import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import CreateGroupForm from './components/CreateGroupForm.vue'
 import ActivateGroup from './components/ActivateGroup.vue'
-import UpgrateVersion from '@/components/Upgrade/UpgrateVersion.vue'
+import CreateGroupForm from './components/CreateGroupForm.vue'
 import CreateSingleGroupForm from './components/CreateSingleGroupForm.vue'
-import {
-  createGroupAPI,
-  serachAccountListAPI,
-  joinGroupChatAPI,
-  createSingleChatAPI
-} from '@/api/release'
 
 const props = defineProps<{
   value: boolean
@@ -181,10 +177,12 @@ const handleCreateAccount = () => {
 const init = async () => {
   isCreatingGroupChat.value = false
   isCreatingSingleGroupChat.value = false
-  const res = await serachAccountListAPI(props.orgId)
-  accountList.value = res.data.data.filter(
-    (item: IAccountList) => item.status !== EAccountStatus.offline
-  )
+  const res = await getCommonGraph<any>('hosting_account', {
+    filter: `org_id=="${props.orgId}"`,
+    size: 500
+  })
+  // serachAccountListAPI(props.orgId)
+  accountList.value = res.data.data.filter((item: IAccountList) => item.status !== 2)
 }
 
 watch(visible, (v) => {

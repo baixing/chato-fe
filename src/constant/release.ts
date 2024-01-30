@@ -1,4 +1,4 @@
-import { EAfficialAccountStatusType, EWeixinConfigType, EActivateGroupType } from '@/enum/release'
+import { EActivateGroupType, EAfficialAccountStatusType, EWeixinConfigType } from '@/enum/release'
 
 export const ChannelStatusTiktok = {
   [EAfficialAccountStatusType.normal]: '解除授权',
@@ -65,6 +65,11 @@ export const RActivedGroupTipConfig = {
 export const RActivedGroupTitleConfig = {
   [EActivateGroupType.joinGroupChat]: '激活机器人',
   [EActivateGroupType.singleGroupChat]: '单聊激活'
+}
+
+export const RGroupStatus = {
+  1: '活跃',
+  2: '禁言'
 }
 
 export const RActivedGroupTokenConfig = {

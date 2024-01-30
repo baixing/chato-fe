@@ -11,8 +11,11 @@
           v-loading="loading && !singleGroupList.length"
           :userRoute="userRoute"
           :domainId="domainId"
+          :groupList="singleGroupList"
           :baseURL="baseURL"
-          :singleGroupList="singleGroupList"
+          :robotNickname="robotNickname"
+          :endpoint="endpoint"
+          @handleRefresh="init"
         />
       </el-tab-pane>
       <el-tab-pane :label="$t('群聊')" :name="ECreateChatType.groupChat">
@@ -31,13 +34,13 @@
   </el-drawer>
 </template>
 <script lang="ts" setup>
+import { getCommonGraph } from '@/api/graph'
 import { useBasicLayout } from '@/composables/useBasicLayout'
-import { computed, ref, watch } from 'vue'
 import { ECreateChatType } from '@/enum/release'
+import type { IGroupList } from '@/interface/release'
+import { computed, ref, watch } from 'vue'
 import GroupChatList from './components/GroupChatList.vue'
 import SingleGroupChatList from './components/SingleGroupChatList.vue'
-import { getGroupListAPI, getSingleGroupListAPI } from '@/api/release'
-import type { ISingelGroupList, IGroupList } from '@/interface/release'
 
 const props = defineProps<{
   value: boolean
@@ -46,6 +49,7 @@ const props = defineProps<{
   userRoute: string
   robotNickname: string
   endpoint: string
+  slugId: string
 }>()
 
 const emit = defineEmits(['update:value'])
@@ -58,7 +62,7 @@ const visible = computed({
 })
 
 const groupList = ref<IGroupList[]>([]) // 群聊
-const singleGroupList = ref<ISingelGroupList[]>([]) // 单聊
+const singleGroupList = ref<IGroupList[]>([]) // 单聊
 
 const handleClose = () => {
   visible.value = false
@@ -68,16 +72,21 @@ const init = async () => {
   try {
     loading.value = true
     const isSingle = activeNames.value === ECreateChatType.singleChat
-    let apiFunc = !isSingle ? getGroupListAPI : getSingleGroupListAPI
-    const res = await apiFunc(props.domainId)
-    const result = res.data.data
-    isSingle
-      ? (singleGroupList.value = result as ISingelGroupList[])
-      : (groupList.value = result as IGroupList[])
+    let apiFunc = !isSingle ? () => getGroupList(2) : () => getGroupList(1)
+    const result = await apiFunc()
+    isSingle ? (singleGroupList.value = result) : (groupList.value = result)
   } catch (error) {
   } finally {
     loading.value = false
   }
+}
+
+const getGroupList = async (type) => {
+  const res = await getCommonGraph<IGroupList[]>('hosting_conversation', {
+    filter: `conversation_type=="${type}" and domain_slug=="${props.slugId}"`
+  })
+
+  return res.data.data
 }
 
 watch(

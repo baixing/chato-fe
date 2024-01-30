@@ -6,20 +6,14 @@
       :accordion="true"
       @change="handleChange"
     >
-      <el-collapse-item v-for="item in groupList" :key="item.token" :name="item.id">
+      <el-collapse-item v-for="item in groupList" :key="item.id" :name="item.id">
         <template #title>
-          <p class="leading-5 break-all">
-            {{ $t(item.is_system_robot ? '群名' : '系统账号') }}：{{ item.group_name }}
-          </p>
+          <p class="leading-5 break-all">{{ item.title }}</p>
         </template>
         <div class="w-full text-[#303133] leading-5 group-detail text-sm">
           <p>
-            {{ $t('账号') }}：
-            <span class="content">{{ $t(item.is_system_robot ? '系统账号' : '自定义账号') }}</span>
-          </p>
-          <p>
             {{ $t('机器人群昵称') }}：
-            <span class="content">{{ item.name }}</span>
+            <span class="content">{{ item.additions.nickname }}</span>
             <span class="ml-[16px] text-[#9DA3AF]"> {{ $t('前往「形象」') }} </span>
             <router-link :to="userRoute" class="theme-color">{{ $t('修改') }}</router-link>
             <el-tooltip
@@ -36,89 +30,59 @@
             </el-tooltip>
           </p>
           <p>
-            {{ $t('组织') }}： <span class="content">{{ item.corp_name }}</span>
-          </p>
-          <p>
-            {{ $t('群人数') }}：
-            <span class="content">{{ item.people_cnt || 0 }} {{ $t('人') }} </span>
-          </p>
-          <p>
-            {{ $t('状态') }}： <span class="content">{{ item.status }}</span>
-          </p>
-          <!-- <p
-            class="flex justify-start items-center"
-            v-if="item.is_system_robot && item.status === EAccountStatus.online"
-          >
-            {{ $t('群二维码') }}：
-            <img class="w-[120px] h-[120px]" :src="url" alt="" />
-            <el-button
-              type="primary"
-              class="ml-[16px]"
-              link
-              @click="getGroupQrCode(item.room_id)"
-            ></el-button>
-          </p> -->
-          <p class="flex justify-start items-center" v-if="item.robot_qr_code_data">
-            {{ $t('机器人二维码') }}：
-            <img class="w-[120px] h-[120px]" :src="item.robot_qr_code_data" alt="" />
-          </p>
-          <p class="flex justify-start items-center" v-if="!item.is_system_robot">
-            {{ $t('Token') }}： <span>{{ item.token }}</span>
-            <el-button class="ml-[12px]" type="primary" link @click="$copyText(item.token)">
-              {{ $t('复制') }}
-            </el-button>
+            {{ $t('创建时间') }}：
+            <span class="content">{{ dayjs(item.created).format('YYYY-MM-DD HH:mm:ss') }}</span>
           </p>
           <el-collapse
             style="--el-collapse-border-color: transparent"
             class="w-full !border-0 text-sm group-collpase-container"
           >
-            <el-collapse-item :title="$t(`群高级设置`)" name="1" class="border-0 text-sm">
-              <el-form
-                ref="ruleFormEditCreateGroupRef"
-                size="large"
-                label-position="top"
-                :rules="rulesEditCreateGroup"
-                :model="editCreateGroupForm"
-              >
-                <el-form-item :label="$t(`回复方式`)" prop="robot_response_type">
-                  <el-select
-                    v-model="editCreateGroupForm.robot_response_type"
-                    class="w-full"
-                    :placeholder="$t(`请选择回复方式`)"
-                  >
-                    <el-option :label="$t(`仅{'@'}回复`)" value="1" />
-                    <el-option :label="$t(`{'@'}或者提及昵称回复`)" value="2" />
-                  </el-select>
-                </el-form-item>
-                <el-form-item :label="$t(`新人进群{'@'}Ta打招呼`)" prop="new_user_in_group_msg">
-                  <el-input
-                    type="textarea"
-                    :rows="5"
-                    v-model="editCreateGroupForm.new_user_msg"
-                    :placeholder="$t(`请输入新人进群{'@'}Ta打招呼欢迎语`)"
-                  />
-                </el-form-item>
-                <el-text class="!text-sm" type="info">
-                  {{ $t('如需修改机器人在群里的名字，请前往') }}
-                  <router-link :to="userRoute" class="theme-color">{{
-                    $t('「形象」')
-                  }}</router-link>
-                  {{ $t('进行编辑机器人昵称，首位进群人员为管理员') }}
-                </el-text>
-                <el-row class="w-full mt-3" justify="end">
-                  <el-col :span="4">
-                    <el-button type="primary" @click="handleEditGroup(item)">{{
-                      $t('确认修改')
-                    }}</el-button>
-                  </el-col>
-                </el-row>
-              </el-form>
-            </el-collapse-item>
+            <el-form
+              ref="ruleFormEditCreateGroupRef"
+              size="large"
+              label-position="top"
+              :rules="rulesEditCreateGroup"
+              :model="editCreateGroupForm"
+            >
+              <el-form-item :label="$t(`回复方式`)" prop="robot_response_type">
+                <el-select
+                  v-model="editCreateGroupForm.robot_response_type"
+                  class="w-full"
+                  :placeholder="$t(`请选择回复方式`)"
+                >
+                  <el-option :label="$t(`仅{'@'}回复`)" value="1" />
+                  <el-option :label="$t(`{'@'}或者提及昵称回复`)" value="2" />
+                </el-select>
+              </el-form-item>
+              <el-form-item :label="$t(`新人进群{'@'}Ta打招呼`)" prop="new_user_in_group_msg">
+                <el-input
+                  type="textarea"
+                  :rows="5"
+                  v-model="editCreateGroupForm.new_user_msg"
+                  :placeholder="$t(`请输入新人进群{'@'}Ta打招呼欢迎语`)"
+                />
+              </el-form-item>
+              <el-form-item label="状态：">
+                <el-switch
+                  active-text="开启"
+                  inactive-text="关闭"
+                  v-model="editCreateGroupForm.status"
+                />
+              </el-form-item>
+              <el-text class="!text-sm" type="info">
+                {{ $t('如需修改机器人在群里的名字，请前往') }}
+                <router-link :to="userRoute" class="theme-color">{{ $t('「形象」') }}</router-link>
+                {{ $t('进行编辑机器人昵称，首位进群人员为管理员') }}
+              </el-text>
+              <el-row class="w-full mt-3" justify="end">
+                <el-col :span="4">
+                  <el-button type="primary" @click="handleEditGroup(item)">{{
+                    $t('确认修改')
+                  }}</el-button>
+                </el-col>
+              </el-row>
+            </el-form>
           </el-collapse>
-          <p class="text-[#303133] font-medium mb-[16px]">{{ $t('用户须知') }}</p>
-          <p class="text-xs text-[#596780] leading-4" v-for="item in RGroupChatListTip" :key="item">
-            {{ $t(item) }}
-          </p>
           <!-- 定时广播 -->
           <p class="text-[#303133] font-medium">{{ $t('定时广播') }}</p>
           <div
@@ -154,12 +118,12 @@
         <el-row justify="start" :gutter="20" class="w-full">
           <el-col :span="6">
             <el-button class="!border-[#7C5CFC] !text-[#7C5CFC]" @click="handleTransfer(item)">
-              {{ $t('转移群') }}
+              {{ $t('转移群聊') }}
             </el-button>
           </el-col>
           <el-col :span="6">
             <el-button class="!border-[#7C5CFC] !text-[#7C5CFC]" @click="handleExitGroup(item)">
-              {{ $t('退出群') }}
+              {{ $t('转移群聊') }}
             </el-button>
           </el-col>
         </el-row>
@@ -202,16 +166,8 @@
 
 <script setup lang="ts">
 import { getCommonGraph, postCommonGraph } from '@/api/graph'
-import {
-  deleteGroupChatAPI,
-  editGroupAPI,
-  getGroupImgAPI,
-  patchTimeBroadcastAPI,
-  postTimeBroadcastAPI,
-  transferGroupAPI
-} from '@/api/release'
-import { RGroupChatListTip } from '@/constant/release'
-import { EAccountStatus, ESettingBroadcastStatus } from '@/enum/release'
+import { patchTimeBroadcastAPI, postTimeBroadcastAPI } from '@/api/release'
+import { ESettingBroadcastStatus } from '@/enum/release'
 import type { IDomainInfo } from '@/interface/domain'
 import type { IGroupList, ISettingBroadcastType } from '@/interface/release'
 import { RoutesMap } from '@/router'
@@ -252,8 +208,6 @@ const transferVisible = ref(false)
 const transferStatus = ref(false)
 const selectedDomain = ref<IDomainInfo>()
 const currentGroup = ref<IGroupList>()
-const qrLoading = ref(true)
-const url = ref('')
 const ruleFormEditCreateGroupRef = ref<FormInstance>()
 const settingDadioVisible = ref(false)
 const radioList = ref<ISettingBroadcastType[]>([])
@@ -267,14 +221,16 @@ const rulesEditCreateGroup = reactive<FormRules>({
 
 const editCreateGroupForm = reactive({
   robot_response_type: '1',
-  new_user_msg: ''
+  new_user_msg: '',
+  status: true
 })
 
 const handleChange = (id: string) => {
   const item = props.groupList.find((item) => item.id === Number(id))
   if ($notnull(item)) {
-    editCreateGroupForm.new_user_msg = item.new_user_msg
-    editCreateGroupForm.robot_response_type = String(item.response_type)
+    editCreateGroupForm.new_user_msg = item.additions.wellcome
+    editCreateGroupForm.robot_response_type = String(item.additions.response_type)
+    editCreateGroupForm.status = item.status === 1 ? true : false
   }
 }
 
@@ -285,15 +241,15 @@ const handleEditGroup = async (item: IGroupList) => {
     background: 'rgba(0, 0, 0, 0.7)'
   })
   try {
-    const data = {
+    await postCommonGraph('hosting_conversation/save', {
       id: item.id,
-      robot_nickname: props.robotNickname,
-      endpoint: props.endpoint,
-      name: item.name,
-      response_type: editCreateGroupForm.robot_response_type,
-      new_user_msg: editCreateGroupForm.new_user_msg
-    }
-    await editGroupAPI(props.domainId, data)
+      additions: {
+        nickname: item.additions.nickname,
+        response_type: Number(editCreateGroupForm.robot_response_type),
+        wellcome: editCreateGroupForm.new_user_msg
+      },
+      status: editCreateGroupForm.status ? 1 : 2
+    })
     ElNotification.success('修改成功')
     emit('handleRefresh')
   } catch (error) {
@@ -302,25 +258,17 @@ const handleEditGroup = async (item: IGroupList) => {
   }
 }
 
-const getChatAPI = (baseURL: string, slug: string) => {
-  return `${baseURL}/chato/api-public/domains/${slug}/chat`
-}
-
 const handleTransfer = (row: IGroupList) => {
   currentGroup.value = row
   transferVisible.value = true
 }
 
 const handleExitGroup = (row: IGroupList) => {
-  ElMessageBox.confirm(
-    t('是否确认退出该群？确认后机器人会从群聊中退出、群聊额度会恢复，此操作无法撤消。'),
-    t('退出群'),
-    {
-      confirmButtonText: t('确认'),
-      cancelButtonText: t('取消'),
-      icon: ''
-    }
-  )
+  ElMessageBox.confirm(t('是否确认退出该群？'), t('退出群'), {
+    confirmButtonText: t('确认'),
+    cancelButtonText: t('取消'),
+    icon: ''
+  })
     .then(async () => {
       const loading = ElLoading.service({
         lock: true,
@@ -329,7 +277,12 @@ const handleExitGroup = (row: IGroupList) => {
       })
 
       try {
-        await deleteGroupChatAPI(row.room_id)
+        // await deleteGroupChatAPI(row.room_id)
+        await postCommonGraph('hosting_conversation/save', {
+          id: row.id,
+          deleted: dayjs().format('YYYY-MM-DD HH:mm:ss')
+          // domain_slug: selectedDomain.value.slug
+        })
         emit('handleRefresh')
       } catch (e) {
       } finally {
@@ -355,15 +308,13 @@ const submitTransfer = () => {
         text: t('转移中...'),
         background: 'rgba(0, 0, 0, 0.7)'
       })
-      const data = {
-        id: currentGroup.value.id,
-        robot_nickname: selectedDomain.value.name,
-        endpoint: getChatAPI(props.baseURL, selectedDomain.value.slug),
-        name: currentGroup.value.group_name,
-        new_domain_id: selectedDomain.value.id
-      }
+
       try {
-        await transferGroupAPI(props.domainId, data)
+        await postCommonGraph('hosting_conversation/save', {
+          id: currentGroup.value.id,
+          domain_slug: selectedDomain.value.slug
+        })
+        // await transferGroupAPI(props.domainId, data)
         transferStatus.value = true
         emit('handleRefresh')
       } catch (e) {
@@ -386,17 +337,10 @@ const handlePushTransfer = () => {
   transferStatus.value = false
 }
 
-const getGroupQrCode = async (id: string) => {
-  qrLoading.value = true
-  const res = await getGroupImgAPI(props.domainId, id)
-  url.value = res.data.data.qrcode_data
-  qrLoading.value = false
-}
-
 // ------ 定时广播 -----
 const initTimeBroadcast = async (id: string) => {
   const { data } = await getCommonGraph<ISettingBroadcastType[]>('send_schedule', {
-    filter: `domain_id="${props.domainId} and receiver_id=="${id}""`
+    filter: `domain_id=="${props.domainId}" and receiver_id=="${id}"`
   })
 
   // getTimeBroadcastAPI({ domain: props.domainId, receiver_id: id })
@@ -467,20 +411,11 @@ watch(transferVisible, (v) => {
 watch(activeNames, (v: number) => {
   if (v) {
     const result = props.groupList.filter((item) => v === item.id)
-    const onlineList = result.filter(
-      (item) => item.status === EAccountStatus.online && item.is_system_robot
-    )
 
     if (result.length) {
-      const roomId = result[0].room_id
+      const roomId = result[0].conversation_id
       initTimeBroadcast(roomId)
       curRoomId.value = roomId
-    }
-
-    if (onlineList.length) {
-      const roomId = onlineList[0].room_id
-      url.value = onlineList[0].group_qr_code_data
-      getGroupQrCode(roomId)
     }
   }
 })
