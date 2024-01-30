@@ -1388,7 +1388,8 @@ watch(
       return
     }
 
-    detail.value = { ...detail.value, ...v }
+    detail.value = { ...detail.value, ...v, desc_show: 1 }
+
     if (!v.show_recommend_question && recommendQuestions.value.length) {
       recommendQuestions.value = []
     }
@@ -1403,10 +1404,12 @@ watch(
       } else if (props.type) {
         sayWelcome()
       }
-    } else {
-      const newHistory = history.value.filter((item) => !item.isWelcome)
-      history.value = newHistory
     }
+    // else {
+    //   console.log('34s')
+    //   const newHistory = history.value.filter((item) => !item.isWelcome)
+    //   history.value = newHistory
+    // }
   },
   { immediate: true, deep: true }
 )

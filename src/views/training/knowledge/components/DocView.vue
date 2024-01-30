@@ -221,11 +221,24 @@ const initDocList = async () => {
     if (DocSelectStatus.value !== LearningStatesPerformanceType.all) {
       params.status = DocSelectStatus.value
     }
+
+    let filter = `business_type=="${params.business_type}" and status != "${LearningStatesPerformanceType.deleted}"`
+
+    if (params.keyword) {
+      filter += `and keyword=="${params.keyword}"`
+    }
+
+    if (params.status) {
+      filter += `and status=="${params.status}"`
+    }
+
     const {
       data: { data, pagination: meta }
     } = await getCommonGraph<IDocumentList[]>(`chato_domains/${domainId.value}/files`, {
-      ...params,
-      sort: '-id'
+      filter: filter,
+      sort: '-id',
+      page: params.page,
+      size: pagination.value.page_size
     })
     tableData.value = data
     pagination.value.page_count = meta.page_count

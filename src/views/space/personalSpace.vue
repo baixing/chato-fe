@@ -107,6 +107,16 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <div class="mt-6 flex justify-end" v-if="spaceMemberPagination.page_count > 1">
+        <el-pagination
+          background
+          layout="prev, pager, next"
+          :page-size="spaceMemberPagination.page_size"
+          :page-count="spaceMemberPagination.page_count"
+          v-model:current-page="spaceMemberPagination.page"
+        />
+      </div>
     </div>
     <AddMember v-model:visible="addMemberVisible" />
   </div>
@@ -137,7 +147,7 @@ const router = useRouter()
 const base = useBase()
 const spaceStoreI = useSpaceStore()
 const { userInfo, orgInfoList } = storeToRefs(base)
-const { spaceMembers } = storeToRefs(spaceStoreI)
+const { spaceMembers, spaceMemberPagination } = storeToRefs(spaceStoreI)
 const loading = ref<boolean>(false)
 const isEdit = ref<boolean>(false)
 const addMemberVisible = ref<boolean>(false)

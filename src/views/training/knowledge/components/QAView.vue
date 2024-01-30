@@ -202,11 +202,24 @@ const initQAList = async () => {
     if (QaSelectStatus.value !== LearningStatesPerformanceType.all) {
       params.status = QaSelectStatus.value
     }
+
+    let filter = `business_type=="${params.business_type}" and status != "${LearningStatesPerformanceType.deleted}"`
+
+    if (params.keyword) {
+      filter += `and keyword=="${params.keyword}"`
+    }
+
+    if (params.status) {
+      filter += `and status=="${params.status}"`
+    }
+
     const {
       data: { data, pagination: meta }
     } = await getCommonGraph<IDocumentList[]>(`chato_domains/${domainId.value}/files`, {
-      ...params,
-      sort: '-id'
+      filter: filter,
+      sort: '-id',
+      page: params.page,
+      size: pagination.value.page_size
     })
     // getFilesByDomainId(domainId.value, params)
     tableData.value = data

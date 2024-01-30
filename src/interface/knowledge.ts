@@ -114,3 +114,10 @@ export interface IDocmentToQAParams {
   long_doc_txt: number
   prompt?: string
 }
+
+export interface IKnowledgeSharedParams {
+  sender_domain_id: number
+  receiver_domain_id: number
+  sender_user_id: number
+  receiver_user_id: number
+}

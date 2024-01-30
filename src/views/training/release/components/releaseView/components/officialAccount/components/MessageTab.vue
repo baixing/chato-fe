@@ -139,7 +139,7 @@
 import { getCommonGraph } from '@/api/graph'
 import { createAfficialAccount } from '@/api/weixin'
 import useImagePath from '@/composables/useImagePath'
-import { EAfficialAccountStatusType } from '@/enum/release'
+import { EAfficialAccountStatusType, EChannelType } from '@/enum/release'
 import type { ICeateAfficialAccountRes } from '@/interface/release'
 import type { FormInstance, FormRules } from 'element-plus'
 import { ElMessageBox } from 'element-plus'
@@ -210,7 +210,7 @@ const submitForm = async () => {
 
 const init = async () => {
   const res = await getCommonGraph<ICeateAfficialAccountRes[]>('mp_account', {
-    filter: `domain_slug=="${props.slugId}"`
+    filter: `domain_slug=="${props.slugId}" and type_def=="${EChannelType.WECHAT_MP}"`
   })
   //  serachAfficialAccount(props.slugId)
   afficialAccountList.value = res.data.data
