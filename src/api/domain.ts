@@ -1,16 +1,6 @@
-import type { IDemonstration, IDomainInfo, IDomainLLMConfig } from '@/interface/domain'
-import type { ITTSListApi, ITimbreAuditionApi } from '@/interface/tts'
+import type { IDemonstration, IDomainInfo } from '@/interface/domain'
+import type { ITimbreAuditionApi } from '@/interface/tts'
 import request from '@/utils/request'
-
-export function getDomainsByOrgId(orgId) {
-  // return Promise.reject({ response: { status: 403 } })
-  // return Promise.resolve({ data: {} })
-  // return Promise.resolve({ data: dataDomains })
-
-  return request({
-    url: `/chato/api/orgs/${orgId}/domains`
-  })
-}
 
 export function getDomainDetailPublic(domainSlug) {
   return request({
@@ -18,11 +8,6 @@ export function getDomainDetailPublic(domainSlug) {
   })
 }
 
-export function getDomainDetail(domainId) {
-  return request<IDomainInfo>({
-    url: `/chato/api/domains/${domainId}`
-  })
-}
 export const updateDomain = (domainId: string | number, data) => {
   return request<IDomainInfo | string[]>({
     method: 'patch',
@@ -46,13 +31,13 @@ export function getDomainQuotaInPlatformC(domain_slug: string) {
 }
 
 // 更新机器人在资源广场显示或隐藏
-export const updateDomainInResource = (domainId: string | number, data: any) => {
-  return request<IDomainInfo>({
-    method: 'patch',
-    url: `/chato/api/v1/domains/${domainId}/in_resource`,
-    data
-  })
-}
+// export const updateDomainInResource = (domainId: string | number, data: any) => {
+//   return request<IDomainInfo>({
+//     method: 'patch',
+//     url: `/chato/api/v1/domains/${domainId}/in_resource`,
+//     data
+//   })
+// }
 
 export const cloneDomainRobot = (domainId: string, data: { is_need_document: 0 | 1 }) => {
   return request({
@@ -86,24 +71,24 @@ export const checkDomainCorrectTicketIsExpired = (data) => {
   })
 }
 
-export const createDraftDomain = () => {
-  return request<IDomainInfo>({
-    method: 'post',
-    url: `chato/api/v1/domains/create_draft`
-  })
-}
+// export const createDraftDomain = () => {
+//   return request<IDomainInfo>({
+//     method: 'post',
+//     url: `/chato/api/v1/domains/create_draft`
+//   })
+// }
 
-export const domainLLMConfigAPI = () => {
-  return request<IDomainLLMConfig[]>({
-    url: `/chato/api/v1/config/llm`
-  })
-}
+// export const domainLLMConfigAPI = () => {
+//   return request<IDomainLLMConfig[]>({
+//     url: `/chato/api/v1/config/llm`
+//   })
+// }
 
-export const getTimbreList = () => {
-  return request<ITTSListApi>({
-    url: `/api/tts/timbre`
-  })
-}
+// export const getTimbreList = () => {
+//   return request<ITTSListApi>({
+//     url: `/api/tts/timbre`
+//   })
+// }
 
 export const getTestTimbreUrl = (timbre: String) => {
   return request<{ contentList: ITimbreAuditionApi[] }>({
@@ -114,15 +99,15 @@ export const getTestTimbreUrl = (timbre: String) => {
   })
 }
 
-export const updateBotUseScope = (domain_id: number, use_scope: 0 | 1) => {
-  return request({
-    url: `/chato/api/domains/${domain_id}/use_scope`,
-    method: 'PATCH',
-    data: {
-      use_scope
-    }
-  })
-}
+// export const updateBotUseScope = (domain_id: number, use_scope: 0 | 1) => {
+//   return request({
+//     url: `/chato/api/domains/${domain_id}/use_scope`,
+//     method: 'PATCH',
+//     data: {
+//       use_scope
+//     }
+//   })
+// }
 
 // 校验domain_id 是否在当前空间 ICheckDomainIdResult
 export function checkDomainIdAPI(domainId: string) {
@@ -132,12 +117,12 @@ export function checkDomainIdAPI(domainId: string) {
   })
 }
 
-export function getDomainCategoryList() {
-  return request<string[]>({
-    method: 'get',
-    url: `/chato/api/v1/config/category`
-  })
-}
+// export function getDomainCategoryList() {
+//   return request<string[]>({
+//     method: 'get',
+//     url: `/chato/api/v1/config/category`
+//   })
+// }
 
 export function getDemonstration(type: string) {
   return request<IDemonstration>({
@@ -173,7 +158,7 @@ export function getAppletQRCode2(slug: string) {
 export function getDomainReplySwitch(domain_id: IDomainInfo['id'], sender_uid: string) {
   return request({
     method: 'get',
-    url: `chato/api/v2/domains/human_reply_switch`,
+    url: `/chato/api/v2/domains/human_reply_switch`,
     data: { domain_id, sender_uid }
   })
 }
@@ -185,7 +170,7 @@ export function updateDomainReplySwitch(data: {
 }) {
   return request({
     method: 'post',
-    url: `chato/api/v2/domains/human_reply_switch`,
+    url: `/chato/api/v2/domains/human_reply_switch`,
     data
   })
 }

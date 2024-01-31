@@ -60,11 +60,11 @@
 </template>
 <script lang="ts" setup>
 import { logoutAccount } from '@/api/auth'
-import { updateOrgUserInfo } from '@/api/space'
+import ImgUpload from '@/components/ImgUpload/ImgUpload.vue'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
 import SLTitle from '@/components/Title/SLTitle.vue'
-import ImgUpload from '@/components/ImgUpload/ImgUpload.vue'
 import Topbar from '@/components/Topbar/index.vue'
+import useGlobalProperties from '@/composables/useGlobalProperties'
 import { useAuthStore } from '@/stores/auth'
 import { useBase } from '@/stores/base'
 import { confirmAndSubmit } from '@/utils/help'
@@ -84,12 +84,14 @@ const authStoreI = useAuthStore()
 const { userInfo } = storeToRefs(base)
 const settingFormRef = ref<FormInstance>()
 let settingFormInit = {}
-
+const { postCommonGraph } = useGlobalProperties()
 const settingForm = reactive<{
+  id?: number
   mobile: string
   nickname: string
   avatar?: string
 }>({
+  id: null,
   mobile: null,
   avatar: '',
   nickname: ''
@@ -124,10 +126,11 @@ const handleSaveSetting = async (formEl: FormInstance | undefined) => {
       })
       const data = {
         avatar: settingForm.avatar,
-        nickname: settingForm.nickname
+        nickname: settingForm.nickname,
+        id: settingForm.id
       }
       try {
-        await updateOrgUserInfo(data)
+        await postCommonGraph('chato_users/save', data)
         base.updateUserInfoAttri(data)
         Notification.success(t('保存成功'))
       } catch (e) {
@@ -168,6 +171,7 @@ onBeforeRouteLeave((to, from, next) => {
 watch(
   userInfo,
   (v) => {
+    settingForm.id = v.id
     settingForm.mobile = v.mobile
     settingForm.avatar = v.avatar
     settingForm.nickname = v.nickname

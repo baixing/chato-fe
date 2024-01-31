@@ -50,7 +50,7 @@ export interface IUpdateOrgInfo {
 }
 
 export interface ISpaceRightsSummaryItem {
-  consume: number
+  consumed: number
   total: number
 }
 

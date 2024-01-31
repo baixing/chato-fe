@@ -25,9 +25,10 @@
 </template>
 
 <script setup lang="ts">
-import { getChannelType, postDingDingConfig, patchChannelType } from '@/api/release'
-import { EAfficialAccountStatusType, EChannelType } from '@/enum/release'
+import { getCommonGraph, postCommonGraph } from '@/api/graph'
+import { postDingDingConfig } from '@/api/release'
 import Modal from '@/components/Modal/index.vue'
+import { EAfficialAccountStatusType, EChannelType } from '@/enum/release'
 import type { IDingDingPublicFormType } from '@/interface/release'
 import { $notnull } from '@/utils/help'
 import { ElLoading } from 'element-plus'
@@ -86,10 +87,13 @@ const initdingdingConfig = async () => {
     loading.value = true
     const {
       data: { data }
-    } = await getChannelType(EChannelType.DINGDING, props.domainSlug)
+    } = await getCommonGraph<any>('mp_account', {
+      filter: `type_def=="${EChannelType.DINGDING}" and domain_slug=="${props.domainSlug}"`
+    })
+    // getChannelType(EChannelType.DINGDING, props.domainSlug)
     if ($notnull(data)) {
-      turn.value = data.s_status === EAfficialAccountStatusType.normal
-      dingdingConfig.value = data
+      turn.value = data[0].s_status === EAfficialAccountStatusType.normal
+      dingdingConfig.value = data[0]
     }
   } catch (e) {
   } finally {
@@ -105,7 +109,20 @@ const updateFeishuStatus = async () => {
     s_status: turn.value ? EAfficialAccountStatusType.normal : EAfficialAccountStatusType.disabled
   }
   try {
-    await patchChannelType(EChannelType.DINGDING, props.domainSlug, data)
+    const res = await getCommonGraph<any>('mp_account', {
+      filter: `domain_slug=="${props.domainSlug}" and type_def=="${EChannelType.DINGDING}" and s_status=="${EAfficialAccountStatusType.normal}"`
+    })
+    const account = res.data.data
+    if ($notnull(account)) {
+      await postCommonGraph('mp_account/save', {
+        id: account[0].id,
+        s_status: data.s_status,
+        app_secret: dingdingConfig.value.app_secret,
+        app_id: dingdingConfig.value.app_id
+      })
+    }
+
+    // patchChannelType(EChannelType.DINGDING, props.domainSlug, data)
   } catch (e) {}
 }
 

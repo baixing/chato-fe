@@ -87,15 +87,18 @@
 </template>
 <script lang="ts" setup>
 import { addChatSessionB, addChatSessionC } from '@/api/chatList'
-import { createDraftDomain, getDomainDetailPublic, updateDomain } from '@/api/domain'
+import { getDomainDetailPublic, updateDomain } from '@/api/domain'
+import { postCommonGraph } from '@/api/graph'
 import { getResourceB, getResourceC } from '@/api/resource'
 import DefaultAvatar from '@/assets/img/avatar.png'
 import useSpaceRights from '@/composables/useSpaceRights'
 import { EDomainStatus } from '@/enum/domain'
 import { ESpaceRightsType } from '@/enum/space'
+import type { IDomainInfo } from '@/interface/domain'
 import ContentLayout from '@/layout/ContentLayout.vue'
 import { RoutesMap } from '@/router'
 import { useAuthStore } from '@/stores/auth'
+import { useBase } from '@/stores/base'
 import { useChatStore } from '@/stores/chat'
 import { useDomainStore } from '@/stores/domain'
 import { useStorage } from '@vueuse/core'
@@ -125,9 +128,11 @@ const router = useRouter()
 const route = useRoute()
 const $uid = useStorage('uid', '')
 const resourceList = ref([])
+const base = useBase()
 const authStoreI = useAuthStore()
 const chatStoreI = useChatStore()
 const domainStoreI = useDomainStore()
+const { userInfo } = storeToRefs(base)
 const { authToken } = storeToRefs(authStoreI)
 const { chatList } = storeToRefs(chatStoreI)
 const { checkRightsTypeNeedUpgrade } = useSpaceRights()
@@ -168,7 +173,16 @@ const onGoCreate = async (botSlug: string) => {
   }
   const {
     data: { data: dataInfo }
-  } = await createDraftDomain()
+  } = await postCommonGraph<IDomainInfo>('chato_domains/save', {
+    creator_id: userInfo.value.id,
+    updater_id: userInfo.value.id,
+    org: userInfo.value.org.id,
+    desc_show: 0,
+    name: '',
+    status: 2,
+    avatar: 'https://afu-1255830993.cos.ap-shanghai.myqcloud.com/447479457016221696.png'
+  })
+  // createDraftDomain()
   const {
     data: { data }
   } = await getDomainDetailPublic(botSlug)

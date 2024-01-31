@@ -60,14 +60,15 @@
 </template>
 
 <script setup lang="ts">
-import { chatToBotHistoryC } from '@/api/chat'
 import { getDomainReplySwitch, updateDomainReplySwitch } from '@/api/domain'
+import { getCommonGraph } from '@/api/graph'
 import CustomerFormDialog from '@/components/Customer/CustomerFormDialog.vue'
 import LoadingMore from '@/components/LoadingMore/index.vue'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import { useSource } from '@/composables/useSource'
 import { XSSOptions } from '@/constant/xss'
 import { EMessageDisplayType } from '@/enum/message'
+import type { ChatToBotRes } from '@/interface/chat'
 import type { IPage } from '@/interface/common'
 import type { ICRMMessage } from '@/interface/message'
 import { useChatUserStore } from '@/stores/chatUser'
@@ -189,16 +190,19 @@ const initChatHistory = async (page = 1) => {
   try {
     chatHistoryLoading.value = true
     const {
-      data: {
-        data,
-        meta: { pagination }
-      }
-    } = await chatToBotHistoryC({
-      sender_uid: senderUID.value,
-      domain_slug: domainInfo.value.slug,
-      page,
-      page_size: chatHistoryPagination.page_size
+      data: { data, pagination }
+    } = await getCommonGraph<ChatToBotRes[]>('chato_questions', {
+      filter: `sender_uid=="${senderUID.value}" and domain_id=="${domainInfo.value.id}"`,
+      page: page,
+      size: chatHistoryPagination.page_size,
+      sort: '-id'
     })
+    //  chatToBotHistoryC({
+    //   sender_uid: senderUID.value,
+    //   domain_slug: domainInfo.value.slug,
+    //   page,
+    //   page_size: chatHistoryPagination.page_size
+    // })
 
     const newChatHistory = [...toRaw(chatHistory.value)]
     let newCount = 0

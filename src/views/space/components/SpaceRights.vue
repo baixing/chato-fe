@@ -132,27 +132,27 @@ const init = async () => {
     const resCardList = {
       domain: {
         ...defaultCardList.domain,
-        consume: domain_num.consume,
+        consume: domain_num.consumed,
         total: domain_num.total
       },
       quota: {
         ...defaultCardList.quota,
-        consume: quota.consume,
+        consume: quota.consumed,
         total: quota.total
       },
       group: {
         ...defaultCardList.group,
-        consume: wx_group_num.consume,
+        consume: wx_group_num.consumed,
         total: wx_group_num.total
       },
       member: {
         ...defaultCardList.member,
-        consume: account_num.consume,
+        consume: account_num.consumed,
         total: account_num.total
       },
       painting: {
         ...defaultCardList.painting,
-        consume: image_quota.consume,
+        consume: image_quota.consumed,
         total: image_quota.total
       }
     }

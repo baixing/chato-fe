@@ -107,14 +107,25 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <div class="mt-6 flex justify-end" v-if="spaceMemberPagination.page_count > 1">
+        <el-pagination
+          background
+          layout="prev, pager, next"
+          :page-size="spaceMemberPagination.page_size"
+          :page-count="spaceMemberPagination.page_count"
+          v-model:current-page="spaceMemberPagination.page"
+        />
+      </div>
     </div>
     <AddMember v-model:visible="addMemberVisible" />
   </div>
 </template>
 <script lang="ts" setup>
-import { removeSpaceMember, updateOrgSpaceInfo, updateSpaceMemberRole } from '@/api/space'
+import { removeSpaceMember } from '@/api/space'
 import UserAvatar from '@/components/Avatar/UserAvatar.vue'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
+import useGlobalProperties from '@/composables/useGlobalProperties'
 import useSpace from '@/composables/useSpace'
 import useSpaceRights from '@/composables/useSpaceRights'
 import type { ESettingSpaceRole } from '@/enum/space'
@@ -136,14 +147,14 @@ const router = useRouter()
 const base = useBase()
 const spaceStoreI = useSpaceStore()
 const { userInfo, orgInfoList } = storeToRefs(base)
-const { spaceMembers } = storeToRefs(spaceStoreI)
+const { spaceMembers, spaceMemberPagination } = storeToRefs(spaceStoreI)
 const loading = ref<boolean>(false)
 const isEdit = ref<boolean>(false)
 const addMemberVisible = ref<boolean>(false)
 const name = ref(userInfo.value?.org?.name || '')
 const avatar = ref(userInfo.value?.org?.avatar || 'avatar://color=#409EFF')
 const { switchSpace } = useSpace()
-
+const { postCommonGraph } = useGlobalProperties()
 const roleList = [
   {
     label: t('管理者'),
@@ -219,17 +230,17 @@ const handleRemoveMember = async (row: any) => {
 
 const handleSelect = async (userId: number, value: ESettingSpaceRole) => {
   const data = {
-    org_user_id: userId,
+    id: userId,
     role: value
   }
-  const res = await updateSpaceMemberRole(data)
+  const res = await postCommonGraph('chato_users/save', data)
   const code = res.data.code
   const message = res.data.message
   ElMessage({
     type: code === 200 ? 'success' : 'error',
     message: code === 200 ? t('修改成功') : message
   })
-  if (data.org_user_id === userInfo.value.id) {
+  if (data.id === userInfo.value.id) {
     switchSpace(userInfo.value.org.id, { role: value as unknown as EAllRole })
     base.getUserInfo()
   }
@@ -238,13 +249,14 @@ const handleSelect = async (userId: number, value: ESettingSpaceRole) => {
 const handleUpdateOrgInfo = async () => {
   name.value = name.value.trim()
   const data = {
+    id: userInfo.value?.org.id,
     avatar: avatar.value,
     name: name.value
   }
   if (getStringWidth(data.name) > 20) return Notification.error(t('昵称超过20个字符'))
   if (getStringWidth(data.name) === 0) return Notification.error(t('请输入昵称'))
   try {
-    await updateOrgSpaceInfo(data)
+    await postCommonGraph('chato_orgs/save', data)
     base.updateUserOrgInfoAttri(data)
     Notification.success(t('保存成功'))
   } catch (e) {}

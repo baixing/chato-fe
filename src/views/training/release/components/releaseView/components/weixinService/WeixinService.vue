@@ -90,12 +90,8 @@
   </Modal>
 </template>
 <script lang="ts" setup>
-import {
-  getChannelType,
-  patchChannelType,
-  patchWeixinConfig,
-  postWeixinConfig
-} from '@/api/release'
+import { getCommonGraph, postCommonGraph } from '@/api/graph'
+import { patchWeixinConfig, postWeixinConfig } from '@/api/release'
 import Modal from '@/components/Modal/index.vue'
 import useImagePath from '@/composables/useImagePath'
 import { EAfficialAccountStatusType, EChannelType } from '@/enum/release'
@@ -172,10 +168,23 @@ const handleChange = async () => {
       : EAfficialAccountStatusType.disabled
   }
   try {
-    const {
-      data: { data }
-    } = await patchChannelType(EChannelType.WECHAT_KF, props.domainSlug, patchData)
-    config.value = data
+    const res = await getCommonGraph<any>('mp_account', {
+      filter: `domain_slug=="${props.domainSlug}" and type_def=="${EChannelType.WECHAT_KF}" and s_status=="${EAfficialAccountStatusType.normal}"`
+    })
+
+    const account = res.data.data
+    if ($notnull(account)) {
+      const {
+        data: { data }
+      } = await postCommonGraph('mp_account/save', {
+        id: account[0].id,
+        ...patchData
+      })
+
+      config.value = data
+    }
+
+    // patchChannelType(EChannelType.WECHAT_KF, props.domainSlug, patchData)
   } catch (e) {}
 }
 
@@ -189,8 +198,11 @@ const init = async () => {
     loading.value = true
     const {
       data: { data }
-    } = await getChannelType(EChannelType.WECHAT_KF, props.domainSlug)
-    config.value = data || {}
+    } = await getCommonGraph<any>('mp_account', {
+      filter: `type_def=="${EChannelType.WECHAT_KF}" and domain_slug=="${props.domainSlug}"`
+    })
+    // getChannelType(EChannelType.WECHAT_KF, props.domainSlug)
+    config.value = $notnull(data) ? data[0] : {}
   } catch (e) {
   } finally {
     loading.value = false

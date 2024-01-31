@@ -94,21 +94,18 @@
   </Modal>
 </template>
 <script lang="ts" setup>
-import {
-  cloneDomainRobot,
-  getDomainCategoryList,
-  updateBotUseScope,
-  updateDomainInResource
-} from '@/api/domain'
+import { cloneDomainRobot } from '@/api/domain'
 import { generateQACheckReport } from '@/api/file'
-import { deletesDomain } from '@/api/user'
 import Modal from '@/components/Modal/index.vue'
 import Topbar from '@/components/Topbar/index.vue'
+import useGlobalProperties from '@/composables/useGlobalProperties'
 import useSpaceRights from '@/composables/useSpaceRights'
+import { CATEGORYLIST } from '@/constant/common'
 import { ESpaceRightsType } from '@/enum/space'
 import type { IDomainInfo } from '@/interface/domain'
 import ContentLayout from '@/layout/ContentLayout.vue'
 import { RoutesMap } from '@/router'
+import { useBase } from '@/stores/base'
 import { useChatStore } from '@/stores/chat'
 import { useDomainStore } from '@/stores/domain'
 import { ElLoading, ElMessage, ElMessageBox, ElNotification, ElSelect } from 'element-plus'
@@ -120,6 +117,7 @@ import BotListCard from './components/BotListCard.vue'
 
 const { t } = useI18n()
 const router = useRouter()
+const base = useBase()
 const chatStoreI = useChatStore()
 const domainStoreI = useDomainStore()
 const loading = ref()
@@ -131,7 +129,9 @@ const dialogState = reactive({
   action: '',
   type: ''
 })
+const { userInfo } = storeToRefs(base)
 const { domainList } = storeToRefs(domainStoreI)
+const { deleteCommonGraph, postCommonGraph } = useGlobalProperties()
 const { checkRightsTypeNeedUpgrade } = useSpaceRights()
 const visibleOptions = [
   {
@@ -151,7 +151,17 @@ const setBotUseScopeDialogVisible = (bot: IDomainInfo) => {
 
 const onSetBotUseScope = async () => {
   try {
-    await updateBotUseScope(opDomain.value.id!, opDomain.value.use_scope)
+    if (
+      opDomain.value.creator_id !== userInfo.value.id &&
+      userInfo.value.org.owner_id !== userInfo.value.id
+    ) {
+      return ElNotification.info('没有操作权限')
+    }
+    await postCommonGraph('chato_domains/save', {
+      id: opDomain.value.id,
+      use_scope: opDomain.value.use_scope
+    })
+    // updateBotUseScope(opDomain.value.id!, opDomain.value.use_scope)
     const findItem = domainList.value.find((item) => item.id === opDomain.value.id)
     if (!findItem) return
     findItem.use_scope = opDomain.value.use_scope
@@ -195,7 +205,7 @@ const onDelete = async (item: IDomainInfo) => {
       text: t('删除中...'),
       background: 'rgba(0, 0, 0, 0.7)'
     })
-    await deletesDomain(item.id)
+    await deleteCommonGraph('chato_domains/' + item.id)
     ElNotification.success(t('删除成功'))
     await onRefresh()
   } catch (err) {
@@ -248,7 +258,8 @@ const onSync = async () => {
     )
 
     syncSubmiting.value = true
-    await updateDomainInResource(opDomain.value.id, {
+    await postCommonGraph('chato_domains/save', {
+      id: opDomain.value.id,
       visible: dialogState.type === 'visible' ? saveValue : opDomain.value.visible,
       template: dialogState.type === 'template' ? saveValue : opDomain.value.template,
       category: opDomain.value.category
@@ -304,22 +315,22 @@ const cloneRobot = async (id: string, name: string) => {
 }
 
 const domainCategoryLoading = ref(false)
-const domainCategoryList = ref<string[]>([])
-const initDomainCategoryList = async () => {
-  try {
-    domainCategoryLoading.value = true
-    const {
-      data: { data }
-    } = await getDomainCategoryList()
-    domainCategoryList.value = data
-  } catch (e) {
-  } finally {
-    domainCategoryLoading.value = false
-  }
-}
+const domainCategoryList = ref<string[]>(CATEGORYLIST)
+// const initDomainCategoryList = async () => {
+//   try {
+//     domainCategoryLoading.value = true
+//     const {
+//       data: { data }
+//     } = await getDomainCategoryList()
+//     domainCategoryList.value = data
+//   } catch (e) {
+//   } finally {
+//     domainCategoryLoading.value = false
+//   }
+// }
 
 onMounted(() => {
-  initDomainCategoryList()
+  // initDomainCategoryList()
   onRefresh()
 })
 

@@ -4,16 +4,10 @@
       {{ t(disabledTip) }}
     </template>
     <el-button
-      plain
       type="primary"
-      size="default"
+      plain
       :disabled="disabled || generating"
-      :link="link"
-      style="
-        --el-button-hover-text-color: #7c5cfc;
-        --el-button-hover-bg-color: white;
-        --el-color-primary-light-9: white;
-      "
+      size="default"
       @click="onAIGenerate"
     >
       {{ btnText }}

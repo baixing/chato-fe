@@ -87,7 +87,8 @@
 </template>
 <script lang="ts" setup>
 import { updateDomain } from '@/api/domain'
-import { deleteRetryFileMate, getFilesByDomainId } from '@/api/file'
+import { deleteRetryFileMate } from '@/api/file'
+import { getCommonGraph } from '@/api/graph'
 import IconReward from '@/assets/img/Icon-Reward.png'
 import EnterQa from '@/components/EnterAnswer/EnterQa.vue'
 import SearchInput from '@/components/Input/SearchInput.vue'
@@ -201,11 +202,28 @@ const initQAList = async () => {
     if (QaSelectStatus.value !== LearningStatesPerformanceType.all) {
       params.status = QaSelectStatus.value
     }
+
+    let filter = `business_type=="${params.business_type}" and status != "${LearningStatesPerformanceType.deleted}"`
+
+    if (params.keyword) {
+      filter += `and keyword=="${params.keyword}"`
+    }
+
+    if (params.status) {
+      filter += `and status=="${params.status}"`
+    }
+
     const {
-      data: { data, meta }
-    } = await getFilesByDomainId(domainId.value, params)
+      data: { data, pagination: meta }
+    } = await getCommonGraph<IDocumentList[]>(`chato_domains/${domainId.value}/files`, {
+      filter: filter,
+      sort: '-id',
+      page: params.page,
+      size: pagination.value.page_size
+    })
+    // getFilesByDomainId(domainId.value, params)
     tableData.value = data
-    pagination.value.page_count = meta.pagination.page_count
+    pagination.value.page_count = meta.page_count
     if (tableData.value.length > 0 && domainInfo.value.task_progress[1] === 0) {
       domainInfo.value.task_progress[1] = 40
       await updateDomain(domainInfo.value.id, {

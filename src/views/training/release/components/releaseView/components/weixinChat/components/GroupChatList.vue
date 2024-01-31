@@ -201,12 +201,11 @@
 </template>
 
 <script setup lang="ts">
+import { getCommonGraph, postCommonGraph } from '@/api/graph'
 import {
   deleteGroupChatAPI,
-  deleteTimeBroadcastAPI,
   editGroupAPI,
   getGroupImgAPI,
-  getTimeBroadcastAPI,
   patchTimeBroadcastAPI,
   postTimeBroadcastAPI,
   transferGroupAPI
@@ -222,6 +221,7 @@ import {
   ElLoading,
   ElMessageBox,
   ElNotification,
+  dayjs,
   type FormInstance,
   type FormRules
 } from 'element-plus'
@@ -395,7 +395,12 @@ const getGroupQrCode = async (id: string) => {
 
 // ------ 定时广播 -----
 const initTimeBroadcast = async (id: string) => {
-  const { data } = await getTimeBroadcastAPI({ domain: props.domainId, receiver_id: id })
+  const { data } = await getCommonGraph<ISettingBroadcastType[]>('send_schedule', {
+    filter: `domain_id="${props.domainId} and receiver_id=="${id}""`
+  })
+
+  // getTimeBroadcastAPI({ domain: props.domainId, receiver_id: id })
+
   radioList.value = data.data
 }
 
@@ -441,7 +446,11 @@ const handleSettingRemove = async (item: ISettingBroadcastType) => {
     background: 'rgba(0, 0, 0, 0.7)'
   })
   try {
-    await deleteTimeBroadcastAPI({ send_schedule_id: item.send_schedule_id })
+    await postCommonGraph('send_schedule/save', {
+      id: item.send_schedule_id,
+      deleted: dayjs().format('YYYY-MM-DD HH:mm:ss')
+    })
+    // deleteTimeBroadcastAPI({ send_schedule_id: item.send_schedule_id })
     initTimeBroadcast(curRoomId.value)
     ElNotification.success('删除成功')
   } catch (error) {

@@ -1,3 +1,4 @@
+import { deleteCommonGraph, getCommonGraph, postCommonGraph } from '@/api/graph'
 import { ExtendedObjectType } from '@/interface/utilsType'
 import { globalComponents } from '@/utils/globalComponents'
 import type sensors from 'sa-sdk-javascript'
@@ -24,6 +25,9 @@ declare module 'vue' {
   export interface ComponentCustomProperties {
     $sensors?: typeof sensors
     $copyText: (e: string, successMessage?: string) => void
+    postCommonGraph: typeof postCommonGraph
+    deleteCommonGraph: typeof deleteCommonGraph
+    getCommonGraph: typeof getCommonGraph
   }
   export interface GlobalComponents extends TGlobalComponents {}
 }

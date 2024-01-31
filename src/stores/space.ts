@@ -1,11 +1,20 @@
-import { getSpaceMembers, getSpaceQuota, getSpaceRights } from '@/api/space'
+import { getCommonGraph } from '@/api/graph'
+import { getSpaceQuota, getSpaceRights } from '@/api/space'
 import { ESpaceRightsType } from '@/enum/space'
+import type { IPage } from '@/interface/common'
 import type { ISpaceQuota, ISpaceRights } from '@/interface/space'
 import type { IUserInfo } from '@/interface/user'
-import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { defineStore, storeToRefs } from 'pinia'
+import { ref, watch } from 'vue'
+import { useBase } from './base'
 
 export const useSpaceStore = defineStore('space', () => {
+  const spaceMemberPagination = ref<IPage>({
+    page: 1,
+    size: 9,
+    page_count: 1,
+    total: 0
+  })
   const spaceMembers = ref<IUserInfo[]>([])
   const spaceQuota = ref<ISpaceQuota>({
     consumed: 0,
@@ -14,6 +23,8 @@ export const useSpaceStore = defineStore('space', () => {
   const followPublicVisible = ref(false) // 引导关注公众号弹框
   const upgradeRightsVisible = ref(false) // 升级权益弹窗
   const upgradeRightsType = ref(ESpaceRightsType.default) // 升级权益类型
+  const base = useBase()
+  const { orgInfo } = storeToRefs(base)
 
   // 当前权益
   const currentRights = ref<ISpaceRights>()
@@ -32,13 +43,28 @@ export const useSpaceStore = defineStore('space', () => {
     currentRights.value = data
   }
 
-  const initSpaceMembers = async () => {
+  // 空间成员
+  const initSpaceMembers = async (
+    page = spaceMemberPagination.value.page,
+    size = spaceMemberPagination.value.size
+  ) => {
     const {
-      data: { data }
-    } = await getSpaceMembers()
+      data: { data, pagination }
+    } = await getCommonGraph<IUserInfo[]>(`chato_orgs/${orgInfo.value.id}/users`, {
+      page,
+      size
+    })
     spaceMembers.value = data
+    spaceMemberPagination.value = pagination
     return data
   }
+
+  watch(
+    () => spaceMemberPagination.value.page,
+    (page) => {
+      initSpaceMembers(page, spaceMemberPagination.value.size)
+    }
+  )
 
   return {
     spaceQuota,
@@ -47,6 +73,7 @@ export const useSpaceStore = defineStore('space', () => {
     upgradeRightsType,
     upgradeRightsVisible,
     followPublicVisible,
+    spaceMemberPagination,
     initSpaceRights,
     initSpaceQuota,
     initSpaceMembers

@@ -498,13 +498,14 @@
 </template>
 
 <script setup lang="ts">
-import { domainLLMConfigAPI, getSystemPromptLimit } from '@/api/domain'
-import { deleteFile, getFilesByDomainId } from '@/api/file'
+import { getSystemPromptLimit } from '@/api/domain'
+import { deleteFile } from '@/api/file'
+import { getCommonGraph } from '@/api/graph'
 import EnterQa from '@/components/EnterAnswer/EnterQa.vue'
 import useImagePath from '@/composables/useImagePath'
 import useSpaceRights from '@/composables/useSpaceRights'
 import { currentEnvConfig } from '@/config'
-import { USER_ROLES } from '@/constant/common'
+import { SUPPORT_LLM_CONFIG, USER_ROLES } from '@/constant/common'
 import {
   DomainCreateSymbol,
   DomainReplyLanguage,
@@ -680,7 +681,11 @@ const initFilesList = async () => {
     uploadFilesListLoading.value = true
     const {
       data: { data }
-    } = await getFilesByDomainId(formState.id.toString(), { page: 1, page_size: 1000 })
+    } = await getCommonGraph<IDocumentList[]>(`chato_domains/${formState.id.toString()}/files`, {
+      page: 1,
+      size: 1000
+    })
+    //  getFilesByDomainId(formState.id.toString(), { page: 1, page_size: 1000 })
     uploadFilesList.value = data
   } catch (e) {
   } finally {
@@ -741,11 +746,11 @@ const onDeleteFile = async (fileId: number) => {
 }
 
 const initLLMConfigOption = async () => {
-  const res = await domainLLMConfigAPI()
-  const domainLLMList = res.data.data
-  domainLLMTypeOptions.value = domainLLMList
-  if (!formState.llm && domainLLMList.length > 0) {
-    formState.llm = domainLLMList[0].type
+  // const res = await domainLLMConfigAPI()
+  // const domainLLMList = res.data.data
+  domainLLMTypeOptions.value = SUPPORT_LLM_CONFIG
+  if (!formState.llm && SUPPORT_LLM_CONFIG.length > 0) {
+    formState.llm = SUPPORT_LLM_CONFIG[0].type
   }
 }
 

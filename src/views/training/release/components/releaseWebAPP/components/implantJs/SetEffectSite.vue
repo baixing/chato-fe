@@ -25,9 +25,8 @@
 </template>
 
 <script lang="ts" setup>
-import { createDeleteEditSites } from '@/api/iframe'
+import { postCommonGraph } from '@/api/graph'
 import Modal from '@/components/Modal/index.vue'
-import { ESiteStatus } from '@/enum/release'
 import type { ISetSiteFormType } from '@/interface/release'
 import { ElLoading, ElNotification as Notification } from 'element-plus'
 import { computed, ref } from 'vue'
@@ -58,11 +57,15 @@ async function submitCreateSite(formEl, data: ISetSiteFormType) {
           background: 'rgba(0, 0, 0, 0.7)'
         })
         const postData = {
-          id: 0,
-          status: ESiteStatus.create,
+          id: null,
+          domain_slug: props.slug,
           ...data
         }
-        const res = await createDeleteEditSites(props.slug, postData)
+
+        const res = await postCommonGraph('share_channel/save', {
+          ...postData
+        })
+        //  createDeleteEditSites(props.slug, postData)
         loading.value.close()
         Notification({
           type: res.data.code === 200 ? 'success' : 'error',

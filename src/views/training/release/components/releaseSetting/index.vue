@@ -289,8 +289,7 @@
 
 <script lang="ts" setup>
 import { updateDomain } from '@/api/domain'
-import { getUserPackageListAPI, postUserPackageAPI } from '@/api/order'
-import { getMobileLimitAPI } from '@/api/release'
+import { getCommonGraph, postCommonGraph } from '@/api/graph'
 import payImg from '@/assets/img/pay-home.png'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
 import Modal from '@/components/Modal/index.vue'
@@ -302,10 +301,12 @@ import useImagePath from '@/composables/useImagePath'
 import { FreeCommercialTypeExperienceDay } from '@/constant/space'
 import { ESpaceCommercialType, ESpaceRightsType } from '@/enum/space'
 import type { IDomainInfo } from '@/interface/domain'
+import type { IMobileLimitItem } from '@/interface/release'
 import { RoutesMap } from '@/router'
 import { useBase } from '@/stores/base'
 import { useDomainStore } from '@/stores/domain'
 import { useSpaceStore } from '@/stores/space'
+import { $notnull } from '@/utils/help'
 import { getStringWidth } from '@/utils/string'
 import { getSpecifiedDateSinceNowDay } from '@/utils/timeRange'
 import { ElLoading, ElMessage, ElMessageBox, ElNotification } from 'element-plus'
@@ -433,10 +434,31 @@ const syncOriginalFormState = () => {
 
 // 保存套餐信息
 const onSaveOrderInfo = async () => {
-  await postUserPackageAPI(domainInfo.value.slug, {
-    ...toRaw(currentOrderDetail),
-    price: currentOrderDetail.price * 100
-  })
+  try {
+    const { data: data } = await getCommonGraph('customer_package', {
+      filter: `domain_slug=="${domainInfo.value.slug}" and status=="active"`
+    })
+
+    const oldList = data.data
+    if ($notnull(oldList)) {
+      await postCommonGraph('customer_package/save', {
+        id: oldList[0].id,
+        status: 'invalid'
+      })
+    }
+
+    await postCommonGraph('customer_package/save', {
+      ...toRaw(currentOrderDetail),
+      price: currentOrderDetail.price * 100,
+      domain_slug: domainInfo.value.slug
+    })
+  } catch (error) {
+    console.log(error)
+  }
+  // postUserPackageAPI(domainInfo.value.slug, {
+  //   ...toRaw(currentOrderDetail),
+  //   price: currentOrderDetail.price * 100
+  // })
 }
 
 const onHandleSetPackage = () => {
@@ -469,16 +491,17 @@ const onSave = async () => {
 }
 
 const initMobileList = async () => {
-  const res = await getMobileLimitAPI(domainInfo.value.id, {
+  const res = await getCommonGraph<IMobileLimitItem[]>(`domain_mobile_limit`, {
+    filter: `domain_id==${domainInfo.value.id}`,
     page: pageMobileConfig.page,
-    page_size: pageMobileConfig.page_size
+    size: pageMobileConfig.page_size
   })
-  const pagination = res.data.meta.pagination
+  const pagination = res.data.pagination
   pageMobileConfig.mobileList = res.data.data
   pageMobileConfig.page = pagination.page
   pageMobileConfig.total = pagination.total
   pageMobileConfig.page_count = pagination.page_count
-  pageMobileConfig.page_size = pagination.page_size
+  pageMobileConfig.page_size = pagination.size
 }
 
 const onHandleSwitchMobile = async (e: Event, mobileSwitch: number) => {
@@ -506,7 +529,10 @@ const onViewRevenue = () => {
 }
 
 const initOrderInfo = async () => {
-  const res = await getUserPackageListAPI(domainInfo.value.slug)
+  const res = await getCommonGraph<any[]>(`customer_package`, {
+    filter: `domain_slug=="${domainInfo.value.slug}" and status=="active"`,
+    sort: '-id'
+  })
   const orderList = res.data.data
   if (orderList.length) {
     const orderInfo = orderList[0]

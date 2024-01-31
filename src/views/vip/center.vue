@@ -191,7 +191,8 @@
 
 <script setup lang="ts">
 import { getJsApiPaySignAPI, postWeixinH5Login } from '@/api/auth'
-import { getOrderPackageList, getOrderPackagePaymentCode, refreshPaymentStatus } from '@/api/order'
+import { getCommonGraph } from '@/api/graph'
+import { getOrderPackagePaymentCode } from '@/api/order'
 import Topbar from '@/components/Topbar/index.vue'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import useSpaceRights from '@/composables/useSpaceRights'
@@ -199,9 +200,9 @@ import { CHATO_BAIXING_APP_ID, XIAONAQIWEI } from '@/constant/common'
 import { OrderPaymentStatus } from '@/constant/order'
 import { SpaceCommercialTypeMapper } from '@/constant/space'
 import { kUserPaymentLinkUrl } from '@/constant/terms'
-import { EOrderPaymentStatus, EWeixinH5LoginType } from '@/enum/order'
+import { EOrderPackageType, EOrderPaymentStatus, EWeixinH5LoginType } from '@/enum/order'
 import { ESpaceCommercialType, ESpaceRightsType } from '@/enum/space'
-import type { IOrderPackage } from '@/interface/order'
+import type { IOrderPackage, IOrderPaymentStatus } from '@/interface/order'
 import ContentLayout from '@/layout/ContentLayout.vue'
 import router, { RoutesMap } from '@/router'
 import { useAuthStore } from '@/stores/auth'
@@ -209,7 +210,7 @@ import { useBase } from '@/stores/base'
 import { useChatStore } from '@/stores/chat'
 import { useDomainStore } from '@/stores/domain'
 import { useSpaceStore } from '@/stores/space'
-import { isWechat, onRouteWeixinDefaultLogin, openPreviewUrl } from '@/utils/help'
+import { $notnull, isWechat, onRouteWeixinDefaultLogin, openPreviewUrl } from '@/utils/help'
 import { payJSAPI } from '@/utils/pay'
 import { ElNotification } from 'element-plus'
 import { storeToRefs } from 'pinia'
@@ -310,16 +311,23 @@ const onOpenPay = async (item: IOrderPackage) => {
 
     refreshInterval = setInterval(async () => {
       const {
-        data: { data: paymentStatusRes }
-      } = await refreshPaymentStatus(paymentRes.order_id)
-      if (paymentStatusRes.status !== EOrderPaymentStatus.paying) {
-        ElNotification({
-          message: t(OrderPaymentStatus[paymentStatusRes.status]),
-          type: paymentStatusRes.status === EOrderPaymentStatus.paid ? 'success' : 'info'
-        })
-        payModalVisible.value = false
-        spaceStoreI.initSpaceRights()
-        clearInterval(refreshInterval)
+        data: { data }
+      } = await getCommonGraph<IOrderPaymentStatus[]>('order', {
+        filter: `id=="${paymentRes.order_id}"`
+      })
+      // refreshPaymentStatus(paymentRes.order_id)
+
+      if ($notnull(data)) {
+        const paymentStatusRes = data[0]
+        if (paymentStatusRes.status !== EOrderPaymentStatus.paying) {
+          ElNotification({
+            message: t(OrderPaymentStatus[paymentStatusRes.status]),
+            type: paymentStatusRes.status === EOrderPaymentStatus.paid ? 'success' : 'info'
+          })
+          payModalVisible.value = false
+          spaceStoreI.initSpaceRights()
+          clearInterval(refreshInterval)
+        }
       }
     }, 2000)
   } catch (e) {
@@ -400,7 +408,11 @@ const init = async () => {
     currentEnvIsWechat && onWeixinH5DefaultLogin()
     const {
       data: { data }
-    } = await getOrderPackageList()
+    } = await getCommonGraph<IOrderPackage[]>('package', {
+      filter: `type=="${EOrderPackageType.buffet}"`,
+      sort: 'sale_price'
+    })
+    // getOrderPackageList()
     packageList.value = data
   } catch (e) {
   } finally {

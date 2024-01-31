@@ -240,8 +240,7 @@
 import {
   checkDomainCorrectTicketIsExpired,
   generateDomainCorrectTicket,
-  getTestTimbreUrl as getTestTimbreUrlApi,
-  getTimbreList as getTimbreListApi
+  getTestTimbreUrl as getTestTimbreUrlApi
 } from '@/api/domain'
 import TimbreItem from '@/components/BotSetting/TimbreItem.vue'
 import ImgUpload from '@/components/ImgUpload/ImgUpload.vue'
@@ -253,6 +252,7 @@ import SwitchWithStateMsg from '@/components/SwitchWithStateMsg/index.vue'
 import SLTitle from '@/components/Title/SLTitle.vue'
 import useImagePath from '@/composables/useImagePath'
 import { currentEnvConfig } from '@/config'
+import { TTSTIMBE } from '@/constant/common'
 import {
   DomainConversationModeArousalMethodOptions,
   DomainConversationModeOptions,
@@ -380,9 +380,9 @@ const changeConversation = (value) => {
 
 const getTimbreList = async () => {
   try {
-    const res = await getTimbreListApi()
-    timbreList.value = res.data.data.timbres.map<ITimbreOptions>((item, index) => ({
-      label: res.data.data.descriptions[index],
+    // const res = await getTimbreListApi()
+    timbreList.value = TTSTIMBE.timbres.map<ITimbreOptions>((item, index) => ({
+      label: TTSTIMBE.descriptions[index],
       value: item
     }))
   } catch (error) {}

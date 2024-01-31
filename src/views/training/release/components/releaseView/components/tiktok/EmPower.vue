@@ -65,16 +65,14 @@
 </template>
 
 <script lang="ts" setup>
-import {
-  getChannelType,
-  getTitokServiceConfig,
-  patchChannelType,
-  updateTiktokConfig
-} from '@/api/release'
+import { getCommonGraph } from '@/api/graph'
+import { getTitokServiceConfig } from '@/api/release'
 import Modal from '@/components/Modal/index.vue'
 import SwitchWithStateMsg from '@/components/SwitchWithStateMsg/index.vue'
+import useGlobalProperties from '@/composables/useGlobalProperties'
 import { ChannelStatusTiktok } from '@/constant/release'
 import { EAfficialAccountStatusType, EChannelType } from '@/enum/release'
+import { $notnull } from '@/utils/help'
 import { ElLoading, ElMessage, ElNotification } from 'element-plus'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -94,7 +92,7 @@ const tiktokStatus = ref<{
 }>()
 const tiktokServiceConfig = ref<string>('') // 抖音配置
 const loading = ref(false)
-
+const { postCommonGraph } = useGlobalProperties()
 const internalVisible = computed({
   get: () => props.value,
   set: (v) => emit('update:value', v)
@@ -106,7 +104,10 @@ const onChangeTiktokAdditions = async (key: string, val: boolean) => {
       ...tiktokStatus.value.additions,
       [key]: Boolean(val)
     }
-    await updateTiktokConfig(tiktokStatus.value.id, params)
+    await postCommonGraph(`mp_account/save`, {
+      id: tiktokStatus.value.id,
+      ...params
+    })
     tiktokStatus.value.additions[key] = val
     ElNotification.success(t('操作成功'))
   } catch (e) {}
@@ -115,14 +116,20 @@ const onChangeTiktokAdditions = async (key: string, val: boolean) => {
 // 授权状态
 const initTiktokStatus = async () => {
   loading.value = true
-  const res = await getChannelType(EChannelType.DOUYIN, props.domainSlug)
-  tiktokStatus.value = res.data.data
-  if (res.data.data && !res.data.data.additions) {
-    tiktokStatus.value.additions = {
-      douyin_im_receive_msg_switch: true,
-      douyin_item_comment_reply_switch: true
+  const data: { data } = await getCommonGraph<any>('mp_account', {
+    filter: `type_def=="${EChannelType.DOUYIN}" and domain_slug=="${props.domainSlug}"`
+  })
+  // getChannelType(EChannelType.DOUYIN, props.domainSlug)
+  if ($notnull(data)) {
+    tiktokStatus.value = data[0]
+    if (!data[0].additions) {
+      tiktokStatus.value.additions = {
+        douyin_im_receive_msg_switch: true,
+        douyin_item_comment_reply_switch: true
+      }
     }
   }
+
   loading.value = false
 }
 
@@ -144,11 +151,23 @@ const handleEmpower = async (txt: string) => {
       background: 'rgba(0, 0, 0, 0.7)'
     })
     try {
-      const res = await patchChannelType(EChannelType.DOUYIN, props.domainSlug, {
-        s_status: EAfficialAccountStatusType.disabled
+      const resAccount = await getCommonGraph<any>('mp_account', {
+        filter: `domain_slug=="${props.domainSlug}" and type_def=="${EChannelType.DOUYIN}" and s_status=="${EAfficialAccountStatusType.normal}"`
       })
-      tiktokStatus.value = res.data.data || {}
-      ElMessage.success(t('解除成功'))
+      const account = resAccount.data.data
+
+      if ($notnull(account)) {
+        const res = await postCommonGraph<any>('mp_account/save', {
+          id: account[0].id,
+          s_status: EAfficialAccountStatusType.disabled
+        })
+        tiktokStatus.value = res.data.data || {}
+        ElMessage.success(t('解除成功'))
+      }
+
+      // patchChannelType(EChannelType.DOUYIN, props.domainSlug, ∑∂ddddfr{
+      //   s_status: EAfficialAccountStatusType.disabled
+      // })
     } catch (e) {
       ElMessage.error(t('解除失败'))
     } finally {

@@ -60,7 +60,8 @@
 
 <script setup lang="ts">
 import { getJsApiPaySignAPI } from '@/api/auth'
-import { getPurchaseOrderStatus, postPurchaseProductionAPI } from '@/api/order'
+import { getCommonGraph } from '@/api/graph'
+import { postPurchaseProductionAPI } from '@/api/order'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import { kUserPaymentLinkUrl } from '@/constant/terms'
 import { EOrderPaymentStatus } from '@/enum/order'
@@ -181,7 +182,9 @@ const initPayCode = async () => {
 
 // 查询订单状态
 const onSerachOrderStatus = async (id: number) => {
-  const res = await getPurchaseOrderStatus(id, uid.value, props.domainInfo.slug)
+  const res = await getCommonGraph<any>(`customer_order`, {
+    filter: `domain_slug=="${props.domainInfo.slug}" and id=="${id}" and user_uuid=="${uid.value}"`
+  })
   const { status } = res.data.data
   if (EOrderPaymentStatus.finish === status) {
     clearTimer()

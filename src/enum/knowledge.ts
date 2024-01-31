@@ -30,7 +30,8 @@ export enum LearningStatesPerformanceType {
   learned = 'learned',
   learning = 'learning',
   error = 'error',
-  crawl_error = 'crawl_error'
+  crawl_error = 'crawl_error',
+  deleted = 'deleted'
 }
 
 export enum DeleteRetryFileMateStatusType {

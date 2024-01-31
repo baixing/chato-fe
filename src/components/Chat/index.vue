@@ -168,18 +168,13 @@
 
 <script lang="ts" setup>
 import { postWeixinH5Login } from '@/api/auth'
-import {
-  chatToBotHistoryB,
-  chatToBotHistoryC,
-  clearSession,
-  evaluate,
-  getChatRecommendQuestions
-} from '@/api/chat'
+import { clearSession, getChatRecommendQuestions } from '@/api/chat'
 import {
   checkDomainCorrectTicketIsExpired,
   getDomainDetailPublic,
   getDomainQuotaInPlatformC
 } from '@/api/domain'
+import { getCommonGraph, postCommonGraph } from '@/api/graph'
 import DefaultAvatar from '@/assets/img/avatar.png'
 import AudioPlayer from '@/components/AudioPlayer/index.vue'
 import ChatEnter from '@/components/Chat/ChatEnter.vue'
@@ -212,7 +207,7 @@ import {
 } from '@/enum/message'
 import { EWeixinH5LoginType } from '@/enum/order'
 import { ESpaceRightsType } from '@/enum/space'
-import type { ChatHistoryParams, IChatCommonParams } from '@/interface/chat'
+import type { ChatHistoryParams, ChatToBotRes, IChatCommonParams } from '@/interface/chat'
 import type { IDomainInfo } from '@/interface/domain'
 import type { IMessageItem } from '@/interface/message'
 import type { IRecommendQuestion } from '@/interface/question'
@@ -348,7 +343,7 @@ const DefaultChatHistoryPage = {
 let chatHistoryPage = reactive({ ...DefaultChatHistoryPage })
 const chatHistoryParams: ChatHistoryParams = reactive({
   page: 1,
-  page_size: 10
+  size: 10
 })
 
 const SSEInstance = new SSE()
@@ -589,12 +584,26 @@ const getHistoryChat = async (scrollBottomTag = true) => {
     chatHistoryParams.sender_uid = uid.value
   }
   chatHistoryParams.domain_slug = botSlug.value
-  const chatToBotHistory = isInternal ? chatToBotHistoryB : chatToBotHistoryC
+  // const chatToBotHistory = isInternal ? chatToBotHistoryB : chatToBotHistoryC
 
   try {
-    const res = await chatToBotHistory(chatHistoryParams)
-    chatHistoryPage.page_count = res.data.meta.pagination.page_count
-    chatHistoryPage.total = res.data.meta.pagination.total
+    const { data } = await getCommonGraph<IDomainInfo[]>('chato_domains', {
+      filter: `slug=="${chatHistoryParams.domain_slug}"`
+    })
+
+    const res = await getCommonGraph<ChatToBotRes[]>('chato_questions', {
+      filter: `${
+        isInternal
+          ? `sender_id=="${chatHistoryParams.sender}" and org_id=="${userInfo.value.org.id}"`
+          : `sender_uid=="${chatHistoryParams.sender_uid}"`
+      } and domain_id=="${data.data[0].id}"`,
+      page: chatHistoryParams.page,
+      size: chatHistoryParams.size,
+      sort: '-id'
+    })
+    // chatToBotHistory(chatHistoryParams)
+    chatHistoryPage.page_count = res.data.pagination.page_count
+    chatHistoryPage.total = res.data.pagination.total
     const list = res.data.data
     chatHistoryPage.currentTotal = chatHistoryPage.currentTotal + list.length
     const newHistory = [...history.value]
@@ -640,6 +649,7 @@ const getHistoryChat = async (scrollBottomTag = true) => {
 
     return list
   } catch (e) {
+    console.log(e)
   } finally {
     $isLoading.value = false
   }
@@ -977,7 +987,11 @@ const onEvaluate = async (questionId: number, evValue: EMessageEvalution) => {
     } else {
       current.evaluation = evValue
     }
-    await evaluate(questionId, { evaluation: current.evaluation })
+    await postCommonGraph('chato_questions/save', {
+      id: questionId,
+      evaluation: current.evaluation
+    })
+    // evaluate(questionId, { evaluation: current.evaluation })
   } catch (e) {}
 }
 
@@ -1374,7 +1388,8 @@ watch(
       return
     }
 
-    detail.value = { ...detail.value, ...v }
+    detail.value = { ...detail.value, ...v, desc_show: 1 }
+
     if (!v.show_recommend_question && recommendQuestions.value.length) {
       recommendQuestions.value = []
     }
@@ -1389,10 +1404,12 @@ watch(
       } else if (props.type) {
         sayWelcome()
       }
-    } else {
-      const newHistory = history.value.filter((item) => !item.isWelcome)
-      history.value = newHistory
     }
+    // else {
+    //   console.log('34s')
+    //   const newHistory = history.value.filter((item) => !item.isWelcome)
+    //   history.value = newHistory
+    // }
   },
   { immediate: true, deep: true }
 )

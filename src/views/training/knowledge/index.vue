@@ -55,13 +55,20 @@
 </template>
 
 <script setup lang="ts">
-import { getKnowledgeSharedList, updateKnowledgeSharedStatus } from '@/api/file'
+import { getKnowledgeSharedList } from '@/api/file'
 import Modal from '@/components/Modal/index.vue'
 import SwitchWithStateMsg from '@/components/SwitchWithStateMsg/index.vue'
+import useGlobalProperties from '@/composables/useGlobalProperties'
 import { EDomainStatus } from '@/enum/domain'
-import type { IRelatedKnowledgeBase } from '@/interface/knowledge'
+import type { IDomainInfo } from '@/interface/domain'
+import type {
+  IKnowledgeShared,
+  IKnowledgeSharedParams,
+  IRelatedKnowledgeBase
+} from '@/interface/knowledge'
 import { RoutesMap } from '@/router'
 import { useDomainStore } from '@/stores/domain'
+import { ElNotification } from 'element-plus'
 import { storeToRefs } from 'pinia'
 import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -72,7 +79,7 @@ const route = useRoute()
 const router = useRouter()
 
 const activeTab = computed(() => (route.params?.type as string) || 'qa')
-
+const { postCommonGraph, getCommonGraph, deleteCommonGraph } = useGlobalProperties()
 const tabs = [
   { key: 'qa', title: '问答集' },
   { key: 'doc', title: '文档集' }
@@ -112,6 +119,49 @@ const onChangeRelated = async (index: number, newRelatedVal: number) => {
   } catch {}
 }
 
+const updateKnowledgeSharedStatus = async ({
+  sender_domain_id,
+  receiver_domain_id,
+  status
+}: {
+  sender_domain_id: number
+  receiver_domain_id: number
+  status: string
+}) => {
+  const {
+    data: { data: sender_domain }
+  } = await getCommonGraph<IDomainInfo>(`chato_domains/${sender_domain_id}`)
+  const {
+    data: { data: receiver_domain }
+  } = await getCommonGraph<IDomainInfo>(`chato_domains/${receiver_domain_id}`)
+  const {
+    data: { data }
+  } = await getCommonGraph<IKnowledgeShared[]>(`knowledge_shared`, {
+    filter: `sender_domain_id == "${sender_domain_id}" and receiver_domain_id == "${receiver_domain_id}"`
+  })
+  if (status === 'delete') {
+    if (data.length === 0) {
+      return ElNotification.error('共享信息不存在或者被删除')
+    }
+    await deleteCommonGraph(`knowledge_shared/${data[0].id}`)
+  } else {
+    const data: Partial<IKnowledgeSharedParams> = {
+      sender_domain_id: sender_domain.id,
+      receiver_domain_id: receiver_domain.id
+    }
+
+    if (sender_domain.creator_id) {
+      data.sender_user_id = sender_domain.creator_id
+    }
+
+    if (receiver_domain.creator_id) {
+      data.receiver_user_id = sender_domain.creator_id
+    }
+
+    await postCommonGraph(`knowledge_shared/save`, data)
+  }
+}
+
 const initRelatedList = async () => {
   try {
     relatedIniting.value = true
@@ -119,7 +169,7 @@ const initRelatedList = async () => {
     const {
       data: { data }
     } = await getKnowledgeSharedList({
-      filter: `sender_domain_id==${route.params.botId}`,
+      filter: `sender_domain_id=="${route.params.botId}"`,
       size: 500
     })
     const relatedDomainIds = data.map((item) => item.receiver_domain_id)

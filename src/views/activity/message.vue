@@ -102,11 +102,12 @@
 </template>
 
 <script setup lang="ts">
-import { getActivityDetail, getActivityMessageList } from '@/api/activity'
+import { getCommonGraph } from '@/api/graph'
 import type { IActivity, IActivityMessage } from '@/interface/activity'
 import type { IPage } from '@/interface/common'
 import ContentLayout from '@/layout/ContentLayout.vue'
 import { RoutesMap } from '@/router'
+import { $notnull } from '@/utils/help'
 import { detectMarkdown, renderMarkdown } from '@/utils/markdown'
 import { ArrowRight } from '@element-plus/icons-vue'
 import dayjs from 'dayjs'
@@ -122,8 +123,11 @@ const activityDetail = ref<IActivity>()
 const initActivityDetail = async () => {
   const {
     data: { data }
-  } = await getActivityDetail(route.params.activityId as string)
-  activityDetail.value = data
+  } = await getCommonGraph<IActivity[]>('send_schedule_group', {
+    filter: `id=="${route.params.activityId}"`
+  })
+  // getActivityDetail(route.params.activityId as string)
+  activityDetail.value = $notnull(data) ? data[0] : null
 }
 
 const init = async () => {
@@ -154,7 +158,12 @@ const initActivityMessageList = async () => {
     }
     const {
       data: { data, pagination: paginationRes }
-    } = await getActivityMessageList(params)
+    } = await getCommonGraph<IActivityMessage[]>('send_schedule', {
+      filter: `group_id=="${params.group_id}"`,
+      page: params.page,
+      size: params.page_size
+    })
+    // getActivityMessageList(params)
     tableData.value = data
     pagination.page_count = paginationRes.page_count
   } catch (e) {

@@ -120,13 +120,15 @@
 </template>
 
 <script setup lang="ts">
-import { createDraftDomain, updateDomain } from '@/api/domain'
-import { getFirstGuideInterestDomains, saveFirstGuideAdditions } from '@/api/industry'
+import { updateDomain } from '@/api/domain'
+import { getFirstGuideInterestDomains } from '@/api/industry'
+import useGlobalProperties from '@/composables/useGlobalProperties'
 import { EDomainStatus } from '@/enum/domain'
 import { EUserOrganizationRole } from '@/enum/userInformation'
 import type { IDomainInfo } from '@/interface/domain'
 import router, { RoutesMap } from '@/router'
 import { useBase } from '@/stores/base'
+import { storeToRefs } from 'pinia'
 import { nextTick, reactive, ref, watch } from 'vue'
 import ChatoDomainAvatar from './components/ChatoDomainAvatar.vue'
 
@@ -151,6 +153,8 @@ const ScenesList = [
 ] as const
 
 const baseStoreI = useBase()
+const { userInfo } = storeToRefs(baseStoreI)
+const { postCommonGraph } = useGlobalProperties()
 let isAdditions = true
 const formState = reactive<{
   interests: string
@@ -202,16 +206,27 @@ const onGotoCreate = async () => {
   try {
     saving.value = true
     if (isAdditions) {
-      await saveFirstGuideAdditions({
-        interests: [formState.interests],
-        organization_type: formState.organization_type
+      await postCommonGraph('chato_orgs/save', {
+        id: userInfo.value.org.id,
+        additions: JSON.stringify({
+          interests: [formState.interests],
+          organization_type: formState.organization_type
+        })
       })
       baseStoreI.getUserInfo()
     }
+    console.log(userInfo.value)
     const {
       data: { data }
-    } = await createDraftDomain()
-
+    } = await postCommonGraph<IDomainInfo>('chato_domains/save', {
+      creator_id: userInfo.value.id,
+      updater_id: userInfo.value.id,
+      org: userInfo.value.org.id,
+      desc_show: 0,
+      name: '',
+      status: 2,
+      avatar: 'https://afu-1255830993.cos.ap-shanghai.myqcloud.com/447479457016221696.png'
+    })
     const { id, slug } = data
     const { name, avatar, system_prompt, desc, welcome } = selectInterestDomain
     const domainState: Partial<IDomainInfo> = {
@@ -238,6 +253,9 @@ const init = async () => {
     const {
       data: { data }
     } = await getFirstGuideInterestDomains()
+    //  getCommonGraph<IDomainInfo[]>(`chato_domains`, {
+    //   filter: `org_id==208 and visible==1 and template==1`
+    // })
     const userInfoRes = await baseStoreI.getUserInfo()
     if (userInfoRes.org.additions) {
       const { organization_type, organization_type_name } = JSON.parse(userInfoRes.org.additions)
