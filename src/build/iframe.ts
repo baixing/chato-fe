@@ -37,7 +37,7 @@ window.onload = () => {
       const domainSlug = createChatoConfig.domainSlug
       const wwwBaseURL = createChatoConfig.wwwBaseURL
       const response = await fetch(
-        `${createChatoConfig.baseURL}/chato/api/v1/graph/share_channel?filter=domain_slug=="${domainSlug} and id=="${createChatoConfig.id}"`
+        `${createChatoConfig.baseURL}/chato/api/v1/graph/share_channel?filter=id=="${createChatoConfig.id}"`
       )
       const data = await response.json()
       if (data.code === 200036) {
