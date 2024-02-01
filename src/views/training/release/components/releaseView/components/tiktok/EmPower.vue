@@ -116,13 +116,14 @@ const onChangeTiktokAdditions = async (key: string, val: boolean) => {
 // 授权状态
 const initTiktokStatus = async () => {
   loading.value = true
-  const data: { data } = await getCommonGraph<any>('mp_account', {
+  const res = await getCommonGraph<any>('mp_account', {
     filter: `type_def=="${EChannelType.DOUYIN}" and domain_slug=="${props.domainSlug}"`
   })
+  const list = res.data.data
   // getChannelType(EChannelType.DOUYIN, props.domainSlug)
-  if ($notnull(data)) {
-    tiktokStatus.value = data[0]
-    if (!data[0].additions) {
+  if ($notnull(list)) {
+    tiktokStatus.value = list[0]
+    if (!list[0].additions) {
       tiktokStatus.value.additions = {
         douyin_im_receive_msg_switch: true,
         douyin_item_comment_reply_switch: true
