@@ -112,7 +112,7 @@ const visible = ref(false)
 let originalDomain: Partial<IDomainInfo> = {}
 let currentDomain = reactive<Partial<IDomainInfo>>({})
 const currentDomainHansLimit = reactive({
-  name: 20,
+  name: 50,
   system_prompt: 900,
   desc: 300,
   welcome: 2000,

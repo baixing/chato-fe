@@ -78,7 +78,7 @@ const inputStrLen = computed(() => {
 })
 const isExceed = computed(() => inputStrLen.value > limit.value)
 
-const limitTagWidth = ref(20)
+const limitTagWidth = ref(50)
 
 const inputRef = ref()
 
