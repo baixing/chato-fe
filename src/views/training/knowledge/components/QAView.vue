@@ -108,7 +108,6 @@ import type { IPage } from '@/interface/common'
 import type { GetFilesByDomainIdType, IDocumentList, IQAForm } from '@/interface/knowledge'
 import { useBase } from '@/stores/base'
 import { useDomainStore } from '@/stores/domain'
-import { $notnull } from '@/utils/help'
 import * as url from '@/utils/url'
 import { debouncedWatch } from '@vueuse/core'
 import dayjs from 'dayjs'
@@ -167,10 +166,8 @@ const onEditPreviewQA = (value: any, type: EDocumentOperateType) => {
     title: value.title,
     modalType: type
   }
-  if ($notnull(value.images)) {
-    list = value.images
-  } else if ($notnull(value.image)) {
-    list = [value.image]
+  if (value.template.includes('images')) {
+    list = JSON.parse(value.template).images
   }
   currentEdit.value.images = list
   activeNames.value = EDocumentTabType.inputText
