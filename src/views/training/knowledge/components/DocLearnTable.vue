@@ -7,7 +7,6 @@ import {
   UPLOAD_FILE_FORCED_CONVERSION_TO_TXT_TYPES,
   UPLOAD_FILE_VIDEO_AUDIO_TYPES
 } from '@/constant/common'
-import { KnowledgeQuestionConvertQABtn } from '@/constant/knowledge'
 import { EDocumentOperateType, LearningStatesPerformanceType } from '@/enum/knowledge'
 import type { IPage } from '@/interface/common'
 import type { IDocumentList } from '@/interface/knowledge'
@@ -46,8 +45,6 @@ const emit = defineEmits([
   'editPreviewDoc',
   'refresh',
   'removeDoc',
-  'generateQA',
-  'generateQARouter',
   'update:selectStatus',
   'update:multipleSelection'
 ])
@@ -175,35 +172,6 @@ const formatDisplayCharacter = (rowData: IDocumentList) => {
     return `${rowData.raw_size} ${t('字符')}`
   } else {
     return convertSize(rowData.raw_size)
-  }
-}
-
-// 生成问答/审阅问答
-const onHandleQuestion = (item: IDocumentList) => {
-  // 生成问答
-  const convertStatus = [0, 3]
-  if (convertStatus.includes(item.qa_status)) {
-    const confirmMessage = t(
-      '批量生成问答并经过人工审阅后可录入问答库，问答的索引匹配度通常高于文档。内测期间，验收不占用问答额度。是否确认生成？'
-    )
-    ElMessageBox.confirm(confirmMessage, t('生成问答'), {
-      confirmButtonText: t('确认'),
-      cancelButtonText: t('取消'),
-      type: 'warning'
-    })
-      .then(() => {
-        internalLoading.value = true
-        emit('generateQA', item.id)
-      })
-      .catch(() => {
-        Notification({
-          type: 'info',
-          message: t('已取消')
-        })
-      })
-  } else {
-    // 审阅问答
-    emit('generateQARouter', item.id)
   }
 }
 
@@ -339,15 +307,6 @@ onUnmounted(() => {
               type="file"
               @removeFile="removeFileCommon"
             />
-            <el-button
-              v-if="!checkDocTypeQuestionConvert(scope.row)"
-              link
-              type="primary"
-              :disabled="scope.row.qa_status === 1"
-              @click="onHandleQuestion(scope.row)"
-            >
-              {{ $t(KnowledgeQuestionConvertQABtn[scope.row.qa_status]) }}
-            </el-button>
             <el-button
               v-if="FILE_TYPE_NAMES[scope.row.type] === 'url'"
               @click.prevent="onOpenTimingConfig(scope.row)"

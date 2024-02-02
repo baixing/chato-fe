@@ -51,7 +51,6 @@ export const RoutesMap = {
     bot: 'tranningBot',
     roleInfo: 'tranningRoleInfo',
     knowledge: 'tranningKnowledge',
-    knowledgeGenerate: 'tranningKnowledgeGenerate',
     release: 'tranningRelease',
     report: 'tranningReport',
     reportContext: 'tranningReportContext',
@@ -293,11 +292,6 @@ const trainningRoutes = [
             path: 'knowledge',
             component: () => import('@/views/training/knowledge/layout.vue'),
             children: [
-              {
-                name: RoutesMap.tranning.knowledgeGenerate,
-                path: 'generate',
-                component: () => import('@/views/training/knowledge/GenerateQA.vue')
-              },
               {
                 name: RoutesMap.tranning.knowledge,
                 path: ':type?',
