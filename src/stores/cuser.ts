@@ -48,7 +48,7 @@ export const cuserStore = defineStore('cuser', () => {
   // 获取套餐信息
   const getCuserOrderInfo = async (slug: string) => {
     const res = await getCommonGraph<any[]>(`customer_package`, {
-      filter: `domain_slug=="${slug}"`
+      filter: `domain_slug=="${slug}" and status=="active"`
     })
     orderInfo.value = res.data.data
   }
