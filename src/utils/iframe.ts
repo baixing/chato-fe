@@ -35,7 +35,7 @@ export const chatoIframe = async () => {
     const domainSlug = createChatoConfig.domainSlug
     const wwwBaseURL = createChatoConfig.wwwBaseURL
     const response = await fetch(
-      `${createChatoConfig.baseURL}/chato/api/v1/graph/share_channel?filter=domain_slug=="${domainSlug} and id=="${createChatoConfig.id}"`
+      `${createChatoConfig.baseURL}/chato/api/v1/graph/share_channel?filter=id=="${createChatoConfig.id}"`
     )
     const data = await response.json()
     if (data.code === 200036) {
@@ -43,7 +43,7 @@ export const chatoIframe = async () => {
     }
     createChatoConfig.tipChatoBg = data.data.suspend_style
     createChatoConfig.tipChatoColor = data.data.suspend_style_color || '#fff'
-    createChatoConfig.chatoIframeSrc = `${wwwBaseURL}/b/${createChatoConfig.domainSlug}?source=${data.data.source}`
+    createChatoConfig.chatoIframeSrc = `${wwwBaseURL}/b/${domainSlug}?source=${data.data.source}`
     createChatoConfig.popupFrequency = data.data.popup_frequency
     return Promise.resolve(data.data)
   }
