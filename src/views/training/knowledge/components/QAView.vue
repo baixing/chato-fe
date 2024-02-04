@@ -203,7 +203,7 @@ const initQAList = async () => {
     let filter = `business_type=="${params.business_type}" and status != "${LearningStatesPerformanceType.deleted}"`
 
     if (params.keyword) {
-      filter += ` and keyword % "%${params.keyword}%"`
+      filter += ` and title % "%${params.keyword}%"`
     }
 
     if (params.status) {
