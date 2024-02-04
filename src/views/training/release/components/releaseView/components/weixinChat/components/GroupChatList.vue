@@ -123,7 +123,7 @@
           </el-col>
           <el-col :span="6">
             <el-button class="!border-[#7C5CFC] !text-[#7C5CFC]" @click="handleExitGroup(item)">
-              {{ $t('转移群聊') }}
+              {{ $t('退出群聊') }}
             </el-button>
           </el-col>
         </el-row>
