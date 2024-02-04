@@ -1,4 +1,5 @@
-import { getGroupListAPI, serachAccountListAPI } from '@/api/release'
+import { getCommonGraph } from '@/api/graph'
+import { getGroupListAPI } from '@/api/release'
 import { checkSpaceRightsTypeCanShow } from '@/api/space'
 import { ESpaceCommercialType, ESpaceRightsType } from '@/enum/space'
 import { RoutesMap } from '@/router'
@@ -59,7 +60,11 @@ export default function useSpaceRights() {
         break
       }
       case ESpaceRightsType.weixinAccount: {
-        const res = await serachAccountListAPI(userInfo.value?.org?.id)
+        const res = await getCommonGraph<any>('hosting_account', {
+          filter: `org_id=="${userInfo.value?.org?.id}"`,
+          size: 500
+        })
+        // serachAccountListAPI(userInfo.value?.org?.id)
         isUpperLimited = res.data.data.length >= trusteeAccountNum.value
         break
       }

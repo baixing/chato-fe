@@ -1,4 +1,3 @@
-import type { EQrCodeHookType } from '@/enum/release'
 import type {
   IAppletAuthParams,
   IAppletAuthRes,
@@ -26,7 +25,7 @@ import request from '@/utils/request'
 export function createGroupVerificationCodeAPI(data: ICreateAccountCode) {
   return request<ICreateGroupRes>({
     method: 'post',
-    url: `/chato/weixin_group/login_verification_code`,
+    url: `/chato/weixin_group/account/verify_code`,
     data
   })
 }
@@ -232,34 +231,46 @@ export function serachAccountListAPI(orgId: number) {
 }
 
 // 创建账号-账号二维码
-export function getAccountQrCode(hook_type: EQrCodeHookType) {
+export function getAccountQrCode() {
   return request({
-    url: '/chato/weixin_group/open_hook_client',
-    data: { hook_type }
+    method: 'post',
+    url: '/chato/weixin_group/account/login'
+    // data: { hook_type }
   })
 }
 
 // 创建账号-查询绑定状态
-export function getAccountBindingStatus(orgId: number, params: ICreateAccountParams) {
+export function getAccountBindingStatus(data: ICreateAccountParams) {
   return request<ICreateAccountEmpowerRes>({
-    url: `/chato/weixin_group/${orgId}/online`,
-    params
+    method: 'post',
+    url: `/chato/weixin_group/account/status`,
+    data
   })
 }
 
 // 账号重启
-export function postAccountRestartAPI(params: { wx_host_user_id: string }) {
+export function postAccountRestartAPI(data: { hosting_id: string }) {
   return request({
-    url: '/chato/weixin_group/restart/robot',
-    params
+    method: 'post',
+    url: '/chato/weixin_group/account/reboot',
+    data
+  })
+}
+
+export function postCheckAPI(data: { hosting_id: string }) {
+  return request({
+    method: 'post',
+    url: '/chato/weixin_group/account/verify_account',
+    data
   })
 }
 
 // 账号下线
-export function postAccountOfflineAPI(params: { wx_host_user_id: string }) {
+export function postAccountOfflineAPI(data: { hosting_id: string }) {
   return request({
-    url: '/chato/weixin_group/shutdown/robot',
-    params
+    method: 'post',
+    url: '/chato/weixin_group/account/logout',
+    data
   })
 }
 

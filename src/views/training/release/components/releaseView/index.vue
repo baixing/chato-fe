@@ -12,7 +12,7 @@ import { useDomainStore } from '@/stores/domain'
 import { useSpaceStore } from '@/stores/space'
 import { copyPaste } from '@/utils/help'
 import { getSpecifiedDateSinceNowDay } from '@/utils/timeRange'
-import { ChatDotRound, Document, FullScreen, Tools, View } from '@element-plus/icons-vue'
+import { Document, FullScreen, Tools, View } from '@element-plus/icons-vue'
 import { storeToRefs } from 'pinia'
 import {
   computed,
@@ -123,9 +123,9 @@ const createWeixinChat = async () => {
 
 const createWeixinAccount = async () => {
   const needUpgrade = await checkRightsTypeNeedUpgrade(ESpaceRightsType.weixinAccount)
-  if (needUpgrade) {
-    return
-  }
+  // if (needUpgrade) {
+  //   return
+  // }
   createAccountVisible.value = true
 }
 
@@ -160,7 +160,7 @@ const handleRestartAccount = (row: ICreateAccountRes) => {
 // 创建账号
 const handleCreateAccount = () => {
   accountCreateStatus.value = EAccountSettingStatus.creating
-  createGroupChatVisible.value = true
+  // createGroupChatVisible.value = true
   accountQrCode.value = null
 }
 const releaseList = [
@@ -181,12 +181,12 @@ const releaseList = [
         scriptId: 'Chato-account-view',
         click: () => commonVisible(drawerAccountVisible)
       },
-      {
-        icon: ChatDotRound,
-        label: t('创建聊天'),
-        scriptId: 'Chato-group-create',
-        click: createWeixinChat
-      },
+      // {
+      //   icon: ChatDotRound,
+      //   label: t('创建聊天'),
+      //   scriptId: 'Chato-group-create',
+      //   click: createWeixinChat
+      // },
       {
         icon: View,
         label: t('查看聊天'),
@@ -364,6 +364,7 @@ onMounted(() => {
       :userRoute="userRoute"
       :robotNickname="domainInfo.name"
       :endpoint="chatReleaseURL.chatAPI"
+      :slugId="botSlug"
     />
     <CreateChat
       v-model:value="createGroupChatVisible"

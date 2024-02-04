@@ -7,16 +7,6 @@
   <p class="mb-[10px] text-[#596780] text-xs" v-for="item in RCreateAccountSuccessTip" :key="item">
     {{ $t(item) }}
   </p>
-  <el-row justify="end" class="w-full" :gutter="20">
-    <el-col :lg="6" :xl="6" :md="12" :xs="12" :sm="12">
-      <el-button size="large" @click="emit('handleClose')">{{ $t('以后再说') }}</el-button>
-    </el-col>
-    <el-col :lg="6" :xl="6" :md="12" :xs="12" :sm="12">
-      <el-button type="primary" size="large" @click="emit('handleCreateChat')">
-        {{ $t('去创建聊天') }}
-      </el-button>
-    </el-col>
-  </el-row>
 </template>
 
 <script setup lang="ts">

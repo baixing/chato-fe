@@ -33,7 +33,7 @@
           type="primary"
           :disabled="loading"
           size="large"
-          @click="emit('handleSubmit', accountQrCode.qrCodeKey)"
+          @click="emit('handleSubmit', accountQrCode.qr_code_key)"
         >
           {{ $t('下一步') }}
         </el-button>
@@ -43,11 +43,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { $notnull } from '@/utils/help'
-import type { ICreateAccountRes } from '@/interface/release'
-import { EAccountSettingStatus } from '@/enum/release'
 import { RCreateAccountFormTip } from '@/constant/release'
+import { EAccountSettingStatus } from '@/enum/release'
+import type { ICreateAccountRes } from '@/interface/release'
+import { $notnull } from '@/utils/help'
+import { computed, ref } from 'vue'
 
 const props = defineProps<{
   accountQrCode: ICreateAccountRes
@@ -58,7 +58,7 @@ const props = defineProps<{
 const emit = defineEmits(['handleSubmit', 'handleSubmitCode'])
 
 const code = ref('')
-const url = computed(() => ($notnull(props.accountQrCode) ? props.accountQrCode.qrCode : ''))
+const url = computed(() => ($notnull(props.accountQrCode) ? props.accountQrCode.qr_code : ''))
 
 const handleSubmitCode = () => {
   if (!code.value) return

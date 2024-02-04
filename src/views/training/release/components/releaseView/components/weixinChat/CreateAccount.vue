@@ -26,10 +26,12 @@ import {
   getAccountBindingStatus,
   getAccountQrCode
 } from '@/api/release'
-import { EAccountCreateStatus, EAccountSettingStatus, EQrCodeHookType } from '@/enum/release'
+import { EAccountCreateStatus, EAccountSettingStatus } from '@/enum/release'
 import type { ICreateAccountRes } from '@/interface/release'
+import { useDomainStore } from '@/stores/domain'
 import { $notnull } from '@/utils/help'
 import { ElLoading, ElNotification as Notification } from 'element-plus'
+import { storeToRefs } from 'pinia'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import CreateAccountFailed from './components/CreateAccountFailed.vue'
@@ -45,6 +47,8 @@ const props = defineProps<{
 const emit = defineEmits(['update:value', 'UpdateCreateChatVisible'])
 
 const { t } = useI18n()
+const useDomain = useDomainStore()
+const { domainInfo } = storeToRefs(useDomain)
 const currentStatus = ref<EAccountCreateStatus>(EAccountCreateStatus.create)
 const accountQrCode = ref<ICreateAccountRes>()
 const loading = ref<boolean>(false)
@@ -61,16 +65,10 @@ const accountComponent = computed(() => ({
 
 const serachEmpowerStatus = async (key: string) => {
   const params = {
-    hook_type: EQrCodeHookType.wxwork,
     qr_code_key: key,
-    is_restart: false,
-    wx_user_id: ''
+    default_domain_slug: domainInfo.value.slug
   }
-  if (props.createStatus === EAccountSettingStatus.restart) {
-    params.is_restart = true
-    params.wx_user_id = props.defaultAccountQrCode.wx_user_id
-  }
-  const { data } = await getAccountBindingStatus(props.orgId, params)
+  const { data } = await getAccountBindingStatus(params)
   if (data.data.is_online) {
     currentStatus.value = EAccountCreateStatus.success
     isCode.value = false
@@ -96,7 +94,7 @@ const handleCreateChat = () => {
 const pollingEmpowerStatus = () => {
   let timer = setInterval(async () => {
     if (!props.value) return clearInterval(timer)
-    const res = await serachEmpowerStatus(accountQrCode.value.qrCodeKey)
+    const res = await serachEmpowerStatus(accountQrCode.value.qr_code_key)
 
     if (res.data.is_online) {
       currentStatus.value = EAccountCreateStatus.success
@@ -129,10 +127,8 @@ const handleSubmitCode = async (code: string) => {
   })
   try {
     const data = {
-      hook_id: accountQrCode.value.hookId,
-      hook_type: EQrCodeHookType.wxwork,
-      qr_code_key: accountQrCode.value.qrCodeKey,
-      client_id: accountQrCode.value.clientId,
+      qr_code_key: accountQrCode.value.qr_code_key,
+      client_id: accountQrCode.value.client_id,
       code
     }
     await createGroupVerificationCodeAPI(data)
@@ -147,9 +143,20 @@ const init = async () => {
   try {
     loading.value = true
     currentStatus.value = EAccountCreateStatus.create
-    const res = await getAccountQrCode(EQrCodeHookType.wxwork)
-    accountQrCode.value = res.data.data
-    pollingEmpowerStatus()
+    let response = await getAccountQrCode()
+    let qrCodeData = response.data.data
+
+    // 如果第一次获取的数据中没有 qr_code，再尝试一次
+    if (!qrCodeData.qr_code) {
+      response = await getAccountQrCode()
+      qrCodeData = response.data.data
+    }
+
+    // 设置响应式变量的值
+    accountQrCode.value = qrCodeData || null // 如果 qrCodeData.qr_code 不存在，则设置为 null
+
+    // 调用轮询授权状态的函数
+    qrCodeData.qr_code && pollingEmpowerStatus()
   } catch (e) {
     visible.value = false
     // currentStatus.value = EAccountCreateStatus.failed

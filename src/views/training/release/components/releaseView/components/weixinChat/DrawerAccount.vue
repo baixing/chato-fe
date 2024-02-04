@@ -8,37 +8,38 @@
     v-loading="loading"
   >
     <el-collapse v-model="activeNames" accordion>
-      <el-collapse-item v-for="(item, index) in accountList" :key="item.wx_user_id" :name="index">
+      <el-collapse-item v-for="(item, index) in accountList" :key="item.id" :name="index">
         <template #title>
-          <p class="leading-5 break-all">{{ $t('自定义账号') }}：{{ item.name }}</p>
+          <p class="leading-5 break-all">{{ $t('自定义账号') }}：{{ item.additions.name }}</p>
         </template>
         <div class="account-detail">
           <p>
             {{ $t('头像') }}：
             <Avatar
-              :avatar="item.avatar"
+              :avatar="item.additions.avatar"
               :size="32"
-              :name="item.name.slice(0, 2)"
+              :name="item.additions.name"
               class="w-[32px] h-[32px] rounded-full"
             />
           </p>
           <p>
-            {{ $t('名称') }}： <span class="">{{ item.name }}</span>
+            {{ $t('名称') }}： <span class="">{{ item.additions.name }}</span>
           </p>
           <p>
-            {{ $t('组织') }}： <span class="text-[#596780]">{{ item.corp_name }}</span>
+            {{ $t('组织') }}： <span class="text-[#596780]">{{ item.additions.company_name }}</span>
           </p>
-          <p>
+          <!-- <p>
             {{ $t('单聊') }}： <span class="text-[#596780]">{{ item.people_cnt }}</span>
           </p>
           <p>
             {{ $t('群聊') }}： <span class="text-[#596780]">{{ formatGroups(item.groups) }}</span>
+          </p> -->
+          <p>
+            {{ $t('名称') }}： <span class="text-[#596780]">{{ item.additions.name }}</span>
           </p>
           <p>
-            {{ $t('名称') }}： <span class="text-[#596780]">{{ item.name }}</span>
-          </p>
-          <p>
-            {{ $t('状态') }}： <span class="text-[#596780]">{{ item.status }}</span>
+            {{ $t('状态') }}：
+            <span class="text-[#596780]">{{ AccountStatusNew[item.status] }}</span>
           </p>
           <p>
             <span class="shrink-0">{{ $t('操作') }}：</span>
@@ -46,17 +47,33 @@
               <el-col :span="5">
                 <el-button
                   class="!border-[#7C5CFC] !text-[#7C5CFC]"
-                  @click="handleRestart(item.wx_user_id)"
+                  @click="handleRestart(item.hosting_id)"
                 >
                   {{ $t('重启') }}
                 </el-button>
               </el-col>
-              <el-col :span="5" v-if="item.status === EAccountStatus.online">
+              <el-col :span="5" v-if="item.status === 1">
                 <el-button
                   class="!border-[#7C5CFC] !text-[#7C5CFC]"
-                  @click="handleOffline(item.wx_user_id)"
+                  @click="handleOffline(item.hosting_id)"
                 >
                   {{ $t('下线') }}
+                </el-button>
+              </el-col>
+            </el-row>
+          </p>
+          <p class="mt-2">
+            注意：托管账号如果是新账号需要在托管成功的20-30分钟内，进行验证操作，否则会被微信强制下线
+          </p>
+          <p>
+            <span class="shrink-0">{{ $t('新用户验证') }}：</span>
+            <el-row justify="start" :gutter="20" class="w-full">
+              <el-col :span="5">
+                <el-button
+                  class="!border-[#7C5CFC] !text-[#7C5CFC]"
+                  @click="handleCheck(item.hosting_id)"
+                >
+                  {{ $t('验证') }}
                 </el-button>
               </el-col>
             </el-row>
@@ -67,9 +84,10 @@
   </el-drawer>
 </template>
 <script lang="ts" setup>
-import { postAccountOfflineAPI, postAccountRestartAPI, serachAccountListAPI } from '@/api/release'
+import { getCommonGraph } from '@/api/graph'
+import { postAccountOfflineAPI, postAccountRestartAPI, postCheckAPI } from '@/api/release'
 import { useBasicLayout } from '@/composables/useBasicLayout'
-import { EAccountStatus } from '@/enum/release'
+import { AccountStatusNew } from '@/enum/release'
 import type { IAccountList } from '@/interface/release'
 import { ElLoading, ElMessageBox, ElNotification as Notification } from 'element-plus'
 import { computed, ref, watch } from 'vue'
@@ -95,10 +113,6 @@ const handleClose = () => {
   activeNames.value = []
 }
 
-const formatGroups = (list: string[]) => {
-  return list.filter((item) => item !== '').join('；')
-}
-
 const handleOffline = (id: string) => {
   ElMessageBox.confirm(
     t('是否确认下线该账号？下线后将停止服务该账号下的群聊和单聊'),
@@ -118,7 +132,7 @@ const handleOffline = (id: string) => {
         background: 'rgba(0, 0, 0, 0.7)'
       })
       try {
-        await postAccountOfflineAPI({ wx_host_user_id: id })
+        await postAccountOfflineAPI({ hosting_id: id })
         Notification.success('下线成功')
         init()
       } catch (e) {
@@ -152,8 +166,8 @@ const handleRestart = (id: string) => {
         background: 'rgba(0, 0, 0, 0.7)'
       })
       try {
-        const res = await postAccountRestartAPI({ wx_host_user_id: id })
-        emit('handleRestartAccount', { ...res.data.data, wx_user_id: id })
+        const res = await postAccountRestartAPI({ hosting_id: id })
+        emit('handleRestartAccount', { ...res.data.data })
         visible.value = false
       } catch (e) {
       } finally {
@@ -163,10 +177,30 @@ const handleRestart = (id: string) => {
     .catch(() => {})
 }
 
+const handleCheck = async (id) => {
+  const loading = ElLoading.service({
+    lock: true,
+    text: t('重启中...'),
+    background: 'rgba(0, 0, 0, 0.7)'
+  })
+  try {
+    const res = await postCheckAPI({ hosting_id: id })
+    emit('handleRestartAccount', { ...res.data.data })
+  } catch (error) {
+    console.log(error)
+  } finally {
+    loading.close()
+  }
+}
+
 const init = async () => {
   try {
     loading.value = true
-    const res = await serachAccountListAPI(props.orgId)
+    const res = await getCommonGraph<any>('hosting_account', {
+      filter: `org_id=="${props.orgId}"`,
+      size: 500
+    })
+    //  serachAccountListAPI(props.orgId)
     accountList.value = res.data.data
   } catch (error) {
   } finally {
