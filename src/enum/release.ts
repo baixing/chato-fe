@@ -23,7 +23,7 @@ export enum EWeixinConfigType {
 export const enum EChannelType {
   FEISHU = 'feishu',
   WECHAT_KF = 'wechat_kf',
-  WECHAT_MP = 'wechat_mp',
+  WECHAT_MP = 'weixin',
   DOUYIN = 'douyin',
   DINGDING = 'dingding'
 }

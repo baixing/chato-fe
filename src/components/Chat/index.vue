@@ -486,7 +486,7 @@ function nextPageHistory() {
 }
 
 let latestScrollHeight = 0
-const scrollChatHistory = () => {
+const scrollChatHistory = useDebounceFn(() => {
   nextTick(() => {
     if (!refChatHistory.value) {
       return
@@ -500,7 +500,7 @@ const scrollChatHistory = () => {
       })
     }
   })
-}
+}, 1300)
 
 const quotaUpperLimit = ref(false)
 const { checkRightsTypeNeedUpgrade } = useSpaceRights()
