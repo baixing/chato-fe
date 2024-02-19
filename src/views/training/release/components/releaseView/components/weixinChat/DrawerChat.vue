@@ -83,7 +83,9 @@ const init = async () => {
 
 const getGroupList = async (type) => {
   const res = await getCommonGraph<IGroupList[]>('hosting_conversation', {
-    filter: `conversation_type=="${type}" and domain_slug=="${props.slugId}"`
+    filter: `conversation_type=="${type}" and domain_slug=="${props.slugId}"`,
+    page: 1,
+    size: 100
   })
 
   return res.data.data
