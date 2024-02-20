@@ -624,7 +624,7 @@ const getHistoryChat = async (scrollBottomTag = true) => {
         displayType: EMessageDisplayType.answer,
         id: `${list_item.id}_a`,
         content: formatChatMessageAnswer({ content: list_item.answer }),
-        ref_source_len: list_item.ref_source_len,
+        ref_source_len: list_item.ref_source.length ? JSON.parse(list_item.ref_source).length : 0,
         questionId: list_item.id,
         evaluation: list_item.evaluation,
         question: list_item.question,
