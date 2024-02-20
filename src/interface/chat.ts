@@ -13,7 +13,8 @@ export interface ChatToBotRes {
   displayType: string
   id: number
   content: string
-  ref_source_len: number
+  ref_source_len?: number
+  ref_source: string
   evaluation: EMessageEvalution | null
   question: string
   answer: string
