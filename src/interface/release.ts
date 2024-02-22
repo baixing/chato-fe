@@ -110,6 +110,8 @@ export interface IAccountList {
   org_id: number
   platform: number
   status: number
+  wx_user_id?: number
+  name?: string
 }
 
 export interface IGroupList {

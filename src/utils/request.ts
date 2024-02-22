@@ -123,11 +123,3 @@ function request<T = any>(options) {
 }
 
 export default request
-
-function customRequest<T = any>(options) {
-  const method = options.method || 'get'
-  if (method.toLowerCase() === 'get') {
-    if (!options.params) options.params = options.data
-  }
-  return service<T>(options)
-}

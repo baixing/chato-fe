@@ -96,14 +96,6 @@ export function getGroupImgAPI(domainId: number, id: string) {
   })
 }
 
-// 行业列表
-// export function getIndustry() {
-//   return request({
-//     method: 'post',
-//     url: `/chato/api/v1/config/industry`
-//   })
-// }
-
 // 空间保存
 export function applicationFormSave(data: IApplicationFormData) {
   return request({
@@ -121,12 +113,6 @@ export function saveBrandDomain(domain_slug: string, data: IBrandDomainType) {
     data
   })
 }
-
-// export function getBrandDomain(domain_slug: string) {
-//   return request<IBrandDomainTypeKeyFile[]>({
-//     url: `/api/custom_host/${domain_slug}/get`
-//   })
-// }
 
 // 查询飞书配置
 export function getFeishuConfig(domain_slug: string) {
@@ -184,35 +170,6 @@ export function getTitokServiceConfig(domain_slug: string) {
     url: `/chato/api/v1/douyin/authorization/${domain_slug}`
   })
 }
-
-// 更改抖音配置
-// export function updateTiktokConfig(id: number, data: any) {
-//   return request({
-//     method: 'post',
-//     url: `/chato/api/v1/channel/douyin/account/${id}/save_additions`,
-//     data
-//   })
-// }
-
-// channel_get
-// export function getChannelType(channel_type: EChannelType, domain_slug: string) {
-//   return request({
-//     url: `/chato/api/v1/channel/${channel_type}/account/${domain_slug}`
-//   })
-// }
-
-// channel_patch
-// export function patchChannelType(
-//   channel_type: EChannelType,
-//   domain_slug: string,
-//   data: IPatchChannelType
-// ) {
-//   return request({
-//     method: 'patch',
-//     url: `/chato/api/v1/channel/${channel_type}/account/${domain_slug}`,
-//     data
-//   })
-// }
 
 // 配置钉钉
 export function postDingDingConfig(data: IDingDingPublicFormType, domain_slug) {
@@ -299,14 +256,6 @@ export function postMiniAppAuthStatusAPI(data: { domain_id: number | string }) {
   })
 }
 
-// ----- 定时广播 -----
-// export function getTimeBroadcastAPI(data: IGetBroadcastParams) {
-//   return request<ISettingBroadcastType[]>({
-//     url: `/chato/api/v1/send_schedule/task`,
-//     data
-//   })
-// }
-
 export function postTimeBroadcastAPI(data: ISettingBroadcastType) {
   return request({
     method: 'post',
@@ -314,14 +263,6 @@ export function postTimeBroadcastAPI(data: ISettingBroadcastType) {
     data
   })
 }
-
-// export function postMobileLimitAPI(domainId: number, data: IMobileLimitItem) {
-//   return request({
-//     method: 'post',
-//     url: `/chato/api/domains/${domainId}/mobile_limit`,
-//     data
-//   })
-// }
 
 export function postMobileLimitFileAPI(domainId: number, file: string) {
   return request({
@@ -331,14 +272,6 @@ export function postMobileLimitFileAPI(domainId: number, file: string) {
   })
 }
 
-// export function deleteMobileLimitAPI(domainId: number, limitId: number) {
-//   return request({
-//     method: 'delete',
-//     url: `/chato/api/domains/${domainId}/mobile_limit/${limitId}`
-//   })
-// }
-// ----------------------
-
 // ------群聊广播-------
 export function patchTimeBroadcastAPI(data: ISettingBroadcastType) {
   return request({
@@ -347,14 +280,6 @@ export function patchTimeBroadcastAPI(data: ISettingBroadcastType) {
     data
   })
 }
-
-// export function deleteTimeBroadcastAPI(data: { send_schedule_id: number }) {
-//   return request({
-//     method: 'delete',
-//     url: `/chato/api/v1/send_schedule/task`,
-//     data
-//   })
-// }
 
 export function createPosterAPI(data: { domain_id: number }) {
   return request({

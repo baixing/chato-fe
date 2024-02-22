@@ -129,6 +129,7 @@
         </el-row>
       </el-collapse-item>
     </el-collapse>
+
     <Modal
       title="转移群"
       mobile-width="100%"
@@ -342,9 +343,6 @@ const initTimeBroadcast = async (id: string) => {
   const { data } = await getCommonGraph<ISettingBroadcastType[]>('send_schedule', {
     filter: `domain_id=="${props.domainId}" and receiver_id=="${id}"`
   })
-
-  // getTimeBroadcastAPI({ domain: props.domainId, receiver_id: id })
-
   radioList.value = data.data
 }
 
@@ -394,7 +392,6 @@ const handleSettingRemove = async (item: ISettingBroadcastType) => {
       id: item.send_schedule_id,
       deleted: dayjs().format('YYYY-MM-DD HH:mm:ss')
     })
-    // deleteTimeBroadcastAPI({ send_schedule_id: item.send_schedule_id })
     initTimeBroadcast(curRoomId.value)
     ElNotification.success('删除成功')
   } catch (error) {

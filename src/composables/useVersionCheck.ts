@@ -4,7 +4,7 @@ import { ElNotification } from 'element-plus'
 import { onBeforeUnmount, onMounted } from 'vue'
 
 export default function useVersionCheck() {
-  const lastestV = useStorage<any>('lastestV', {})
+  const lastestV = useStorage<{ buildId: string }>('lastestV', { buildId: '' })
   let intervaler
 
   async function fetchVersion() {
@@ -20,7 +20,6 @@ export default function useVersionCheck() {
     const lastestVersion = await fetchVersion()
     if (lastestVersion.buildId !== lastestV.value?.buildId) {
       lastestV.value = lastestVersion
-      open()
       ElNotification({
         title: '温馨提示',
         message: '网站已发布新版本，请刷新后继续使用'
