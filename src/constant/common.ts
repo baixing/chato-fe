@@ -119,6 +119,12 @@ export const SUPPORT_LLM_CONFIG = [
     need_vip: false
   },
   {
+    name: 'moonshot',
+    type: '6bz8LxU4p9YQv3Tw',
+    consume_quota: 1,
+    need_vip: false
+  },
+  {
     name: 'Advanced Model',
     type: 'e640dbec16b891d9',
     consume_quota: 40,
