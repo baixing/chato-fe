@@ -116,7 +116,6 @@ const coreRoutes = [
     name: RoutesMap.home.nash,
     path: '/nash',
     component: () => import('@/views/nash/index.vue')
-    // meta: { title: '云南纳什智能科技有限公司' }
   },
   {
     path: '/wxh/:botSlug',
@@ -130,7 +129,6 @@ const coreRoutes = [
     name: RoutesMap.auth.login,
     path: '/auth/login',
     component: () => import('@/views/auth/LoginView.vue')
-    // meta: { title: '登录' }
   },
   {
     name: RoutesMap.auth.loginInvite,
@@ -138,16 +136,9 @@ const coreRoutes = [
     component: () => import('@/views/auth/LoginInvitationView.vue')
   },
   {
-    name: RoutesMap.auth.verify,
-    path: '/auth/verify',
-    component: () => import('@/views/auth/VerifyView.vue')
-    // meta: { title: '审核中' }
-  },
-  {
     name: RoutesMap.auth.logout,
     path: '/auth/logout',
     component: () => import('@/views/auth/LogoutView.vue')
-    // meta: { title: '退出登录' }
   },
   {
     path: '/error',
@@ -156,17 +147,14 @@ const coreRoutes = [
       {
         path: '403',
         component: () => import('@/views/error/Error403.vue')
-        // meta: { title: '错误 403' }
       },
       {
         path: '404',
         component: () => import('@/views/error/Error404.vue')
-        // meta: { title: '错误 404' }
       },
       {
         path: '500',
         component: () => import('@/views/error/Error500.vue')
-        // meta: { title: '错误 500' }
       }
     ]
   },
@@ -174,7 +162,6 @@ const coreRoutes = [
     name: RoutesMap.safe,
     path: '/link',
     component: () => import('@/views/redirect/RedirectView.vue')
-    // meta: { title: '安全中心' }
   },
   {
     name: RoutesMap.endPlatform.adCollectForm,
@@ -193,10 +180,7 @@ const asyncRoutes = [
       {
         name: RoutesMap.chat.release,
         path: ':botSlug',
-        component: () => import('@/views/chat/shareChat.vue'),
-        meta: {
-          // title: '对话'
-        }
+        component: () => import('@/views/chat/shareChat.vue')
       }
     ]
   }
@@ -225,7 +209,6 @@ const chatRoutes = [
       {
         name: RoutesMap.chat.c,
         path: 'bot/:botSlug',
-        // meta: { title: '聊天' },
         component: () => import('@/views/chating/ChatItem.vue')
       }
     ]
@@ -242,28 +225,28 @@ const resourceSquareRoutes = [
 ]
 
 // AI插件库
-const aiPluginSquareRoutes = [
-  {
-    path: 'aiplugin',
-    meta: {
-      name: 'aiplugin',
-      requiresAuth: true
-    },
-    component: RouterView,
-    children: [
-      {
-        name: RoutesMap.aiPlugin.center,
-        path: 'center',
-        component: () => import('@/views/aiplugin/index.vue')
-      },
-      {
-        name: RoutesMap.aiPlugin.detail,
-        path: 'detail/:name',
-        component: () => import('@/views/aiplugin/detail.vue')
-      }
-    ]
-  }
-]
+// const aiPluginSquareRoutes = [
+//   {
+//     path: 'aiplugin',
+//     meta: {
+//       name: 'aiplugin',
+//       requiresAuth: true
+//     },
+//     component: RouterView,
+//     children: [
+//       {
+//         name: RoutesMap.aiPlugin.center,
+//         path: 'center',
+//         component: () => import('@/views/aiplugin/index.vue')
+//       },
+//       {
+//         name: RoutesMap.aiPlugin.detail,
+//         path: 'detail/:name',
+//         component: () => import('@/views/aiplugin/detail.vue')
+//       }
+//     ]
+//   }
+// ]
 
 // 训练机器人
 const trainningRoutes = [
@@ -321,7 +304,6 @@ const managerRoutes = [
     path: 'manager',
     meta: {
       name: 'manager',
-      // title: '机器人信息',
       requiresAuth: true
     },
     component: RouterView,
@@ -330,7 +312,6 @@ const managerRoutes = [
         name: RoutesMap.manager.center,
         path: 'center',
         component: () => import('@/views/manage/BotList.vue')
-        // meta: { title: '管理机器人' }
       },
       {
         name: RoutesMap.manager.create,
@@ -478,7 +459,6 @@ const loginedRoutes = [
       ...flowManager,
       ...activityManager,
       ...vipManager
-      // ...guideRoutes // 引导
     ]
   }
 ]

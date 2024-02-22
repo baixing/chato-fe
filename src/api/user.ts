@@ -67,11 +67,3 @@ export function createDomainByAI(data) {
     data
   })
 }
-
-// 删除机器人
-// export function deletesDomain(domain_id) {
-//   return request({
-//     method: 'post',
-//     url: `/chato/api/v1/domains/${domain_id}/delete`
-//   })
-// }

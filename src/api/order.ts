@@ -5,14 +5,6 @@ import type {
 } from '@/interface/order'
 import request from '@/utils/request'
 
-// 套餐列表
-// export function getOrderPackageList() {
-//   return request<IOrderPackage[]>({
-//     method: 'get',
-//     url: `/chato/api/package/order/list_package`
-//   })
-// }
-
 export function getOrderPackagePaymentCode(data: {
   package_id: number
   payment_price: number
@@ -24,21 +16,6 @@ export function getOrderPackagePaymentCode(data: {
     data
   })
 }
-
-// export function refreshPaymentStatus(order_id: number) {
-//   return request<IOrderPaymentStatus>({
-//     method: 'get',
-//     url: `/chato/api/package/order/${order_id}`
-//   })
-// }
-
-// export function postUserPackageAPI(slug: string, data: IUserSettingOrderPayment) {
-//   return request({
-//     method: 'post',
-//     url: `/chato/api/v2/domains/${slug}/customer/package`,
-//     data
-//   })
-// }
 
 export function postPurchaseProductionAPI(slug: string, data: ICUserBuyProductionParams) {
   return request<IOrderPaymentCode>({

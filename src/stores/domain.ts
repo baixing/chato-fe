@@ -1,7 +1,7 @@
 import { getMyOrgs } from '@/api/org'
 import type { IDomainInfo } from '@/interface/domain'
 import { RoutesMap } from '@/router'
-import { defineStore, storeToRefs } from 'pinia'
+import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { useRouter, type RouteLocationNormalizedLoaded } from 'vue-router'
 import { useBase } from './base'
@@ -10,7 +10,6 @@ export const useDomainStore = defineStore('domain', () => {
   const domainList = ref<IDomainInfo[]>([])
   const domainInfo = ref<Partial<IDomainInfo>>({})
   const baseStore = useBase()
-  const { userInfo } = storeToRefs(baseStore)
   const router = useRouter()
 
   const switchDomainInfoById = (id: number | string) => {
@@ -21,7 +20,6 @@ export const useDomainStore = defineStore('domain', () => {
     try {
       let domain: IDomainInfo
       const res = await getMyOrgs()
-      // const res = await getCommonGraph(`users/${userInfo.value.id}/orgs`) // 获取domain_info信息
       const org = res.data?.data?.[0] || {}
       baseStore.updateOrgInfo(org)
 

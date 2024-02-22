@@ -29,6 +29,17 @@
           :endpoint="endpoint"
           @handleRefresh="init"
         />
+        <div class="px-3 py-5" v-if="pageInfo.page_count > 1">
+          <el-pagination
+            background
+            layout="total, prev, pager, next"
+            :page-size="pageInfo.size"
+            :page-count="pageInfo.page_count"
+            :total="pageInfo.total"
+            v-model:current-page="pageInfo.page"
+            @current-change="onHandleSizeChange"
+          />
+        </div>
       </el-tab-pane>
     </el-tabs>
   </el-drawer>
@@ -61,11 +72,23 @@ const visible = computed({
   set: (val) => emit('update:value', val)
 })
 
+const pageInfo = ref({
+  page: 1,
+  size: 20,
+  total: 0,
+  page_count: 0
+})
+
 const groupList = ref<IGroupList[]>([]) // 群聊
 const singleGroupList = ref<IGroupList[]>([]) // 单聊
 
 const handleClose = () => {
   visible.value = false
+}
+
+const onHandleSizeChange = async () => {
+  const res = await getGroupList(2)
+  groupList.value = res
 }
 
 const init = async () => {
@@ -84,9 +107,11 @@ const init = async () => {
 const getGroupList = async (type) => {
   const res = await getCommonGraph<IGroupList[]>('hosting_conversation', {
     filter: `conversation_type=="${type}" and domain_slug=="${props.slugId}"`,
-    page: 1,
-    size: 100
+    page: pageInfo.value.page,
+    size: pageInfo.value.size
   })
+
+  pageInfo.value = res.data.pagination
 
   return res.data.data
 }

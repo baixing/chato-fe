@@ -20,24 +20,6 @@ export function chatToBot(botId, question) {
   })
 }
 
-// c端聊天
-// export function chatToBotHistoryC(params: ChatHistoryParams) {
-//   return request<ChatToBotRes[]>({
-//     method: 'get',
-//     url: '/chato/api/v1/questions/query',
-//     params
-//   })
-// }
-
-// b端聊天
-// export function chatToBotHistoryB(params: ChatHistoryParams) {
-//   return request<ChatToBotRes[]>({
-//     method: 'get',
-//     url: '/chato/api/v1/questions/auth/query',
-//     params
-//   })
-// }
-
 // 聊天-问题风控
 export function forbidSerach(domainId, params) {
   return request({
@@ -46,15 +28,6 @@ export function forbidSerach(domainId, params) {
     data: params
   })
 }
-
-// 问答-踩和赞
-// export function evaluate(questionId, params) {
-//   return request({
-//     method: 'post',
-//     url: `/chato/api/v1/questions/${questionId}/evaluate`,
-//     data: params
-//   })
-// }
 
 // 清除会话记录
 

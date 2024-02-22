@@ -17,11 +17,3 @@ export function createAfficialAccount(slug_id: string, data: ICreateAfficialAcco
     data
   })
 }
-
-// 查询当前绑定的微信公众号
-// export function serachAfficialAccount(slug_id: string) {
-//   return request<ICeateAfficialAccountRes[]>({
-//     method: 'get',
-//     url: `/mp/manage/${slug_id}`
-//   })
-// }

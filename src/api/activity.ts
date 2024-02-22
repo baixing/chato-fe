@@ -11,14 +11,6 @@ export function getActivityList(data: IPageFilter) {
   })
 }
 
-// 活动详情
-// export function getActivityDetail(id: string | number) {
-//   return request<IActivity>({
-//     method: 'get',
-//     url: `/chato/api/v1/send_schedule/group/${id}`
-//   })
-// }
-
 // 添加活动
 export function addActivity(data: Omit<IActivity, 'id'> & { type: number }) {
   return request({
@@ -44,12 +36,3 @@ export function getQwUserTagList(wx_user_id: number | string) {
     data: { wx_user_id }
   })
 }
-
-// 活动 - 消息列表
-// export function getActivityMessageList(data: IPageFilter<{ group_id: number | string }>) {
-//   return request<IActivityMessage[]>({
-//     method: 'get',
-//     url: `/chato/api/v1/send_schedule/query_group_send_schedule`,
-//     data
-//   })
-// }

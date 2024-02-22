@@ -16,9 +16,3 @@ export function getFirstGuideInterestDomains() {
     url: '/chato/api/v2/domains/interests'
   })
 }
-
-// export function getFirstGuideIndustry() {
-//   return request({
-//     url: '/chato/api/v1/org/industry_select_config'
-//   })
-// }

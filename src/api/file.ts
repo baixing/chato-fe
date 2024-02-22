@@ -1,23 +1,5 @@
-import type {
-  IDocmentToQAParams,
-  IKnowledgeShared,
-  IQuestionConvertQAForm,
-  IWXPublic,
-  RetryFileMateType
-} from '@/interface/knowledge'
+import type { IKnowledgeShared, IWXPublic, RetryFileMateType } from '@/interface/knowledge'
 import request from '@/utils/request'
-
-const PAGE_SIZE = 10
-
-// export function getFilesByDomainId(domainId: string | number, params: GetFilesByDomainIdType) {
-//   return request<IDocumentList[]>({
-//     url: `/chato/api/domains/${domainId}/files`,
-//     params: {
-//       page_size: PAGE_SIZE,
-//       ...params
-//     }
-//   })
-// }
 
 // 删除文件
 export function deleteFile(fileId) {
@@ -108,15 +90,6 @@ export function getKnowledgeSharedList(data: any) {
     data
   })
 }
-
-// 更新知识库关联状态
-// export function updateKnowledgeSharedStatus(data: any) {
-//   return request({
-//     method: 'post',
-//     url: `/api/knowledge/share`,
-//     data
-//   })
-// }
 
 //获取公众号list
 export function getWXPublicList(data: { name: string }) {

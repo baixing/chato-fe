@@ -34,21 +34,6 @@ export interface IAddMemeberRole {
   invite_ticket: string
 }
 
-export interface IUpdateMemeberRole {
-  role: ESettingSpaceRole
-  org_user_id: number | string
-}
-
-export interface IUpdateOrgUserInfo {
-  avatar: string
-  nickname: string
-}
-
-export interface IUpdateOrgInfo {
-  avatar: string
-  name: string
-}
-
 export interface ISpaceRightsSummaryItem {
   consumed: number
   total: number

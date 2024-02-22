@@ -17,11 +17,6 @@ export interface ITTSList {
   contentList: ITTSItem[]
 }
 
-export interface ITTSListApi {
-  timbres: string[]
-  descriptions: string[]
-}
-
 export interface ITimbreOptions {
   label: string
   value: string
