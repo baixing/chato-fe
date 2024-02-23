@@ -106,7 +106,9 @@ const onChangeTiktokAdditions = async (key: string, val: boolean) => {
     }
     await postCommonGraph(`mp_account/save`, {
       id: tiktokStatus.value.id,
-      ...params
+      additions: {
+        ...params
+      }
     })
     tiktokStatus.value.additions[key] = val
     ElNotification.success(t('操作成功'))
