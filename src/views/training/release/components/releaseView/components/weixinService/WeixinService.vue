@@ -169,7 +169,7 @@ const handleChange = async () => {
   }
   try {
     const res = await getCommonGraph<any>('mp_account', {
-      filter: `domain_slug=="${props.domainSlug}" and type_def=="${EChannelType.WECHAT_KF}" and s_status=="${EAfficialAccountStatusType.normal}"`
+      filter: `domain_slug=="${props.domainSlug}" and type_def=="${EChannelType.WECHAT_KF}"`
     })
 
     const account = res.data.data
@@ -183,8 +183,6 @@ const handleChange = async () => {
 
       config.value = data
     }
-
-    // patchChannelType(EChannelType.WECHAT_KF, props.domainSlug, patchData)
   } catch (e) {}
 }
 
