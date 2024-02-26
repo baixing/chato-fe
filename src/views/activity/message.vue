@@ -104,7 +104,6 @@
 <script setup lang="ts">
 import { getCommonGraph } from '@/api/graph'
 import type { IActivity, IActivityMessage } from '@/interface/activity'
-import type { IPage } from '@/interface/common'
 import ContentLayout from '@/layout/ContentLayout.vue'
 import { RoutesMap } from '@/router'
 import { $notnull } from '@/utils/help'
@@ -143,7 +142,7 @@ const init = async () => {
 
 const loading = ref(false)
 const tableData = ref<IActivityMessage[]>([])
-const pagination = reactive<IPage>({
+const pagination = reactive({
   page: 1,
   page_count: 1
 })
