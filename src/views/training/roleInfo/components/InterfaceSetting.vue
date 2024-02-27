@@ -84,7 +84,7 @@
           </span>
           <span v-else class="text-[#596780]">
             <span class="text-[#7C5CFC]">
-              {{ $t('7天') }}
+              {{ $t('90天') }}
             </span>
             {{ $t('后该链接的修正功能将失效') }}
           </span>
