@@ -41,6 +41,7 @@ import { useBase } from '@/stores/base'
 import { useChatStore } from '@/stores/chat'
 import { useDomainStore } from '@/stores/domain'
 import { useSpaceStore } from '@/stores/space'
+import { useYouzanStore } from '@/stores/yz'
 import { nextTick, ref } from 'vue'
 import { RouterView, useRoute, useRouter } from 'vue-router'
 import Sidebar from './components/Sidebar/MainSidebar.vue'
@@ -57,6 +58,7 @@ const baseStoreI = useBase()
 const chatStoreI = useChatStore()
 const domainStoreI = useDomainStore()
 const spaceStoreI = useSpaceStore()
+const useYouzanStoreI = useYouzanStore()
 const { cookieToken } = useAuthStore()
 
 useVersionCheck()
@@ -71,6 +73,7 @@ const init = async () => {
 
     await baseStoreI.getAuthToken()
     const userInfoRes = await baseStoreI.getUserInfo()
+
     $sensors?.login(userInfoRes.id.toString())
     // 新用户跳转对话引导页
     if (userInfoRes.id === userInfoRes.org.owner_id && !userInfoRes.org.additions && !cookieToken) {
@@ -84,7 +87,8 @@ const init = async () => {
     await Promise.all([
       domainStoreI.initDomainList(route),
       chatStoreI.initChatList(),
-      spaceStoreI.initSpaceRights()
+      spaceStoreI.initSpaceRights(),
+      useYouzanStoreI.getYouzanInfo()
     ])
 
     spaceStoreI.initSpaceQuota()

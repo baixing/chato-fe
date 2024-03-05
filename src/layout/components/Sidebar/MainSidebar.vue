@@ -50,7 +50,8 @@ import { RoutesMap } from '@/router'
 import { useBase } from '@/stores/base'
 import { useChatStore } from '@/stores/chat'
 import { useDomainStore } from '@/stores/domain'
-import { isManagerRole } from '@/utils/help'
+import { useYouzanStore } from '@/stores/yz'
+import { $notnull, isManagerRole } from '@/utils/help'
 import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -59,6 +60,8 @@ import ChatSidebar from './ChatSidebar.vue'
 import SidebarBottom from './SidebarBottom.vue'
 
 const { t } = useI18n()
+const youzanStore = useYouzanStore()
+const { youzanInfo } = storeToRefs(youzanStore)
 
 const normalMenuList = [
   { title: t('训练中心'), icon: 'robot-filled', routeName: RoutesMap.manager.center },
@@ -71,6 +74,8 @@ const supermanMenuList = [
   { title: t('对话 Flow'), icon: 'flow-filled', routeName: RoutesMap.flow.index },
   { title: t('私域运营'), icon: 'activity-filled', routeName: RoutesMap.activity.index }
 ]
+
+const youzanMenuList = [{ title: t('有赞插件'), icon: 'youzan', routeName: RoutesMap.aiPlugin.yz }]
 
 const secondarySidebar = {
   [RoutesMap.chat.c]: ChatSidebar,
@@ -89,12 +94,17 @@ const { chatList } = storeToRefs(chatStoreI)
 const { domainInfo } = storeToRefs(domainStoreI)
 
 const sideMenuList = computed(() => {
+  let menuList = normalMenuList
+  if ($notnull(youzanInfo.value) && youzanInfo.value.additions.kdt_id) {
+    menuList = normalMenuList.concat(youzanMenuList)
+  }
+
   if (userInfo.value.role === 'superman') {
-    return normalMenuList.concat(supermanMenuList)
+    return menuList.concat(supermanMenuList)
   } else if (isManagerRole(userInfo.value.role)) {
-    return normalMenuList
+    return menuList
   } else {
-    return normalMenuList.slice(1)
+    return menuList.slice(1)
   }
 })
 
@@ -111,6 +121,8 @@ const activeSideMenu = computed(() => {
     return RoutesMap.flow.index
   } else if (/^(activity).*/.test(route.name as string)) {
     return RoutesMap.activity.index
+  } else if (/^(Youzan).*/.test(route.name as string)) {
+    return RoutesMap.aiPlugin.yz
   } else {
     return ''
   }
