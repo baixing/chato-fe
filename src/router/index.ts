@@ -9,10 +9,6 @@ import { nextTick } from 'vue'
 import { RouterView, createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 
 export const RoutesMap = {
-  aiPlugin: {
-    center: 'aipluginCenter',
-    detail: 'aipluginDetail'
-  },
   home: {
     homeName: 'home',
     index: 'homeIndex',
@@ -74,7 +70,8 @@ export const RoutesMap = {
   },
   inviteMember: 'inviteMember',
   guide: {
-    first: 'guideFirst'
+    first: 'guideFirst',
+    yzl: 'youzanLoading'
   },
   namespaceSwitch: 'namespaceSwitch',
   endPlatform: {
@@ -82,6 +79,11 @@ export const RoutesMap = {
   },
   pay: {
     payRediect: 'payRediect'
+  },
+  aiPlugin: {
+    center: 'aipluginCenter',
+    detail: 'aipluginDetail',
+    yz: 'Youzan'
   }
 }
 
@@ -224,29 +226,40 @@ const resourceSquareRoutes = [
   }
 ]
 
-// AI插件库
-// const aiPluginSquareRoutes = [
-//   {
-//     path: 'aiplugin',
-//     meta: {
-//       name: 'aiplugin',
-//       requiresAuth: true
-//     },
-//     component: RouterView,
-//     children: [
-//       {
-//         name: RoutesMap.aiPlugin.center,
-//         path: 'center',
-//         component: () => import('@/views/aiplugin/index.vue')
-//       },
-//       {
-//         name: RoutesMap.aiPlugin.detail,
-//         path: 'detail/:name',
-//         component: () => import('@/views/aiplugin/detail.vue')
-//       }
-//     ]
-//   }
-// ]
+// AI插件库()
+const aiPluginSquareRoutes = [
+  {
+    path: '/aiplugin',
+    component: RouterView,
+    children: [
+      {
+        name: RoutesMap.aiPlugin.yz,
+        path: 'yz',
+        component: () => import('@/views/aiplugin/YouzanCreate.vue')
+      }
+    ]
+  }
+  //   {
+  //     path: 'aiplugin',
+  //     meta: {
+  //       name: 'aiplugin',
+  //       requiresAuth: true
+  //     },
+  //     component: RouterView,
+  //     children: [
+  //       {
+  //         name: RoutesMap.aiPlugin.center,
+  //         path: 'center',
+  //         component: () => import('@/views/aiplugin/index.vue')
+  //       },
+  //       {
+  //         name: RoutesMap.aiPlugin.detail,
+  //         path: 'detail/:name',
+  //         component: () => import('@/views/aiplugin/detail.vue')
+  //       }
+  //     ]
+  //   }
+]
 
 // 训练机器人
 const trainningRoutes = [
@@ -433,6 +446,11 @@ const guideRoutes = [
     name: RoutesMap.guide.first,
     path: '/guide/first',
     component: () => import('@/views/guide/firstGuide.vue')
+  },
+  {
+    name: RoutesMap.guide.yzl,
+    path: '/guide/yzl',
+    component: () => import('@/views/aiplugin/YouzanLoading.vue')
   }
 ]
 
@@ -454,7 +472,7 @@ const loginedRoutes = [
       ...trainningRoutes, // 训练中心
       ...managerRoutes, // 管理机器人
       ...resourceSquareRoutes, // 资源广场
-      // ...aiPluginSquareRoutes, // AI插件库
+      ...aiPluginSquareRoutes, // AI插件库
       ...spaceManager,
       ...flowManager,
       ...activityManager,
