@@ -97,7 +97,8 @@ const pagination = reactive<IPage>({
   page: 1,
   total: 0,
   page_count: 0,
-  page_size: 10
+  page_size: 10,
+  size: 10
 })
 
 const hasMoreChatUsers = computed(
