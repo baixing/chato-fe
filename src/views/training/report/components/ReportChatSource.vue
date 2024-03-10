@@ -21,7 +21,7 @@ import type { ChatToBotRes } from '@/interface/chat'
 import { useDomainStore } from '@/stores/domain'
 import { extractData } from '@/utils/reg'
 import { storeToRefs } from 'pinia'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
 const domainStoreI = useDomainStore()
 const { domainInfo } = storeToRefs(domainStoreI)
@@ -55,7 +55,15 @@ const init = async () => {
   }
 }
 
-init()
+watch(
+  () => props.uid,
+  () => {
+    init()
+  },
+  {
+    immediate: true
+  }
+)
 </script>
 
 <style scoped></style>
