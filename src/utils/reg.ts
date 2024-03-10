@@ -45,14 +45,14 @@ export function verifyImageReg(name: string) {
 
 export function extractData(url) {
   // 正则表达式，包含三个捕获组
-  const regex = /^(https?:\/\/)([^\/]+\/[^=]+)=title=(.*)$/
+  const regex = /^(https?:\/\/[^\/]+)\/.*?title=([^&]+)/
   const matches = decodeURIComponent(url).match(regex)
 
   if (matches) {
-    // matches[1] 包含协议部分，matches[2] 包含主机名与路径，matches[3] 包含 title 参数的值
+    // matches[1] 包含协议部分和主机名部分，matches[2] 包含 title 参数的值
     return {
-      url: matches[1] + matches[2],
-      title: matches[3]
+      url: matches[1],
+      title: matches[2]
     }
   } else {
     return {
