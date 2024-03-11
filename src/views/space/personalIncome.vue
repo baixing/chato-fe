@@ -17,6 +17,7 @@
       style="
         width: 100%;
         height: 100%;
+
         --el-table-border-color: none;
         --el-table-header-bg-color: #e7e9ee;
         --el-table-bg-color: #f2f3f5;

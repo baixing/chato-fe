@@ -1425,6 +1425,7 @@ defineExpose({
 <style lang="scss" scoped>
 .chat-history {
   @apply px-1 py-4;
+
   flex: auto 1 1;
   box-sizing: border-box;
   max-width: 100vw;
@@ -1454,6 +1455,7 @@ defineExpose({
 
   .quick-item {
     @apply rounded-2xl leading-4 text-xs px-3 py-2 mr-1;
+
     background: #f2f3f5;
     cursor: pointer;
 
@@ -1470,6 +1472,7 @@ defineExpose({
 
   .quick-span-desc {
     @apply p-4 rounded-lg;
+
     display: flex;
     justify-content: flex-start;
     align-items: flex-start;
@@ -1482,6 +1485,7 @@ defineExpose({
 
     img {
       @apply w-14 h-14;
+
       border-radius: 100%;
       flex-shrink: 0;
       object-fit: cover;
@@ -1489,11 +1493,13 @@ defineExpose({
 
     .desc-right {
       @apply text-xs leading-5 ml-3;
+
       color: #596780;
       word-break: break-word;
 
       .desc-right-title {
         @apply mb-2 text-base;
+
         color: #3d3d3d;
         font-weight: 500;
       }
@@ -1503,11 +1509,13 @@ defineExpose({
 
 .divider-tip {
   @apply text-xs;
+
   color: #dcdfe6;
 }
 
 .divider-desc-seesion {
   @apply mb-3 rounded-lg text-xs;
+
   text-align: center;
   color: #9da3af;
 }

@@ -445,7 +445,7 @@ watch(domainId, (v) => v && init(), { immediate: true })
     :deep(.el-button) {
       width: 96px;
       height: 40px;
-      margin-left: 0px;
+      margin-left: 0;
     }
   }
 }
@@ -478,6 +478,7 @@ watch(domainId, (v) => v && init(), { immediate: true })
 
   .pagination {
     @apply flex items-center justify-between;
+
     margin-top: 24px;
     flex-direction: row-reverse;
   }

@@ -67,6 +67,7 @@ const onLinkData = () => {
 <style lang="scss" scoped>
 .upgrade-btn {
   @apply cursor-pointer rounded-lg h-9 text-center w-full text-xs leading-9 text-white mt-3 mb-5 transition-opacity hover:opacity-95;
+
   background: linear-gradient(335deg, #0547ff -28%, #d683ff 104%);
 }
 </style>

@@ -12,7 +12,7 @@
 }
 
 .el-button.is-link {
-  padding: 0px !important;
+  padding: 0 !important;
 }
 
 .el-button--primary.is-plain {
@@ -33,12 +33,12 @@
   width: 100%;
 }
 
-.el-button+.el-button {
+.el-button + .el-button {
   margin-left: 0 !important;
 }
 
 .el-message-box__btns {
-  .el-button+.el-button {
+  .el-button + .el-button {
     margin-left: 12px !important;
   }
 }
@@ -48,7 +48,7 @@
   --el-radio-font-weight: normal !important;
 }
 
-.el-button [class*='el-icon']+span {
+.el-button [class*='el-icon'] + span {
   margin-left: 4px !important;
 }
 
@@ -102,7 +102,7 @@
 }
 
 .el-dialog__footer {
-  .el-button+.el-button {
+  .el-button + .el-button {
     margin-left: 12px !important;
   }
 }
@@ -154,11 +154,12 @@
   --el-border-color-light: #e4e7ed;
   --el-text-color-primary: #596780;
   --el-tabs-header-height: 34px !important;
+
   height: 100%;
   display: flex;
   flex-direction: column;
 
-  &>.el-tabs__header {
+  & > .el-tabs__header {
     border-bottom: none !important;
     margin-bottom: 32px;
 

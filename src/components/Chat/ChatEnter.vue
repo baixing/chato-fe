@@ -371,6 +371,7 @@ onBeforeUnmount(() => {
 <style lang="scss" scoped>
 .input-box {
   @apply gap-1 my-2 px-4;
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -385,6 +386,7 @@ onBeforeUnmount(() => {
 
   .input-box-content {
     @apply rounded-3xl py-1 pl-4 pr-1;
+
     flex: 1;
     display: flex;
     align-items: center;
@@ -395,6 +397,7 @@ onBeforeUnmount(() => {
 
   .send-btn {
     @apply w-9 h-9;
+
     cursor: pointer;
     border-radius: 100%;
     box-sizing: border-box;
@@ -441,10 +444,11 @@ onBeforeUnmount(() => {
 .recorder-container {
   // left-[24%] right-[24%] xl:left-[12%] xl:right-[12%] 2xl:left-[18%] 2xl:right-[18%]
   @apply lg:left-4 lg:right-4 left-4 right-4 h-44 rounded-2xl px-5 py-4 text-sm leading-6;
+
   position: absolute;
   z-index: 3;
   bottom: 0;
-  box-shadow: 0px 8px 32px 0px rgba(0, 0, 0, 0.16);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.16);
   box-sizing: border-box;
   background-color: #fff;
   border: 1px solid #e4e7ed;
@@ -455,6 +459,7 @@ onBeforeUnmount(() => {
 
   .close-icon {
     @apply right-4 top-4;
+
     cursor: pointer;
     position: absolute;
     z-index: 2;

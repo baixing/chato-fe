@@ -181,6 +181,7 @@ function onChangeDateRangeType(dateRangeType) {
   header {
     box-sizing: border-box;
     @apply flex items-center justify-between;
+
     height: 60px;
     padding: 10px 20px;
     border-bottom: 1px solid #222;
@@ -202,6 +203,7 @@ function onChangeDateRangeType(dateRangeType) {
 
     .pagination {
       @apply flex items-center justify-center;
+
       margin-top: 30px;
     }
   }
@@ -210,6 +212,7 @@ function onChangeDateRangeType(dateRangeType) {
 .summary {
   box-sizing: border-box;
   @apply flex items-center justify-between;
+
   margin-bottom: 50px;
   text-align: center;
 

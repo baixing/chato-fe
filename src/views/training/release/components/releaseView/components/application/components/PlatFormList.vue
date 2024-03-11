@@ -21,11 +21,12 @@ defineProps<{
   flex-wrap: wrap;
   .plat-item {
     @apply flex items-center justify-center;
+
     width: 32px;
     height: 32px;
     margin-right: 16px;
     border-radius: 100%;
-    background: #ffffff;
+    background: #fff;
     font-size: 14px;
     color: #596780;
     &:last-of-type {

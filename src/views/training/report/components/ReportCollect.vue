@@ -359,6 +359,7 @@ watch(selectId, (v) => {
 
   .pagination {
     @apply flex items-center justify-between;
+
     margin-top: 24px;
     flex-direction: row-reverse;
   }
@@ -385,7 +386,7 @@ watch(selectId, (v) => {
     :deep(.el-button) {
       width: 96px;
       height: 40px;
-      margin-left: 0px;
+      margin-left: 0;
     }
   }
 }

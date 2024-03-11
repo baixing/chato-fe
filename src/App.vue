@@ -84,6 +84,7 @@ window.previewImages = (imageStr: string, imageIndex = 0) => {
   border: 2px solid rgba(124, 92, 252);
   animation: blink 2s linear infinite;
 }
+
 @keyframes blink {
   0% {
     border-color: transparent;

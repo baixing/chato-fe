@@ -267,7 +267,7 @@ watch(isMobile, () => {
 
 .case-active {
   transform: scale(1.2) translateX(8%);
-  box-shadow: 0px 20px 23.2px -19px rgba(106, 86, 219, 0.17);
+  box-shadow: 0 20px 23.2px -19px rgba(106, 86, 219, 0.17);
   margin-bottom: 38px;
 
   &:last-child {

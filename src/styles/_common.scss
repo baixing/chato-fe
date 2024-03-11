@@ -123,6 +123,7 @@ body {
 
 .form-item-extra {
   @apply flex items-start justify-between;
+
   flex-flow: row-reverse;
   margin-top: 12px;
   width: 100%;

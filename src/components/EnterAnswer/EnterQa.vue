@@ -350,7 +350,7 @@ onUnmounted(() => {
 
 <style lang="scss" scoped>
 .content_html_item {
-  margin-bottom: 0px;
+  margin-bottom: 0;
   :deep(.el-form-item__error) {
     bottom: 0 !important;
     top: inherit !important;

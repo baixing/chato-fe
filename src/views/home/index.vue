@@ -486,9 +486,9 @@ watch(
 <style lang="scss" scoped>
 .home-contact-btn {
   position: fixed;
-  box-shadow: 0px 3px 8px 0px rgba(0, 0, 0, 0.16);
+  box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.16);
   border: 1px solid #e4e7ed;
-  background: #ffffff;
+  background: #fff;
   border-radius: 32px;
   font-size: 12px;
   font-weight: 500;
@@ -498,6 +498,7 @@ watch(
 
 .fixed-btn {
   @apply flex items-center justify-center;
+
   flex-direction: column;
   border-bottom: 1px solid #e4e7ed;
   color: #303133;

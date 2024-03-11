@@ -265,6 +265,7 @@ const handleSelectionChange = (val: IDocumentList[]) => {
 
   .pagination {
     @apply flex items-center justify-end;
+
     margin-top: 30px;
   }
 }

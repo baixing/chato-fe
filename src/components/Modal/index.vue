@@ -106,7 +106,7 @@ const onSubmit = () => {
     font-size: 20px;
     font-weight: 500;
     color: #303133;
-    padding-bottom: 0px;
+    padding-bottom: 0;
   }
 
   .el-dialog__body {
