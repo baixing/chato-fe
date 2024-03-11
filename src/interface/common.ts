@@ -14,7 +14,7 @@ export interface IPage {
   page: number
   total: number
   page_count: number
-  page_size: number
+  page_size?: number
   size: number
 }
 
