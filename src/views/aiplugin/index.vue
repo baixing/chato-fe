@@ -29,13 +29,13 @@
             帮助商家和创作者在小红书平台进行社交营销的神器。它能基于用户设置的主题和需求,自动生成相关的评论内容,实现在小红书上的精准获客。
           </p>
           <el-button
-            style="background: #7c5cfc; border-radius: 4px; color: #ffffff"
+            style="background: #7c5cfc; border-radius: 4px; color: #fff"
             class="w-full"
             @click="installDialogVisible = true"
             >添加</el-button
           >
           <el-button
-            style="background: #7c5cfc; border-radius: 4px; color: #ffffff"
+            style="background: #7c5cfc; border-radius: 4px; color: #fff"
             class="w-full"
             @click="navigateToNextPage"
             >使用</el-button

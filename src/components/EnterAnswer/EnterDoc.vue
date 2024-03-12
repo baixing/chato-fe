@@ -765,7 +765,7 @@ watch(
   }
 
   .el-dialog__body {
-    padding: 5px 24px 0px;
+    padding: 5px 24px 0;
   }
 
   .el-upload-list {

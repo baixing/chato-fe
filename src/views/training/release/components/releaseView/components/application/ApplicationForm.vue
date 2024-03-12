@@ -134,6 +134,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
   width: 100%;
   .a-f-header {
     @apply flex items-center justify-start;
+
     flex-wrap: wrap;
     border-radius: 8px;
     background: #e5ecf7;

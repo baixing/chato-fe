@@ -77,9 +77,8 @@ const onInputFocus = () => {
 
 .search-input-focus {
   :deep(.el-input-group__prepend) {
-    box-shadow: 1px 0 0 0 var(--el-input-focus-border-color) inset,
-      0 1px 0 0 var(--el-input-focus-border-color) inset,
-      0 -1px 0 0 var(--el-input-focus-border-color) inset;
+    /* prettier-ignore */
+    box-shadow: 1px 0 0 0 var(--el-input-focus-border-color) inset, 0 1px 0 0 var(--el-input-focus-border-color) inset, 0 -1px 0 0 var(--el-input-focus-border-color) inset;
   }
 
   :deep(.el-input__wrapper) {

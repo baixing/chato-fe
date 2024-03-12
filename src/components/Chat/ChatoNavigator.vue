@@ -280,6 +280,7 @@ watch(base, freshHistory, { immediate: true })
 <style lang="scss" scoped>
 .input-box-content {
   @apply rounded-3xl py-1 pl-4 pr-1;
+
   flex: 1;
   display: flex;
   align-items: center;
@@ -289,6 +290,7 @@ watch(base, freshHistory, { immediate: true })
 }
 .input-box {
   @apply gap-1 my-2 px-4;
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -303,6 +305,7 @@ watch(base, freshHistory, { immediate: true })
 
   .input-box-content {
     @apply rounded-3xl py-1 pl-4 pr-1;
+
     flex: 1;
     display: flex;
     align-items: center;
@@ -313,6 +316,7 @@ watch(base, freshHistory, { immediate: true })
 
   .send-btn {
     @apply w-9 h-9;
+
     cursor: pointer;
     border-radius: 100%;
     box-sizing: border-box;
@@ -362,6 +366,7 @@ watch(base, freshHistory, { immediate: true })
 
 .chat-history {
   @apply px-1 py-4;
+
   flex: auto 1 1;
   box-sizing: border-box;
   max-width: 100vw;
@@ -377,6 +382,7 @@ watch(base, freshHistory, { immediate: true })
 
   .quick-span-desc {
     @apply p-4 rounded-lg;
+
     display: flex;
     justify-content: flex-start;
     align-items: flex-start;
@@ -389,6 +395,7 @@ watch(base, freshHistory, { immediate: true })
 
     img {
       @apply w-14 h-14;
+
       border-radius: 100%;
       flex-shrink: 0;
       object-fit: cover;
@@ -396,11 +403,13 @@ watch(base, freshHistory, { immediate: true })
 
     .desc-right {
       @apply text-xs leading-5 ml-3;
+
       color: #596780;
       word-break: break-word;
 
       .desc-right-title {
         @apply mb-2 text-base;
+
         color: #3d3d3d;
         font-weight: 500;
       }
@@ -424,6 +433,7 @@ watch(base, freshHistory, { immediate: true })
 
   .quick-item {
     @apply rounded-2xl leading-4 text-xs px-3 py-2 mr-1;
+
     background: #f2f3f5;
     cursor: pointer;
 

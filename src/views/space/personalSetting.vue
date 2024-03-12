@@ -217,7 +217,7 @@ watch(
   margin-top: 24px;
 
   :deep(.el-form-item__label) {
-    margin-bottom: 0px !important;
+    margin-bottom: 0 !important;
     align-items: center;
     height: 100%;
     min-width: 62px;
