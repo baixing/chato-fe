@@ -451,7 +451,7 @@ const onRegisterContactUS = () => {
 
 onMounted(() => {
   const wow = new WOW({
-    offset: 100, // 定义浏览器视口底部与隐藏框顶部之间的距离。当用户滚动并到达此距离时，隐藏的框会显示出来。
+    offset: 50, // 定义浏览器视口底部与隐藏框顶部之间的距离。当用户滚动并到达此距离时，隐藏的框会显示出来。
     mobile: true, // 在移动设备上打开/关闭 WOW.js。
     live: true, // 在页面上同时检查新的 WOW 元素。
     scrollContainer: '#homeContainer'

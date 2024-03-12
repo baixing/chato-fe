@@ -61,14 +61,14 @@
         {{ $t('开启对话') }}
       </el-button>
     </div>
-    <IndustryCase />
+    <IndustryCase class="wow act" />
   </div>
   <div class="line-grad-bg pt-20 pb-24 mb-32 home-center-padding lg:!px-2 lg:pt-9 lg:pb-9">
-    <h3 class="mb-12 text-white text-center text-5xl font-medium lg:mb-8 lg:text-2xl">
+    <h3 class="wow act mb-12 text-white text-center text-5xl font-medium lg:mb-8 lg:text-2xl">
       {{ $t('如何训练 AI 数字员工') }}
     </h3>
     <div :class="dynamicClasses.flexClass">
-      <div class="lg:w-full lg:pl-3">
+      <div class="lg:w-full lg:pl-3 wow act">
         <p class="text-[#303133] text-2xl font-medium leading-10 text-left lg:text-base">
           {{ $t('AI 驱动的') }}<br class="lg:hidden" />{{ $t('基于企业私有数据的')
           }}<br class="lg:hidden" />{{ $t('AI 数字员工') }}
@@ -96,31 +96,31 @@
           {{ $t('了解更多') }}
         </el-button>
       </div>
-      <el-image :src="homeStepImg" class="!w-[65%] h-auto lg:!w-full lg:mb-8" fit="cover" lazy />
+      <el-image
+        :src="homeStepImg"
+        class="!w-[65%] h-auto lg:!w-full lg:mb-8 wow act"
+        fit="cover"
+        lazy
+      />
     </div>
   </div>
   <div class="home-center-padding">
     <h3
-      class="text-5xl leading-[72px] font-medium text-[#303133] text-center lg:text-[26px] lg:leading-[38px]"
+      class="wow act text-5xl leading-[72px] font-medium text-[#303133] text-center lg:text-[26px] lg:leading-[38px]"
     >
       {{ $t('Chato 如何实现') }}
       <strong class="tracking-[0.08em] bg-clip-text text-transparent line-grad-bg">
         {{ $t('定制化') }}</strong
       >
     </h3>
-    <div class="text-base leading-9 mt-6 text-center text-[#696984]">
+    <div class="wow act text-base leading-9 mt-6 text-center text-[#696984]">
       {{ $t('Chato 可以设定角色和学习自己的知识库，') }}
       <br class="hidden lg:block" />
       {{ $t('定制独特个性和超强能力的专属机器人。') }}
     </div>
 
-    <el-row class="learn-row lg:!mx-0 lg:!mt-10" :gutter="10">
-      <el-col
-        :span="8"
-        :xs="24"
-        class="wow fadeInDown learn-card"
-        style="display: flex; justify-content: center"
-      >
+    <el-row class="wow act learn-row lg:!mx-0 lg:!mt-10" :gutter="10">
+      <el-col :span="8" :xs="24" class="learn-card" style="display: flex; justify-content: center">
         <el-space direction="vertical">
           <svg-icon svg-class="w-[38px] h-[38px]" color="#596780" name="home_user" />
           <span class="learn-title"> {{ $t(' 角色设定 ') }}</span>
@@ -135,7 +135,7 @@
       <el-col
         :span="8"
         :xs="24"
-        class="wow fadeInDown learn-card"
+        class="wow act learn-card"
         style="display: flex; justify-content: center"
       >
         <el-space direction="vertical">
@@ -166,13 +166,8 @@
       </el-col>
     </el-row>
 
-    <el-row class="learn-row lg:!mx-0 lg:!mt-0" :gutter="10">
-      <el-col
-        :span="8"
-        :xs="24"
-        class="wow fadeInDown learn-card"
-        style="display: flex; justify-content: center"
-      >
+    <el-row class="wow act learn-row lg:!mx-0 lg:!mt-0" :gutter="10">
+      <el-col :span="8" :xs="24" class="learn-card" style="display: flex; justify-content: center">
         <el-space direction="vertical">
           <svg-icon color="#596780" svg-class="w-[38px] h-[38px]" name="home_release" />
           <span class="learn-title">{{ $t(' 多终端发布渠道 ') }}</span>
@@ -220,7 +215,7 @@
       </el-col>
     </el-row>
 
-    <div class="mt-6 text-center mb-[100px] lg:mt-0 lg:mb-12">
+    <div class="wow act mt-6 text-center mb-[100px] lg:mt-0 lg:mb-12">
       <el-button
         id="Chato_customize_click"
         type="primary"
@@ -235,17 +230,17 @@
   <div
     class="line-grad-bg home-center-padding py-20 text-white text-center mb-28 lg:mb-12 lg:py-10"
   >
-    <h3 class="text-5xl leading-[72px] font-medium mb-6 lg:text-[26px] lg:leading-[38px]">
+    <h3 class="wow act text-5xl leading-[72px] font-medium mb-6 lg:text-[26px] lg:leading-[38px]">
       {{ $t('Chato 优势') }}
     </h3>
-    <p class="text-xl leading-9 mb-12 lg:mb-6 lg:text-base">
+    <p class="wow act text-xl leading-9 mb-12 lg:mb-6 lg:text-base">
       {{ $t('Chato 不需要具备代码知识，预设海量模版，轻松上手使用。') }}
     </p>
-    <div class="flex justify-between gap-5 lg:flex-col">
+    <div class="wow act flex justify-between gap-5 lg:flex-col">
       <div
         v-for="(item, index) in serviceCardList"
         :key="item.icon"
-        class="wow fadeInDown flex-1 flex flex-col justify-between rounded-2xl bg-white py-6 px-7 h-64 lg:h-auto lg:gap-3 lg:p-4"
+        class="flex-1 flex flex-col justify-between rounded-2xl bg-white py-6 px-7 h-64 lg:h-auto lg:gap-3 lg:p-4"
       >
         <div class="service-card">
           <span
@@ -292,17 +287,17 @@
 
   <div class="home-center-padding">
     <h3
-      class="text-5xl leading-[72px] font-medium text-[#303133] text-center lg:text-[26px] lg:leading-[38px]"
+      class="wow act text-5xl leading-[72px] font-medium text-[#303133] text-center lg:text-[26px] lg:leading-[38px]"
     >
       Chato
       <strong class="tracking-[0.08em] bg-clip-text text-transparent line-grad-bg">{{
         $t('企业服务')
       }}</strong>
     </h3>
-    <p class="text-[#767676] text-xl leading-9 text-center mt-4">
+    <p class="wow act text-[#767676] text-xl leading-9 text-center mt-4">
       {{ $t('Chato 致力于为客户提供最贴心的服务和支持') }}
     </p>
-    <el-row :gutter="40" class="mt-20 lg:mt-10 flex w-full justify-around !mx-0">
+    <el-row :gutter="40" class="wow fadeInLeft mt-20 lg:mt-10 flex w-full justify-around !mx-0">
       <el-col
         :span="12"
         :xs="24"
@@ -314,7 +309,7 @@
           name="home_personal_files"
         />
       </el-col>
-      <el-col :span="12" :xs="24" style="align-self: center" class="wow fadeInRight advantage-card">
+      <el-col :span="12" :xs="24" style="align-self: center" class="advantage-card">
         <el-space direction="vertical" style="justify-content: flex-start; align-items: flex-start">
           <span class="advantage-title"> {{ $t('AI 训练师服务') }}</span>
           <div class="flex flex-row items-start mt-2">
@@ -348,13 +343,11 @@
       </el-col>
     </el-row>
 
-    <el-row :gutter="40" class="mt-20 lg:mt-0 flex w-full justify-around lg:flex-col-reverse !mx-0">
-      <el-col
-        class="wow fadeInLeft advantage-card"
-        :span="12"
-        :xs="24"
-        style="align-self: center; width: 100%"
-      >
+    <el-row
+      :gutter="40"
+      class="wow fadeInRight mt-20 lg:mt-0 flex w-full justify-around lg:flex-col-reverse !mx-0"
+    >
+      <el-col class="advantage-card" :span="12" :xs="24" style="align-self: center; width: 100%">
         <el-space direction="vertical" style="justify-content: flex-start; align-items: flex-start">
           <span class="advantage-title">{{ $t('大客户定制') }}</span>
           <div class="flex flex-row items-start mt-2">
@@ -402,7 +395,7 @@
 
     <el-row
       :gutter="40"
-      class="mt-20 mb-[120px] lg:mb-[60px] lg:mt-0 flex w-full justify-around !mx-0"
+      class="wow act mt-20 mb-[120px] lg:mb-[60px] lg:mt-0 flex w-full justify-around !mx-0"
     >
       <el-col
         :span="12"
@@ -453,7 +446,7 @@
     </el-row>
 
     <h3
-      class="text-5xl leading-[72px] font-medium text-[#303133] text-center lg:text-[26px] lg:leading-[38px] tracking-[4px]"
+      class="wow act text-5xl leading-[72px] font-medium text-[#303133] text-center lg:text-[26px] lg:leading-[38px] tracking-[4px]"
     >
       {{ $t('常见')
       }}<strong class="tracking-[0.08em] bg-clip-text text-transparent line-grad-bg"
@@ -461,7 +454,7 @@
       </strong>
     </h3>
     <dl class="mt-10 w-full">
-      <el-card shadow="hover" class="wow fadeInUp qa-card">
+      <el-card shadow="hover" class="wow act qa-card">
         <dt :class="dynamicClasses.textClass">
           {{ $t('Chato的接口是否开放？可以与企业其他系统集成？') }}
         </dt>
@@ -473,7 +466,7 @@
           }}
         </dd>
       </el-card>
-      <el-card shadow="hover" class="wow fadeInUp qa-card">
+      <el-card shadow="hover" class="wow act qa-card">
         <dt :class="dynamicClasses.textClass">
           {{ $t('我不上传任何文档，它会回答吗？') }}
         </dt>
@@ -481,7 +474,7 @@
           {{ $t('您的机器人仍可以回答常规问题，成为一个助理机器人，但是它不了解您的业务哦。') }}
         </dd>
       </el-card>
-      <el-card shadow="hover" class="wow fadeInUp qa-card">
+      <el-card shadow="hover" class="wow act qa-card">
         <dt :class="dynamicClasses.textClass">
           {{ $t('我的语料很少，如何训练？') }}
         </dt>
@@ -497,7 +490,7 @@
   </div>
 
   <div
-    class="quick-start-bg home-center-padding mt-[100px] mb-[50px] py-[74px] items-center lg:py-7 lg:mt-10 lg:mb-5 overflow-hidden flex justify-between gap-28 lg:flex-col lg:gap-0 lg:items-start"
+    class="wow act quick-start-bg home-center-padding mt-[100px] mb-[50px] py-[74px] items-center lg:py-7 lg:mt-10 lg:mb-5 overflow-hidden flex justify-between gap-28 lg:flex-col lg:gap-0 lg:items-start"
   >
     <div
       class="flex flex-col items-start text-white flex-1 overflow-hidden lg:w-full lg:items-center"
@@ -737,5 +730,19 @@ onBeforeUnmount(() => {
 
 .service-card {
   @apply text-[#696984] text-base leading-7 tracking-[0.3px] flex items-center flex-col gap-4;
+}
+
+.act {
+  animation-name: fadeInUp;
+  animation-duration: 0.66s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: 1;
+  animation-direction: normal;
+  animation-fill-mode: forwards;
+  visibility: hidden; /* 隐藏元素，直到 WOW.js 触发动画 */
+}
+
+.act.animated {
+  visibility: visible; /* 当 WOW.js 触发动画时，使元素可见 */
 }
 </style>
