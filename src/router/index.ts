@@ -475,8 +475,8 @@ const loginedRoutes = [
       ...aiPluginSquareRoutes, // AI插件库
       ...spaceManager,
       ...flowManager,
-      ...activityManager,
-      ...vipManager
+      ...activityManager
+      // ...vipManager
     ]
   }
 ]
