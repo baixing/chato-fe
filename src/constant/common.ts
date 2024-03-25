@@ -125,6 +125,12 @@ export const SUPPORT_LLM_CONFIG = [
     need_vip: false
   },
   {
+    name: 'claude',
+    type: '4mF7gHnXj5sK8qZw',
+    consume_quota: 1,
+    need_vip: false
+  },
+  {
     name: 'Advanced Model',
     type: 'e640dbec16b891d9',
     consume_quota: 40,
