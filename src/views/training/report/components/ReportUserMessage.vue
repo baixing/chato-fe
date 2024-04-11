@@ -75,7 +75,7 @@ import type { IUserChat } from '@/interface/question'
 import { useAuthStore } from '@/stores/auth'
 import { useChatUserStore } from '@/stores/chatUser'
 import { useDomainStore } from '@/stores/domain'
-import { generateRandomRGB, isPhoneNum } from '@/utils/help'
+import { generateRandomRGB } from '@/utils/help'
 import { useWebSocket } from '@vueuse/core'
 import dayjs from 'dayjs'
 import { storeToRefs } from 'pinia'
@@ -172,11 +172,7 @@ const refreshChatUsersOrder = (chatMsgItem) => {
 }
 
 const rednerUserName = (str: string) => {
-  if (isPhoneNum(str)) {
-    return str
-  } else {
-    return `未知用户-${str.slice(-6)}`
-  }
+  return str
 }
 
 const onSend = (params: Record<string, any>) => {
