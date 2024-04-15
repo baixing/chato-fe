@@ -216,6 +216,7 @@ import router, { RoutesMap } from '@/router'
 import { useAuthStore } from '@/stores/auth'
 import { useBase } from '@/stores/base'
 import { cuserStore } from '@/stores/cuser'
+import { useKimiStore } from '@/stores/kimi'
 import { useSocketStore } from '@/stores/socket'
 import { formatChatMessageAnswer } from '@/utils/chat'
 import {
@@ -356,6 +357,10 @@ const socketURL = computed(() =>
 )
 const socketInstance = useWebSocketConnect(socketURL.value)
 const { socketResultMap } = storeToRefs(socketStore)
+
+// kimi
+const kimiStore = useKimiStore()
+const { question, kimiHistoryLength, showKimi } = storeToRefs(kimiStore)
 
 const link = computed(
   () =>
@@ -645,6 +650,7 @@ const getHistoryChat = async (scrollBottomTag = true) => {
     // 放到 nextTick 更新：为了不影响正常发送消息滚动到底部的控制
     nextTick(() => {
       scrollBottom.value = true
+      kimiHistoryLength.value = history.value.length
     })
 
     return list
@@ -710,6 +716,13 @@ const beforeSubmit = async () => {
 const submit = async (str = '') => {
   const beforeSubmitCheckRes = await beforeSubmit()
   const text = String(str || inputText.value).trim()
+  question.value = text
+
+  // kimi
+  if (kimiHistoryLength.value >= 5) {
+    showKimi.value = true
+    return
+  }
 
   // 无额度
   if (!beforeSubmitCheckRes) {
@@ -952,6 +965,12 @@ const generateMessage = async (data, key) => {
       domainSlug: botSlug.value,
       token: chatToken.value
     }))
+
+  nextTick(() => {
+    if (isFinalStatus) {
+      kimiHistoryLength.value = history.value.length
+    }
+  })
 }
 
 // 特殊处理：继续
