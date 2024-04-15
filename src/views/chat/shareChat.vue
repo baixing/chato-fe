@@ -23,6 +23,7 @@
     hidden-batch
     @closeDialogVisble="() => (dialogVisibleQa = false)"
   />
+  <UpgradeKimi v-if="isKimiRobot" />
 </template>
 
 <script setup lang="ts">
@@ -30,6 +31,7 @@
 import DocSourceDrawer from '@/components/Chat/ChatDocSourceDrawer.vue'
 import Chat from '@/components/Chat/index.vue'
 import EnterQa from '@/components/EnterAnswer/EnterQa.vue'
+import UpgradeKimi from '@/components/Upgrade/UpgradeKimi.vue'
 import { useSource } from '@/composables/useSource'
 import { currentEnvConfig } from '@/config'
 import { CHATO_SOURCE_APPLET, USER_ROLES } from '@/constant/common'
@@ -71,6 +73,7 @@ const defaultForm = reactive({
   images: []
 })
 const isInApplet = computed(() => source.value === CHATO_SOURCE_APPLET) // 判断是否在小程序环境
+const isKimiRobot = computed(() => import.meta.env.VITE_APP_KIMI_ROBOT_SLUG === currentSlug.value)
 
 const correctAnswer = (e) => {
   defaultForm.title = e.question

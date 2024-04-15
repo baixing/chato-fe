@@ -243,3 +243,7 @@ export const TTSTIMBE = {
   timbres: ['zh_female_qingxin', 'zh_female_qiaopi', 'zh_male_chunhou', 'zh_male_qinqie'],
   descriptions: ['晓晓-女-清新', '依依-女-俏皮', '齐光-男-醇厚', '小川-男-亲切']
 }
+
+export const BAIDU_TOKEN = {
+  'chato.cn': import.meta.env.VITE_APP_KIMI_BAIDU_TOKEN
+}
