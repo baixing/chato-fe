@@ -31,7 +31,7 @@ const route = useRoute()
 const { clickId } = useClickId(route)
 const { bdvid } = useBaidu(route)
 const kimiStore = useKimiStore()
-const { showKimi } = storeToRefs(kimiStore)
+const { showKimi, question } = storeToRefs(kimiStore)
 
 const douyinAPI = useStorage('douyinAPI', false)
 const baiduAPI = useStorage('baiduAPI', false)
@@ -44,6 +44,6 @@ const onHandleRouterKimi = () => {
   if (bdvid.value && !baiduAPI.value) {
     baiduCallbackAPI(bdvid.value, () => (baiduAPI.value = true))
   }
-  // window.location.href = `http://kimi.moonshot.cn/_prefill_chat?send_immediately=true&prefill_prompt=%s&utm_campaign=TR_cAOfw0mv`
+  window.location.href = `http://kimi.moonshot.cn/_prefill_chat?send_immediately=true&prefill_prompt=${question.value}&utm_campaign=TR_cAOfw0mv`
 }
 </script>
