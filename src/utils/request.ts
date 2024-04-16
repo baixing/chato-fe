@@ -45,9 +45,9 @@ service.interceptors.response.use(
           tokenAbnormal = true
           // data.message = $t('您的登录状态已失效，请重新登录。')
           authStoreI.$patch({ authToken: '' })
-          // if (window.location.pathname !== '/') {
-          //   router.replace('/auth/login')
-          // }
+          if (window.location.pathname !== '/') {
+            router.replace('/auth/login')
+          }
           break
         }
         case 403:
