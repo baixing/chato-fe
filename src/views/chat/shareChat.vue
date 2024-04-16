@@ -23,7 +23,7 @@
     hidden-batch
     @closeDialogVisble="() => (dialogVisibleQa = false)"
   />
-  <UpgradeKimi v-if="isKimiRobot" />
+  <UpgradeKimi v-if="isKimiRobot" :slug="currentSlug" />
 </template>
 
 <script setup lang="ts">
