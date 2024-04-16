@@ -247,3 +247,10 @@ export const TTSTIMBE = {
 export const BAIDU_TOKEN = {
   'chato.cn': import.meta.env.VITE_APP_KIMI_BAIDU_TOKEN
 }
+
+export const KIMI_ROBOT_SLUG = [
+  'djp1637wpl5mo8e9',
+  'dlj4z523zdl7g031',
+  '21q4l51gwkw5nxom',
+  '8ojdg7gpyez7e236'
+]
