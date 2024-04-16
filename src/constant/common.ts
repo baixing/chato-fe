@@ -254,3 +254,10 @@ export const KIMI_ROBOT_SLUG = [
   '21q4l51gwkw5nxom',
   '8ojdg7gpyez7e236'
 ]
+
+export const KIMI_MODAL_TITLE = {
+  '21q4l51gwkw5nxom': '到kimi，体验更多AI智能写作场景',
+  '8ojdg7gpyez7e236': '到kimi 体验更多AI文案创作场景',
+  djp1637wpl5mo8e9: '到kimi，体验更多场景',
+  dlj4z523zdl7g031: '到kimi，体验更多场景'
+}

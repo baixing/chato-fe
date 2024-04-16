@@ -10,7 +10,7 @@
     class="pay-tip-container text-[#888]"
   >
     <template #header>
-      <div class="w-full text-center text-base">享受更专业的服务</div>
+      <div class="w-full text-center text-base">{{ KIMI_MODAL_TITLE[slug] }}</div>
     </template>
     <div class="bg-[#F2F2F2] rounded-md px-5 py-4" style="font-feature-settings: 'kern' on">
       <p
@@ -48,7 +48,7 @@
       class="!rounded-full !bg-[#333333] !text-lg w-full !font-medium !text-[#CB9F67] !h-[46px] text-center !border-none !my-[10px]"
       @click="onHandleRouterKimi()"
     >
-      立即前往
+      立即体验
     </el-button>
   </Modal>
 </template>
@@ -57,11 +57,14 @@
 import Modal from '@/components/Modal/index.vue'
 import useBaidu from '@/composables/useBaidu'
 import useClickId from '@/composables/useDouyin'
+import { KIMI_MODAL_TITLE } from '@/constant/common'
 import { useKimiStore } from '@/stores/kimi'
 import { baiduCallbackAPI, douYinCallbackAPI } from '@/utils/callback'
 import { useStorage } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
+
+defineProps<{ slug: string }>()
 
 const route = useRoute()
 const { clickId } = useClickId(route)
