@@ -37,13 +37,15 @@ const douyinAPI = useStorage('douyinAPI', false)
 const baiduAPI = useStorage('baiduAPI', false)
 
 const onHandleRouterKimi = () => {
+  let source = 'baidu'
   if (clickId.value && !douyinAPI.value) {
+    source = 'douyin'
     douYinCallbackAPI(clickId.value, () => (douyinAPI.value = true))
   }
 
   if (bdvid.value && !baiduAPI.value) {
     baiduCallbackAPI(bdvid.value, () => (baiduAPI.value = true))
   }
-  window.location.href = `http://kimi.moonshot.cn/_prefill_chat?send_immediately=true&prefill_prompt=${question.value}&utm_campaign=TR_cAOfw0mv`
+  window.location.href = `http://kimi.moonshot.cn/_prefill_chat?send_immediately=true&prefill_prompt=${question.value}&utm_campaign=TR_cAOfw0mv&utm_source=${source}&utm_medium=link&utm_campaign=kimi小助手`
 }
 </script>
