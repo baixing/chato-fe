@@ -34,7 +34,7 @@ import EnterQa from '@/components/EnterAnswer/EnterQa.vue'
 import UpgradeKimi from '@/components/Upgrade/UpgradeKimi.vue'
 import { useSource } from '@/composables/useSource'
 import { currentEnvConfig } from '@/config'
-import { CHATO_SOURCE_APPLET, USER_ROLES } from '@/constant/common'
+import { CHATO_SOURCE_APPLET, KIMI_ROBOT_SLUG, USER_ROLES } from '@/constant/common'
 import { ETerminal } from '@/enum/common'
 import { EDocumentTabType } from '@/enum/knowledge'
 import { useBase } from '@/stores/base'
@@ -73,7 +73,7 @@ const defaultForm = reactive({
   images: []
 })
 const isInApplet = computed(() => source.value === CHATO_SOURCE_APPLET) // 判断是否在小程序环境
-const isKimiRobot = computed(() => import.meta.env.VITE_APP_KIMI_ROBOT_SLUG === currentSlug.value)
+const isKimiRobot = computed(() => KIMI_ROBOT_SLUG.includes(currentSlug.value))
 
 const correctAnswer = (e) => {
   defaultForm.title = e.question
