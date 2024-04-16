@@ -719,7 +719,7 @@ const submit = async (str = '') => {
   question.value = text
 
   // kimi
-  if (kimiHistoryLength.value >= 5) {
+  if (kimiHistoryLength.value >= 5 && botSlug.value === import.meta.env.VITE_APP_KIMI_ROBOT_SLUG) {
     showKimi.value = true
     return
   }
