@@ -193,7 +193,7 @@ import {
   SymChatDomainDetail,
   SymChatToken
 } from '@/constant/chat'
-import { CHATO_BAIXING_APP_ID } from '@/constant/common'
+import { CHATO_BAIXING_APP_ID, KIMI_ROBOT_SLUG } from '@/constant/common'
 import { DebugDomainSymbol, MidJourneyDomainSlug } from '@/constant/domain'
 import { PaidCommercialTypes } from '@/constant/space'
 import { XSSOptions } from '@/constant/xss'
@@ -650,7 +650,6 @@ const getHistoryChat = async (scrollBottomTag = true) => {
     // 放到 nextTick 更新：为了不影响正常发送消息滚动到底部的控制
     nextTick(() => {
       scrollBottom.value = true
-      kimiHistoryLength.value = history.value.length
     })
 
     return list
@@ -719,7 +718,7 @@ const submit = async (str = '') => {
   question.value = text
 
   // kimi
-  if (kimiHistoryLength.value >= 5 && botSlug.value === import.meta.env.VITE_APP_KIMI_ROBOT_SLUG) {
+  if (kimiHistoryLength.value >= 2 && KIMI_ROBOT_SLUG.includes(botSlug.value)) {
     showKimi.value = true
     return
   }
@@ -965,12 +964,6 @@ const generateMessage = async (data, key) => {
       domainSlug: botSlug.value,
       token: chatToken.value
     }))
-
-  nextTick(() => {
-    if (isFinalStatus) {
-      kimiHistoryLength.value = history.value.length
-    }
-  })
 }
 
 // 特殊处理：继续
@@ -1320,8 +1313,9 @@ watch(refChatHistory, (v) => {
 
 watch(
   history,
-  () => {
+  (v) => {
     scrollBottom.value && scrollChatHistory()
+    kimiHistoryLength.value = v.length
   },
   { deep: true }
 )

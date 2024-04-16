@@ -10,7 +10,7 @@ export const useKimiStore = defineStore('kimi', () => {
   watch(
     kimiHistoryLength,
     (v) => {
-      if (v >= 5) {
+      if (v >= 2) {
         showKimi.value = true
       }
     },
