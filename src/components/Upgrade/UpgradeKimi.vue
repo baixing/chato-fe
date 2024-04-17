@@ -64,9 +64,10 @@ import { useStorage } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
 
-defineProps<{ slug: string }>()
+const props = defineProps<{ slug: string }>()
 
 const route = useRoute()
+const keyword = route.query.keyword as string
 const { clickId } = useClickId(route)
 const { bdvid } = useBaidu(route)
 const kimiStore = useKimiStore()
@@ -90,6 +91,8 @@ const onHandleRouterKimi = () => {
   if (bdvid.value && !baiduAPI.value) {
     baiduCallbackAPI(bdvid.value, () => (baiduAPI.value = true))
   }
-  window.location.href = `http://kimi.moonshot.cn/_prefill_chat?send_immediately=true&prefill_prompt=${question.value}&utm_campaign=TR_cAOfw0mv&utm_source=${source}&utm_medium=link&utm_campaign=kimi小助手`
+  window.location.href = `http://kimi.moonshot.cn/?Campaign_group_id=baixing&utm_source=Chat&utm_campaign=baixing_kimi&utm_content=${
+    KIMI_MODAL_TITLE[props.slug]
+  }`
 }
 </script>
