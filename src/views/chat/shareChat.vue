@@ -23,7 +23,8 @@
     hidden-batch
     @closeDialogVisble="() => (dialogVisibleQa = false)"
   />
-  <UpgradeKimi v-if="isKimiRobot" :slug="currentSlug" />
+  <UpgradeKimi v-if="isKimiRobot && isRedirectKimi" :slug="currentSlug" />
+  <UpgradeKimi2 v-if="isKimiRobot && !isRedirectKimi" :slug="currentSlug" />
 </template>
 
 <script setup lang="ts">
@@ -32,6 +33,7 @@ import DocSourceDrawer from '@/components/Chat/ChatDocSourceDrawer.vue'
 import Chat from '@/components/Chat/index.vue'
 import EnterQa from '@/components/EnterAnswer/EnterQa.vue'
 import UpgradeKimi from '@/components/Upgrade/UpgradeKimi.vue'
+import UpgradeKimi2 from '@/components/Upgrade/UpgradeKimi2.vue'
 import { useSource } from '@/composables/useSource'
 import { currentEnvConfig } from '@/config'
 import { CHATO_SOURCE_APPLET, KIMI_ROBOT_SLUG, USER_ROLES } from '@/constant/common'
@@ -74,6 +76,11 @@ const defaultForm = reactive({
 })
 const isInApplet = computed(() => source.value === CHATO_SOURCE_APPLET) // 判断是否在小程序环境
 const isKimiRobot = computed(() => KIMI_ROBOT_SLUG.includes(currentSlug.value))
+// 按50%的概率决定是否直接跳转kimi
+const isRedirectKimi = computed(() => {
+  const random = Math.random()
+  return random < 0.5
+})
 
 const correctAnswer = (e) => {
   defaultForm.title = e.question

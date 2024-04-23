@@ -91,7 +91,7 @@ const onHandleRouterKimi = () => {
   if (bdvid.value && !baiduAPI.value) {
     baiduCallbackAPI(bdvid.value, () => (baiduAPI.value = true))
   }
-  window.location.href = `http://kimi.moonshot.cn/?Campaign_group_id=baixing&prefill_prompt=hello&utm_source=Chat&utm_campaign=baixing_kimi&utm_content=${
+  window.location.href = `http://kimi.moonshot.cn/?tr_param1=aiwriting&tr_param2=oldpage&Campaign_group_id=baixing&prefill_prompt=hello&utm_source=Chat&utm_campaign=baixing_kimi&utm_content=${
     KIMI_MODAL_TITLE[props.slug]
   }`
 }
