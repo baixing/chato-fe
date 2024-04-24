@@ -57,7 +57,7 @@
 import Modal from '@/components/Modal/index.vue'
 import useBaidu from '@/composables/useBaidu'
 import useClickId from '@/composables/useDouyin'
-import { KIMI_MODAL_TITLE } from '@/constant/common'
+import { KIMI_MODAL_TITLE, KIMI_TR_PARAM1 } from '@/constant/common'
 import { useKimiStore } from '@/stores/kimi'
 import { baiduCallbackAPI, douYinCallbackAPI } from '@/utils/callback'
 import { useStorage } from '@vueuse/core'
@@ -91,7 +91,9 @@ const onHandleRouterKimi = () => {
   if (bdvid.value && !baiduAPI.value) {
     baiduCallbackAPI(bdvid.value, () => (baiduAPI.value = true))
   }
-  window.location.href = `http://kimi.moonshot.cn/?tr_param1=aiwriting&tr_param2=oldpage&Campaign_group_id=baixing&prefill_prompt=hello&utm_source=Chat&utm_campaign=baixing_kimi&utm_content=${
+  window.location.href = `http://kimi.moonshot.cn/?tr_param1=${
+    KIMI_TR_PARAM1[props.slug]
+  }&tr_param2=oldpage&Campaign_group_id=baixing&prefill_prompt=hello&utm_source=Chat&utm_campaign=baixing_kimi&utm_content=${
     KIMI_MODAL_TITLE[props.slug]
   }`
 }

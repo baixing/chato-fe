@@ -252,12 +252,22 @@ export const KIMI_ROBOT_SLUG = [
   'djp1637wpl5mo8e9',
   'dlj4z523zdl7g031',
   '21q4l51gwkw5nxom',
-  '8ojdg7gpyez7e236'
+  '8ojdg7gpyez7e236',
+  'kv9ez5yjexp5l3m4'
 ]
 
 export const KIMI_MODAL_TITLE = {
   '21q4l51gwkw5nxom': '到kimi，体验更多AI智能写作场景',
   '8ojdg7gpyez7e236': '到kimi，体验更多AI文案创作场景',
+  kv9ez5yjexp5l3m4: '到kimi，体验更多AI智能写作场景',
   djp1637wpl5mo8e9: '到kimi，体验更多场景',
   dlj4z523zdl7g031: '到kimi，体验更多场景'
+}
+
+export const KIMI_TR_PARAM1 = {
+  '21q4l51gwkw5nxom': 'aiWriting',
+  '8ojdg7gpyez7e236': 'aiWriting',
+  kv9ez5yjexp5l3m4: 'readingReaction',
+  djp1637wpl5mo8e9: 'aiWriting',
+  dlj4z523zdl7g031: 'aiWriting'
 }
