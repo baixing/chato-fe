@@ -40,11 +40,13 @@ import { CHATO_SOURCE_APPLET, USER_ROLES } from '@/constant/common'
 import { ETerminal } from '@/enum/common'
 import { EDocumentTabType } from '@/enum/knowledge'
 import router from '@/router'
+import { useAuthStore } from '@/stores/auth'
 import { useBase } from '@/stores/base'
 import { cuserStore } from '@/stores/cuser'
 import { getMarkDownUrl, replaceMarkdownUrl } from '@/utils/help'
 import { removewRegReplaceA } from '@/utils/reg'
 import * as url from '@/utils/url'
+import { storeToRefs } from 'pinia'
 import { computed, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
@@ -60,6 +62,8 @@ const showDrawer = (question_id, slug) => {
 const route = useRoute()
 const base = useBase()
 const { source } = useSource()
+const authStoreI = useAuthStore()
+const { uid } = storeToRefs(authStoreI)
 const { checkUserLoginStatus, getCuserOrderInfo } = cuserStore()
 const domainId = route.params.botId as string
 const currentSlug = ref<string>(import.meta.env.VITE_APP_ZHINENGHAO_ROBOT)
@@ -110,6 +114,13 @@ const onCheckExsitZhinenghao = async () => {
   }
 }
 
+const initUID = () => {
+  if (!uid.value.includes(serachName.value)) {
+    authStoreI.setToken(uid.value + serachName.value)
+  }
+}
+
+initUID()
 // 校验是否存在智能号
 onCheckExsitZhinenghao()
 // 校验C端登录
