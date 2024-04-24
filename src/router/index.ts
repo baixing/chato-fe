@@ -84,6 +84,9 @@ export const RoutesMap = {
     center: 'aipluginCenter',
     detail: 'aipluginDetail',
     yz: 'Youzan'
+  },
+  zhinenghao: {
+    chat: 'chatZhinenghao'
   }
 }
 
@@ -185,6 +188,15 @@ const asyncRoutes = [
         component: () => import('@/views/chat/shareChat.vue')
       }
     ]
+  }
+]
+
+// 智能号临时机器人
+const znhRoutes = [
+  {
+    name: RoutesMap.zhinenghao.chat,
+    path: '/w',
+    component: () => import('@/views/chat/zhinenghaoChat.vue')
   }
 ]
 
@@ -514,7 +526,8 @@ const router = createRouter({
     ...namespaceSwitch,
     ...finalRoutes,
     ...guideRoutes,
-    ...payRedirect
+    ...payRedirect,
+    ...znhRoutes
   ] as RouteRecordRaw[]
 })
 

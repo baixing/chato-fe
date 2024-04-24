@@ -270,6 +270,9 @@ interface Props {
   isResource?: boolean
   needAiGenerate?: boolean
   brandShow?: boolean
+  isZhinenghao?: boolean
+  prompt?: string
+  serachName?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -280,7 +283,10 @@ const props = withDefaults(defineProps<Props>(), {
   avatarShow: true,
   isResource: false,
   needAiGenerate: false,
-  brandShow: true
+  brandShow: true,
+  isZhinenghao: false,
+  prompt: '',
+  serachName: ''
 })
 
 const debugDomain = inject<IDomainInfo>(DebugDomainSymbol, null)
@@ -303,11 +309,16 @@ const botSlug = computed(() => {
   if (debugDomain?.slug) {
     return debugDomain.slug
   }
-  return props.internalProps
-    ? props.isreadRouteParam
-      ? (route.params.botSlug as string)
-      : props.bSlug
-    : (route.params.botSlug as string)
+
+  if (props.internalProps) {
+    return props.isreadRouteParam ? (route.params.botSlug as string) : props.bSlug
+  }
+
+  if (props.isZhinenghao) {
+    return import.meta.env.VITE_APP_ZHINENGHAO_ROBOT
+  }
+
+  return route.params.botSlug as string
 })
 const isInternal = props.internalProps || false // 是否处于 Chato 内部环境
 const query_p = (route.query.p as string) || ''
@@ -362,10 +373,15 @@ const { socketResultMap } = storeToRefs(socketStore)
 const kimiStore = useKimiStore()
 const { question, kimiHistoryLength, showKimi } = storeToRefs(kimiStore)
 
-const link = computed(
-  () =>
-    `${window.location.origin}/${detail.value.org.id === 208 ? 'bot' : 'b'}/${detail.value.slug}`
-)
+const link = computed(() => {
+  if (props.isZhinenghao) {
+    return location.href
+  } else {
+    return `${window.location.origin}/${detail.value.org.id === 208 ? 'bot' : 'b'}/${
+      detail.value.slug
+    }`
+  }
+})
 
 const copyText = (str: string) => {
   scanCodeSuccessRBI()
@@ -543,6 +559,11 @@ function getBotInfo() {
   getDomainDetailPublic(botSlug.value)
     .then((res) => {
       detail.value = res.data?.data || {}
+      if (props.isZhinenghao && props.prompt && props.serachName) {
+        detail.value.system_prompt = props.prompt
+        detail.value.name = props.serachName
+        detail.value.welcome = `您好！我是${props.serachName}！`
+      }
       document.title = detail.value.name
       if (
         [RoutesMap.chat.c, RoutesMap.chat.release].includes(route.name as string) &&
@@ -766,10 +787,18 @@ const needsSSEAudio = computed(
   () => EDomainConversationMode.audio === detail.value.conversation_mode
 )
 const chatCommonParams = computed<IChatCommonParams>(() => {
+  let type = 'vistor'
+  if (props.isZhinenghao && props.prompt) {
+    type = 'vistor'
+  }
+
+  if (isInternal) {
+    type = props.isreadRouteParam ? 'chat' : 'owner'
+  }
   return {
     domain_slug: detail.value.slug,
     token: chatToken.value,
-    visitor_type: isInternal ? (props.isreadRouteParam ? 'chat' : 'owner') : 'vistor'
+    visitor_type: type
   }
 })
 
@@ -795,7 +824,7 @@ const onTerminateRetry = async () => {
       text: content,
       cutoff_continue_qid: lastAnswer.questionId,
       ...chatCommonParams.value,
-      fake_domain: debugDomain || undefined,
+      fake_domain: debugDomain || { ...detail.value },
       msg_id: lastAnswer.msg_id
     }
 
@@ -872,7 +901,7 @@ async function sendMsgRequest(message) {
     source_id: sourceID.value,
     ...chatCommonParams.value,
     navit_msg_id: isMidJourneyDomain.value ? random(1000000, 9999999) : undefined,
-    fake_domain: debugDomain || undefined
+    fake_domain: debugDomain || { ...detail.value }
   }
   // if (params.source === 'chato_home' && abTestConfig.value[7] === '0') {
   //   params.type = 'flow'
