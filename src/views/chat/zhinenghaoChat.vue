@@ -116,7 +116,7 @@ const onCheckExsitZhinenghao = async () => {
 
 const initUID = () => {
   if (!uid.value.includes(serachName.value)) {
-    authStoreI.setToken(uid.value + serachName.value)
+    authStoreI.setUid(uid.value + serachName.value)
   }
 }
 
