@@ -23,8 +23,8 @@
     hidden-batch
     @closeDialogVisble="() => (dialogVisibleQa = false)"
   />
-  <UpgradeKimi v-if="isKimiRobot && isRedirectKimi" :slug="currentSlug" />
-  <UpgradeKimi2 v-if="isKimiRobot && !isRedirectKimi" :slug="currentSlug" />
+  <UpgradeKimi v-if="isKimiRobot && !isRedirectKimi" :slug="currentSlug" />
+  <UpgradeKimi2 v-if="isKimiRobot && isRedirectKimi" :slug="currentSlug" />
 </template>
 
 <script setup lang="ts">
@@ -76,10 +76,10 @@ const defaultForm = reactive({
 })
 const isInApplet = computed(() => source.value === CHATO_SOURCE_APPLET) // 判断是否在小程序环境
 const isKimiRobot = computed(() => KIMI_ROBOT_SLUG.includes(currentSlug.value))
-// 按99%的概率直接跳转kimi
+// 按0.1%的概率直接跳转kimi
 const isRedirectKimi = computed(() => {
   const random = Math.random()
-  return random < 0.01
+  return random > 0.999
 })
 
 const correctAnswer = (e) => {
