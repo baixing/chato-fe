@@ -251,7 +251,6 @@ import {
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import { BlindWatermark, Watermark } from 'watermark-js-plus'
-import wx from 'weixin-js-sdk'
 import xss from 'xss'
 import ChatFooter from './ChatFooter.vue'
 import ChatMessageMore from './ChatMessageMore.vue'
@@ -546,13 +545,14 @@ async function init() {
   }
   await getHistoryChat()
   watermarkFunc()
-  if (currentEnvIsWechat && !!detail.value.customer_limit.payment_limit_switch) {
-    wx.miniProgram.getEnv(function (res) {
-      if (!res.miniprogram && location.host.includes('chato.cn')) {
-        onWeixinH5DefaultLogin()
-      }
-    })
-  }
+  // 暂时下掉微信静默登录
+  // if (currentEnvIsWechat && !!detail.value.customer_limit.payment_limit_switch) {
+  //   wx.miniProgram.getEnv(function (res) {
+  //     if (!res.miniprogram && location.host.includes('chato.cn')) {
+  //       onWeixinH5DefaultLogin()
+  //     }
+  //   })
+  // }
 }
 
 function getBotInfo() {
