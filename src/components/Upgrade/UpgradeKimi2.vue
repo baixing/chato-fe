@@ -23,7 +23,7 @@ const redirectToKimi = () => {
     baiduCallbackAPI(bdvid.value, () => (baiduAPI.value = true))
   }
   // 你希望用户跳转去的外部链接
-  const externalUrl = `http://kimi.moonshot.cn/?tr_param1=${
+  const externalUrl = `http://kimi.moonshot.cn/?send_immediately=true&tr_param1=${
     KIMI_TR_PARAM1[props.slug]
   }&tr_param2=newpage&Campaign_group_id=baixing&prefill_prompt=hello&utm_source=Chat&utm_campaign=baixing_kimi&utm_content=${
     KIMI_MODAL_TITLE[props.slug]
