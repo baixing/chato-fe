@@ -133,10 +133,21 @@
           </el-form>
         </el-tab-pane>
         <el-tab-pane :label="$t('公众号抓取')" name="input-public">
-          <p class="description">
-            {{ $t('避免未经授权抓取他人公众号原创文章的侵权行为') }}
-          </p>
-          <el-form
+          <div
+            v-if="
+              [ESpaceCommercialType.free, ESpaceCommercialType.freeFirstExp].includes(
+                currentRights.type
+              )
+            "
+          >
+            <p class="mb-2 text-center">请联系产品顾问升级版本</p>
+            <img class="w-full mt-6 mx-auto" src="@/assets/img/lock-crcode.png" />
+          </div>
+          <div v-else>
+            <p class="m-5 text-center">请联系训练师使用</p>
+            <!-- <img class="w-full mt-6 mx-auto" src="@/assets/img/lock-crcode.png" /> -->
+          </div>
+          <!-- <el-form
             ref="spliderPublic"
             size="large"
             :disabled="inputTextForm.status === 'preview'"
@@ -211,7 +222,7 @@
                 >
               </el-select>
             </el-form-item>
-          </el-form>
+          </el-form> -->
         </el-tab-pane>
       </el-tabs>
 
@@ -261,10 +272,11 @@ import useSpaceRights from '@/composables/useSpaceRights'
 import { UPLOAD_FILE_TYPES, UPLOAD_FILE_VIDEO_AUDIO_TYPES } from '@/constant/common'
 import { PaidCommercialTypes } from '@/constant/space'
 import { EDocumentTabType } from '@/enum/knowledge'
-import { ESpaceRightsType } from '@/enum/space'
+import { ESpaceCommercialType } from '@/enum/space'
 import type { IDemonstration } from '@/interface/domain'
 import type { IDocumentForm, IWXPublic } from '@/interface/knowledge'
 import { useAuthStore } from '@/stores/auth'
+import { useSpaceStore } from '@/stores/space'
 import { getFileByUrl } from '@/utils/cos'
 import { $notnull } from '@/utils/help'
 import { getStringWidth } from '@/utils/string'
@@ -304,6 +316,8 @@ const props = withDefaults(defineProps<Props>(), {
   qtyLimit: 20,
   mediaLimit: 25
 })
+const spaceStoreI = useSpaceStore()
+const { currentRights } = storeToRefs(spaceStoreI)
 const demonstrationData = reactive<Partial<IDemonstration>>({})
 const { isAllowedCommercialType, checkRightsTypeNeedUpgrade } = useSpaceRights()
 const needUpgrade = isAllowedCommercialType(PaidCommercialTypes)
