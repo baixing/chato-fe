@@ -217,7 +217,6 @@
 </template>
 <script setup lang="ts">
 import baixingAI from '@/assets/img/home/baixing-ai.png'
-import homeInvestJoin from '@/assets/img/home/home-invest-join.jpg'
 import nashCrcode from '@/assets/img/nash-crcode.jpeg'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import useGlobalProperties from '@/composables/useGlobalProperties'
@@ -362,8 +361,8 @@ const menuRouteList = [
 
 const footerQrCode = [
   { label: '百姓AI', desc: '掌握AI前沿资讯', img: baixingAI },
-  { label: '关注纳什智能', desc: '先人一步运用AI', img: nashCrcode },
-  { label: '渠道负责人', desc: '李经理', img: homeInvestJoin }
+  { label: '关注纳什智能', desc: '先人一步运用AI', img: nashCrcode }
+  // { label: '渠道负责人', desc: '李经理', img: homeInvestJoin }
 ]
 
 const showFooterName = [RoutesMap.home.index, RoutesMap.home.case]
