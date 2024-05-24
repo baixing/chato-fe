@@ -80,7 +80,7 @@ const defaultCardList = {
   group: {
     bg: '#F3C137',
     icon: 'chat-bubble',
-    title: t('群聊数'),
+    title: t('微信托管数'),
     desc: t('已创建数/总数'),
     consume: 0,
     total: 0

@@ -771,7 +771,7 @@
   "已训练/总数": "Trained/Total",
   "电力值": "Power value",
   "已使用量/总量": "Used amount/Total amount",
-  "群聊数": "Number of group chats",
+  "群聊托管数": "Number of group chats",
   "已创建数/总数": "Created number/Total number",
   "空间成员数": "Space members number",
   "添加到空间下的成员，可共同训练/使用机器人": "Members added to the space can train/use robots together.",
