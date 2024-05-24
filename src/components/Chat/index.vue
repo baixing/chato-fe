@@ -722,7 +722,10 @@ const beforeSubmit = async () => {
         time: dayjs().format('YYYY-MM-DD HH:mm:ss')
       }
     })
-    router.replace({ name: RoutesMap.auth.login, query: { redirect: `/bot/${botSlug.value}` } })
+    router.replace({
+      name: RoutesMap.auth.login,
+      query: { redirect: `/bot/${botSlug.value}` }
+    })
     return false
   }
   // C 端对话额度限制，B 端对话额度限制走流式
@@ -1429,17 +1432,21 @@ watch(
     if (!v) {
       return
     }
-
-    detail.value = { ...detail.value, ...v, desc_show: 1 }
+    detail.value = {
+      ...detail.value,
+      ...v,
+      desc_show: 1,
+      welcome: v.welcome + '\n' + v.example || ''
+    }
 
     if (!v.show_recommend_question && recommendQuestions.value.length) {
       recommendQuestions.value = []
     }
 
-    if (v.welcome) {
+    if (detail.value.welcome) {
       const hisWelcomeItem = history.value.find((item) => item.isWelcome)
       if (hisWelcomeItem) {
-        hisWelcomeItem.content = regReplaceA(v.welcome, {
+        hisWelcomeItem.content = regReplaceA(detail.value.welcome, {
           class: 'welcome-a',
           id: 'Chato_chat_label_click'
         })

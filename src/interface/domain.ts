@@ -110,6 +110,7 @@ export interface IDomainInfo {
     publish: 0 | number,
     receiveMessages: 0 | number
   ]
+  example?: string
 }
 
 export interface IDomainShortcut {

@@ -1,13 +1,17 @@
 export const enum EDomainType {
   document = 1,
-  role = 2
+  role = 2,
+  wenxin = 6
 }
 
 export const enum EDomainStatus {
   able = 0, // 正常
   disable = 1, // 被禁用
   temporaryDraft = 2, // 临时草稿
-  draft = 3 // 草稿
+  draft = 3, // 草稿
+  processing = 4, // 审核中
+  processFail = 5, // 审核失败
+  processSuccess = 6 // 审核成功
 }
 
 export enum EBrandDomainStatusType {

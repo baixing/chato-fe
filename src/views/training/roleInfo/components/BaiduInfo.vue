@@ -1,0 +1,359 @@
+<template>
+  <div class="chato-form">
+    <div class="chato-form-item flex gap-4 items-center w-full">
+      <AvatarModal v-model:img-url="currentDomain.avatar" :name="currentDomain.name" />
+      <HansInputLimit
+        v-model:value="currentDomain.name"
+        type="text"
+        :limit="currentDomainHansLimit.name"
+        :disabled="
+          AIGenerateInputDisabled.system_prompt &&
+          AIGenerateInputDisabled.desc &&
+          AIGenerateInputDisabled.welcome
+        "
+        class="flex-1"
+      />
+    </div>
+    <div class="chato-form-item">
+      <div class="chato-form-label flex items-center justify-between">
+        <SLTitle tips="基于智能体当前名字和角色设定生成">{{ $t('角色简介') }}</SLTitle>
+        <AIGenerateBtn
+          v-model:generateStr="currentDomain.desc"
+          :role="currentDomain.name"
+          :system-prompt="currentDomain.system_prompt"
+          :type="EDomainAIGenerateType.intro"
+          :disabled="
+            !currentDomain.system_prompt || !currentDomain.name || AIGenerateInputDisabled.desc
+          "
+          disabled-tip="请填写名字和角色设定后生成"
+          @start="AIGenerateInputDisabled.desc = true"
+          @end="AIGenerateInputDisabled.desc = false"
+        />
+      </div>
+      <HansInputLimit
+        v-model:value="currentDomain.desc"
+        type="textarea"
+        :rows="3"
+        size="large"
+        :limit="currentDomainHansLimit.desc"
+        :disabled="AIGenerateInputDisabled.desc"
+        class="w-full"
+      />
+    </div>
+    <div class="chato-form-item">
+      <div class="chato-form-label flex items-center justify-between">
+        <SLTitle>{{ $t('角色设定') }}</SLTitle>
+        <AIGenerateBtn
+          v-model:generateStr="currentDomain.system_prompt"
+          :role="currentDomain.name"
+          :system-prompt="currentDomain.system_prompt"
+          :type="EDomainAIGenerateType.role"
+          :disabled="!currentDomain.name || AIGenerateInputDisabled.system_prompt"
+          disabled-tip="请填写名字后生成"
+          @start="AIGenerateInputDisabled.system_prompt = true"
+          @end="AIGenerateInputDisabled.system_prompt = false"
+        />
+      </div>
+      <HansInputLimit
+        v-model:value="currentDomain.system_prompt"
+        type="textarea"
+        :rows="10"
+        size="large"
+        :limit="currentDomainHansLimit.system_prompt"
+        :disabled="AIGenerateInputDisabled.system_prompt"
+        class="w-full"
+      />
+    </div>
+    <div v-if="currentDomain.status !== 0" class="chato-form-item">
+      <SLTitle class="chato-form-label">{{ $t('知识') }}</SLTitle>
+      <div class="w-full">
+        <div class="flex gap-4 mb-3">
+          <el-button plain @click="DOCModalVisible = true">
+            <template #icon><svg-icon name="document" svg-class="w-4 h-4" /></template>
+            {{ $t('录入文档') }}
+          </el-button>
+          <el-button plain @click="onOpenQAModal">
+            <template #icon><svg-icon name="qa" svg-class="w-4 h-4" /></template>
+            {{ $t('录入问答') }}
+          </el-button>
+        </div>
+        <div v-loading="uploadFilesListLoading" class="max-h-[240px] overflow-y-auto space-y-3">
+          <p
+            v-for="item in uploadFilesList"
+            :key="item.id"
+            class="flex text-[#606266] text-sm items-center gap-2"
+          >
+            <svg-icon name="document" svg-class="w-4 h-4" />
+            <span
+              class="flex-1 truncate transition-colors cursor-pointer hover:text-[#7C5CFC]"
+              @click="onPreviewFile(item)"
+            >
+              {{ item.title }}
+            </span>
+            <span class="text-[#7C5CFC]">{{ $t(getFileStatusName(item.status)) }}</span>
+            <el-button link :icon="Close" @click="onDeleteFile(item.id)" />
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="chato-form-item">
+      <div class="chato-form-label flex items-center justify-between">
+        <SLTitle tips="该描述将在欢迎气泡内作为智能体开场白展示给用户">{{ t('开场白') }}</SLTitle>
+        <AIGenerateBtn
+          v-model:generateStr="currentDomain.welcome"
+          :role="currentDomain.name"
+          :system-prompt="currentDomain.system_prompt"
+          :type="EDomainAIGenerateType.welcome"
+          :disabled="
+            !currentDomain.system_prompt || !currentDomain.name || AIGenerateInputDisabled.welcome
+          "
+          disabled-tip="请填写名字和角色设定后生成"
+          @start="AIGenerateInputDisabled.welcome = true"
+          @end="AIGenerateInputDisabled.welcome = false"
+        />
+      </div>
+      <HansInputLimit
+        v-model:value="currentDomain.welcome"
+        type="textarea"
+        :rows="6"
+        size="large"
+        :limit="currentDomainHansLimit.welcome"
+        :disabled="AIGenerateInputDisabled.welcome"
+        class="w-full"
+      />
+    </div>
+
+    <div class="chato-form-item">
+      <div class="chato-form-label flex items-center justify-between">
+        <SLTitle tips="为用户提供推荐问题，引导用户提问，示例将展示在智能体欢迎气泡内">{{
+          t('提问示例')
+        }}</SLTitle>
+      </div>
+      <p class="text-[#9DA3AF] text-xs mt-4 mb-2">
+        {{ $t('添加双井号可添加提问示例，例如：#帮我写一则关于xxx的文案#') }}
+      </p>
+      <p class="text-[#9DA3AF] text-xs mb-4">多个提问示例请换行添加</p>
+      <HansInputLimit
+        v-model:value="currentDomain.example"
+        type="textarea"
+        :rows="6"
+        size="large"
+        class="w-full"
+      />
+    </div>
+  </div>
+
+  <EnterQa
+    :active-names="EDocumentTabType.inputText"
+    :default-form="QAFormState"
+    :domain-slug="currentDomain.slug"
+    :size-limit="30"
+    :qty-limit="qtyLimit"
+    :api-upload="apiUploadPath.qa"
+    :dialog-visible="QAModalVisible"
+    @close-dialog-visble="onCloseEnterModal"
+  />
+  <EnterDoc
+    :domain-id="(currentDomain.id as unknown as string)"
+    :domain-name="currentDomain.name"
+    :defaultForm="DOCFormState"
+    :sizeLimit="30"
+    :qtyLimit="qtyLimit"
+    :apiUpload="apiUploadPath.doc"
+    :dialogVisible="DOCModalVisible"
+    @setSuccess="onCloseEnterModal"
+    @closeDialogVisble="onCloseEnterModal"
+  />
+  <Modal
+    v-model:visible="visible"
+    :width="300"
+    class="!p-0 flex justify-center !pb-4"
+    :slotHeader="false"
+    :footer="false"
+  >
+    <div class="h-[150px] flex justify-center">
+      <img :src="IconReward" class="w-[200px] h-full object-cover" />
+    </div>
+    <div class="text-center mt-4 text-[#3D3D3D] text-base font-medium mb-3">
+      {{ $t('恭喜你，完成') }} <span class="text-[#7C5CFC]">{{ $t('上传知识') }}</span>
+      {{ $t('任务') }}
+    </div>
+  </Modal>
+  <BaiduProcess :status="currentDomain.status" />
+</template>
+
+<script setup lang="ts">
+import { updateDomain } from '@/api/domain'
+import { deleteFile } from '@/api/file'
+import { getCommonGraph } from '@/api/graph'
+import IconReward from '@/assets/img/Icon-Reward.png'
+import AIGenerateBtn from '@/components/AIGenerateBtn/index.vue'
+import EnterDoc from '@/components/EnterAnswer/EnterDoc.vue'
+import EnterQa from '@/components/EnterAnswer/EnterQa.vue'
+import HansInputLimit from '@/components/Input/HansInputLimit.vue'
+import SLTitle from '@/components/Title/SLTitle.vue'
+import useGlobalProperties from '@/composables/useGlobalProperties'
+import { currentEnvConfig } from '@/config'
+import { USER_ROLES } from '@/constant/common'
+import { DomainEditSymbol, DomainHansLimitSymbol } from '@/constant/domain'
+import { KnowledgeLearningFinalStatus } from '@/constant/knowledge'
+import { EDomainAIGenerateType } from '@/enum/domain'
+import { EDocumentOperateType, EDocumentTabType } from '@/enum/knowledge'
+import type { IDomainInfo } from '@/interface/domain'
+import type { IDocumentForm, IDocumentList, IQAForm } from '@/interface/knowledge'
+import { useBase } from '@/stores/base'
+import { getFileStatusName } from '@/utils/formatter'
+import { openPreviewUrl } from '@/utils/help'
+import { Close } from '@element-plus/icons-vue'
+import dayjs from 'dayjs'
+import { ElMessageBox, ElNotification } from 'element-plus'
+import { computed, inject, onBeforeUnmount, reactive, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import BaiduProcess from './BaiduProcess.vue'
+
+const currentDomain = inject<Partial<IDomainInfo>>(DomainEditSymbol)
+const currentDomainHansLimit = inject<Record<string, string>>(DomainHansLimitSymbol)
+const { $sensors } = useGlobalProperties()
+const defaultAIGenerateInputDisabled = {
+  desc: false,
+  system_prompt: false,
+  welcome: false
+}
+let AIGenerateInputDisabled = reactive({ ...defaultAIGenerateInputDisabled })
+
+const { t } = useI18n()
+const baseStoreI = useBase()
+
+// ---- 文档 & 问答 ----
+const qtyLimit = baseStoreI.userInfo.role === USER_ROLES.SUPERMAN ? 1000 : 20 // 同时上传的文件数量限制
+const apiUploadPath = computed(() => {
+  const uri = `${currentEnvConfig.uploadBaseURL}/chato/api/domains/${currentDomain.id}/files/upload`
+  return {
+    qa: `${uri}/qa`,
+    doc: `${uri}/document`
+  }
+})
+const defaultQAFormState: IQAForm = {
+  title: '',
+  question_id: 0,
+  content: '',
+  images: [],
+  modalType: EDocumentOperateType.create
+}
+const DOCFormState = ref<IDocumentForm>({})
+let QAFormState = reactive<IQAForm>({ ...defaultQAFormState })
+
+const visible = ref(false)
+const QAModalVisible = ref(false)
+const DOCModalVisible = ref(false)
+const uploadFilesListLoading = ref(false)
+const uploadFilesList = ref<IDocumentList[]>([])
+
+const initFilesList = async () => {
+  try {
+    uploadFilesListLoading.value = true
+    const {
+      data: { data }
+    } = await getCommonGraph<IDocumentList[]>(
+      `chato_domains/${currentDomain.id.toString()}/files`,
+      {
+        page: 1,
+        size: 1000
+      }
+    )
+    //  getFilesByDomainId(currentDomain.id.toString(), { page: 1, page_size: 1000 })
+    uploadFilesList.value = data
+    if (uploadFilesList.value.length > 0 && currentDomain.task_progress[1] === 0) {
+      currentDomain.task_progress[1] = 40
+      await updateDomain(currentDomain.id, {
+        task_progress: currentDomain.task_progress
+      })
+      setTimeout(() => {
+        visible.value = false
+      }, 6000)
+      setTimeout(() => {
+        sensorsTaskProgress()
+        visible.value = true
+      }, 2000)
+    }
+  } catch (e) {
+  } finally {
+    uploadFilesListLoading.value = false
+  }
+}
+
+const sensorsTaskProgress = () => {
+  $sensors?.track('mission_completed', {
+    name: t('任务完成'),
+    type: 'mission_completed',
+    data: {
+      task_progress: 1,
+      time: dayjs().format('YYYY-MM-DD HH:mm:ss')
+    }
+  })
+}
+
+const onOpenQAModal = () => {
+  QAFormState = Object.assign(QAFormState, { ...defaultQAFormState })
+  QAModalVisible.value = true
+}
+
+let refreshFilesIntervaler = null
+watch(
+  uploadFilesList,
+  (v) => {
+    if (!v.length && refreshFilesIntervaler) {
+      clearInterval(refreshFilesIntervaler)
+    } else {
+      const needsRefresh = v.some((item) => !KnowledgeLearningFinalStatus.includes(item.status))
+
+      if (needsRefresh && !refreshFilesIntervaler) {
+        refreshFilesIntervaler = setInterval(() => initFilesList(), 10000)
+      }
+
+      if (!needsRefresh) {
+        clearInterval(refreshFilesIntervaler)
+      }
+    }
+  },
+  { immediate: true }
+)
+
+const onDeleteFile = async (fileId: number) => {
+  try {
+    await ElMessageBox.confirm(t('删除后将影响机器人的训练结果，不可恢复！'), t('确认删除'), {
+      confirmButtonText: t('确认'),
+      cancelButtonText: t('取消'),
+      type: 'warning'
+    })
+    await deleteFile(fileId)
+    ElNotification.success(t('删除成功'))
+    initFilesList()
+  } catch (e) {}
+}
+
+const onCloseEnterModal = () => {
+  QAModalVisible.value = false
+  DOCModalVisible.value = false
+  initFilesList()
+}
+
+const onPreviewFile = (file: IDocumentList) => {
+  if (file.type === 'text') {
+    QAFormState = Object.assign(QAFormState, {
+      title: file.title,
+      content: file.content_html,
+      id: file.id,
+      images: file.images,
+      modalType: EDocumentOperateType.preview
+    })
+    QAModalVisible.value = true
+  } else {
+    openPreviewUrl(file.raw_file_url)
+  }
+}
+
+onBeforeUnmount(() => {
+  clearInterval(refreshFilesIntervaler)
+})
+</script>

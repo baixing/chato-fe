@@ -23,5 +23,6 @@
     "editor.defaultFormatter": "DotJoshJohnson.xml"
   },
   "i18n-ally.localesPaths": ["locales", "src/locales", "src/locales/lang"],
-  "cSpell.words": ["youzan"]
+  "cSpell.words": ["youzan"],
+  "vue3snippets.enable-compile-vue-file-on-did-save-code": false
 }
