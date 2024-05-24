@@ -17,6 +17,24 @@ export function regReplaceA(str: string, properties?: Record<string, string | nu
   })
 }
 
+export function regExtractContent(input) {
+  // 正则表达式，匹配以'#'开头并以'#'结尾的内容，包括它们之间的所有字符
+  return input.replace(/#[^#]+#/g, '') || ''
+}
+
+export function regExtractExample(input) {
+  // 正则表达式，匹配以'#'开头并以'#'结尾的内容，包括它们之间的所有字符
+  const regex = /#([^#]+)#/g
+  // 使用matchAll方法获取所有匹配项
+  const matches = input.matchAll(regex)
+  // 提取匹配项中的捕获组内容，并拼接成字符串返回
+  return (
+    Array.from(matches)
+      .map((match) => match[0])
+      .join('\n') || ''
+  )
+}
+
 export function removewRegReplaceA(str: string) {
   return str.replace(/<a\b[^>]*>(.*?)继续<\/a>/g, '')
 }

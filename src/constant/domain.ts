@@ -1,4 +1,8 @@
-import { EDomainConversationMode, EDomainConversationModeArousalMethod } from '@/enum/domain'
+import {
+  EDomainConversationMode,
+  EDomainConversationModeArousalMethod,
+  EDomainStatus
+} from '@/enum/domain'
 import type { IDomainInfo } from '@/interface/domain'
 import { RoutesMap } from '@/router'
 import type { InjectionKey } from 'vue'
@@ -107,3 +111,9 @@ export const DebugDomainSymbol = Symbol('temporary-debug-domain')
 export const DomainEditSymbol = Symbol('domain-edit')
 export const DomainHansLimitSymbol = Symbol('domain-hans-limit')
 export const DomainCreateSymbol = Symbol('domain-create') as InjectionKey<Partial<IDomainInfo>>
+
+export const processLimit = [
+  EDomainStatus.processing,
+  EDomainStatus.processFail,
+  EDomainStatus.processSuccess
+]

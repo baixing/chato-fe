@@ -9,7 +9,7 @@
           class="chato-card-tab w-full info-tab"
         >
           <el-tab-pane
-            v-for="item in tabComponents"
+            v-for="item in filteredTabComponents"
             :key="item.key"
             :name="item.key"
             :label="$t(item.title)"
@@ -23,8 +23,13 @@
         class="py-4 box-border flex justify-end items-center gap-4 information-padding"
         style="border-top: 1px solid #e4e7ed"
       >
-        <!-- <el-button plain @click="onCancel">{{ $t('不保存') }}</el-button> -->
-        <el-button type="primary" @click="onSave">{{ $t('保存设定') }}</el-button>
+        <el-popconfirm width="250" :title="saveConfirmText" @confirm="onSave">
+          <template #reference>
+            <el-button type="primary" :disabled="processLimit.includes(currentDomain.status)">{{
+              $t('保存设定')
+            }}</el-button>
+          </template>
+        </el-popconfirm>
       </div>
     </div>
     <DebugChat v-if="!isMobile" />
@@ -41,7 +46,8 @@
       <img :src="IconReward" class="w-[200px] h-full object-cover" />
     </div>
     <div class="text-center mt-4 text-[#3D3D3D] text-base font-medium mb-3">
-      {{ $t('恭喜你，完成') }} <span class="text-[#7C5CFC]">{{ $t('配置形象信息') }}</span>
+      {{ $t('恭喜你，完成') }}
+      <span class="text-[#7C5CFC]">{{ $t('配置形象信息') }}</span>
       {{ $t('任务') }}
     </div>
     <!-- <div class="text-[#596780] text-xs text-center">
@@ -83,11 +89,17 @@ import IconReward from '@/assets/img/Icon-Reward.png'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import useGlobalProperties from '@/composables/useGlobalProperties'
 import { SUPPORT_LLM_CONFIG } from '@/constant/common'
-import { DebugDomainSymbol, DomainEditSymbol, DomainHansLimitSymbol } from '@/constant/domain'
-import { EDomainStatus } from '@/enum/domain'
+import {
+  DebugDomainSymbol,
+  DomainEditSymbol,
+  DomainHansLimitSymbol,
+  processLimit
+} from '@/constant/domain'
+import { EDomainStatus, EDomainType } from '@/enum/domain'
 import type { IDomainInfo, IDomainLLMConfig } from '@/interface/domain'
 import { RoutesMap } from '@/router'
 import { useDomainStore } from '@/stores/domain'
+import { regExtractContent, regExtractExample } from '@/utils/reg'
 import { getStringWidth } from '@/utils/string'
 import dayjs from 'dayjs'
 import { ElLoading, ElMessage, ElMessageBox, ElNotification } from 'element-plus'
@@ -97,6 +109,7 @@ import { computed, onBeforeUnmount, onMounted, provide, reactive, ref, toRaw, wa
 import { useI18n } from 'vue-i18n'
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
 import AdvancedSetting from './components/AdvancedSetting.vue'
+import BaiduInfo from './components/BaiduInfo.vue'
 import BaseInfo from './components/BaseInfo.vue'
 import DebugChat from './components/DebugChat.vue'
 import InterfaceSetting from './components/InterfaceSetting.vue'
@@ -127,11 +140,46 @@ const activeTab = computed(() => (route.params?.type as string) || 'base')
 // 是否修改过
 const isModified = () => !isEqual(currentDomain, originalDomain)
 
+const saveConfirmText = computed(() =>
+  currentDomain.type === EDomainType.wenxin
+    ? '您确认要修改吗？'
+    : '请谨慎操作！修改资料可能会导致百度智能体审核不通过，'
+)
+
 const tabComponents = [
-  { key: 'base', title: '基础信息', component: BaseInfo },
-  { key: 'advanced', title: '高级设置', component: AdvancedSetting },
-  { key: 'interface', title: '界面设置', component: InterfaceSetting }
+  { key: 'base', title: '基础配置', component: BaseInfo, showWhenStatusZero: true },
+  {
+    key: 'advanced',
+    title: '高级设置',
+    component: AdvancedSetting,
+    showWhenStatusZero: false
+  },
+  {
+    key: 'interface',
+    title: '界面设置',
+    component: InterfaceSetting,
+    showWhenStatusZero: false
+  }
 ]
+
+// 计算属性，根据 currentDomain.status 过滤出需要显示的 tabs
+const filteredTabComponents = computed(() => {
+  if (currentDomain.type === EDomainType.wenxin) {
+    // 如果 currentDomain.status 等于 0，则只返回 showWhenStatusZero 为 true 的 tabs
+    const mapTabComponents = tabComponents.map((item) => {
+      if (item.key === 'base') {
+        item.component = BaiduInfo
+      }
+      return item
+    })
+
+    const filterTabComponents = mapTabComponents.filter((item) => item.showWhenStatusZero)
+
+    return filterTabComponents
+  }
+  // 否则返回所有 tabs
+  return tabComponents
+})
 
 const onClickTab = (v) => {
   router.push({ name: RoutesMap.tranning.roleInfo, params: { type: v } })
@@ -147,13 +195,21 @@ const beforeSaveCheck = () => {
   let msg = ''
 
   if (getStringWidth(currentDomain.name) > currentDomainHansLimit.name) {
-    msg = t('机器人名称不能超过 {limitNum} 字符', { limitNum: currentDomainHansLimit.name })
+    msg = t('机器人名称不能超过 {limitNum} 字符', {
+      limitNum: currentDomainHansLimit.name
+    })
   } else if (getStringWidth(currentDomain.system_prompt) > currentDomainHansLimit.system_prompt) {
-    msg = t('角色设定不能超过 {limitNum} 字符', { limitNum: currentDomainHansLimit.system_prompt })
+    msg = t('角色设定不能超过 {limitNum} 字符', {
+      limitNum: currentDomainHansLimit.system_prompt
+    })
   } else if (getStringWidth(currentDomain.desc) > currentDomainHansLimit.desc) {
-    msg = t('角色简介不能超过 {limitNum} 字符', { limitNum: currentDomainHansLimit.desc })
+    msg = t('角色简介不能超过 {limitNum} 字符', {
+      limitNum: currentDomainHansLimit.desc
+    })
   } else if (getStringWidth(currentDomain.welcome) > currentDomainHansLimit.welcome) {
-    msg = t('欢迎语不能超过 {limitNum} 字符', { limitNum: currentDomainHansLimit.welcome })
+    msg = t('欢迎语不能超过 {limitNum} 字符', {
+      limitNum: currentDomainHansLimit.welcome
+    })
   }
 
   if (msg) {
@@ -173,24 +229,6 @@ const onSave = async () => {
     if (!beforeSaveCheck()) {
       return
     }
-    // if (currentDomain.toc_privacy == 0 && localStorage.getItem(currentDomain.slug) === null) {
-    //   如果值为 0，弹出一个对话框
-    //   await ElMessageBox({
-    //     title: t('温馨提示'),
-    //     message:
-    //       t('是否开放机器人被互联网用户访问?') +
-    //       '<br>' +
-    //       t('可前往高级设置->公开访问权限开关手动修改'),
-    //     confirmButtonText: t('开启权限'),
-    //     dangerouslyUseHTMLString: true, // 允许message中的HTML
-    //     type: 'warning'
-    //   })
-    //     .then(() => {
-    //       currentDomain.toc_privacy = 1
-    //     })
-    //     .catch(() => {})
-    //   localStorage.setItem(currentDomain.slug, 'true')
-    // }
     loading.value = ElLoading.service({
       lock: true,
       text: t('保存中'),
@@ -207,8 +245,16 @@ const onSave = async () => {
         visible.value = false
       }, 2000)
     }
-    await updateDomain(currentDomain.id, {
-      ...currentDomain,
+
+    let postCurrentDomain = cloneDeep({ ...currentDomain })
+
+    if (postCurrentDomain.type === EDomainType.wenxin) {
+      postCurrentDomain.welcome = postCurrentDomain.welcome + '\n' + postCurrentDomain.example
+      delete postCurrentDomain.example
+    }
+
+    await updateDomain(postCurrentDomain.id, {
+      ...postCurrentDomain,
       status: EDomainStatus.able
     })
     await domainStoreI.initDomainList(route)
@@ -232,9 +278,6 @@ const sensorsTaskProgress = () => {
 }
 
 const initLLMConfigOption = () => {
-  // const res = await domainLLMConfigAPI()
-  //  domainLLMConfigAPI()
-  // const domainLLMList = res.data.data
   domainLLMTypeOptions.value = SUPPORT_LLM_CONFIG
   if (!currentDomain.llm && SUPPORT_LLM_CONFIG.length > 0) {
     currentDomain.llm = SUPPORT_LLM_CONFIG[0].type
@@ -262,13 +305,30 @@ watch(
       llm: currentDomainInfo.llm || '7e78bce4872633c2',
       qa_modifiable: currentDomainInfo.qa_modifiable || 0
     })
+
+    currentDomainInfo.example = ''
+
+    // 设置example 和 welcome
+    if (currentDomainInfo.type == EDomainType.wenxin) {
+      currentDomainHansLimit.name = 20
+      currentDomainHansLimit.system_prompt = 1000
+      currentDomainHansLimit.desc = 50
+      currentDomainHansLimit.welcome = 200
+      currentDomainInfo.example = regExtractExample(currentDomainInfo.welcome) || ''
+      currentDomainInfo.welcome = regExtractContent(currentDomainInfo.welcome) || ''
+    }
+
     currentDomain = Object.assign(currentDomain, currentDomainInfo)
   },
-  { immediate: true }
+  { immediate: true, deep: true }
 )
 onBeforeRouteLeave(async (to, from, next) => {
   try {
     if (!isModified()) {
+      return
+    }
+
+    if (currentDomain.type === EDomainType.wenxin) {
       return
     }
     await ElMessageBox.confirm(t('当前页面有内容更新，请确认是否保存？'), t('温馨提示'), {

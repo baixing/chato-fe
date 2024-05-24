@@ -51,7 +51,7 @@
       <HorizontalMenu
         v-if="!isMobile"
         :active="activeMenu"
-        :menus="menus"
+        :menus="filteredMenus"
         @select="onMenuSelect"
         :height="56"
         class="!absolute -translate-x-1/2 left-1/2 h-14"
@@ -61,7 +61,7 @@
   <HorizontalMenu
     v-if="isMobile"
     :active="activeMenu"
-    :menus="menus"
+    :menus="filteredMenus"
     :height="45"
     @select="onMenuSelect"
     class="w-full !px-4"
@@ -75,6 +75,7 @@ import Avatar from '@/components/Avatar/index.vue'
 import HorizontalMenu from '@/components/HorizontalMenu/index.vue'
 import Topbar from '@/components/Topbar/index.vue'
 import { useBasicLayout } from '@/composables/useBasicLayout'
+import { EDomainType } from '@/enum/domain'
 import type { IMenuItem } from '@/interface/common'
 import { RoutesMap } from '@/router'
 import { useDomainStore } from '@/stores/domain'
@@ -100,10 +101,17 @@ const menus: IMenuItem[] = [
   { title: '数据', routeName: RoutesMap.tranning.report }
 ]
 
+// 过滤 menus 数组，移除不需要的菜单项
+const filteredMenus = computed(() => {
+  if (domainInfo.value?.type === EDomainType.wenxin) {
+    return menus.filter((menu) => !['知识', '发布', '数据'].includes(menu.title))
+  }
+  return menus
+})
+
 const onMenuSelect = (routeName: string) => {
   router.push({
     name: routeName,
-    // botId 复写意义防止部分菜单未含有 botId 跳转至需要 botId 的页面
     params: { ...route.params, botId: domainInfo.value.id, type: undefined }
   })
 }
