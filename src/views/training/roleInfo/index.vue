@@ -141,7 +141,7 @@ const activeTab = computed(() => (route.params?.type as string) || 'base')
 const isModified = () => !isEqual(currentDomain, originalDomain)
 
 const saveConfirmText = computed(() =>
-  currentDomain.type === EDomainType.wenxin
+  currentDomain.type !== EDomainType.wenxin
     ? '您确认要修改吗？'
     : '请谨慎操作！修改资料可能会导致百度智能体审核不通过，'
 )
