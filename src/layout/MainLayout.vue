@@ -1,13 +1,13 @@
 <template>
   <Skeleton v-if="loading" />
-  <el-container v-else-if="!isShowSiderBar" class="layout-container">
+  <el-container v-else class="layout-container">
     <Transition
       enter-from-class="-translate-x-full"
       leave-to-class="-translate-x-full"
       enter-active-class="transition duration-200"
       leave-active-class="transition duration-200"
     >
-      <Sidebar v-show="!isMobile" />
+      <Sidebar v-if="!isShowSiderBar" v-show="!isMobile" />
     </Transition>
     <el-main class="main-container">
       <router-view />
@@ -67,7 +67,7 @@ const { checkRightsTypeNeedUpgrade } = useSpaceRights()
 
 const { $sensors } = useGlobalProperties()
 
-const isShowSiderBar = computed(() => route.query.showBar as string)
+const isShowSiderBar = computed(() => (route.query.showBar as string) || '')
 
 const init = async () => {
   try {
