@@ -1,5 +1,6 @@
 <template>
   <Topbar
+    v-if="!isShowSiderBar"
     :center="false"
     class="bg-white relative px-16 lg:px-4 lg:h-auto lg:flex-col"
     style="border-bottom: 1px solid #e4e7ed"
@@ -92,6 +93,7 @@ const { domainInfo, domainList } = storeToRefs(domainStoreI)
 const popoverVisible = ref(false)
 
 const activeMenu = computed(() => route.name as string)
+const isShowSiderBar = computed(() => (route.query.showBar as string) || '')
 
 const menus: IMenuItem[] = [
   { title: '对话', routeName: RoutesMap.tranning.botChat },

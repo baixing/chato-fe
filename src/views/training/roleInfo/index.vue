@@ -139,6 +139,7 @@ const { $sensors } = useGlobalProperties()
 const activeTab = computed(() => (route.params?.type as string) || 'base')
 // 是否修改过
 const isModified = () => !isEqual(currentDomain, originalDomain)
+const isShowSiderBar = computed(() => (route.query.showBar as string) || '')
 
 const saveConfirmText = computed(() =>
   currentDomain.type !== EDomainType.wenxin
