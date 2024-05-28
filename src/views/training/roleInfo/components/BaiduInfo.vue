@@ -6,11 +6,7 @@
         v-model:value="currentDomain.name"
         type="text"
         :limit="currentDomainHansLimit.name"
-        :disabled="
-          AIGenerateInputDisabled.system_prompt &&
-          AIGenerateInputDisabled.desc &&
-          AIGenerateInputDisabled.welcome
-        "
+        :disabled="true"
         class="flex-1"
       />
     </div>
