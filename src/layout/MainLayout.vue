@@ -1,6 +1,6 @@
 <template>
   <Skeleton v-if="loading" />
-  <el-container v-else class="layout-container">
+  <el-container v-else-if="!isShowSiderBar" class="layout-container">
     <Transition
       enter-from-class="-translate-x-full"
       leave-to-class="-translate-x-full"
@@ -14,6 +14,7 @@
     </el-main>
   </el-container>
   <el-drawer
+    v-if="!isShowSiderBar"
     v-model="drawerVisible"
     direction="ltr"
     :with-header="false"
@@ -42,11 +43,10 @@ import { useChatStore } from '@/stores/chat'
 import { useDomainStore } from '@/stores/domain'
 import { useSpaceStore } from '@/stores/space'
 import { useYouzanStore } from '@/stores/yz'
-import { nextTick, ref } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 import { RouterView, useRoute, useRouter } from 'vue-router'
 import Sidebar from './components/Sidebar/MainSidebar.vue'
 import Skeleton from './components/Skeleton/index.vue'
-
 const { drawerVisible } = useSidebar()
 const { isMobile } = useBasicLayout()
 
@@ -66,6 +66,8 @@ useVersionCheck()
 const { checkRightsTypeNeedUpgrade } = useSpaceRights()
 
 const { $sensors } = useGlobalProperties()
+
+const isShowSiderBar = computed(() => route.query.showBar as string)
 
 const init = async () => {
   try {
