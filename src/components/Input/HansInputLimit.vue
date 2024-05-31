@@ -34,7 +34,7 @@
 </template>
 
 <script setup lang="ts">
-import { getStringWidth } from '@/utils/string'
+import { getStringWidth, getStringoriginWidth } from '@/utils/string'
 import { throttledWatch } from '@vueuse/core'
 import type { InputAutoSize, InputProps } from 'element-plus'
 import { computed, onMounted, ref, toRefs, watch } from 'vue'
@@ -51,6 +51,7 @@ const props = withDefaults(
     specifyInputStrLen?: number
     defaultFocus?: boolean
     disabled?: boolean
+    baidu?: boolean
   }>(),
   {
     size: 'default'
@@ -74,7 +75,10 @@ const internalValue = computed({
 const internalDisabled = computed(() => props.disabled)
 
 const inputStrLen = computed(() => {
-  return props.specifyInputStrLen || getStringWidth(internalValue.value)
+  return (
+    props.specifyInputStrLen ||
+    (props.baidu ? getStringoriginWidth(internalValue.value) : getStringWidth(internalValue.value))
+  )
 })
 const isExceed = computed(() => inputStrLen.value > limit.value)
 
