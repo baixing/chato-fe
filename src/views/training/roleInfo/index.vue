@@ -23,13 +23,13 @@
         class="py-4 box-border flex justify-end items-center gap-4 information-padding"
         style="border-top: 1px solid #e4e7ed"
       >
-        <el-popconfirm width="250" :title="saveConfirmText" @confirm="onSave">
-          <template #reference>
-            <el-button type="primary" :disabled="processLimit.includes(currentDomain.status)">{{
-              $t('保存设定')
-            }}</el-button>
-          </template>
-        </el-popconfirm>
+        <el-button
+          type="primary"
+          @click="onSave"
+          :disabled="processLimit.includes(currentDomain.status)"
+        >
+          {{ $t('保存设定') }}
+        </el-button>
       </div>
     </div>
     <DebugChat v-if="!isMobile" />
@@ -139,13 +139,6 @@ const { $sensors } = useGlobalProperties()
 const activeTab = computed(() => (route.params?.type as string) || 'base')
 // 是否修改过
 const isModified = () => !isEqual(currentDomain, originalDomain)
-const isShowSiderBar = computed(() => (route.query.showBar as string) || '')
-
-const saveConfirmText = computed(() =>
-  currentDomain.type !== EDomainType.wenxin
-    ? '您确认要修改吗？'
-    : '请谨慎操作！修改资料可能会导致百度智能体审核不通过，'
-)
 
 const tabComponents = [
   { key: 'base', title: '基础配置', component: BaseInfo, showWhenStatusZero: true },
@@ -225,8 +218,29 @@ const setModifyFields = (keys: (keyof IDomainInfo)[]) => {
   return keys.every((value) => currentDomain[value] === originalDomain[value])
 }
 
+const saveTip = () => {
+  return `
+  修改资料需重新审核，可能导致展现不稳定或失效。<br>
+  建议联系升级专业服务支持，以实现安全有效更新。<br>
+  如展现不稳定或失效，平台概不负责，请确认是否修改？
+  `
+}
+
+const onBeforeSaveTip = async () => {
+  await ElMessageBox.confirm(saveTip(), '智能体资料更新', {
+    confirmButtonText: '确认修改',
+    cancelButtonText: '我再想想',
+    type: 'warning',
+    dangerouslyUseHTMLString: true
+  })
+}
+
 const onSave = async () => {
   try {
+    if (currentDomain.type === EDomainType.wenxin) {
+      await onBeforeSaveTip()
+    }
+
     if (!beforeSaveCheck()) {
       return
     }
