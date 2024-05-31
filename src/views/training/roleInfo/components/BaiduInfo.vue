@@ -8,6 +8,7 @@
         :limit="currentDomainHansLimit.name"
         :disabled="true"
         class="flex-1"
+        :baidu="true"
       />
     </div>
     <div class="chato-form-item">
@@ -34,6 +35,7 @@
         :limit="currentDomainHansLimit.desc"
         :disabled="AIGenerateInputDisabled.desc"
         class="w-full"
+        :baidu="true"
       />
     </div>
     <div class="chato-form-item">
@@ -58,6 +60,7 @@
         :limit="currentDomainHansLimit.system_prompt"
         :disabled="AIGenerateInputDisabled.system_prompt"
         class="w-full"
+        :baidu="true"
       />
     </div>
     <div v-if="currentDomain.status !== 0" class="chato-form-item">
@@ -116,6 +119,7 @@
         :limit="currentDomainHansLimit.welcome"
         :disabled="AIGenerateInputDisabled.welcome"
         class="w-full"
+        :baidu="true"
       />
     </div>
 
@@ -135,6 +139,7 @@
         :rows="6"
         size="large"
         class="w-full"
+        :baidu="true"
       />
     </div>
   </div>

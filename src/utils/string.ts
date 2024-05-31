@@ -10,6 +10,14 @@ export function getStringWidth(str) {
   return str.length
 }
 
+export function getStringoriginWidth(str) {
+  if (!str) {
+    return 0
+  }
+  str = String(str).trim()
+  return str.length
+}
+
 // 把字符串缩短，把中间挤压掉的字符用 ... 替换
 export function shortenString(str, desiredWidth) {
   str = String(str)
