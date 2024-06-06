@@ -186,6 +186,13 @@
     >
       {{ t('草稿') }}
     </span>
+
+    <span
+      v-else-if="EDomainType.wenxin === bot.type"
+      class="absolute right-0 top-0 inline-block !m-0 text-center px-2 py-1 rounded-tr-md rounded-bl-md bg-[#7c5cfc] text-xs text-white"
+    >
+      百度智能体
+    </span>
   </div>
 </template>
 <script lang="ts" setup>
@@ -193,7 +200,7 @@ import { addChatSessionB } from '@/api/chatList'
 import DefaultAvatar from '@/assets/img/avatar.png'
 import IconBtn from '@/components/IconBtn/index.vue'
 import { useBasicLayout } from '@/composables/useBasicLayout'
-import { EDomainStatus } from '@/enum/domain'
+import { EDomainStatus, EDomainType } from '@/enum/domain'
 import { EAllRole } from '@/enum/user'
 import type { IDomainInfo } from '@/interface/domain'
 import { RoutesMap } from '@/router'
@@ -257,6 +264,10 @@ const onLinkTo = async (routeName: string, routeParams?: Record<string, string>)
 const onCardClick = () => {
   // const linkRouteName =
   //   EDomainStatus.draft === internalBot.value.status ? RoutesMap.manager.create : RoutesMap.chat.c
-  onLinkTo(RoutesMap.tranning.botChat)
+  if (EDomainType.wenxin === props.bot.type) {
+    window.open(`https://zhinenghao.cn/bns/${props.bot.id}?name=${props.bot.name}`)
+  } else {
+    onLinkTo(RoutesMap.tranning.botChat)
+  }
 }
 </script>
