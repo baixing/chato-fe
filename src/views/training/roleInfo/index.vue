@@ -138,7 +138,7 @@ const domainLLMTypeOptions = ref<IDomainLLMConfig[]>([])
 const { $sensors } = useGlobalProperties()
 const activeTab = computed(() => (route.params?.type as string) || 'base')
 // 是否修改过
-const isModified = () => !isEqual(currentDomain, originalDomain)
+const isModified = () => !isEqual(currentDomain, { ...currentDomain, ...originalDomain })
 
 const tabComponents = [
   { key: 'base', title: '基础配置', component: BaseInfo, showWhenStatusZero: true },
