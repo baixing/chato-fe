@@ -272,6 +272,7 @@ const onSave = async () => {
       ...postCurrentDomain,
       status: EDomainStatus.able
     })
+    loading.value.close()
     await domainStoreI.initDomainList(route)
     syncOriginalFormState()
     ElNotification.success(t('保存成功'))
