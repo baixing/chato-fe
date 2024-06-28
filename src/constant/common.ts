@@ -71,14 +71,14 @@ export const RGBList = [
 
 export const SUPPORT_LLM_CONFIG = [
   {
-    name: 'Default Model (推荐)',
-    type: '7e78bce4872633c2',
+    name: '文心一言',
+    type: 'd389c001a3062589',
     consume_quota: 1,
     need_vip: false
   },
   {
-    name: '文心一言',
-    type: 'd389c001a3062589',
+    name: 'Default Model (推荐)',
+    type: '7e78bce4872633c2',
     consume_quota: 1,
     need_vip: false
   },
