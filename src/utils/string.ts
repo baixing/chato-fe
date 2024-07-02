@@ -10,6 +10,7 @@ export function getStringWidth(str) {
   return str.length
 }
 
+// 计算字符串的实际长度
 export function getStringoriginWidth(str) {
   if (!str) {
     return 0
