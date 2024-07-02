@@ -100,7 +100,7 @@ import type { IDomainInfo, IDomainLLMConfig } from '@/interface/domain'
 import { RoutesMap } from '@/router'
 import { useDomainStore } from '@/stores/domain'
 import { regExtractContent, regExtractExample } from '@/utils/reg'
-import { getStringWidth } from '@/utils/string'
+import { getStringoriginWidth, getStringWidth } from '@/utils/string'
 import dayjs from 'dayjs'
 import { ElLoading, ElMessage, ElMessageBox, ElNotification } from 'element-plus'
 import { cloneDeep, isEqual } from 'lodash-es'
@@ -187,20 +187,27 @@ const loading = ref()
 
 const beforeSaveCheck = () => {
   let msg = ''
+  let getStringWidthFunc = getStringWidth
 
-  if (getStringWidth(currentDomain.name) > currentDomainHansLimit.name) {
+  if (currentDomain.type === EDomainType.wenxin) {
+    getStringWidthFunc = getStringoriginWidth
+  }
+
+  if (getStringWidthFunc(currentDomain.name) > currentDomainHansLimit.name) {
     msg = t('机器人名称不能超过 {limitNum} 字符', {
       limitNum: currentDomainHansLimit.name
     })
-  } else if (getStringWidth(currentDomain.system_prompt) > currentDomainHansLimit.system_prompt) {
+  } else if (
+    getStringWidthFunc(currentDomain.system_prompt) > currentDomainHansLimit.system_prompt
+  ) {
     msg = t('角色设定不能超过 {limitNum} 字符', {
       limitNum: currentDomainHansLimit.system_prompt
     })
-  } else if (getStringWidth(currentDomain.desc) > currentDomainHansLimit.desc) {
+  } else if (getStringWidthFunc(currentDomain.desc) > currentDomainHansLimit.desc) {
     msg = t('角色简介不能超过 {limitNum} 字符', {
       limitNum: currentDomainHansLimit.desc
     })
-  } else if (getStringWidth(currentDomain.welcome) > currentDomainHansLimit.welcome) {
+  } else if (getStringWidthFunc(currentDomain.welcome) > currentDomainHansLimit.welcome) {
     msg = t('欢迎语不能超过 {limitNum} 字符', {
       limitNum: currentDomainHansLimit.welcome
     })
