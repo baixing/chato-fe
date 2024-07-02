@@ -208,6 +208,7 @@ import { useBase } from '@/stores/base'
 import { useChatStore } from '@/stores/chat'
 import { useDomainStore } from '@/stores/domain'
 import { Compass, Delete, Finished, Hide, Notification, View } from '@element-plus/icons-vue'
+import { useLocalStorage } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -222,6 +223,7 @@ const emit = defineEmits(['delete', 'sync', 'cloneRobot', 'visible', 'acceptance
 // 特殊权益用户开放同步/隐藏资源广场机器人按钮
 const PrivilegeUser = '18116404787'
 
+const authToken = useLocalStorage('auth_token', '')
 const { t } = useI18n()
 const router = useRouter()
 const domainStoreI = useDomainStore()
@@ -265,6 +267,7 @@ const onCardClick = () => {
   // const linkRouteName =
   //   EDomainStatus.draft === internalBot.value.status ? RoutesMap.manager.create : RoutesMap.chat.c
   if (EDomainType.wenxin === props.bot.type) {
+    document.cookie = `auth_token=${authToken.value}; domain=.zhinenghao.cn; path=/;`
     window.open(`https://zhinenghao.cn/bns/${props.bot.id}?name=${props.bot.name}`)
   } else {
     onLinkTo(RoutesMap.tranning.botChat)
