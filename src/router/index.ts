@@ -485,9 +485,9 @@ const loginedRoutes = [
       ...managerRoutes, // 管理机器人
       ...resourceSquareRoutes, // 资源广场
       ...aiPluginSquareRoutes, // AI插件库
-      ...spaceManager,
-      ...flowManager,
-      ...activityManager
+      ...spaceManager
+      // ...flowManager,
+      // ...activityManager
       // ...vipManager
     ]
   }
