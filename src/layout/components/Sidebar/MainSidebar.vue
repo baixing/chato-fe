@@ -70,10 +70,10 @@ const normalMenuList = [
   // { title: t('AI 插件库'), icon: 'cube-filled', routeName: RoutesMap.aiPlugin.center },
 ]
 
-// const supermanMenuList = [
-//   { title: t('对话 Flow'), icon: 'flow-filled', routeName: RoutesMap.flow.index },
-//   { title: t('私域运营'), icon: 'activity-filled', routeName: RoutesMap.activity.index }
-// ]
+const supermanMenuList = [
+  //   { title: t('对话 Flow'), icon: 'flow-filled', routeName: RoutesMap.flow.index },
+  { title: t('私域运营'), icon: 'activity-filled', routeName: RoutesMap.activity.index }
+]
 
 const youzanMenuList = [{ title: t('有赞插件'), icon: 'youzan', routeName: RoutesMap.aiPlugin.yz }]
 
