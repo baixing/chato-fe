@@ -133,7 +133,7 @@ export const SUPPORT_LLM_CONFIG = [
   {
     name: 'Advanced Model',
     type: 'e640dbec16b891d9',
-    consume_quota: 40,
+    consume_quota: 20,
     need_vip: true
   }
 ]
