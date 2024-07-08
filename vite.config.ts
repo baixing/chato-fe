@@ -10,8 +10,6 @@ import Components from 'unplugin-vue-components/vite'
 import { defineConfig, loadEnv } from 'vite'
 import eslintPlugin from 'vite-plugin-eslint'
 import { prismjsPlugin } from 'vite-plugin-prismjs'
-import type { ViteSentryPluginOptions } from 'vite-plugin-sentry'
-import viteSentry from 'vite-plugin-sentry'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import buildConfig from './plugins/build-id'
 
@@ -23,23 +21,23 @@ export default defineConfig(({ command, mode }) => {
   const devWithHttps = Boolean(env?.HTTPS || false)
   const isProd = env.VITE_APP_ENV === 'prod'
 
-  const sentryConfig: ViteSentryPluginOptions = {
-    authToken: env.VITE_APP_SENTRY_TOKEN,
-    url: env.VITE_APP_SENTRY_URL,
-    org: env.VITE_APP_SENTRY_ORG,
-    project: env.VITE_APP_SENTRY_PROJECT,
-    release: '1.0', // TODO: package.json version 保持同步
-    deploy: {
-      env: 'production'
-    },
-    skipEnvironmentCheck: true, // 可以跳过环境检查
-    cleanSourcemapsAfterUpload: true,
-    sourceMaps: {
-      include: ['./dist/assets'],
-      ignore: ['node_modules'],
-      urlPrefix: '~/assets'
-    }
-  }
+  // const sentryConfig: ViteSentryPluginOptions = {
+  //   authToken: env.VITE_APP_SENTRY_TOKEN,
+  //   url: env.VITE_APP_SENTRY_URL,
+  //   org: env.VITE_APP_SENTRY_ORG,
+  //   project: env.VITE_APP_SENTRY_PROJECT,
+  //   release: '1.0', // TODO: package.json version 保持同步
+  //   deploy: {
+  //     env: 'production'
+  //   },
+  //   skipEnvironmentCheck: true, // 可以跳过环境检查
+  //   cleanSourcemapsAfterUpload: true,
+  //   sourceMaps: {
+  //     include: ['./dist/assets'],
+  //     ignore: ['node_modules'],
+  //     urlPrefix: '~/assets'
+  //   }
+  // }
 
   return {
     server: {
@@ -104,7 +102,7 @@ export default defineConfig(({ command, mode }) => {
           'esnext.string.match-all'
         ]
       }),
-      isProd ? viteSentry(sentryConfig) : null
+      // isProd ? viteSentry(sentryConfig) : null
       // visualizer({
       //   open: true,  //注意这里要设置为true，否则无效
       //   filename: "stats.html", //分析图生成的文件名

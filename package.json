@@ -9,6 +9,7 @@
     "build:test": "vite build --mode test",
     "build:pre": "vite build --mode pre",
     "build:prod": "vite build --mode production",
+    "release": "npm run build:prod && ./deploy.sh prod",
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit",

@@ -36,4 +36,11 @@ yarn.lock
 # sentry
 .sentryclirc
 
+# env
+.env
+.env.*
+
+# deploy
+deploy.sh
+
 components.d.ts
