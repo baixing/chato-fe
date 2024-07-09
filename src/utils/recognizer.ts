@@ -26,7 +26,7 @@ export default class Recognizer {
       bitRate: this.testBitRate,
       sampleRate: this.SampleRate,
       onProcess: (buffers, level, time, sampleRate) => {
-        this.RealTimeSendTry(rec, false) //推入实时处理，因为是unknown格式，这里简化函数调用，没有用到buffers和bufferSampleRate，因为这些数据和rec.buffers是完全相同的。
+        // this.RealTimeSendTry(rec, false) //推入实时处理，因为是unknown格式，这里简化函数调用，没有用到buffers和bufferSampleRate，因为这些数据和rec.buffers是完全相同的。
       }
     })
 
@@ -132,12 +132,13 @@ export default class Recognizer {
     )
   }
 
-  recordClose(latestSend = true) {
+  recordClose(blob: Blob) {
     try {
       this.rec.close(() => {
         this.isCloseRecorder = true
       })
-      latestSend && this.RealTimeSendTry(this.rec, true) //最后一次发送
+      // latestSend && this.RealTimeSendTry(this.rec, true) //最后一次发送
+      this.TransferUpload(0, blob, 0, null, true)
     } catch (ex) {
       // this.recordClose()
     }
@@ -146,13 +147,26 @@ export default class Recognizer {
   recordEnd() {
     try {
       this.rec.stop(
-        (blob, time) => {
-          this.recordClose()
+        (blob, duration) => {
+          this.recordClose(blob)
         },
         (s) => {
-          this.recordClose()
+          this.recordClose(s)
+          // this.recordClose(blob)
         }
       )
     } catch (ex) {}
+  }
+  blobToBase64(blob) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        resolve((reader.result as string).split(',')[1]) // 只提取base64数据部分
+      }
+      reader.onerror = () => {
+        reject(new Error('Failed to convert Blob to Base64'))
+      }
+      reader.readAsDataURL(blob)
+    })
   }
 }
