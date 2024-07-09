@@ -125,7 +125,7 @@
         class="pr-5"
       />
       <div v-else class="text-center text-sm leading-5 space-y-2 mt-7">
-        <p class="font-medium">{{ t('想问什么，说来听听...') }}</p>
+        <p class="font-medium">{{ isLoading ? '识别中...' : '想问什么，说来听听...' }}</p>
         <p class="text-[#9DA3AF] leading-4 text-xs">{{ t('点击下方语音图标可停止录音') }}</p>
       </div>
       <div class="flex gap-10 items-center justify-center relative">
@@ -280,7 +280,7 @@ const onRecorderNeedReopen = (): boolean => {
   return res
 }
 
-const { startRecording, stopRecording, resetAsr, isRecording } = useRecognizer({
+const { startRecording, stopRecording, resetAsr, isRecording, isLoading } = useRecognizer({
   updateStr: onRecorderUpdateStr,
   checkNeedReopen: onRecorderNeedReopen
 })

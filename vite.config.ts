@@ -8,7 +8,6 @@ import ElementPlus from 'unplugin-element-plus/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import Components from 'unplugin-vue-components/vite'
 import { defineConfig, loadEnv } from 'vite'
-import eslintPlugin from 'vite-plugin-eslint'
 import { prismjsPlugin } from 'vite-plugin-prismjs'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import buildConfig from './plugins/build-id'
@@ -71,9 +70,9 @@ export default defineConfig(({ command, mode }) => {
         symbolId: 'icon-[dir]-[name]'
       }),
       buildConfig(),
-      eslintPlugin({
-        include: ['src/**/*.ts', 'src/**/*.vue', 'src/*.ts', 'src/*.vue']
-      }),
+      // eslintPlugin({
+      //   include: ['src/**/*.ts', 'src/**/*.vue', 'src/*.ts', 'src/*.vue']
+      // }),
       prismjsPlugin({
         languages: 'all',
         theme: 'okaidia',
