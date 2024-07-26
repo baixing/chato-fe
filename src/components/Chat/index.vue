@@ -822,12 +822,18 @@ const onTerminateRetry = async () => {
         'data-cid': lastAnswer.msg_id || lastAnswer.questionId
       })
 
+    const fake_domain_new = debugDomain || { ...detail.value }
+
+    if (fake_domain_new && fake_domain_new.customer_limit) {
+      delete fake_domain_new.customer_limit
+    }
+
     const terminateParams = {
       type: 'close',
       text: content,
       cutoff_continue_qid: lastAnswer.questionId,
       ...chatCommonParams.value,
-      fake_domain: debugDomain || { ...detail.value },
+      fake_domain: fake_domain_new,
       msg_id: lastAnswer.msg_id
     }
 
@@ -897,6 +903,12 @@ function doRequest(message) {
 
 const { SSETextToAudio } = useSSEAudio()
 async function sendMsgRequest(message) {
+  const fake_domain_new = debugDomain || { ...detail.value }
+
+  if (fake_domain_new && fake_domain_new.customer_limit) {
+    delete fake_domain_new.customer_limit
+  }
+
   const params = {
     ...message,
     type: isMidJourneyDomain.value ? 'mj_image' : 'chat',
@@ -904,7 +916,7 @@ async function sendMsgRequest(message) {
     source_id: sourceID.value,
     ...chatCommonParams.value,
     navit_msg_id: isMidJourneyDomain.value ? random(1000000, 9999999) : undefined,
-    fake_domain: debugDomain || { ...detail.value }
+    fake_domain: fake_domain_new
   }
   // if (params.source === 'chato_home' && abTestConfig.value[7] === '0') {
   //   params.type = 'flow'
