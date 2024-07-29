@@ -219,7 +219,6 @@
 import baixingAI from '@/assets/img/home/baixing-ai.png'
 import nashCrcode from '@/assets/img/nash-crcode.jpeg'
 import { useBasicLayout } from '@/composables/useBasicLayout'
-import useGlobalProperties from '@/composables/useGlobalProperties'
 import useSpaceRights from '@/composables/useSpaceRights'
 import { kPrivacyLinkUrl, kUserAgreementLinkUrl } from '@/constant/terms'
 import { ELangKey } from '@/enum/locales'
@@ -418,7 +417,7 @@ const initUid = () => {
   }
 }
 
-const { $sensors } = useGlobalProperties()
+// const { $sensors } = useGlobalProperties()
 
 const init = async () => {
   await chatStoreI.initChatList()
@@ -428,7 +427,7 @@ const init = async () => {
   }
 
   const res = await baseStoreI.getUserInfo()
-  res?.id && $sensors?.login(res.id.toString())
+  // res?.id && $sensors?.login(res.id.toString())
 }
 
 let contactTimer = null

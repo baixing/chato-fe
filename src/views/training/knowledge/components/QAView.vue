@@ -92,7 +92,6 @@ import { getCommonGraph } from '@/api/graph'
 import IconReward from '@/assets/img/Icon-Reward.png'
 import EnterQa from '@/components/EnterAnswer/EnterQa.vue'
 import SearchInput from '@/components/Input/SearchInput.vue'
-import useGlobalProperties from '@/composables/useGlobalProperties'
 import useImagePath from '@/composables/useImagePath'
 import { currentEnvConfig } from '@/config'
 import { USER_ROLES } from '@/constant/common'
@@ -110,7 +109,6 @@ import { useBase } from '@/stores/base'
 import { useDomainStore } from '@/stores/domain'
 import * as url from '@/utils/url'
 import { debouncedWatch } from '@vueuse/core'
-import dayjs from 'dayjs'
 import { ElLoading, ElMessageBox, ElNotification } from 'element-plus'
 import { storeToRefs } from 'pinia'
 import { computed, onUnmounted, ref, watch } from 'vue'
@@ -137,7 +135,7 @@ const multipleSelection = ref<IDocumentList[]>([])
 const batchRemove = ref<boolean>(false)
 const QaSelectStatus = ref(LearningStatesPerformanceType.all)
 const searchInput = ref<string>('')
-const { $sensors } = useGlobalProperties()
+// const { $sensors } = useGlobalProperties()
 const loading = ref(true)
 const tableData = ref<IDocumentList[]>([])
 const pagination = ref<IPage>({
@@ -226,7 +224,7 @@ const initQAList = async () => {
       await updateDomain(domainInfo.value.id, {
         task_progress: domainInfo.value.task_progress
       })
-      sensorsTaskProgress()
+      // sensorsTaskProgress()
       setTimeout(() => {
         visible.value = false
       }, 2000)
@@ -238,16 +236,16 @@ const initQAList = async () => {
   }
 }
 
-const sensorsTaskProgress = () => {
-  $sensors?.track('mission_completed', {
-    name: t('任务完成'),
-    type: 'mission_completed',
-    data: {
-      task_progress: 1,
-      time: dayjs().format('YYYY-MM-DD HH:mm:ss')
-    }
-  })
-}
+// const sensorsTaskProgress = () => {
+//   $sensors?.track('mission_completed', {
+//     name: t('任务完成'),
+//     type: 'mission_completed',
+//     data: {
+//       task_progress: 1,
+//       time: dayjs().format('YYYY-MM-DD HH:mm:ss')
+//     }
+//   })
+// }
 
 const handleTriggerMate = () => {
   batchRemove.value = !batchRemove.value

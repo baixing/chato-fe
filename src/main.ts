@@ -5,7 +5,7 @@ import 'viewerjs/dist/viewer.css'
 import 'wow.js/css/libs/animate.css'
 //
 import { deleteCommonGraph, getCommonGraph, postCommonGraph } from '@/api/graph'
-import useSensors from '@/composables/useSensors'
+// import useSensors from '@/composables/useSensors'
 // import useSentry from '@/composables/useSentry'
 import elementIcon from '@/utils/elementIcon'
 import { globalComponents } from '@/utils/globalComponents'
@@ -32,7 +32,7 @@ app.use(VueViewer)
 app.use(asyncRegisterGlobalComponents, globalComponents)
 app.use(elementIcon)
 
-useSensors(app)
+// useSensors(app)
 
 app.config.globalProperties.$copyText = (text: string, successMessage?: string) =>
   copyPaste(text, successMessage)

@@ -38,12 +38,10 @@
 import { postLoginCAPI } from '@/api/auth'
 import { getDomainDetailPublic } from '@/api/domain'
 import avatar from '@/assets/img/avatar.png'
-import useGlobalProperties from '@/composables/useGlobalProperties'
 import type { IDomainInfo } from '@/interface/domain'
 import { RoutesMap } from '@/router'
 import { useAuthStore } from '@/stores/auth'
 import { cuserStore } from '@/stores/cuser'
-import dayjs from 'dayjs'
 import { ElLoading, ElNotification as Notification } from 'element-plus'
 import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
@@ -53,7 +51,7 @@ import LoginMobile from './components/LoginMobile.vue'
 
 const { t } = useI18n()
 const cuser = cuserStore()
-const { $sensors } = useGlobalProperties()
+// const { $sensors } = useGlobalProperties()
 const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
@@ -79,14 +77,14 @@ const loginEnterSuccess = async (token: string, channel: string, close?: () => v
         pay: pay.value
       }
     })
-    $sensors?.track('c_login_success', {
-      name: t('C端登录'),
-      type: 'c_login_success',
-      data: {
-        id: token,
-        time: dayjs().format('YYYY-MM-DD HH:mm:ss')
-      }
-    })
+    // $sensors?.track('c_login_success', {
+    //   name: t('C端登录'),
+    //   type: 'c_login_success',
+    //   data: {
+    //     id: token,
+    //     time: dayjs().format('YYYY-MM-DD HH:mm:ss')
+    //   }
+    // })
     close && close()
   }
 }

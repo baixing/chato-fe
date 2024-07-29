@@ -3,9 +3,7 @@ import usePageTitle from '@/composables/usePageTitle'
 import useRoleCheck from '@/composables/useRoleCheck'
 import useSidebar from '@/composables/useSidebar'
 import { useAuthStore } from '@/stores/auth'
-import Sensors from '@/utils/sensors'
 import { locationComToCn } from '@/utils/url'
-import { nextTick } from 'vue'
 import { RouterView, createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 
 export const RoutesMap = {
@@ -534,18 +532,18 @@ const router = createRouter({
 router.beforeEach((to) => {
   const { drawerVisible } = useSidebar()
   const { shareChannel } = useChannel()
-  const sensors = new Sensors()
-  const { saInstance } = sensors
+  // const sensors = new Sensors()
+  // const { saInstance } = sensors
   drawerVisible.value = false
 
   locationComToCn()
   useRoleCheck(to)
   usePageTitle(to.meta?.title)
-  saInstance?.track('channel-source', {
-    name: 'channel来源',
-    type: 'channel-source',
-    data: shareChannel
-  })
+  // saInstance?.track('channel-source', {
+  //   name: 'channel来源',
+  //   type: 'channel-source',
+  //   data: shareChannel
+  // })
   // useCheckDomain(to)
   const authStoreI = useAuthStore()
   if (to.meta.requiresAuth && !authStoreI.authToken) {
@@ -560,13 +558,13 @@ router.beforeEach((to) => {
   }
 })
 
-router.afterEach((to) => {
-  nextTick(() => {
-    const sensors = new Sensors()
-    const { saInstance } = sensors
-    saInstance?.quick('autoTrackSinglePage')
-  })
-})
+// router.afterEach((to) => {
+//   nextTick(() => {
+//     const sensors = new Sensors()
+//     const { saInstance } = sensors
+//     saInstance?.quick('autoTrackSinglePage')
+//   })
+// })
 
 // 由于当前部署，采用镜像构建并覆盖全部新文件，解决网站有老用户停留在老页面，但旧资源地址在服务器已被移除掉的问题
 // 期待 Vite 的解决方案：https://github.com/vitejs/vite/issues/11804

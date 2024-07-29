@@ -46,7 +46,6 @@ import { getLoginQRCodeAPI, getLoginQREmpowerStatusAPI, postLoginAPI } from '@/a
 import { addSpaceMember } from '@/api/space'
 import { useIsMobile } from '@/composables/useBasicLayout'
 import useChannel from '@/composables/useChannel'
-import useGlobalProperties from '@/composables/useGlobalProperties'
 import useInvite from '@/composables/useInvite'
 import { LoginWayConfig } from '@/constant/auth'
 import { ELoginEmpowerStatus, ELoginWay } from '@/enum/auth'
@@ -55,7 +54,6 @@ import { useAuthStore } from '@/stores/auth'
 import { useBase } from '@/stores/base'
 import { $notnull } from '@/utils/help'
 import { useStorage } from '@vueuse/core'
-import dayjs from 'dayjs'
 import { ElLoading, ElNotification as Notification } from 'element-plus'
 import { storeToRefs } from 'pinia'
 import { computed, ref, watch } from 'vue'
@@ -72,7 +70,7 @@ const stateToken = useStorage('auth_token', '')
 const { shareChannel, setShareChannel } = useChannel()
 const { invite_ticket } = useInvite()
 const mobile = useIsMobile()
-const { $sensors } = useGlobalProperties()
+// const { $sensors } = useGlobalProperties()
 const router = useRouter()
 const route = useRoute()
 const baseStoreI = useBase()
@@ -123,14 +121,14 @@ const handleChangeLoginWay = () => {
 
 // ---- 业务打点-----
 const scanCodeSuccessRBI = (id: string) => {
-  $sensors?.track('sms_scan_code_login_success', {
-    name: t('扫码登录成功'),
-    type: 'sms_scan_code_login_success',
-    data: {
-      id,
-      time: dayjs().format('YYYY-MM-DD HH:mm:ss')
-    }
-  })
+  // $sensors?.track('sms_scan_code_login_success', {
+  //   name: t('扫码登录成功'),
+  //   type: 'sms_scan_code_login_success',
+  //   data: {
+  //     id,
+  //     time: dayjs().format('YYYY-MM-DD HH:mm:ss')
+  //   }
+  // })
 }
 // ----------------
 
@@ -199,7 +197,7 @@ const loginEnterSuccess = async (token: string, channel: string, close?: () => v
     await enterSpaceValidate(invite_ticket.value as string)
   }
   const userInfo = await baseStoreI.getUserInfo()
-  userInfo?.id && $sensors?.login(userInfo?.id.toString())
+  // userInfo?.id && $sensors?.login(userInfo?.id.toString())
   router.replace(routeUrl.value)
   setShareChannel(channel)
   close && close()

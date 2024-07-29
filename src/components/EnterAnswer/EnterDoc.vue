@@ -267,7 +267,6 @@ import * as apiFile from '@/api/file'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
 import Modal from '@/components/Modal/index.vue'
 import { useBasicLayout } from '@/composables/useBasicLayout'
-import useGlobalProperties from '@/composables/useGlobalProperties'
 import useSpaceRights from '@/composables/useSpaceRights'
 import { UPLOAD_FILE_TYPES, UPLOAD_FILE_VIDEO_AUDIO_TYPES } from '@/constant/common'
 import { PaidCommercialTypes } from '@/constant/space'
@@ -435,7 +434,7 @@ const $textExceedLimit = computed(() => {
 const domainName = computed(() => props.domainName || '')
 
 const demonstrationFile = async () => {
-  demonstrationSensors()
+  // demonstrationSensors()
   const loading = ElLoading.service({
     lock: true,
     text: t('保存中'),
@@ -473,7 +472,7 @@ const modalSubmitLoading = ref(false)
 const spliderWxPublicEl = ref()
 const onFillWXPublic = async () => {
   try {
-    demonstrationSensors()
+    // demonstrationSensors()
     const fillExampleName = `百姓课堂-${domainName.value}`
     await getWXPublicListByPublicName(fillExampleName)
     spliderWxPublicEl.value.focus()
@@ -484,19 +483,19 @@ const onFillWXPublic = async () => {
 }
 
 const onDemonstration = (cd: Function) => {
-  demonstrationSensors()
+  // demonstrationSensors()
   cd()
 }
 
-const demonstrationSensors = () => {
-  $sensors?.track('demonstration_sensors', {
-    name: t('使用示例填充'),
-    type: 'demonstration_sensors',
-    data: {
-      time: dayjs().format('YYYY-MM-DD HH:mm:ss')
-    }
-  })
-}
+// const demonstrationSensors = () => {
+//   $sensors?.track('demonstration_sensors', {
+//     name: t('使用示例填充'),
+//     type: 'demonstration_sensors',
+//     data: {
+//       time: dayjs().format('YYYY-MM-DD HH:mm:ss')
+//     }
+//   })
+// }
 
 const onSubmit = () => {
   spliderPublicForm.content = spliderPublicForm.maxContent
@@ -679,16 +678,16 @@ const handleSuccess = (response: any, uploadFile: UploadFile) => {
   uploadFileList.value = uploadFileList.value.filter((item) => item.uid !== uploadFile.uid)
 }
 
-const { $sensors } = useGlobalProperties()
+// const { $sensors } = useGlobalProperties()
 function pretreatmentTracker(uid: number) {
   for (let i = 0; i < uploadingList.value.length; i++) {
     const current = uploadingList.value[i]
     if (uid === current.uid) {
-      $sensors?.track('upload_time', {
-        name: t('文档上传时间'),
-        type: 'upload_time',
-        data: { ...current, endTime: dayjs().format('YYYY-MM-DD HH:mm:ss') }
-      })
+      // $sensors?.track('upload_time', {
+      //   name: t('文档上传时间'),
+      //   type: 'upload_time',
+      //   data: { ...current, endTime: dayjs().format('YYYY-MM-DD HH:mm:ss') }
+      // })
       uploadingList.value.splice(i, 1)
     }
   }

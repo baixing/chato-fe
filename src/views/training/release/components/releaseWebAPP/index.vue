@@ -3,7 +3,6 @@ import { updateDomain } from '@/api/domain'
 import IconReward from '@/assets/img/Icon-Reward.png'
 import SpaceRightsFreeExpUpgrate from '@/components/Space/SpaceRightsFreeExpUpgrate.vue'
 import SpaceRightsMask from '@/components/Space/SpaceRightsMask.vue'
-import useGlobalProperties from '@/composables/useGlobalProperties'
 import useSpaceRights from '@/composables/useSpaceRights'
 import { currentEnvConfig } from '@/config'
 import { FreeCommercialTypeExperienceDay } from '@/constant/space'
@@ -24,7 +23,6 @@ import {
   View
 } from '@element-plus/icons-vue'
 import { useSessionStorage } from '@vueuse/core'
-import dayjs from 'dayjs'
 import { storeToRefs } from 'pinia'
 import {
   computed,
@@ -141,20 +139,20 @@ const postReview = async () => {
       visible.value = false
     }, 2000)
     visible.value = true
-    sensorsTaskProgress()
+    // sensorsTaskProgress()
   }
 }
 
-const sensorsTaskProgress = () => {
-  $sensors?.track('mission_completed', {
-    name: t('任务完成'),
-    type: 'mission_completed',
-    data: {
-      task_progress: 2,
-      time: dayjs().format('YYYY-MM-DD HH:mm:ss')
-    }
-  })
-}
+// const sensorsTaskProgress = () => {
+// $sensors?.track('mission_completed', {
+//   name: t('任务完成'),
+//   type: 'mission_completed',
+//   data: {
+//     task_progress: 2,
+//     time: dayjs().format('YYYY-MM-DD HH:mm:ss')
+//   }
+// })
+// }
 
 const commonVisible = (visibleRef: Ref<boolean>, show: boolean = false) => {
   postReview()
@@ -173,7 +171,7 @@ const brandDomain = async () => {
   brandDomainVisible.value = true
 }
 
-const { $sensors } = useGlobalProperties()
+// const { $sensors } = useGlobalProperties()
 const releaseList = [
   {
     icon: 'wangye',
@@ -237,9 +235,9 @@ const releaseList = [
         click: () => {
           postReview()
           commonVisible(createPoster)
-          $sensors.track('bot_poster_click', {
-            bot_id: botId.value
-          })
+          // $sensors.track('bot_poster_click', {
+          //   bot_id: botId.value
+          // })
         }
       }
     ]

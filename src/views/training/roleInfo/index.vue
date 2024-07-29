@@ -87,7 +87,6 @@
 import { updateDomain } from '@/api/domain'
 import IconReward from '@/assets/img/Icon-Reward.png'
 import { useBasicLayout } from '@/composables/useBasicLayout'
-import useGlobalProperties from '@/composables/useGlobalProperties'
 import { SUPPORT_LLM_CONFIG } from '@/constant/common'
 import {
   DebugDomainSymbol,
@@ -101,7 +100,6 @@ import { RoutesMap } from '@/router'
 import { useDomainStore } from '@/stores/domain'
 import { regExtractContent, regExtractExample } from '@/utils/reg'
 import { getStringoriginWidth, getStringWidth } from '@/utils/string'
-import dayjs from 'dayjs'
 import { ElLoading, ElMessage, ElMessageBox, ElNotification } from 'element-plus'
 import { cloneDeep, isEqual } from 'lodash-es'
 import { storeToRefs } from 'pinia'
@@ -135,7 +133,7 @@ const currentDomainHansLimit = reactive({
 })
 const chatMobileModalVisible = ref(false)
 const domainLLMTypeOptions = ref<IDomainLLMConfig[]>([])
-const { $sensors } = useGlobalProperties()
+// const { $sensors } = useGlobalProperties()
 const activeTab = computed(() => (route.params?.type as string) || 'base')
 // 是否修改过
 const isModified = () => !isEqual(currentDomain, { ...currentDomain, ...originalDomain })
@@ -262,7 +260,7 @@ const onSave = async () => {
     ) {
       currentDomain.task_progress[0] = 20
       visible.value = true
-      sensorsTaskProgress()
+      // sensorsTaskProgress()
       setTimeout(() => {
         visible.value = false
       }, 2000)
@@ -289,16 +287,16 @@ const onSave = async () => {
   }
 }
 
-const sensorsTaskProgress = () => {
-  $sensors?.track('mission_completed', {
-    name: t('任务完成'),
-    type: 'mission_completed',
-    data: {
-      task_progress: 0,
-      time: dayjs().format('YYYY-MM-DD HH:mm:ss')
-    }
-  })
-}
+// const sensorsTaskProgress = () => {
+//   $sensors?.track('mission_completed', {
+//     name: t('任务完成'),
+//     type: 'mission_completed',
+//     data: {
+//       task_progress: 0,
+//       time: dayjs().format('YYYY-MM-DD HH:mm:ss')
+//     }
+//   })
+// }
 
 const initLLMConfigOption = () => {
   domainLLMTypeOptions.value = SUPPORT_LLM_CONFIG

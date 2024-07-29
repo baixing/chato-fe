@@ -132,13 +132,12 @@ import useBaiduPromotion from '@/composables/useBaiduPromotion'
 import { useIsMobile } from '@/composables/useBasicLayout'
 import useByteDancePromotion from '@/composables/useByteDancePromotion'
 import useChannel from '@/composables/useChannel'
-import useGlobalProperties from '@/composables/useGlobalProperties'
 import useRSA from '@/composables/useRSA'
 import { kPrivacyLinkUrl, kUserAgreementLinkUrl } from '@/constant/terms'
 import { openPreviewUrl } from '@/utils/help'
 import { validateMobile } from '@/utils/validate'
 import { ArrowRight } from '@element-plus/icons-vue'
-import { ElMessage, ElNotification as Notification, dayjs, type FormInstance } from 'element-plus'
+import { ElMessage, ElNotification as Notification, type FormInstance } from 'element-plus'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -162,7 +161,7 @@ withDefaults(
 const { encryption } = useRSA()
 const { t } = useI18n()
 
-const { $sensors } = useGlobalProperties()
+// const { $sensors } = useGlobalProperties()
 const isBtnSendDisabled = ref(true)
 const codetText = ref(t('重新获取'))
 const refForm = ref<FormInstance>(null)
@@ -180,14 +179,14 @@ const modelForm = reactive({
 
 // 验证码发送业务打点
 const onCodeSendRBI = () => {
-  $sensors?.track('sms_code_send_time', {
-    name: t('短信验证码发送时间'),
-    type: 'sms_code_send_time',
-    data: {
-      mobile: modelForm.mobile,
-      time: dayjs().format('YYYY-MM-DD HH:mm:ss')
-    }
-  })
+  // $sensors?.track('sms_code_send_time', {
+  //   name: t('短信验证码发送时间'),
+  //   type: 'sms_code_send_time',
+  //   data: {
+  //     mobile: modelForm.mobile,
+  //     time: dayjs().format('YYYY-MM-DD HH:mm:ss')
+  //   }
+  // })
 }
 
 // 发送验证码

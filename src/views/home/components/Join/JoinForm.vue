@@ -41,9 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import useGlobalProperties from '@/composables/useGlobalProperties'
 import { EMAIL_REG, MOBILE_REG } from '@/constant/common'
-import dayjs from 'dayjs'
 import type { FormInstance, FormRules } from 'element-plus'
 import { ElNotification } from 'element-plus'
 import { reactive, ref } from 'vue'
@@ -51,7 +49,7 @@ import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 const emit = defineEmits(['submit'])
-const { $sensors } = useGlobalProperties()
+// const { $sensors } = useGlobalProperties()
 const joinForm = ref<FormInstance>()
 const joinFormRule = ref<FormRules>({
   name: [{ required: true, message: t('请输入您的姓名'), trigger: 'blur' }],
@@ -72,11 +70,11 @@ const joinFormModel = reactive({
 
 const onSubmit = async () => {
   await joinForm.value.validate()
-  $sensors.track('home_join_call_back', {
-    name: t(`首页-招商加盟`),
-    type: 'home_join_call_back',
-    data: { ...joinFormModel, time: dayjs().format('YYYY-MM-DD HH:mm:ss') }
-  })
+  // $sensors.track('home_join_call_back', {
+  //   name: t(`首页-招商加盟`),
+  //   type: 'home_join_call_back',
+  //   data: { ...joinFormModel, time: dayjs().format('YYYY-MM-DD HH:mm:ss') }
+  // })
   joinForm.value.resetFields()
   ElNotification.success(t('提交成功'))
   emit('submit')

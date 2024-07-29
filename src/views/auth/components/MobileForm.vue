@@ -103,7 +103,6 @@
 <script lang="ts" setup>
 import { postSendSmsCodeAPI } from '@/api/auth'
 import { getCommonGraph } from '@/api/graph'
-import useGlobalProperties from '@/composables/useGlobalProperties'
 import useRSA from '@/composables/useRSA'
 import useSpaceRights from '@/composables/useSpaceRights'
 import { LoginCodeTip } from '@/constant/auth'
@@ -143,7 +142,7 @@ withDefaults(
 const { checkRightsTypeNeedUpgrade } = useSpaceRights()
 const { encryption } = useRSA()
 const { t } = useI18n()
-const { $sensors } = useGlobalProperties()
+// const { $sensors } = useGlobalProperties()
 const isBtnSendDisabled = ref(false)
 const codetText = ref(t('获取验证码'))
 const refForm = ref<FormInstance>(null)
@@ -225,14 +224,14 @@ const onContactUs = () => {
 
 // 验证码发送业务打点
 const onCodeSendRBI = () => {
-  $sensors?.track('sms_code_send_time', {
-    name: t('短信验证码发送时间'),
-    type: 'sms_code_send_time',
-    data: {
-      mobile: modelForm.mobile,
-      time: dayjs().format('YYYY-MM-DD HH:mm:ss')
-    }
-  })
+  // $sensors?.track('sms_code_send_time', {
+  //   name: t('短信验证码发送时间'),
+  //   type: 'sms_code_send_time',
+  //   data: {
+  //     mobile: modelForm.mobile,
+  //     time: dayjs().format('YYYY-MM-DD HH:mm:ss')
+  //   }
+  // })
 }
 
 // 验证码输入业务打点
@@ -241,14 +240,14 @@ const onCodeInputRBI = async () => {
     return
   }
 
-  $sensors?.track('sms_code_input_time', {
-    name: t('短信验证码输入时间'),
-    type: 'sms_code_input_time',
-    data: {
-      mobile: modelForm.mobile,
-      time: dayjs().format('YYYY-MM-DD HH:mm:ss')
-    }
-  })
+  // $sensors?.track('sms_code_input_time', {
+  //   name: t('短信验证码输入时间'),
+  //   type: 'sms_code_input_time',
+  //   data: {
+  //     mobile: modelForm.mobile,
+  //     time: dayjs().format('YYYY-MM-DD HH:mm:ss')
+  //   }
+  // })
 
   smsCodeTrackerTag = true
 }

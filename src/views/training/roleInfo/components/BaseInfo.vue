@@ -182,7 +182,6 @@ import EnterDoc from '@/components/EnterAnswer/EnterDoc.vue'
 import EnterQa from '@/components/EnterAnswer/EnterQa.vue'
 import HansInputLimit from '@/components/Input/HansInputLimit.vue'
 import SLTitle from '@/components/Title/SLTitle.vue'
-import useGlobalProperties from '@/composables/useGlobalProperties'
 import { currentEnvConfig } from '@/config'
 import { USER_ROLES } from '@/constant/common'
 import { DomainEditSymbol, DomainHansLimitSymbol } from '@/constant/domain'
@@ -195,14 +194,13 @@ import { useBase } from '@/stores/base'
 import { getFileStatusName } from '@/utils/formatter'
 import { openPreviewUrl } from '@/utils/help'
 import { Close } from '@element-plus/icons-vue'
-import dayjs from 'dayjs'
 import { ElMessageBox, ElNotification } from 'element-plus'
 import { computed, inject, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const currentDomain = inject<Partial<IDomainInfo>>(DomainEditSymbol)
 const currentDomainHansLimit = inject<Record<string, string>>(DomainHansLimitSymbol)
-const { $sensors } = useGlobalProperties()
+// const { $sensors } = useGlobalProperties()
 const defaultAIGenerateInputDisabled = {
   desc: false,
   system_prompt: false,
@@ -261,7 +259,7 @@ const initFilesList = async () => {
         visible.value = false
       }, 6000)
       setTimeout(() => {
-        sensorsTaskProgress()
+        // sensorsTaskProgress()
         visible.value = true
       }, 2000)
     }
@@ -271,16 +269,16 @@ const initFilesList = async () => {
   }
 }
 
-const sensorsTaskProgress = () => {
-  $sensors?.track('mission_completed', {
-    name: t('任务完成'),
-    type: 'mission_completed',
-    data: {
-      task_progress: 1,
-      time: dayjs().format('YYYY-MM-DD HH:mm:ss')
-    }
-  })
-}
+// const sensorsTaskProgress = () => {
+//   $sensors?.track('mission_completed', {
+//     name: t('任务完成'),
+//     type: 'mission_completed',
+//     data: {
+//       task_progress: 1,
+//       time: dayjs().format('YYYY-MM-DD HH:mm:ss')
+//     }
+//   })
+// }
 
 const onOpenQAModal = () => {
   QAFormState = Object.assign(QAFormState, { ...defaultQAFormState })

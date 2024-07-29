@@ -31,7 +31,6 @@
 <script setup lang="ts">
 import UpgradeRightsModal from '@/components/Upgrade/UpgradeRightsModal.vue'
 import { useBasicLayout } from '@/composables/useBasicLayout'
-import useGlobalProperties from '@/composables/useGlobalProperties'
 import useSidebar from '@/composables/useSidebar'
 import useSpaceRights from '@/composables/useSpaceRights'
 import useVersionCheck from '@/composables/useVersionCheck'
@@ -65,7 +64,7 @@ useVersionCheck()
 
 const { checkRightsTypeNeedUpgrade } = useSpaceRights()
 
-const { $sensors } = useGlobalProperties()
+// const { $sensors } = useGlobalProperties()
 
 const isShowSiderBar = computed(() => (route.query.showBar as string) || '')
 
@@ -76,7 +75,7 @@ const init = async () => {
     await baseStoreI.getAuthToken()
     const userInfoRes = await baseStoreI.getUserInfo()
 
-    $sensors?.login(userInfoRes.id.toString())
+    // $sensors?.login(userInfoRes.id.toString())
     // 新用户跳转对话引导页
     if (userInfoRes.id === userInfoRes.org.owner_id && !userInfoRes.org.additions && !cookieToken) {
       if (route.name !== RoutesMap.guide.first) {

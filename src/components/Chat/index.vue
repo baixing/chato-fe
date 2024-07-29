@@ -232,7 +232,6 @@ import { getStringWidth } from '@/utils/string'
 import { isURL } from '@/utils/url'
 import shareWeixin from '@/utils/weixinShare'
 import { useDebounceFn } from '@vueuse/core'
-import dayjs from 'dayjs'
 import { ElMessage, ElMessageBox, ElNotification as Notification } from 'element-plus'
 import 'highlight.js/styles/default.css'
 import { random, remove } from 'lodash'
@@ -418,24 +417,24 @@ const onAIGenerate = async () => {
 }
 
 // ---- 业务打点-----
-const scanCodeSuccessRBI = () => {
-  $sensors?.track('chat_share', {
-    name: t('分享成功'),
-    type: 'chat_share',
-    data: {
-      time: dayjs().format('YYYY-MM-DD HH:mm:ss')
-    }
-  })
-}
+// const scanCodeSuccessRBI = () => {
+//   $sensors?.track('chat_share', {
+//     name: t('分享成功'),
+//     type: 'chat_share',
+//     data: {
+//       time: dayjs().format('YYYY-MM-DD HH:mm:ss')
+//     }
+//   })
+// }
 // ----------------
 const successRBI = () => {
-  $sensors?.track('automatic_generated', {
-    name: t('自动生成'),
-    type: 'automatic_generated',
-    data: {
-      time: dayjs().format('YYYY-MM-DD HH:mm:ss')
-    }
-  })
+  // $sensors?.track('automatic_generated', {
+  //   name: t('自动生成'),
+  //   type: 'automatic_generated',
+  //   data: {
+  //     time: dayjs().format('YYYY-MM-DD HH:mm:ss')
+  //   }
+  // })
   return true
 }
 
@@ -715,13 +714,13 @@ const beforeSubmit = async () => {
   // 未登录状态资源广场对话数限制
   if (props.authLogin && !isInternal && history.value.length >= 6) {
     ElMessage.warning(t('对话次数已用完，请登录后继续'))
-    $sensors?.track('square_chat_login', {
-      name: t('资源广场跳转登录'),
-      type: 'square_chat_login',
-      data: {
-        time: dayjs().format('YYYY-MM-DD HH:mm:ss')
-      }
-    })
+    // $sensors?.track('square_chat_login', {
+    //   name: t('资源广场跳转登录'),
+    //   type: 'square_chat_login',
+    //   data: {
+    //     time: dayjs().format('YYYY-MM-DD HH:mm:ss')
+    //   }
+    // })
     router.replace({
       name: RoutesMap.auth.login,
       query: { redirect: `/bot/${botSlug.value}` }

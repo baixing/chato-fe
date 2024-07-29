@@ -53,7 +53,6 @@ import Navigator from '@/components/Chat/ChatoNavigator.vue'
 import { useBasicLayout } from '@/composables/useBasicLayout'
 import useGlobalProperties from '@/composables/useGlobalProperties'
 import ChatSidebar from '@/layout/components/Sidebar/ChatSidebar.vue'
-import dayjs from 'dayjs'
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
@@ -76,13 +75,13 @@ const copyText = (str: string) => {
 }
 
 const scanCodeSuccessRBI = () => {
-  $sensors?.track('chat_share', {
-    name: t('分享成功'),
-    type: 'chat_share',
-    data: {
-      time: dayjs().format('YYYY-MM-DD HH:mm:ss')
-    }
-  })
+  // $sensors?.track('chat_share', {
+  //   name: t('分享成功'),
+  //   type: 'chat_share',
+  //   data: {
+  //     time: dayjs().format('YYYY-MM-DD HH:mm:ss')
+  //   }
+  // })
 }
 
 // 观察路由变化

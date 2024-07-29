@@ -62,11 +62,9 @@
   </el-checkbox>
 </template>
 <script lang="ts" setup>
-import useGlobalProperties from '@/composables/useGlobalProperties'
 import { INDUSTRYSELECTCONFIG } from '@/constant/common'
 import { kPrivacyLinkUrl, kUserAgreementLinkUrl } from '@/constant/terms'
 import { openPreviewUrl } from '@/utils/help'
-import dayjs from 'dayjs'
 import { ElNotification } from 'element-plus'
 import type { FormInstance, FormRules } from 'element-plus/es/components/form'
 import { reactive, ref } from 'vue'
@@ -116,15 +114,15 @@ const protocolAgree = ref(true)
 //   }
 // }
 
-const { $sensors } = useGlobalProperties()
+// const { $sensors } = useGlobalProperties()
 
 const onSubmit = async () => {
   await formRef.value.validate()
-  $sensors?.track('home_schedule_call_back', {
-    name: t('首页-{slot1}', { slot1: props.submitBtnText }),
-    type: 'home_schedule_call_back',
-    data: { ...formState, time: dayjs().format('YYYY-MM-DD HH:mm:ss') }
-  })
+  // $sensors?.track('home_schedule_call_back', {
+  //   name: t('首页-{slot1}', { slot1: props.submitBtnText }),
+  //   type: 'home_schedule_call_back',
+  //   data: { ...formState, time: dayjs().format('YYYY-MM-DD HH:mm:ss') }
+  // })
 
   formState = Object.assign(formState, defaultFormState)
   formRef.value.resetFields()
