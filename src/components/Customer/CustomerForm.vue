@@ -111,10 +111,11 @@ const onSubmit = async () => {
   try {
     submitting.value = true
     if (valid) {
+      const title = window.top.document.title
       const saveParams = {
         form: internalId.value,
         sender_uid: route.query.uid || props.uid,
-        channel: shareChannel.value,
+        channel: shareChannel.value || title,
         ...(formState as object)
       }
       await saveCustomerForm(saveParams)
