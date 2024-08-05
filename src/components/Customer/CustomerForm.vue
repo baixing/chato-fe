@@ -111,11 +111,10 @@ const onSubmit = async () => {
   try {
     submitting.value = true
     if (valid) {
-      const title = window.top.document.title
       const saveParams = {
         form: internalId.value,
         sender_uid: route.query.uid || props.uid,
-        channel: shareChannel.value || title,
+        channel: shareChannel.value,
         ...(formState as object)
       }
       await saveCustomerForm(saveParams)
@@ -128,6 +127,7 @@ const onSubmit = async () => {
       ElMessage.error(allErrMsgArr.join('、'))
     }
   } catch (err) {
+    console.log(err)
   } finally {
     submitting.value = false
   }
